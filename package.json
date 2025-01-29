@@ -1,12 +1,9 @@
 {
-  "name": "addonbone",
-  "version": "1.0.0",
+  "name": "adb",
+  "type": "module",
+  "version": "0.0.1",
   "description": "Cross browser web extension framework with shared code base",
   "main": "index.js",
-  "scripts": {
-    "foo": "tsx src/cli/index.ts",
-    "build": "webpack --config webpack.config.js"
-  },
   "homepage": "https://github.com/addonbone/addonbone",
   "repository": {
     "type": "git",
@@ -25,6 +22,16 @@
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/addonbone/addonbone/issues"
+  },
+  "files": [
+    "bin"
+  ],
+  "bin": {
+    "adb": "./bin/index.mjs"
+  },
+  "module": "./bin/index.mjs",
+  "scripts": {
+    "build": "buildc -- unbuild"
   },
   "devDependencies": {
     "@types/deep-extend": "^0.6.2",

@@ -25,9 +25,7 @@ const getConfigFromPlugins = async (webpack: Configuration, config: ReadonlyConf
 const applyConfigForManifest = async (webpack: Configuration, config: ReadonlyConfig): Promise<Configuration> => {
     const manifest = manifestFactory(config.manifestVersion);
 
-    for await (const _ of processPluginHandler(config, 'manifest', {manifest, config})) {
-
-    }
+    await Array.fromAsync(processPluginHandler(config, 'manifest', {manifest, config}));
 
     console.log(manifest.get());
 
@@ -82,7 +80,11 @@ export default async (config: ReadonlyConfig): Promise<Configuration> => {
         }
     }
 
-    webpack = merge(webpack, await getConfigFromPlugins(webpack, config), await applyConfigForManifest(webpack, config));
+    webpack = merge(
+        webpack,
+        await getConfigFromPlugins(webpack, config),
+        await applyConfigForManifest(webpack, config)
+    );
 
 
     return webpack;

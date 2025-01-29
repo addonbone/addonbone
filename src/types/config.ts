@@ -35,7 +35,8 @@ export interface Config {
     analyze: boolean;
     configFile: string;
     mergeBackground: boolean;
-    mergeContent: boolean;
+    mergeContentScripts: boolean;
+    concatContentScripts: boolean;
 }
 
 export interface ConfigOptions {

@@ -3,6 +3,7 @@
 .env.*
 .idea
 .output
+addon
 *.log
 /.vscode/
 /docs/.vitepress/cache

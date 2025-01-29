@@ -26,8 +26,9 @@ export default async (config: OptionalConfig): Promise<Config> => {
         mode = Mode.Development,
         analyze = false,
         plugins = [],
-        mergeContent = false,
         mergeBackground = false,
+        mergeContentScripts = false,
+        concatContentScripts = true,
     } = config;
 
     let resolvedConfig: Config = {
@@ -49,7 +50,8 @@ export default async (config: OptionalConfig): Promise<Config> => {
         analyze,
         configFile,
         mergeBackground,
-        mergeContent,
+        mergeContentScripts,
+        concatContentScripts,
     };
 
     const configFilePath = getConfigFile(resolvedConfig);

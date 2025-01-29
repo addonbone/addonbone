@@ -15,18 +15,17 @@ export interface PluginContentOptions extends ConfigOptions {
     contentScripts: ContentScript[];
 }
 
-export interface PluginContentResult {
-    contentScripts: ContentScript[] | string | string[];
-    fallbackName?: (name: string) => string;
-}
+export type PluginContentResult = string | string[] | Record<string, string>;
 
 export interface PluginBackgroundOptions extends ConfigOptions {
     files: string[];
 }
 
+export type PluginBackgroundResult = string;
+
 export interface Plugin {
     content?: PluginHandler<PluginContentOptions, PluginContentResult>;
-    background?: PluginHandler<PluginBackgroundOptions, string>;
+    background?: PluginHandler<PluginBackgroundOptions, PluginBackgroundResult>;
     manifest?: PluginHandlerCallback<PluginManifestOptions>;
     webpack?: PluginHandler<PluginWebpackOptions, WebpackConfig>;
 }

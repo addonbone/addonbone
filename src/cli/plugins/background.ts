@@ -1,5 +1,6 @@
 import path from "path";
 import fs from "fs";
+import _isFunction from "lodash/isFunction";
 
 import {getAppsPath, getSharedPath} from "../resolvers/path";
 
@@ -30,7 +31,7 @@ export default (options?: BackgroundOptions): Plugin => {
     let hasBackground: boolean = false;
 
     return {
-        webpack: async ({config}) => {
+        webpack: async ({config, webpack}) => {
             const files: string[] = [];
 
             const appBackgroundFile = findBackgroundFile(getAppsPath(config));
@@ -84,6 +85,12 @@ export default (options?: BackgroundOptions): Plugin => {
                 optimization: {
                     splitChunks: {
                         chunks(chunk) {
+                            const {chunks} = webpack.optimization?.splitChunks || {};
+
+                            if (_isFunction(chunks) && !chunks(chunk)) {
+                                return false;
+                            }
+
                             return chunk.name !== name;
                         },
                     }

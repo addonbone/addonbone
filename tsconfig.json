@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "module": "commonjs",
+    "target": "es6",
+    "esModuleInterop": true,
+    "sourceMap": false,
+    "rootDir": ".",
+    "outDir": "./dist",
+    "noEmitOnError": false,
+    "noEmit": false,
+    "skipLibCheck": true,
+    "noImplicitAny": false,
+    "jsx": "react",
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "baseUrl": "./src",
+    "paths": {
+      "@cli/*": [
+        "cli/*"
+      ],
+      "@typing/*": [
+        "types/*"
+      ]
+    }
+  },
+  "include": [
+    "./declaration.d.ts",
+    "./src/**/*"
+  ]
+}

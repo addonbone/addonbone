@@ -99,7 +99,10 @@ export default (options?: BackgroundOptions): Plugin => {
         },
         manifest: ({manifest, config}) => {
             if (hasBackground) {
-                manifest.resetBackground(path.join(config.jsDir, name + '.js'));
+                manifest.resetBackground({
+                    entry: name,
+                    file: path.join(config.jsDir, name + '.js')
+                });
             }
         }
     };

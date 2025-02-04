@@ -2,10 +2,12 @@ import {ManifestBuilder, ManifestMapping, ManifestVersion} from "@typing/manifes
 import ManifestV2 from './ManifestV2';
 import ManifestV3 from './ManifestV3';
 
-export default <T extends ManifestVersion>(manifestVersion: T): ManifestBuilder<ManifestMapping[T]> => {
+import {Browser} from "@typing/config";
+
+export default <T extends ManifestVersion>(browser: Browser, manifestVersion: T): ManifestBuilder<ManifestMapping[T]> => {
     if (manifestVersion === 2) {
-        return new ManifestV2();
+        return new ManifestV2(browser);
     }
 
-    return new ManifestV3();
+    return new ManifestV3(browser);
 }

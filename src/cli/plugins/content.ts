@@ -4,8 +4,8 @@ import {Configuration} from "webpack";
 import VirtualModulesPlugin from "webpack-virtual-modules";
 
 import {getAppsPath} from "@cli/resolvers/path";
-import {ContentScript} from "@typing/content";
 import {Plugin} from "@typing/plugin";
+import {ManifestContentScript} from "@typing/manifest";
 
 
 const findContentFiles = (dir: string): Record<string, string> => {
@@ -36,7 +36,7 @@ const findContentFiles = (dir: string): Record<string, string> => {
 
 
 export default (): Plugin => {
-    const contentScripts: ContentScript[] = [];
+    const contentScripts: ManifestContentScript[] = [];
 
     return {
         webpack: async ({config}): Promise<Configuration> => {
@@ -53,7 +53,7 @@ export default (): Plugin => {
             // console.log(findContentFiles(getAppsPath(config)));
             // console.log(findContentFiles(getSharedPath(config)));
 
-            const p = path.resolve(__dirname, 'src/some.ts');
+            const p = path.resolve(getAppsPath(config), 'src/some.ts');
 
             return {
                 entry: {

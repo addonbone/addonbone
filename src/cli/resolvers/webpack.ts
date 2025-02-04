@@ -11,6 +11,7 @@ import {ReadonlyConfig} from "@typing/config";
 
 import {getRootPath} from "./path";
 import {processPluginHandler} from "@cli/utils/plugin";
+import {ManifestBuilder} from "@typing/manifest";
 
 const getConfigFromPlugins = async (webpack: Configuration, config: ReadonlyConfig): Promise<Configuration> => {
     let mergedConfig: Configuration = {};
@@ -22,9 +23,7 @@ const getConfigFromPlugins = async (webpack: Configuration, config: ReadonlyConf
     return mergedConfig;
 }
 
-const applyConfigForManifest = async (webpack: Configuration, config: ReadonlyConfig): Promise<Configuration> => {
-    const manifest = manifestFactory(config.manifestVersion);
-
+const getConfigForManifest = async (webpack: Configuration, config: ReadonlyConfig, manifest: ManifestBuilder): Promise<Configuration> => {
     await Array.fromAsync(processPluginHandler(config, 'manifest', {manifest, config}));
 
     console.log(manifest.get());
@@ -33,6 +32,8 @@ const applyConfigForManifest = async (webpack: Configuration, config: ReadonlyCo
 }
 
 export default async (config: ReadonlyConfig): Promise<Configuration> => {
+    const manifest = manifestFactory(config.browser, config.manifestVersion);
+
     let webpack: Configuration = {
         mode: config.mode,
         cache: false,
@@ -67,7 +68,7 @@ export default async (config: ReadonlyConfig): Promise<Configuration> => {
                         {
                             loader: "sass-loader",
                             options: {
-                                implementation: require("sass"),
+                                implementation: import("sass"),
                             },
                         },
                     ],
@@ -83,7 +84,7 @@ export default async (config: ReadonlyConfig): Promise<Configuration> => {
     webpack = merge(
         webpack,
         await getConfigFromPlugins(webpack, config),
-        await applyConfigForManifest(webpack, config)
+        await getConfigForManifest(webpack, config, manifest),
     );
 
 

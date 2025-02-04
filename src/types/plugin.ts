@@ -1,22 +1,27 @@
 import {ManifestBuilder} from "@typing/manifest";
 import {Configuration as WebpackConfig} from "webpack";
-import {ContentScript} from "@typing/content";
+
+import {ContentScriptConfig} from "@typing/content";
 import {ConfigOptions} from "@typing/config";
 
+// Manifest
 export interface PluginManifestOptions extends ConfigOptions {
     manifest: ManifestBuilder;
 }
 
+// Webpack
 export interface PluginWebpackOptions extends ConfigOptions {
     webpack: Partial<WebpackConfig>;
 }
 
+// Content
 export interface PluginContentOptions extends ConfigOptions {
-    contentScripts: ContentScript[];
+    contentScripts: ContentScriptConfig[];
 }
 
 export type PluginContentResult = string | string[] | Record<string, string>;
 
+// Background
 export interface PluginBackgroundOptions extends ConfigOptions {
     files: string[];
 }

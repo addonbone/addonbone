@@ -1,4 +1,5 @@
-import {ContentScript} from "@typing/content";
+import {ContentScriptConfig} from "@typing/content";
+import {BackgroundConfig} from "@typing/background";
 
 import ManifestCommon = chrome.runtime.Manifest;
 import ManifestBase = chrome.runtime.ManifestBase;
@@ -59,12 +60,39 @@ export type SafariManifest = ChromeManifest & {
 
 export type Manifest = ChromeManifest | FirefoxManifest | SafariManifest;
 
-export type OptionalManifest = Partial<Manifest>;
-
 export interface ManifestBuilder<T extends CoreManifest = Manifest> {
-    resetBackground(src: string): this;
+    setVersion(version: string): this;
 
-    pushContentScript(...content: ContentScript[]): this;
+    setName(name: string): this;
+
+    setShortName(shortName: string): this;
+
+    setDescription(description: string): this;
+
+    resetBackground(background: ManifestBackground): this;
+
+    pushContentScript(...contentScript: ManifestContentScript[]): this;
 
     get(): T;
+}
+
+export interface ManifestEntry {
+    entry: string,
+}
+
+export interface ManifestEntryFile extends ManifestEntry {
+    file: string,
+}
+
+export type ManifestBackground = ManifestEntryFile & BackgroundConfig;
+
+export interface ManifestContentScript extends ManifestEntryFile, ContentScriptConfig {
+    js?: string[];
+    css?: string[];
+}
+
+export interface ManifestDependencies extends ManifestEntry {
+    js?: string[];
+    css?: string[];
+    assets?: string[];
 }

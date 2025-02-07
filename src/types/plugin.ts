@@ -1,8 +1,9 @@
 import {ManifestBuilder} from "@typing/manifest";
 import {Configuration as WebpackConfig} from "webpack";
 
-import {ContentScriptConfig} from "@typing/content";
 import {ConfigOptions} from "@typing/config";
+import {ContentScriptEntrypointMap} from "@typing/content";
+import {BackgroundEntrypointMap} from "@typing/background";
 
 // Manifest
 export interface PluginManifestOptions extends ConfigOptions {
@@ -16,14 +17,14 @@ export interface PluginWebpackOptions extends ConfigOptions {
 
 // Content
 export interface PluginContentOptions extends ConfigOptions {
-    contentScripts: ContentScriptConfig[];
+    entries: ContentScriptEntrypointMap;
 }
 
 export type PluginContentResult = string | string[] | Record<string, string>;
 
 // Background
 export interface PluginBackgroundOptions extends ConfigOptions {
-    files: string[];
+    entries: BackgroundEntrypointMap;
 }
 
 export type PluginBackgroundResult = string;

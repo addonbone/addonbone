@@ -71,7 +71,7 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
             return manifest;
         }
 
-        return {...manifest, ...sources};
+        return Object.assign({}, manifest, ...sources);
     }
 
     public build(): T {

@@ -1,24 +1,30 @@
 import path from "path";
-import fs from "fs";
-import _isFunction from "lodash/isFunction";
+import _ from "lodash";
+
+import {getBackgroundOptions} from "../parsers/entrypoint";
 
 import {getAppsPath, getSharedPath} from "../resolvers/path";
 
 import {processPluginHandler} from "../utils/plugin";
+import {isValidEntrypointOptions} from "../utils/option";
+import {findBackgroundFiles} from "../utils/entrypoint";
 
 import {Plugin} from "@typing/plugin";
+import {BackgroundEntrypointMap} from "@typing/background";
 
-const findBackgroundFile = (dir: string): string | undefined => {
-    const candidates = [
-        path.join(dir, 'background.ts'),
-        path.join(dir, 'background', 'index.ts'),
-    ];
 
-    for (const file of candidates) {
-        if (fs.existsSync(file)) {
-            return file;
-        }
+const backgroundFilesToEntries = (files: string[]): BackgroundEntrypointMap => {
+    const entries: BackgroundEntrypointMap = new Map;
+
+    for (const file of files) {
+        entries.set(file, getBackgroundOptions(file));
     }
+
+    return entries;
+}
+
+const findBackgroundEntries = (dir: string): BackgroundEntrypointMap => {
+    return backgroundFilesToEntries(findBackgroundFiles(dir));
 }
 
 export interface BackgroundOptions {
@@ -32,41 +38,54 @@ export default (options?: BackgroundOptions): Plugin => {
 
     return {
         webpack: async ({config, webpack}) => {
-            const files: string[] = [];
+            let entries: BackgroundEntrypointMap = new Map;
 
-            const appBackgroundFile = findBackgroundFile(getAppsPath(config));
+            const appBackgroundEntries = findBackgroundEntries(getAppsPath(config));
 
-            if (appBackgroundFile) {
-                files.push(appBackgroundFile);
+            if (appBackgroundEntries.size > 0) {
+                entries = new Map([...entries, ...appBackgroundEntries]);
 
                 if (config.debug) {
-                    console.info('App background file added:', appBackgroundFile);
+                    console.info('App background added:', appBackgroundEntries);
                 }
             }
 
-            if (appBackgroundFile && config.mergeBackground || !appBackgroundFile) {
-                const sharedBackgroundFile = findBackgroundFile(getSharedPath(config));
+            if (appBackgroundEntries.size > 0 && config.mergeBackground || appBackgroundEntries.size === 0) {
+                const sharedBackgroundEntries = findBackgroundEntries(getSharedPath(config));
 
-                if (sharedBackgroundFile) {
-                    files.push(sharedBackgroundFile);
+                if (sharedBackgroundEntries.size > 0) {
+                    entries = new Map([...entries, ...sharedBackgroundEntries]);
 
                     if (config.debug) {
-                        console.info('Shared background file added:', sharedBackgroundFile);
+                        console.info('Shared background added:', sharedBackgroundEntries);
                     }
                 }
             }
 
-            for await (const pluginBackgroundFile of processPluginHandler(config, 'background', {config, files})) {
-                files.push(pluginBackgroundFile);
+            const pluginBackgroundFiles = await Array.fromAsync(processPluginHandler(config, 'background', {
+                config,
+                entries
+            }));
+
+            console.log('pluginBackgroundFiles', pluginBackgroundFiles);
+
+            if (pluginBackgroundFiles.length > 0) {
+                const pluginBackgroundEntries = backgroundFilesToEntries(pluginBackgroundFiles);
+
+                entries = new Map([...entries, ...pluginBackgroundEntries]);
 
                 if (config.debug) {
-                    console.info('Plugin background file added:', pluginBackgroundFile);
+                    console.info('Plugin background added:', pluginBackgroundEntries);
                 }
             }
 
+            const files = Array.from(entries)
+                .filter(([_, options]) => isValidEntrypointOptions(options, config))
+                .map(([file]) => file);
+
             if (files.length === 0) {
                 if (config.debug) {
-                    console.warn('Background files not found');
+                    console.warn('Background entries not found');
                 }
 
                 return {};
@@ -75,7 +94,7 @@ export default (options?: BackgroundOptions): Plugin => {
             hasBackground = true;
 
             if (config.debug) {
-                console.info('Background files:', files);
+                console.info('Background entries:', entries);
             }
 
             return {
@@ -87,7 +106,7 @@ export default (options?: BackgroundOptions): Plugin => {
                         chunks(chunk) {
                             const {chunks} = webpack.optimization?.splitChunks || {};
 
-                            if (_isFunction(chunks) && !chunks(chunk)) {
+                            if (_.isFunction(chunks) && !chunks(chunk)) {
                                 return false;
                             }
 
@@ -101,7 +120,7 @@ export default (options?: BackgroundOptions): Plugin => {
             if (hasBackground) {
                 manifest.resetBackground({
                     entry: name,
-                    file: path.join(config.jsDir, name + '.js')
+                    file: path.join(config.jsDir, name + '.js'),
                 });
             }
         }

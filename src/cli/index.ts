@@ -3,9 +3,17 @@ import cac from 'cac';
 import {Browser} from "@typing/config";
 import app from "./builders/app";
 
-const cli = cac('addonbone');
+import pkg from '../../package.json';
+
+const cli = cac('adnbn');
 
 cli.option('--debug', 'Enable debug mode');
+
+cli
+    .command('init', 'Initialize a new project')
+    .action(() => {
+        console.log('init is good in cli');
+    });
 
 cli
     .command('[root]', 'Start dev server')
@@ -39,5 +47,6 @@ cli
         });
     });
 
+cli.version(pkg.version);
 cli.help();
 cli.parse();

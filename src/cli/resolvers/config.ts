@@ -1,48 +1,30 @@
-import fs from "fs";
-import _isFunction from "lodash/isFunction";
-import _isPlainObject from "lodash/isPlainObject";
+import {existsSync} from "fs";
+import {loadConfig} from "c12";
 
 import content from "@cli/plugins/content";
 import background from "@cli/plugins/background";
 
 import {getConfigFile} from "@cli/resolvers/path";
 
-import {
-    Browser,
-    Config,
-    ConfigDefinition,
-    Mode,
-    OptionalConfig,
-    ReadonlyConfig,
-    UserConfig,
-    UserConfigCallback,
-} from "@typing/config";
+import {Browser, Config, Mode, OptionalConfig, ReadonlyConfig, UserConfig,} from "@typing/config";
 import {Plugin} from "@typing/plugin";
 
 const getUserConfig = async (config: ReadonlyConfig): Promise<UserConfig> => {
     const configFilePath = getConfigFile(config);
 
-    let resolvedUserConfig: UserConfig = {};
+    if (existsSync(configFilePath)) {
+        const {config: userConfig} = await loadConfig<UserConfig>({configFile: configFilePath});
 
-    if (fs.existsSync(configFilePath)) {
-        let {default: userConfigDefinition = undefined as ConfigDefinition | undefined} = await import(configFilePath);
-
-        if (_isFunction(userConfigDefinition)) {
-            let userConfigCallback: UserConfigCallback = userConfigDefinition(config);
-
-            resolvedUserConfig = await userConfigCallback(config);
-        }
-
-        if (_isPlainObject(resolvedUserConfig) && config.debug) {
+        if (config.debug) {
             console.log('Loaded user config:', configFilePath);
-        } else if (config.debug) {
-            console.error('Invalid user config:', configFilePath);
         }
+
+        return userConfig
     } else if (config.debug) {
         console.warn('Config file not found:', configFilePath);
     }
 
-    return resolvedUserConfig;
+    return {};
 }
 
 export default async (config: OptionalConfig): Promise<Config> => {

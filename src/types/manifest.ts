@@ -1,10 +1,10 @@
 import {ContentScriptConfig} from "@typing/content";
 import {BackgroundConfig} from "@typing/background";
 
-import ManifestCommon = chrome.runtime.Manifest;
-import ManifestBase = chrome.runtime.ManifestBase;
-import ManifestV3 = chrome.runtime.ManifestV3;
-import ManifestV2 = chrome.runtime.ManifestV2;
+type ManifestCommon = chrome.runtime.Manifest;
+type ManifestBase = chrome.runtime.ManifestBase;
+type ManifestV3 = chrome.runtime.ManifestV3;
+type ManifestV2 = chrome.runtime.ManifestV2;
 
 type ManifestFixed<T extends ManifestBase> = Omit<T, 'manifest_version'> & {
     manifest_version: ManifestVersion

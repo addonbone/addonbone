@@ -1,10 +1,10 @@
-import _isFunction from "lodash/isFunction";
+import _ from "lodash";
 
 import {PluginHandler, PluginHandlerKeys, PluginHandlerOptions, PluginHandlerResult} from "@typing/plugin";
 import {ReadonlyConfig} from "@typing/config";
 
 export const resolvePluginHandler = async <O extends object, T>(handler: PluginHandler<O, T> | undefined, options: O): Promise<T | undefined> => {
-    if (_isFunction(handler)) {
+    if (_.isFunction(handler)) {
         const result = handler(options);
 
         if (result instanceof Promise) {

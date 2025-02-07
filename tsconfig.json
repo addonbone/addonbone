@@ -1,10 +1,14 @@
 {
   "compilerOptions": {
     "strict": true,
-    "module": "commonjs",
+    "module": "ESNext",
     "target": "ESNext",
+    "moduleResolution": "Bundler",
+    "declaration": true,
+    "emitDeclarationOnly": false,
+    "resolvePackageJsonExports": true,
     "esModuleInterop": true,
-    "sourceMap": false,
+    "forceConsistentCasingInFileNames": true,
     "rootDir": ".",
     "outDir": "./dist",
     "noEmitOnError": false,
@@ -23,10 +27,20 @@
       "@typing/*": [
         "types/*"
       ]
-    }
+    },
+    "isolatedModules": true,
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    "declarationMap": true
   },
   "include": [
     "./declaration.d.ts",
     "./src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.test.ts",
+    "dist"
   ]
 }

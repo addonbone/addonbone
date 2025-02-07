@@ -3,7 +3,7 @@ import ManifestBase from "./ManifestBase";
 import {ManifestVersion} from "@typing/manifest";
 import {Browser} from "@typing/config";
 
-import ManifestV2 = chrome.runtime.ManifestV2;
+type ManifestV2 = chrome.runtime.ManifestV2;
 
 export default class extends ManifestBase<ManifestV2> {
 

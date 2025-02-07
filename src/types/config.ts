@@ -47,6 +47,6 @@ export type OptionalConfig = Partial<Config>;
 export type UserConfig = Omit<OptionalConfig, 'configFile'>;
 export type ReadonlyConfig = Readonly<Config>;
 
-export type UserConfigCallback = (config: ReadonlyConfig) => UserConfig | Promise<UserConfig>;
+export type UserConfigCallback = (config: ReadonlyConfig) => UserConfig;
 export type ConfigDefinition = UserConfigCallback | UserConfig;
 

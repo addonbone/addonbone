@@ -7,3 +7,5 @@ export interface BackgroundConfig {
 export type BackgroundEntrypointOptions = BackgroundConfig & BaseEntrypointOptions;
 
 export type BackgroundDefinition = BackgroundEntrypointOptions;
+
+export type BackgroundEntrypointMap = Map<string, BackgroundDefinition>;

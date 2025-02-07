@@ -1,6 +1,7 @@
-import ExecutionWorld = chrome.scripting.ExecutionWorld;
-import RunAt = chrome.userScripts.RunAt;
 import {BaseEntrypointOptions} from "@typing/base";
+
+type ExecutionWorld = chrome.scripting.ExecutionWorld;
+type RunAt = chrome.userScripts.RunAt;
 
 export interface ContentScriptConfig {
     matches?: string[];
@@ -46,6 +47,8 @@ export interface ContentScriptConfig {
 }
 
 export type ContentScriptEntrypointOptions = ContentScriptConfig & BaseEntrypointOptions;
+
+export type ContentScriptEntrypointMap = Map<string, ContentScriptDefinition>;
 
 export interface ContentScriptDefinition extends ContentScriptEntrypointOptions {
     render?(): Promise<void>;

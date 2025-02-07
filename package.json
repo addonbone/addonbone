@@ -1,9 +1,8 @@
 {
   "name": "adnbn",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.0.14",
   "description": "Cross browser web extension framework with shared code base",
-  "main": "index.js",
   "homepage": "https://github.com/addonbone/addonbone",
   "repository": {
     "type": "git",
@@ -23,28 +22,40 @@
   "bugs": {
     "url": "https://github.com/addonbone/addonbone/issues"
   },
+  "exports": {
+    "./core": {
+      "types": "./dist/core/index.d.ts",
+      "import": "./dist/core/index.js",
+      "require": "./dist/core/index.cjs"
+    }
+  },
+  "main": "./dist/core/index.js",
+  "module": "./dist/core/index.js",
+  "types": "./dist/core/index.d.ts",
   "files": [
-    "bin"
+    "bin",
+    "dist"
   ],
   "bin": {
-    "adnbn": "./bin/index.mjs"
+    "adnbn": "bin/adnbn.js"
   },
-  "module": "./bin/index.mjs",
   "scripts": {
-    "build": "buildc -- unbuild"
+    "build": "tsup"
   },
   "devDependencies": {
-    "@types/deep-extend": "^0.6.2",
     "@types/generate-json-webpack-plugin": "^0.3.7",
     "@types/lodash": "^4.17.14",
-    "@types/node": "^22.10.7",
+    "@types/node": "^22.13.1",
+    "fs-extra": "^11.3.0",
+    "ts-node": "^10.9.2",
+    "tsup": "^8.3.6",
     "tsx": "^4.19.2"
   },
   "dependencies": {
     "@types/chrome": "^0.0.299",
+    "c12": "^2.0.1",
     "cac": "^6.7.14",
     "css-loader": "^7.1.2",
-    "deep-extend": "^0.6.0",
     "file-loader": "^6.2.0",
     "generate-json-webpack-plugin": "^2.0.0",
     "lodash": "^4.17.21",
@@ -53,10 +64,10 @@
     "sass-loader": "^16.0.4",
     "ts-loader": "^9.5.2",
     "tsconfig-paths-webpack-plugin": "^4.2.0",
+    "typescript": "^5.7.3",
     "utility-types": "^3.11.0",
     "webpack": "^5.97.1",
     "webpack-cli": "^6.0.1",
-    "webpack-virtual-modules": "^0.6.2",
-    "typescript": "^5.7.3"
+    "webpack-virtual-modules": "^0.6.2"
   }
 }

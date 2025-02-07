@@ -1,0 +1,1 @@
+export {defineBackground, defineConfig, defineContentScript} from "./define";

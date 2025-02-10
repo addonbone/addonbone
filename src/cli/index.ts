@@ -3,7 +3,7 @@ import cac from 'cac';
 import {Browser} from "@typing/config";
 import app from "./builders/app";
 
-import pkg from '../../package.json';
+import {version} from '../../package.json';
 
 const cli = cac('adnbn');
 
@@ -16,7 +16,7 @@ cli
     });
 
 cli
-    .command('[root]', 'Start dev server')
+    .command('dev [root]', 'Start dev server')
     .option('-m, --mode <mode>', 'Set env mode', {default: 'development',})
     .option('-c, --config <config>', 'Path to config file')
     .option('-a, --app <app>', 'Specify an app to run', {default: 'myapp'})
@@ -47,6 +47,6 @@ cli
         });
     });
 
-cli.version(pkg.version);
+cli.version(version);
 cli.help();
 cli.parse();

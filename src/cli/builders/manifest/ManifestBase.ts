@@ -4,10 +4,17 @@ import {
     ManifestBackground,
     ManifestBuilder,
     ManifestContentScript,
+    ManifestEntryDependencies,
     ManifestVersion
 } from "@typing/manifest";
 
 import {Browser} from "@typing/config";
+
+export class ManifestError extends Error {
+    public constructor(message: string) {
+        super('Manifest: ' + message);
+    }
+}
 
 export default abstract class<T extends CoreManifest> implements ManifestBuilder<T> {
     protected name: string = "__MSG_app_name__";
@@ -16,6 +23,7 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
     protected version: string = "0.0.0";
     protected background?: ManifestBackground;
     protected contentScripts: Map<string, ManifestContentScript> = new Map();
+    protected dependencies: ManifestEntryDependencies = new Map();
 
     public abstract getManifestVersion(): ManifestVersion;
 
@@ -60,6 +68,12 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
         for (const script of content) {
             this.contentScripts.set(script.entry, script);
         }
+
+        return this;
+    }
+
+    public setDependencies(dependencies: ManifestEntryDependencies): this {
+        this.dependencies = dependencies
 
         return this;
     }

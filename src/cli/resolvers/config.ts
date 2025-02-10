@@ -1,19 +1,26 @@
+import path from "path";
 import {existsSync} from "fs";
+import dotenv, {type DotenvParseOutput} from 'dotenv';
 import {loadConfig} from "c12";
 
-import content from "@cli/plugins/content";
-import background from "@cli/plugins/background";
+import dotenvPlugin from "../plugins/dotenv";
+import contentPlugin from "../plugins/content";
+import backgroundPlugin from "../plugins/background";
 
-import {getConfigFile} from "@cli/resolvers/path";
+import {getConfigFile, getRootPath} from "../resolvers/path";
 
 import {Browser, Config, Mode, OptionalConfig, ReadonlyConfig, UserConfig,} from "@typing/config";
 import {Plugin} from "@typing/plugin";
+
 
 const getUserConfig = async (config: ReadonlyConfig): Promise<UserConfig> => {
     const configFilePath = getConfigFile(config);
 
     if (existsSync(configFilePath)) {
-        const {config: userConfig} = await loadConfig<UserConfig>({configFile: configFilePath});
+        const {config: userConfig} = await loadConfig<UserConfig>({
+            configFile: configFilePath,
+            dotenv: true,
+        });
 
         if (config.debug) {
             console.log('Loaded user config:', configFilePath);
@@ -25,6 +32,45 @@ const getUserConfig = async (config: ReadonlyConfig): Promise<UserConfig> => {
     }
 
     return {};
+}
+
+const updateLocalDotenv = (config: ReadonlyConfig): DotenvParseOutput => {
+    const {mode, app, browser, manifestVersion} = config;
+
+    const localVars: DotenvParseOutput = {
+        APP: app,
+        BROWSER: browser,
+        MODE: mode,
+        MANIFEST_VERSION: String(manifestVersion),
+    };
+
+    Object.assign(process.env, localVars);
+
+    return localVars;
+}
+
+const loadDotenv = (config: ReadonlyConfig): DotenvParseOutput => {
+    const {mode, app, browser} = config;
+
+    const paths = [
+        `.env.${mode}.${app}.${browser}.local`,
+        `.env.${mode}.${app}.${browser}`,
+        `.env.${app}.${browser}.local`,
+        `.env.${app}.${browser}`,
+        `.env.${app}`,
+        `.env.${mode}.${browser}.local`,
+        `.env.${mode}.${browser}`,
+        `.env.${browser}.local`,
+        `.env.${browser}`,
+        `.env.${mode}.local`,
+        `.env.${mode}`,
+        `.env.local`,
+        `.env`,
+    ].map((file) => path.join(getRootPath(config.inputDir), file));
+
+    const {parsed: fileVars = {}} = dotenv.config({path: paths});
+
+    return {...fileVars, ...updateLocalDotenv(config)};
 }
 
 export default async (config: OptionalConfig): Promise<Config> => {
@@ -74,13 +120,22 @@ export default async (config: OptionalConfig): Promise<Config> => {
         concatContentScripts,
     };
 
+    let vars = loadDotenv(resolvedConfig);
+
     const {plugins: userPlugins = [], ...userConfig} = await getUserConfig(resolvedConfig);
 
-    const corePlugins: Plugin[] = [content(), background()];
+    resolvedConfig = {...resolvedConfig, ...userConfig};
+
+    vars = {...vars, ...loadDotenv(resolvedConfig)};
+
+    const corePlugins: Plugin[] = [
+        dotenvPlugin({vars}),
+        contentPlugin(),
+        backgroundPlugin(),
+    ];
 
     return {
         ...resolvedConfig,
-        ...userConfig,
         plugins: [
             ...plugins,
             ...userPlugins,

@@ -73,6 +73,8 @@ export interface ManifestBuilder<T extends CoreManifest = Manifest> {
 
     pushContentScript(...contentScript: ManifestContentScript[]): this;
 
+    setDependencies(dependencies: ManifestEntryDependencies): this;
+
     get(): T;
 }
 
@@ -84,15 +86,14 @@ export interface ManifestEntryFile extends ManifestEntry {
     file: string,
 }
 
-export type ManifestBackground = ManifestEntryFile & BackgroundConfig;
+export type ManifestBackground = ManifestEntry & BackgroundConfig;
 
-export interface ManifestContentScript extends ManifestEntryFile, ContentScriptConfig {
-    js?: string[];
-    css?: string[];
+export type ManifestContentScript = ManifestEntry & ContentScriptConfig;
+
+export interface ManifestDependencies {
+    js: Set<string>;
+    css: Set<string>;
+    assets: Set<string>;
 }
 
-export interface ManifestDependencies extends ManifestEntry {
-    js?: string[];
-    css?: string[];
-    assets?: string[];
-}
+export type ManifestEntryDependencies = Map<string, ManifestDependencies>;

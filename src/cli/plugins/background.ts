@@ -1,5 +1,6 @@
-import path from "path";
 import _ from "lodash";
+
+import {definePlugin} from "@core/define";
 
 import {getBackgroundOptions} from "../parsers/entrypoint";
 
@@ -9,8 +10,8 @@ import {processPluginHandler} from "../utils/plugin";
 import {isValidEntrypointOptions} from "../utils/option";
 import {findBackgroundFiles} from "../utils/entrypoint";
 
-import {Plugin} from "@typing/plugin";
 import {BackgroundEntrypointMap} from "@typing/background";
+import {ReadonlyConfig} from "@typing/config";
 
 
 const backgroundFilesToEntries = (files: string[]): BackgroundEntrypointMap => {
@@ -23,61 +24,65 @@ const backgroundFilesToEntries = (files: string[]): BackgroundEntrypointMap => {
     return entries;
 }
 
-const findBackgroundEntries = (dir: string): BackgroundEntrypointMap => {
+const findBackgroundEntriesByDir = (dir: string): BackgroundEntrypointMap => {
     return backgroundFilesToEntries(findBackgroundFiles(dir));
+}
+
+const getBackgroundEntries = async (config: ReadonlyConfig): Promise<BackgroundEntrypointMap> => {
+    let entries: BackgroundEntrypointMap = new Map;
+
+    const appBackgroundEntries = findBackgroundEntriesByDir(getAppsPath(config));
+
+    if (appBackgroundEntries.size > 0) {
+        entries = new Map([...entries, ...appBackgroundEntries]);
+
+        if (config.debug) {
+            console.info('App background added:', appBackgroundEntries);
+        }
+    }
+
+    if (appBackgroundEntries.size > 0 && config.mergeBackground || appBackgroundEntries.size === 0) {
+        const sharedBackgroundEntries = findBackgroundEntriesByDir(getSharedPath(config));
+
+        if (sharedBackgroundEntries.size > 0) {
+            entries = new Map([...entries, ...sharedBackgroundEntries]);
+
+            if (config.debug) {
+                console.info('Shared background added:', sharedBackgroundEntries);
+            }
+        }
+    }
+
+    const pluginBackgroundFiles = await Array.fromAsync(processPluginHandler(config, 'background', {
+        config,
+        entries
+    }));
+
+    if (pluginBackgroundFiles.length > 0) {
+        const pluginBackgroundEntries = backgroundFilesToEntries(pluginBackgroundFiles);
+
+        entries = new Map([...entries, ...pluginBackgroundEntries]);
+
+        if (config.debug) {
+            console.info('Plugin background added:', pluginBackgroundEntries);
+        }
+    }
+
+    return entries;
 }
 
 export interface BackgroundOptions {
     name?: string;
 }
 
-export default (options?: BackgroundOptions): Plugin => {
+export default definePlugin<BackgroundOptions>(options => {
     const {name = 'background'} = options || {};
 
     let hasBackground: boolean = false;
 
     return {
         webpack: async ({config, webpack}) => {
-            let entries: BackgroundEntrypointMap = new Map;
-
-            const appBackgroundEntries = findBackgroundEntries(getAppsPath(config));
-
-            if (appBackgroundEntries.size > 0) {
-                entries = new Map([...entries, ...appBackgroundEntries]);
-
-                if (config.debug) {
-                    console.info('App background added:', appBackgroundEntries);
-                }
-            }
-
-            if (appBackgroundEntries.size > 0 && config.mergeBackground || appBackgroundEntries.size === 0) {
-                const sharedBackgroundEntries = findBackgroundEntries(getSharedPath(config));
-
-                if (sharedBackgroundEntries.size > 0) {
-                    entries = new Map([...entries, ...sharedBackgroundEntries]);
-
-                    if (config.debug) {
-                        console.info('Shared background added:', sharedBackgroundEntries);
-                    }
-                }
-            }
-
-            const pluginBackgroundFiles = await Array.fromAsync(processPluginHandler(config, 'background', {
-                config,
-                entries
-            }));
-
-            console.log('pluginBackgroundFiles', pluginBackgroundFiles);
-
-            if (pluginBackgroundFiles.length > 0) {
-                const pluginBackgroundEntries = backgroundFilesToEntries(pluginBackgroundFiles);
-
-                entries = new Map([...entries, ...pluginBackgroundEntries]);
-
-                if (config.debug) {
-                    console.info('Plugin background added:', pluginBackgroundEntries);
-                }
-            }
+            const entries = await getBackgroundEntries(config);
 
             const files = Array.from(entries)
                 .filter(([_, options]) => isValidEntrypointOptions(options, config))
@@ -116,13 +121,12 @@ export default (options?: BackgroundOptions): Plugin => {
                 }
             };
         },
-        manifest: ({manifest, config}) => {
+        manifest: ({manifest}) => {
             if (hasBackground) {
                 manifest.resetBackground({
                     entry: name,
-                    file: path.join(config.jsDir, name + '.js'),
                 });
             }
         }
     };
-};
+});

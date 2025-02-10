@@ -2,12 +2,13 @@ import path from "path";
 import {Configuration} from "webpack";
 import VirtualModulesPlugin from "webpack-virtual-modules";
 
-import {getAppsPath} from "@cli/resolvers/path";
-import {Plugin} from "@typing/plugin";
+import {definePlugin} from "@core/define";
+
+import {getAppsPath} from "../resolvers/path";
 import {ManifestContentScript} from "@typing/manifest";
 
 
-export default (): Plugin => {
+export default definePlugin(() => {
     const contentScripts: ManifestContentScript[] = [];
 
     return {
@@ -34,4 +35,4 @@ export default (): Plugin => {
             manifest.pushContentScript(...contentScripts);
         }
     };
-};
+});

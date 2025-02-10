@@ -1,4 +1,4 @@
-import ManifestBase from "./ManifestBase";
+import ManifestBase, {ManifestError} from "./ManifestBase";
 
 import {ManifestVersion} from "@typing/manifest";
 import {Browser} from "@typing/config";
@@ -17,9 +17,21 @@ export default class extends ManifestBase<ManifestV2> {
 
     protected buildBackground(): Partial<ManifestV2> | undefined {
         if (this.background) {
-            const {file, persistent} = this.background;
+            const {entry, persistent} = this.background;
 
-            return {background: {scripts: [file], persistent}};
+            const dependencies = this.dependencies.get(entry);
+
+            if (!dependencies) {
+                throw new ManifestError(`Background entry "${entry}" not found in dependencies`);
+            }
+
+            if (dependencies.js.size === 0) {
+                throw new ManifestError(`Background entry "${entry}" has no dependencies`);
+            }
+
+            const scripts = Array.from(dependencies.js);
+
+            return {background: {scripts, persistent}};
         }
     }
 
@@ -27,7 +39,6 @@ export default class extends ManifestBase<ManifestV2> {
         if (this.contentScripts.size > 0) {
             const contentScripts: ManifestV2['content_scripts'] = Array.from(this.contentScripts, ([_, contentScript]) => ({
                 matches: contentScript.matches,
-                js: [contentScript.file],
                 exclude_matches: contentScript.excludeMatches,
                 all_frames: contentScript.allFrames,
                 run_at: contentScript.runAt,

@@ -1,44 +1,46 @@
 import {Configuration} from "webpack";
-import {merge} from "webpack-merge";
 import path from "path";
 
 import TsconfigPathsPlugin from "tsconfig-paths-webpack-plugin";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
 
-import manifestFactory from "@cli/builders/manifest";
+import manifestFactory from "../builders/manifest";
+
+import {getRootPath} from "./path";
+import {processPluginHandler} from "../utils/plugin";
+
+import ManifestPlugin from "../webpack/plugins/ManifestPlugin";
+import mergeWebpack from "../webpack/merge";
 
 import {ReadonlyConfig} from "@typing/config";
 
-import {getRootPath} from "./path";
-import {processPluginHandler} from "@cli/utils/plugin";
-import {ManifestBuilder} from "@typing/manifest";
 
 const getConfigFromPlugins = async (webpack: Configuration, config: ReadonlyConfig): Promise<Configuration> => {
     let mergedConfig: Configuration = {};
 
     for await (const webpackFromPlugin of processPluginHandler(config, 'webpack', {webpack, config})) {
-        mergedConfig = merge(mergedConfig, webpackFromPlugin);
+        mergedConfig = mergeWebpack(mergedConfig, webpackFromPlugin);
     }
 
     return mergedConfig;
 }
 
-const getConfigForManifest = async (webpack: Configuration, config: ReadonlyConfig, manifest: ManifestBuilder): Promise<Configuration> => {
+const getConfigForManifest = async (webpack: Configuration, config: ReadonlyConfig): Promise<Configuration> => {
+    const manifest = manifestFactory(config.browser, config.manifestVersion);
+
     await Array.fromAsync(processPluginHandler(config, 'manifest', {manifest, config}));
 
-    console.log(manifest.get());
-
-    return webpack;
+    return {
+        plugins: [new ManifestPlugin(manifest)],
+    };
 }
 
 export default async (config: ReadonlyConfig): Promise<Configuration> => {
-    const manifest = manifestFactory(config.browser, config.manifestVersion);
-
     let webpack: Configuration = {
         mode: config.mode,
         cache: false,
         output: {
-            path: getRootPath(config.outputDir),
+            path: getRootPath(path.join(config.outputDir, `${config.app}-${config.browser}-mv${config.manifestVersion}`)),
             filename: path.join(config.jsDir, '[name].js'),
             assetModuleFilename: path.join(config.assetsDir, '[name]-[hash:4][ext]'),
         },
@@ -81,12 +83,11 @@ export default async (config: ReadonlyConfig): Promise<Configuration> => {
         }
     }
 
-    webpack = merge(
+    webpack = mergeWebpack(
         webpack,
         await getConfigFromPlugins(webpack, config),
-        await getConfigForManifest(webpack, config, manifest),
+        await getConfigForManifest(webpack, config),
     );
-
 
     return webpack;
 }

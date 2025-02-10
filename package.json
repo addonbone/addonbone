@@ -1,6 +1,5 @@
 {
   "name": "adnbn",
-  "type": "module",
   "version": "0.0.14",
   "description": "Cross browser web extension framework with shared code base",
   "homepage": "https://github.com/addonbone/addonbone",
@@ -23,15 +22,15 @@
     "url": "https://github.com/addonbone/addonbone/issues"
   },
   "exports": {
-    "./core": {
-      "types": "./dist/core/index.d.ts",
-      "import": "./dist/core/index.js",
-      "require": "./dist/core/index.cjs"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     }
   },
-  "main": "./dist/core/index.js",
-  "module": "./dist/core/index.js",
-  "types": "./dist/core/index.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "files": [
     "bin",
     "dist"
@@ -40,12 +39,14 @@
     "adnbn": "bin/adnbn.js"
   },
   "scripts": {
+    "adnbn": "tsx ./src/cli/index.ts",
     "build": "tsup"
   },
   "devDependencies": {
     "@types/generate-json-webpack-plugin": "^0.3.7",
     "@types/lodash": "^4.17.14",
     "@types/node": "^22.13.1",
+    "dotenv": "^16.4.7",
     "fs-extra": "^11.3.0",
     "ts-node": "^10.9.2",
     "tsup": "^8.3.6",

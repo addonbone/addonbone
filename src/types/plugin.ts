@@ -51,3 +51,4 @@ export type PluginHandlerOptions<K extends PluginHandlerKeys> =
 export type PluginHandlerResult<K extends PluginHandlerKeys> =
     NonNullable<PluginHandlerType<Plugin[K]>['result']>;
 
+export type PluginDefinition<T> = ((options?: T) => Plugin) | Plugin;

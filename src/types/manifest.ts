@@ -73,7 +73,7 @@ export interface ManifestBuilder<T extends CoreManifest = Manifest> {
 
     pushContentScript(...contentScript: ManifestContentScript[]): this;
 
-    setDependencies(dependencies: ManifestEntryDependencies): this;
+    setDependencies(dependencies: ManifestDependenciesMap): this;
 
     get(): T;
 }
@@ -96,4 +96,4 @@ export interface ManifestDependencies {
     assets: Set<string>;
 }
 
-export type ManifestEntryDependencies = Map<string, ManifestDependencies>;
+export type ManifestDependenciesMap = Map<string, ManifestDependencies>;

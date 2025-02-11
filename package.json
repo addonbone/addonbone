@@ -1,6 +1,6 @@
 {
   "name": "adnbn",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "Cross browser web extension framework with shared code base",
   "homepage": "https://github.com/addonbone/addonbone",
   "repository": {

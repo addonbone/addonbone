@@ -17,3 +17,7 @@ export const getSharedPath = (config: ReadonlyConfig): string => {
 export const getAppsPath = (config: ReadonlyConfig): string => {
     return path.resolve(config.inputDir, config.srcDir, config.appsDir, config.app);
 }
+
+export const getOutputPath = (config: ReadonlyConfig): string => {
+    return path.resolve(config.outputDir, `${config.app}-${config.browser}-mv${config.manifestVersion}`);
+}

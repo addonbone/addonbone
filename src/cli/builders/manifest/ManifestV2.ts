@@ -31,7 +31,7 @@ export default class extends ManifestBase<ManifestV2> {
 
             const scripts = Array.from(dependencies.js);
 
-            return {background: {scripts, persistent}};
+            return {background: {scripts, persistent: persistent || undefined}};
         }
     }
 

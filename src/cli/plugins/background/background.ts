@@ -4,8 +4,9 @@ import {getAppsPath, getSharedPath} from "@cli/resolvers/path";
 
 import {findBackgroundFiles} from "@cli/utils/entrypoint";
 import {processPluginHandler} from "@cli/utils/plugin";
+import {isValidEntrypointOptions} from "@cli/utils/option";
 
-import {BackgroundEntrypointMap} from "@typing/background";
+import {BackgroundConfig, BackgroundEntrypointMap} from "@typing/background";
 import {ReadonlyConfig} from "@typing/config";
 
 const backgroundFilesToEntries = (files: string[]): BackgroundEntrypointMap => {
@@ -18,11 +19,11 @@ const backgroundFilesToEntries = (files: string[]): BackgroundEntrypointMap => {
     return entries;
 }
 
-export const findBackgroundEntriesByDir = (dir: string): BackgroundEntrypointMap => {
+const findBackgroundEntriesByDir = (dir: string): BackgroundEntrypointMap => {
     return backgroundFilesToEntries(findBackgroundFiles(dir));
 }
 
-export const getBackgroundEntries = async (config: ReadonlyConfig): Promise<BackgroundEntrypointMap> => {
+const getBackgroundEntries = async (config: ReadonlyConfig): Promise<BackgroundEntrypointMap> => {
     let entries: BackgroundEntrypointMap = new Map;
 
     const appBackgroundEntries = findBackgroundEntriesByDir(getAppsPath(config));
@@ -63,4 +64,18 @@ export const getBackgroundEntries = async (config: ReadonlyConfig): Promise<Back
     }
 
     return entries;
+}
+
+export interface BackgroundResult extends Partial<BackgroundConfig> {
+    files: string[];
+}
+
+export default async (config: ReadonlyConfig): Promise<BackgroundResult> => {
+    const entries = Array.from(await getBackgroundEntries(config))
+        .filter(([_, options]) => isValidEntrypointOptions(options, config))
+
+    const files = entries.map(([file]) => file);
+    const persistent = entries.some(([_, {persistent}]) => persistent);
+
+    return {files, persistent}
 }

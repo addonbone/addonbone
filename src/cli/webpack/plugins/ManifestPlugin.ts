@@ -1,5 +1,5 @@
 import webpack, {Compilation, Compiler} from 'webpack';
-import {ManifestBuilder, ManifestDependencies, ManifestEntryDependencies} from "@typing/manifest";
+import {ManifestBuilder, ManifestDependencies, ManifestDependenciesMap} from "@typing/manifest";
 
 class ManifestPlugin {
     constructor(private readonly manifest: ManifestBuilder) {
@@ -13,7 +13,7 @@ class ManifestPlugin {
                     stage: Compilation.PROCESS_ASSETS_STAGE_ADDITIONS
                 },
                 () => {
-                    const entryDependencies: ManifestEntryDependencies = new Map();
+                    const entryDependencies: ManifestDependenciesMap = new Map();
 
                     compilation.entrypoints.forEach((entryPoint, entryName) => {
                         const dependencies: ManifestDependencies = {

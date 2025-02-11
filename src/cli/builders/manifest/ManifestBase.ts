@@ -4,7 +4,7 @@ import {
     ManifestBackground,
     ManifestBuilder,
     ManifestContentScript,
-    ManifestEntryDependencies,
+    ManifestDependenciesMap,
     ManifestVersion
 } from "@typing/manifest";
 
@@ -23,7 +23,7 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
     protected version: string = "0.0.0";
     protected background?: ManifestBackground;
     protected contentScripts: Map<string, ManifestContentScript> = new Map();
-    protected dependencies: ManifestEntryDependencies = new Map();
+    protected dependencies: ManifestDependenciesMap = new Map();
 
     public abstract getManifestVersion(): ManifestVersion;
 
@@ -72,7 +72,7 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
         return this;
     }
 
-    public setDependencies(dependencies: ManifestEntryDependencies): this {
+    public setDependencies(dependencies: ManifestDependenciesMap): this {
         this.dependencies = dependencies
 
         return this;

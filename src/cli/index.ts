@@ -1,7 +1,8 @@
 import cac from 'cac';
 
-import {Browser} from "@typing/config";
 import app from "./builders/app";
+
+import {Browser, Command} from "@typing/config";
 
 import {version} from '../../package.json';
 
@@ -16,15 +17,22 @@ cli
     });
 
 cli
-    .command('dev [root]', 'Start dev server')
-    .option('-m, --mode <mode>', 'Set env mode', {default: 'development',})
+    .command('watch [root]', 'Start watch mode')
+    .option('-m, --mode <mode>', 'Set env mode', {default: 'development'})
     .option('-c, --config <config>', 'Path to config file')
     .option('-a, --app <app>', 'Specify an app to run', {default: 'myapp'})
     .option('-b, --browser <browser>', 'Specify a browser')
-    .option('-p, --port <port>', 'Specify a port for the dev server')
     .option('--mv2', 'Target manifest v2')
-    .action((root, options) => {
-        console.log(options)
+    .action(async (root, options) => {
+        await app(Command.Watch, {
+            mode: options.mode,
+            debug: options.debug,
+            app: options.app,
+            browser: options.browser,
+            manifestVersion: options.mv2 ? 2 : 3,
+            inputDir: root,
+            configFile: options.config,
+        });
     });
 
 cli
@@ -36,7 +44,7 @@ cli
     .option('--mv2', 'Target manifest v2')
     .option('--analyze', 'Visualize extension bundle')
     .action(async (root, options) => {
-        await app({
+        await app(Command.Build, {
             mode: options.mode,
             debug: options.debug,
             app: options.app,
@@ -44,6 +52,7 @@ cli
             manifestVersion: options.mv2 ? 2 : 3,
             inputDir: root,
             configFile: options.config,
+            analyze: options.analyze,
         });
     });
 

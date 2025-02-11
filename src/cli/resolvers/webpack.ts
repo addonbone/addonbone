@@ -1,4 +1,4 @@
-import {Configuration} from "webpack";
+import {Configuration, WebpackPluginInstance} from "webpack";
 import path from "path";
 
 import TsconfigPathsPlugin from "tsconfig-paths-webpack-plugin";
@@ -6,13 +6,14 @@ import MiniCssExtractPlugin from "mini-css-extract-plugin";
 
 import manifestFactory from "../builders/manifest";
 
-import {getRootPath} from "./path";
+import {getOutputPath, getRootPath} from "./path";
 import {processPluginHandler} from "../utils/plugin";
 
 import ManifestPlugin from "../webpack/plugins/ManifestPlugin";
+import WatchPlugin from "../webpack/plugins/WatchPlugin";
 import mergeWebpack from "../webpack/merge";
 
-import {ReadonlyConfig} from "@typing/config";
+import {Command, Mode, ReadonlyConfig} from "@typing/config";
 
 
 const getConfigFromPlugins = async (webpack: Configuration, config: ReadonlyConfig): Promise<Configuration> => {
@@ -25,22 +26,35 @@ const getConfigFromPlugins = async (webpack: Configuration, config: ReadonlyConf
     return mergedConfig;
 }
 
-const getConfigForManifest = async (webpack: Configuration, config: ReadonlyConfig): Promise<Configuration> => {
+const getConfigForManifest = async (config: ReadonlyConfig): Promise<Configuration> => {
     const manifest = manifestFactory(config.browser, config.manifestVersion);
 
-    await Array.fromAsync(processPluginHandler(config, 'manifest', {manifest, config}));
+    const update = async () => await Array.fromAsync(processPluginHandler(config, 'manifest', {manifest, config}))
 
-    return {
-        plugins: [new ManifestPlugin(manifest)],
-    };
+    await update();
+
+    const plugins: WebpackPluginInstance[] = [];
+
+    if (config.mode === Mode.Development) {
+        plugins.push(new WatchPlugin({
+            key: 'manifest',
+            callback: async () => {
+                await update();
+            }
+        }));
+    }
+
+    plugins.push(new ManifestPlugin(manifest));
+
+    return {plugins};
 }
 
-export default async (config: ReadonlyConfig): Promise<Configuration> => {
+export default async (command: Command, config: ReadonlyConfig): Promise<Configuration> => {
     let webpack: Configuration = {
         mode: config.mode,
         cache: false,
         output: {
-            path: getRootPath(path.join(config.outputDir, `${config.app}-${config.browser}-mv${config.manifestVersion}`)),
+            path: getRootPath(getOutputPath(config)),
             filename: path.join(config.jsDir, '[name].js'),
             assetModuleFilename: path.join(config.assetsDir, '[name]-[hash:4][ext]'),
         },
@@ -86,8 +100,14 @@ export default async (config: ReadonlyConfig): Promise<Configuration> => {
     webpack = mergeWebpack(
         webpack,
         await getConfigFromPlugins(webpack, config),
-        await getConfigForManifest(webpack, config),
+        await getConfigForManifest(config),
     );
+
+    if (command == Command.Watch) {
+        webpack = mergeWebpack(webpack, {
+            devtool: 'inline-source-map',
+        });
+    }
 
     return webpack;
 }

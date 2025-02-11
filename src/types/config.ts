@@ -16,6 +16,11 @@ export enum Mode {
     Production = 'production',
 }
 
+export enum Command {
+    Build = 'build',
+    Watch = 'watch',
+}
+
 export interface Config {
     debug: boolean;
     mode: Mode;

@@ -1,9 +1,13 @@
+import {Configuration as WebpackConfig} from "webpack";
 import _ from "lodash";
 
 import {definePlugin} from "@core/define";
-import {isValidEntrypointOptions} from "@cli/utils/option";
 
-import {getBackgroundEntries} from "./background";
+import WatchPlugin from "@cli/webpack/plugins/WatchPlugin";
+
+import background from "./background";
+
+import {Mode} from "@typing/config";
 
 export interface BackgroundOptions {
     name?: string;
@@ -17,10 +21,9 @@ export default definePlugin<BackgroundOptions>(options => {
 
     return {
         webpack: async ({config, webpack}) => {
-            const backgroundEntries = Array.from(await getBackgroundEntries(config))
-                .filter(([_, options]) => isValidEntrypointOptions(options, config))
+            const {files: backgroundFiles, persistent: backgroundPersistent} = await background(config);
 
-            const files = backgroundEntries.map(([file]) => file);
+            const files = backgroundFiles;
 
             if (files.length === 0) {
                 if (config.debug) {
@@ -31,19 +34,12 @@ export default definePlugin<BackgroundOptions>(options => {
             }
 
             hasBackground = true;
+            persistent = backgroundPersistent;
 
-            if (backgroundEntries.some(([_, {persistent: isPersistent}]) => isPersistent)) {
-                persistent = true;
-            }
+            const entry = {[name]: files};
 
-            if (config.debug) {
-                console.info('Background entries:', new Map(backgroundEntries));
-            }
-
-            return {
-                entry: {
-                    [name]: files,
-                },
+            let resolvedWebpack: WebpackConfig = {
+                entry,
                 optimization: {
                     splitChunks: {
                         chunks(chunk) {
@@ -58,12 +54,36 @@ export default definePlugin<BackgroundOptions>(options => {
                     }
                 }
             };
+
+            if (config.mode === Mode.Development) {
+                resolvedWebpack = {
+                    ...resolvedWebpack,
+                    plugins: [
+                        new WatchPlugin({
+                            key: name,
+                            entry,
+                            callback: async () => {
+                                const {
+                                    files: backgroundFiles,
+                                    persistent: backgroundPersistent
+                                } = await background(config);
+
+                                persistent = backgroundPersistent;
+
+                                return {[name]: backgroundFiles};
+                            }
+                        }),
+                    ],
+                };
+            }
+
+            return resolvedWebpack;
         },
         manifest: ({manifest}) => {
             if (hasBackground) {
                 manifest.resetBackground({
                     entry: name,
-                    persistent
+                    persistent,
                 });
             }
         }

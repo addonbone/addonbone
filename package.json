@@ -1,6 +1,6 @@
 {
   "name": "adnbn",
-  "version": "0.0.15",
+  "version": "0.0.21",
   "description": "Cross browser web extension framework with shared code base",
   "homepage": "https://github.com/addonbone/addonbone",
   "repository": {
@@ -43,10 +43,13 @@
     "build": "tsup"
   },
   "devDependencies": {
+    "@types/deep-diff": "^1.0.5",
     "@types/generate-json-webpack-plugin": "^0.3.7",
     "@types/lodash": "^4.17.14",
     "@types/node": "^22.13.1",
+    "@types/webpack": "^5.28.5",
     "dotenv": "^16.4.7",
+    "esbuild-plugin-raw": "^0.1.8",
     "fs-extra": "^11.3.0",
     "ts-node": "^10.9.2",
     "tsup": "^8.3.6",
@@ -56,7 +59,10 @@
     "@types/chrome": "^0.0.299",
     "c12": "^2.0.1",
     "cac": "^6.7.14",
+    "clean-webpack-plugin": "^4.0.0",
     "css-loader": "^7.1.2",
+    "deep-diff": "^1.0.2",
+    "deep-object-diff": "^1.1.9",
     "file-loader": "^6.2.0",
     "generate-json-webpack-plugin": "^2.0.0",
     "lodash": "^4.17.21",

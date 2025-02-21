@@ -1,7 +1,7 @@
 import {Browser} from "@typing/config";
 
 
-export interface BaseEntrypointOptions {
+export interface EntrypointOptions {
     /**
      * List of target browsers to include this entrypoint in. Defaults to being included in all
      * builds. Cannot be used with `exclude`. You must choose one of the two options.
@@ -33,4 +33,10 @@ export interface BaseEntrypointOptions {
      * @default undefined
      */
     includeApp?: string[];
+}
+
+export interface EntrypointFile {
+    file: string;
+    import: string;
+    external?: boolean;
 }

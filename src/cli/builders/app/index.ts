@@ -7,13 +7,13 @@ import webpackResolver from "../../resolvers/webpack";
 
 import {Command, OptionalConfig} from "@typing/config";
 
-export default async (command: Command, config: OptionalConfig): Promise<void> => {
+export default async (config: OptionalConfig): Promise<void> => {
     const resolverConfig = await configResolver(config);
-    const webpackConfig = await webpackResolver(command, resolverConfig);
+    const webpackConfig = await webpackResolver(resolverConfig);
 
     const compiler = webpack(webpackConfig);
 
-    switch (command) {
+    switch (resolverConfig.command) {
         case Command.Build:
             build(compiler);
             break;

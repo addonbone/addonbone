@@ -1,47 +1,13 @@
-import {
-    ArrayLiteralExpression,
-    createSourceFile,
-    forEachChild,
-    Identifier,
-    isComputedPropertyName,
-    isEnumDeclaration,
-    isExportAssignment,
-    isExportDeclaration,
-    isIdentifier,
-    isImportDeclaration,
-    isNamedExports,
-    isNamedImports,
-    isPropertyAccessExpression,
-    isPropertyAssignment,
-    isShorthandPropertyAssignment,
-    isVariableStatement,
-    Node,
-    NumericLiteral,
-    ObjectLiteralExpression,
-    PropertyAssignment,
-    ScriptTarget,
-    SourceFile,
-    StringLiteral,
-    SyntaxKind
-} from 'typescript';
-import {readFileSync} from 'fs';
-import path from "path";
+import ts from 'typescript';
+import fs from 'fs';
 
+import resolveImport from "./utils/resolveImport";
 
-export interface Variable {
-    name: string;
-    value: any;
-    exported: boolean;
-}
-
-export type VariableMap = Map<string, Variable>;
-
-export type ImportMap = Map<string, string>;
-
-export type EnumMap = Map<string, Map<string, string | number>>;
+import {EnumMap, ImportMap, Variable, VariableMap} from "./types";
+import resolvers from "./resolvers";
 
 export default class EntryFile {
-    private sourceFile?: SourceFile;
+    private sourceFile?: ts.SourceFile;
 
     private variables?: VariableMap;
 
@@ -49,24 +15,24 @@ export default class EntryFile {
 
     private enums?: EnumMap;
 
-    public static make<T extends EntryFile>(this: new (file: string) => T, file: string): T {
+    static make<T extends EntryFile>(this: new (file: string) => T, file: string): T {
         return new this(file);
     }
 
     constructor(protected readonly file: string) {
     }
 
-    public getSourceFile(): SourceFile {
+    public getSourceFile(): ts.SourceFile {
         if (this.sourceFile) {
             return this.sourceFile;
         }
 
-        const sourceCode = readFileSync(this.file, 'utf8');
+        const sourceCode = fs.readFileSync(this.file, 'utf8');
 
-        return this.sourceFile = createSourceFile(
+        return this.sourceFile = ts.createSourceFile(
             this.file,
             sourceCode,
-            ScriptTarget.ESNext,
+            ts.ScriptTarget.ESNext,
             true
         );
     }
@@ -78,18 +44,18 @@ export default class EntryFile {
 
         this.imports = new Map();
 
-        const parse = (node: Node) => {
-            if (isImportDeclaration(node) && node.moduleSpecifier) {
-                const importPath = (node.moduleSpecifier as StringLiteral).text;
+        const parse = (node: ts.Node) => {
+            if (ts.isImportDeclaration(node) && node.moduleSpecifier) {
+                const importPath = (node.moduleSpecifier as ts.StringLiteral).text;
 
-                if (node.importClause && node.importClause.namedBindings && isNamedImports(node.importClause.namedBindings)) {
+                if (node.importClause && node.importClause.namedBindings && ts.isNamedImports(node.importClause.namedBindings)) {
                     node.importClause.namedBindings.elements.forEach(el => {
-                        this.imports?.set(el.name.text, path.resolve(path.dirname(this.file), importPath + '.ts'));
+                        this.imports?.set(el.name.text, resolveImport(importPath));
                     });
                 }
             }
 
-            forEachChild(node, parse);
+            ts.forEachChild(node, parse);
         }
 
         parse(this.getSourceFile());
@@ -104,8 +70,8 @@ export default class EntryFile {
 
         this.enums = new Map();
 
-        const parse = (node: Node) => {
-            if (isEnumDeclaration(node)) {
+        const parse = (node: ts.Node) => {
+            if (ts.isEnumDeclaration(node)) {
                 const enumName = node.name.text;
                 const enumProperties: Map<string, string | number> = new Map();
 
@@ -119,7 +85,7 @@ export default class EntryFile {
                 this.enums?.set(enumName, enumProperties);
             }
 
-            forEachChild(node, parse);
+            ts.forEachChild(node, parse);
         }
 
         parse(this.getSourceFile());
@@ -134,12 +100,12 @@ export default class EntryFile {
 
         this.variables = new Map();
 
-        const parse = (node: Node) => {
-            if (isVariableStatement(node)) {
-                const isExported = node.modifiers?.some(modifier => modifier.kind === SyntaxKind.ExportKeyword);
+        const parse = (node: ts.Node) => {
+            if (ts.isVariableStatement(node)) {
+                const isExported = node.modifiers?.some(modifier => modifier.kind === ts.SyntaxKind.ExportKeyword);
 
                 node.declarationList.declarations.forEach(declaration => {
-                    if (isIdentifier(declaration.name) && declaration.initializer) {
+                    if (ts.isIdentifier(declaration.name) && declaration.initializer) {
                         const name = declaration.name.text;
                         const value = this.parseNode(declaration.initializer);
 
@@ -152,7 +118,7 @@ export default class EntryFile {
                 });
             }
 
-            if (isExportDeclaration(node) && node.exportClause && isNamedExports(node.exportClause)) {
+            if (ts.isExportDeclaration(node) && node.exportClause && ts.isNamedExports(node.exportClause)) {
                 node.exportClause.elements.forEach(el => {
                     const name = el.name.text;
 
@@ -168,9 +134,9 @@ export default class EntryFile {
                 });
             }
 
-            if (isExportAssignment(node)) {
+            if (ts.isExportAssignment(node)) {
                 const expr = node.expression;
-                if (isIdentifier(expr) && this.variables?.has(expr.text)) {
+                if (ts.isIdentifier(expr) && this.variables?.has(expr.text)) {
                     const variable = this.variables?.get(expr.text) as Variable;
                     const name = "default";
 
@@ -182,7 +148,7 @@ export default class EntryFile {
                 }
             }
 
-            forEachChild(node, parse);
+            ts.forEachChild(node, parse);
         };
 
         parse(this.getSourceFile());
@@ -190,8 +156,12 @@ export default class EntryFile {
         return this.variables;
     }
 
-    protected findPropertyAccessValue(property: Node): any {
-        if (isPropertyAccessExpression(property)) {
+    protected resolveValue(from: string, target: string, name: string): any {
+        return resolvers([])(from, target, name);
+    }
+
+    protected findPropertyAccessValue(property: ts.Node): any {
+        if (ts.isPropertyAccessExpression(property)) {
             const objectName = property.expression.getText();
             const propertyName = property.name.getText();
 
@@ -210,6 +180,12 @@ export default class EntryFile {
             const importItem = this.getImports().get(objectName);
 
             if (importItem) {
+                const resolverItem = this.resolveValue(importItem, objectName, propertyName);
+
+                if (resolverItem) {
+                    return resolverItem;
+                }
+
                 return EntryFile.make(importItem).findPropertyAccessValue(property);
             }
 
@@ -219,40 +195,40 @@ export default class EntryFile {
         return undefined;
     }
 
-    protected parseNode(node?: Node): any {
+    protected parseNode(node?: ts.Node): any {
         if (!node) {
             return undefined;
         }
 
         switch (node.kind) {
-            case SyntaxKind.StringLiteral:
-                return (node as StringLiteral).text;
-            case SyntaxKind.TrueKeyword:
+            case ts.SyntaxKind.StringLiteral:
+                return (node as ts.StringLiteral).text;
+            case ts.SyntaxKind.TrueKeyword:
                 return true;
-            case SyntaxKind.FalseKeyword:
+            case ts.SyntaxKind.FalseKeyword:
                 return false;
-            case SyntaxKind.NullKeyword:
+            case ts.SyntaxKind.NullKeyword:
                 return null;
-            case SyntaxKind.NumericLiteral:
-                return parseFloat((node as NumericLiteral).text);
-            case SyntaxKind.Identifier:
-                return this.variables?.get((node as Identifier).text)?.value ?? (node as Identifier).text;
-            case SyntaxKind.ArrayLiteralExpression:
-                return (node as ArrayLiteralExpression).elements.map(element =>
+            case ts.SyntaxKind.NumericLiteral:
+                return parseFloat((node as ts.NumericLiteral).text);
+            case ts.SyntaxKind.Identifier:
+                return this.variables?.get((node as ts.Identifier).text)?.value ?? (node as ts.Identifier).text;
+            case ts.SyntaxKind.ArrayLiteralExpression:
+                return (node as ts.ArrayLiteralExpression).elements.map(element =>
                     this.parseNode(element)
                 );
-            case SyntaxKind.ObjectLiteralExpression:
-                return (node as ObjectLiteralExpression).properties
+            case ts.SyntaxKind.ObjectLiteralExpression:
+                return (node as ts.ObjectLiteralExpression).properties
                     .filter(
-                        (property): property is PropertyAssignment =>
-                            isPropertyAssignment(property) || isShorthandPropertyAssignment(property)
+                        (property): property is ts.PropertyAssignment =>
+                            ts.isPropertyAssignment(property) || ts.isShorthandPropertyAssignment(property)
                     )
                     .reduce((acc, property) => {
-                        if (isComputedPropertyName(property.name)) {
+                        if (ts.isComputedPropertyName(property.name)) {
                             return acc;
                         }
 
-                        const key = (property.name as Identifier | StringLiteral).text;
+                        const key = (property.name as ts.Identifier | ts.StringLiteral).text;
                         let value = this.parseNode(property.initializer);
 
                         if (typeof value === 'string' && this.variables?.has(value)) {
@@ -263,7 +239,7 @@ export default class EntryFile {
 
                         return acc;
                     }, {} as Record<string, any>);
-            case SyntaxKind.PropertyAccessExpression: {
+            case ts.SyntaxKind.PropertyAccessExpression: {
                 return this.findPropertyAccessValue(node);
             }
             default:

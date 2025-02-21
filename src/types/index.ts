@@ -1,5 +1,5 @@
 export * from './background';
-export * from './base';
+export * from './entrypoint';
 export * from './config';
 export * from './content';
 export * from './manifest';

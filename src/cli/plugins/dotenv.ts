@@ -11,6 +11,7 @@ export default definePlugin<DotenvOptions>((options) => {
     const {vars = {}} = options || {};
 
     return {
+        name: import.meta.dirname,
         webpack: {
             plugins: [
                 new webpack.DefinePlugin({

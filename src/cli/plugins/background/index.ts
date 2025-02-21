@@ -1,31 +1,39 @@
-import {Configuration as WebpackConfig} from "webpack";
 import _ from "lodash";
 
+import {Configuration as WebpackConfig} from "webpack";
+
+import getBackgroundFiles from "./background";
+import getBackgroundEntrypoint from "./entrypoint/background";
+
 import {definePlugin} from "@core/define";
+import {virtualBackgroundModule} from "@cli/virtual";
 
-import WatchPlugin from "@cli/webpack/plugins/WatchPlugin";
+import EntrypointPlugin, {EntrypointPluginEntries} from "@cli/webpack/plugins/EntrypointPlugin";
 
-import background from "./background";
+import {BackgroundEntrypointMap} from "@typing/background";
+import {Command} from "@typing/config";
 
-import {Mode} from "@typing/config";
+const name = 'background';
 
-export interface BackgroundOptions {
-    name?: string;
+const isPersistent = (background: BackgroundEntrypointMap): boolean => {
+    return Array.from(background.values()).some(({persistent}) => persistent);
 }
 
-export default definePlugin<BackgroundOptions>(options => {
-    const {name = 'background'} = options || {};
+const getEntry = (background: BackgroundEntrypointMap): EntrypointPluginEntries => {
+    return {[name]: Array.from(background.keys())};
+}
 
+export default definePlugin(() => {
     let hasBackground: boolean = false;
     let persistent: boolean | undefined;
 
     return {
+        name: import.meta.dirname,
+        background: ({config}) => getBackgroundFiles(config),
         webpack: async ({config, webpack}) => {
-            const {files: backgroundFiles, persistent: backgroundPersistent} = await background(config);
+            const backgroundEntrypoint = await getBackgroundEntrypoint(config);
 
-            const files = backgroundFiles;
-
-            if (files.length === 0) {
+            if (backgroundEntrypoint.size === 0) {
                 if (config.debug) {
                     console.warn('Background entries not found');
                 }
@@ -34,12 +42,25 @@ export default definePlugin<BackgroundOptions>(options => {
             }
 
             hasBackground = true;
-            persistent = backgroundPersistent;
+            persistent = isPersistent(backgroundEntrypoint);
 
-            const entry = {[name]: files};
+            const backgroundEntrypointPlugin = (new EntrypointPlugin(getEntry(backgroundEntrypoint), 'background-entrypoint'))
+                .virtual(file => virtualBackgroundModule(file.import));
+
+            if (config.command === Command.Watch) {
+                backgroundEntrypointPlugin.watch(async () => {
+                    const backgroundEntrypoint = await getBackgroundEntrypoint(config);
+
+                    persistent = isPersistent(backgroundEntrypoint);
+
+                    console.warn('Updating background entrypoint', persistent);
+
+                    return getEntry(backgroundEntrypoint);
+                });
+            }
 
             let resolvedWebpack: WebpackConfig = {
-                entry,
+                plugins: [backgroundEntrypointPlugin],
                 optimization: {
                     splitChunks: {
                         chunks(chunk) {
@@ -54,28 +75,6 @@ export default definePlugin<BackgroundOptions>(options => {
                     }
                 }
             };
-
-            if (config.mode === Mode.Development) {
-                resolvedWebpack = {
-                    ...resolvedWebpack,
-                    plugins: [
-                        new WatchPlugin({
-                            key: name,
-                            entry,
-                            callback: async () => {
-                                const {
-                                    files: backgroundFiles,
-                                    persistent: backgroundPersistent
-                                } = await background(config);
-
-                                persistent = backgroundPersistent;
-
-                                return {[name]: backgroundFiles};
-                            }
-                        }),
-                    ],
-                };
-            }
 
             return resolvedWebpack;
         },

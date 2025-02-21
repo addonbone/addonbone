@@ -1,6 +1,6 @@
 import _ from "lodash";
 
-import {PluginHandler, PluginHandlerKeys, PluginHandlerOptions, PluginHandlerResult} from "@typing/plugin";
+import {PluginHandler, PluginHandlerKeys, PluginHandlerOptions, PluginNameHandlerResult} from "@typing/plugin";
 import {ReadonlyConfig} from "@typing/config";
 
 export const resolvePluginHandler = async <O extends object, T>(handler: PluginHandler<O, T> | undefined, options: O): Promise<T | undefined> => {
@@ -18,7 +18,7 @@ export const resolvePluginHandler = async <O extends object, T>(handler: PluginH
 };
 
 
-export const processPluginHandler = async function* <K extends PluginHandlerKeys>(config: ReadonlyConfig, key: K, options: PluginHandlerOptions<K>): AsyncGenerator<PluginHandlerResult<K>, void, void> {
+export const processPluginHandler = async function* <K extends PluginHandlerKeys>(config: ReadonlyConfig, key: K, options: PluginHandlerOptions<K>): AsyncGenerator<PluginNameHandlerResult<K>, void, void> {
     const {plugins = []} = config;
 
     for await (const plugin of plugins) {
@@ -27,7 +27,7 @@ export const processPluginHandler = async function* <K extends PluginHandlerKeys
         const result = await resolvePluginHandler(handler, options);
 
         if (result !== undefined) {
-            yield result;
+            yield {name: plugin.name, result};
         }
     }
 }

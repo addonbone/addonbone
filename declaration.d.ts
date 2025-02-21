@@ -24,3 +24,8 @@ declare module "*.svg" {
     const value: string;
     export = value;
 }
+
+declare module '*?raw' {
+    const content: string;
+    export default content;
+}

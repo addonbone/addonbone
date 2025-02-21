@@ -1,7 +1,7 @@
-import {BaseEntrypointOptions} from "@typing/base";
+import {EntrypointOptions} from "@typing/entrypoint";
 import {ReadonlyConfig} from "@typing/config";
 
-export const isValidEntrypointOptions = (options: BaseEntrypointOptions, config: ReadonlyConfig): boolean => {
+export const isValidEntrypointOptions = (options: EntrypointOptions, config: ReadonlyConfig): boolean => {
     const {browser, app} = config;
 
     if (options.includeBrowser?.includes(browser) || options.includeApp?.includes(app)) {

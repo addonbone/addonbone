@@ -6,18 +6,22 @@ export const getRootPath = (to: string): string => {
     return path.resolve(process.cwd(), to);
 }
 
-export const getConfigFile = (config: ReadonlyConfig): string => {
-    return path.resolve(config.inputDir, config.configFile);
+export const getSharedPath = (config: ReadonlyConfig, to?: string): string => {
+    return path.join(config.inputDir, config.srcDir, config.sharedDir, to ?? '');
 }
 
-export const getSharedPath = (config: ReadonlyConfig): string => {
-    return path.resolve(config.inputDir, config.srcDir, config.sharedDir);
+export const getAppsPath = (config: ReadonlyConfig, to?: string): string => {
+    return path.join(config.inputDir, config.srcDir, config.appsDir, config.app, to ?? '');
 }
 
-export const getAppsPath = (config: ReadonlyConfig): string => {
-    return path.resolve(config.inputDir, config.srcDir, config.appsDir, config.app);
+export const getInputPath = (config: ReadonlyConfig, to?: string): string => {
+    return path.join(config.inputDir, to ?? '');
 }
 
 export const getOutputPath = (config: ReadonlyConfig): string => {
-    return path.resolve(config.outputDir, `${config.app}-${config.browser}-mv${config.manifestVersion}`);
+    return path.join(config.outputDir, `${config.app}-${config.browser}-mv${config.manifestVersion}`);
+}
+
+export const getConfigFile = (config: ReadonlyConfig): string => {
+    return getInputPath(config, config.configFile);
 }

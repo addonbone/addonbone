@@ -23,6 +23,7 @@ export enum Command {
 
 export interface Config {
     debug: boolean;
+    command: Command;
     mode: Mode;
     app: string;
     browser: Browser;
@@ -49,7 +50,7 @@ export interface ConfigOptions {
 }
 
 export type OptionalConfig = Partial<Config>;
-export type UserConfig = Omit<OptionalConfig, 'configFile'>;
+export type UserConfig = Omit<OptionalConfig, 'configFile' | 'command'>;
 export type ReadonlyConfig = Readonly<Config>;
 
 export type UserConfigCallback = (config: ReadonlyConfig) => UserConfig;

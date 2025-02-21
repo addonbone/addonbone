@@ -1,9 +1,9 @@
 import OptionFile from "./OptionFile";
 
 import {BackgroundEntrypointOptions} from "@typing/background";
-import {BaseEntrypointOptions} from "@typing/base";
+import {EntrypointOptions} from "@typing/entrypoint";
 
-const commonProperties: Array<keyof BaseEntrypointOptions> = [
+const commonProperties: Array<keyof EntrypointOptions> = [
     'includeApp',
     'excludeApp',
     'includeBrowser',

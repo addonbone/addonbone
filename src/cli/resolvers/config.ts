@@ -1,15 +1,13 @@
-import path from "path";
 import {existsSync} from "fs";
 import dotenv, {type DotenvParseOutput} from 'dotenv';
 import {loadConfig} from "c12";
 
 import dotenvPlugin from "../plugins/dotenv";
-import contentPlugin from "../plugins/content";
 import backgroundPlugin from "../plugins/background";
 
-import {getConfigFile, getRootPath} from "../resolvers/path";
+import {getAppsPath, getConfigFile, getInputPath} from "../resolvers/path";
 
-import {Browser, Config, Mode, OptionalConfig, ReadonlyConfig, UserConfig,} from "@typing/config";
+import {Browser, Command, Config, Mode, OptionalConfig, ReadonlyConfig, UserConfig,} from "@typing/config";
 import {Plugin} from "@typing/plugin";
 
 
@@ -50,14 +48,9 @@ const updateLocalDotenv = (config: ReadonlyConfig): DotenvParseOutput => {
 }
 
 const loadDotenv = (config: ReadonlyConfig): DotenvParseOutput => {
-    const {mode, app, browser} = config;
+    const {mode, browser} = config;
 
-    const paths = [
-        `.env.${mode}.${app}.${browser}.local`,
-        `.env.${mode}.${app}.${browser}`,
-        `.env.${app}.${browser}.local`,
-        `.env.${app}.${browser}`,
-        `.env.${app}`,
+    const preset = [
         `.env.${mode}.${browser}.local`,
         `.env.${mode}.${browser}`,
         `.env.${browser}.local`,
@@ -66,7 +59,12 @@ const loadDotenv = (config: ReadonlyConfig): DotenvParseOutput => {
         `.env.${mode}`,
         `.env.local`,
         `.env`,
-    ].map((file) => path.join(getRootPath(config.inputDir), file));
+    ];
+
+    const appPaths = preset.map((file) => getAppsPath(config, file));
+    const rootPaths = preset.map((file) => getInputPath(config, file));
+
+    const paths = [...appPaths, ...rootPaths];
 
     const {parsed: fileVars = {}} = dotenv.config({path: paths});
 
@@ -75,8 +73,9 @@ const loadDotenv = (config: ReadonlyConfig): DotenvParseOutput => {
 
 export default async (config: OptionalConfig): Promise<Config> => {
     let {
+        command = Command.Build,
         debug = false,
-        configFile = 'addonbone.config.ts',
+        configFile = 'adnbn.config.ts',
         app = 'myapp',
         browser = Browser.Chrome,
         inputDir = '.',
@@ -98,6 +97,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
     } = config;
 
     let resolvedConfig: Config = {
+        command,
         debug,
         mode,
         app,
@@ -130,7 +130,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
 
     const corePlugins: Plugin[] = [
         dotenvPlugin({vars}),
-        contentPlugin(),
+        // contentPlugin(),
         backgroundPlugin(),
     ];
 

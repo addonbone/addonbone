@@ -3,6 +3,7 @@ import path from "path";
 
 import TsconfigPathsPlugin from "tsconfig-paths-webpack-plugin";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
+import {CleanWebpackPlugin} from "clean-webpack-plugin";
 
 import manifestFactory from "../builders/manifest";
 
@@ -11,16 +12,15 @@ import {processPluginHandler} from "../utils/plugin";
 
 import ManifestPlugin from "../webpack/plugins/ManifestPlugin";
 import WatchPlugin from "../webpack/plugins/WatchPlugin";
-import mergeWebpack from "../webpack/merge";
+import mergeWebpack from "../webpack/utils/mergeConfig";
 
-import {Command, Mode, ReadonlyConfig} from "@typing/config";
-
+import {Command, ReadonlyConfig} from "@typing/config";
 
 const getConfigFromPlugins = async (webpack: Configuration, config: ReadonlyConfig): Promise<Configuration> => {
     let mergedConfig: Configuration = {};
 
-    for await (const webpackFromPlugin of processPluginHandler(config, 'webpack', {webpack, config})) {
-        mergedConfig = mergeWebpack(mergedConfig, webpackFromPlugin);
+    for await (const {result: pluginConfig} of processPluginHandler(config, 'webpack', {webpack, config})) {
+        mergedConfig = mergeWebpack(mergedConfig, pluginConfig);
     }
 
     return mergedConfig;
@@ -35,13 +35,10 @@ const getConfigForManifest = async (config: ReadonlyConfig): Promise<Configurati
 
     const plugins: WebpackPluginInstance[] = [];
 
-    if (config.mode === Mode.Development) {
-        plugins.push(new WatchPlugin({
-            key: 'manifest',
-            callback: async () => {
-                await update();
-            }
-        }));
+    if (config.command === Command.Watch) {
+        plugins.push(new WatchPlugin(async () => {
+            await update();
+        }, 'manifest'));
     }
 
     plugins.push(new ManifestPlugin(manifest));
@@ -49,8 +46,9 @@ const getConfigForManifest = async (config: ReadonlyConfig): Promise<Configurati
     return {plugins};
 }
 
-export default async (command: Command, config: ReadonlyConfig): Promise<Configuration> => {
+export default async (config: ReadonlyConfig): Promise<Configuration> => {
     let webpack: Configuration = {
+        entry: {},
         mode: config.mode,
         cache: false,
         output: {
@@ -67,7 +65,6 @@ export default async (command: Command, config: ReadonlyConfig): Promise<Configu
                 {
                     test: /\.tsx?$/,
                     use: "ts-loader",
-                    exclude: /node_modules/,
                 },
                 {
                     test: /\.(scss|css)$/,
@@ -103,9 +100,17 @@ export default async (command: Command, config: ReadonlyConfig): Promise<Configu
         await getConfigForManifest(config),
     );
 
-    if (command == Command.Watch) {
+    if (config.command == Command.Watch) {
         webpack = mergeWebpack(webpack, {
             devtool: 'inline-source-map',
+        });
+    }
+
+    if (config.command == Command.Build) {
+        webpack = mergeWebpack(webpack, {
+            plugins: [
+                new CleanWebpackPlugin(),
+            ],
         });
     }
 

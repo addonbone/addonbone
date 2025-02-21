@@ -1,4 +1,4 @@
-import {BaseEntrypointOptions} from "@typing/base";
+import {EntrypointOptions} from "@typing/entrypoint";
 
 type ExecutionWorld = chrome.scripting.ExecutionWorld;
 type RunAt = chrome.userScripts.RunAt;
@@ -46,7 +46,7 @@ export interface ContentScriptConfig {
     matchOriginAsFallback?: boolean;
 }
 
-export type ContentScriptEntrypointOptions = ContentScriptConfig & BaseEntrypointOptions;
+export type ContentScriptEntrypointOptions = ContentScriptConfig & EntrypointOptions;
 
 export type ContentScriptEntrypointMap = Map<string, ContentScriptDefinition>;
 

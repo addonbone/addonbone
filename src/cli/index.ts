@@ -24,7 +24,8 @@ cli
     .option('-b, --browser <browser>', 'Specify a browser')
     .option('--mv2', 'Target manifest v2')
     .action(async (root, options) => {
-        await app(Command.Watch, {
+        await app({
+            command: Command.Watch,
             mode: options.mode,
             debug: options.debug,
             app: options.app,
@@ -44,7 +45,8 @@ cli
     .option('--mv2', 'Target manifest v2')
     .option('--analyze', 'Visualize extension bundle')
     .action(async (root, options) => {
-        await app(Command.Build, {
+        await app({
+            command: Command.Build,
             mode: options.mode,
             debug: options.debug,
             app: options.app,

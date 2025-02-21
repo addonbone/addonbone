@@ -1,11 +1,4 @@
-import {
-    forEachChild,
-    isCallExpression,
-    isExportAssignment,
-    isIdentifier,
-    isObjectLiteralExpression,
-    Node
-} from 'typescript';
+import ts from 'typescript';
 
 import SourceFile from "./SourceFile";
 
@@ -39,24 +32,24 @@ export default class<T extends Record<string, unknown>> extends SourceFile {
     protected getOptionsFromDefinition(): T {
         let options = {} as T;
 
-        const parse = (node: Node) => {
-            if (isExportAssignment(node)) {
+        const parse = (node: ts.Node) => {
+            if (ts.isExportAssignment(node)) {
                 const expr = node.expression;
 
-                if (isCallExpression(expr) && isIdentifier(expr.expression)) {
+                if (ts.isCallExpression(expr) && ts.isIdentifier(expr.expression)) {
                     const functionName = expr.expression.text;
 
                     if (functionName === this.definition && expr.arguments.length > 0) {
                         const arg = expr.arguments[0];
 
-                        if (isObjectLiteralExpression(arg)) {
+                        if (ts.isObjectLiteralExpression(arg)) {
                             options = this.parseNode(arg);
                         }
                     }
                 }
             }
 
-            forEachChild(node, parse);
+            ts.forEachChild(node, parse);
         }
 
         parse(this.getSourceFile());

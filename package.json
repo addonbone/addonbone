@@ -43,7 +43,6 @@
     "build": "tsup"
   },
   "devDependencies": {
-    "@types/deep-diff": "^1.0.5",
     "@types/generate-json-webpack-plugin": "^0.3.7",
     "@types/lodash": "^4.17.14",
     "@types/node": "^22.13.1",
@@ -61,8 +60,6 @@
     "cac": "^6.7.14",
     "clean-webpack-plugin": "^4.0.0",
     "css-loader": "^7.1.2",
-    "deep-diff": "^1.0.2",
-    "deep-object-diff": "^1.1.9",
     "file-loader": "^6.2.0",
     "generate-json-webpack-plugin": "^2.0.0",
     "lodash": "^4.17.21",

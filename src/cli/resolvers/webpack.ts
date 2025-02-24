@@ -8,7 +8,7 @@ import {CleanWebpackPlugin} from "clean-webpack-plugin";
 import manifestFactory from "../builders/manifest";
 
 import {getOutputPath, getRootPath} from "./path";
-import {processPluginHandler} from "../utils/plugin";
+import {processPluginHandler} from "./plugin";
 
 import ManifestPlugin from "../webpack/plugins/ManifestPlugin";
 import WatchPlugin from "../webpack/plugins/WatchPlugin";

@@ -4,10 +4,12 @@ export interface BackgroundConfig {
     persistent?: boolean;
 }
 
-export type BackgroundEntrypointOptions = BackgroundConfig & EntrypointOptions;
+export type BackgroundOptions = BackgroundConfig & EntrypointOptions;
+
+export type BackgroundEntrypointOptions = BackgroundOptions;
 
 export interface BackgroundDefinition extends BackgroundEntrypointOptions {
-    main?(options: BackgroundEntrypointOptions): any;
+    main?(options: BackgroundOptions): any;
 }
 
 export type BackgroundEntrypointMap = Map<EntrypointFile, BackgroundDefinition>;

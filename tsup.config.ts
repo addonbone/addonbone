@@ -2,7 +2,6 @@ import {defineConfig, Options} from 'tsup';
 import {resolve} from 'path';
 import rawPlugin from 'esbuild-plugin-raw';
 
-
 const common: Options = {
     dts: true,
     clean: true,
@@ -14,7 +13,7 @@ const common: Options = {
     splitting: false,
     //@ts-ignore
     esbuildPlugins: [rawPlugin()],
-    external: [/^node_modules/, 'virtual:background-entrypoint'],
+    external: [/^node_modules/],
     esbuildOptions(options) {
         options.alias = {
             '@cli': resolve(__dirname, './src/cli'),
@@ -38,6 +37,7 @@ const exports: Options = {
     ...common,
     entry: {
         'index': 'src/index.ts',
+        'browser/index': 'src/browser/index.ts',
     },
     format: ['esm', 'cjs'],
     outExtension({format}) {

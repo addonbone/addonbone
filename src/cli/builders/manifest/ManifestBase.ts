@@ -3,7 +3,8 @@ import {
     Manifest,
     ManifestBackground,
     ManifestBuilder,
-    ManifestContentScript,
+    ManifestCommandMap,
+    ManifestContentScriptMap,
     ManifestDependenciesMap,
     ManifestVersion
 } from "@typing/manifest";
@@ -22,7 +23,8 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
     protected description: string = "__MSG_app_description__";
     protected version: string = "0.0.0";
     protected background?: ManifestBackground;
-    protected contentScripts: Map<string, ManifestContentScript> = new Map();
+    protected commands: ManifestCommandMap = new Set();
+    protected contentScripts: ManifestContentScriptMap = new Map();
     protected dependencies: ManifestDependenciesMap = new Map();
 
     public abstract getManifestVersion(): ManifestVersion;
@@ -58,16 +60,20 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
         return this;
     }
 
-    public resetBackground(background: ManifestBackground): this {
+    public setBackground(background: ManifestBackground): this {
         this.background = background;
 
         return this;
     }
 
-    public pushContentScript(...content: ManifestContentScript[]): this {
-        for (const script of content) {
-            this.contentScripts.set(script.entry, script);
-        }
+    public setCommands(commands: ManifestCommandMap): this {
+        this.commands = commands;
+
+        return this;
+    }
+
+    public setContentScripts(contentScripts: ManifestContentScriptMap): this {
+        this.contentScripts = contentScripts;
 
         return this;
     }
@@ -97,9 +103,36 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
             manifest_version: this.getManifestVersion(),
         };
 
-        manifest = this.marge(manifest, this.buildBackground(), this.buildContentScripts());
+        manifest = this.marge(
+            manifest,
+            this.buildBackground(),
+            this.buildCommands(),
+            this.buildContentScripts()
+        );
 
         return manifest as T;
+    }
+
+    protected buildCommands(): Partial<CoreManifest> | undefined {
+        if (this.commands.size > 0) {
+            const commands = Array.from(this.commands).reduce((commands, command) => {
+                const item = {
+                    suggested_key: {
+                        default: command?.defaultKey,
+                        windows: command?.windowsKey,
+                        mac: command?.macKey,
+                        chromeos: command?.chromeosKey,
+                        linux: command?.linuxKey,
+                    },
+                    description: command?.description || command.name,
+                    global: command?.global,
+                };
+
+                return {...commands, [command.name]: item};
+            }, {} as T['commands']);
+
+            return {commands};
+        }
     }
 
     public get(): T {

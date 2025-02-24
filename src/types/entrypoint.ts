@@ -1,5 +1,13 @@
 import {Browser} from "@typing/config";
 
+export enum EntrypointType {
+    Background = 'background',
+    Command = 'command',
+    ContentScript = 'content',
+    OptionsPage = 'options',
+    Popup = 'popup',
+    Sidebar = 'sidebar',
+}
 
 export interface EntrypointOptions {
     /**

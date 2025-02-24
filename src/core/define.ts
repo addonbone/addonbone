@@ -2,6 +2,7 @@ import {ConfigDefinition} from "@typing/config";
 import {BackgroundDefinition} from "@typing/background";
 import {ContentScriptDefinition} from "@typing/content";
 import {Plugin, PluginDefinition} from "@typing/plugin";
+import {CommandDefinition} from "@typing/command";
 
 export function defineConfig(config: ConfigDefinition): ConfigDefinition {
     return config;
@@ -15,6 +16,10 @@ export function definePlugin<T>(plugin: PluginDefinition<T>): PluginDefinition<T
 }
 
 export function defineBackground(options: BackgroundDefinition): BackgroundDefinition {
+    return options;
+}
+
+export function defineCommand(options: CommandDefinition): CommandDefinition {
     return options;
 }
 

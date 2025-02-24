@@ -1,6 +1,6 @@
 {
   "name": "adnbn",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "description": "Cross browser web extension framework with shared code base",
   "homepage": "https://github.com/addonbone/addonbone",
   "repository": {
@@ -26,6 +26,11 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
+    },
+    "./browser": {
+        "types": "./dist/browser/index.d.ts",
+        "import": "./dist/browser/index.js",
+        "require": "./dist/browser/index.cjs"
     }
   },
   "main": "./dist/index.js",

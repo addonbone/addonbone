@@ -92,6 +92,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         analyze = false,
         plugins = [],
         mergeBackground = false,
+        mergeCommands = false,
         mergeContentScripts = false,
         concatContentScripts = true,
     } = config;
@@ -116,6 +117,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         analyze,
         configFile,
         mergeBackground,
+        mergeCommands,
         mergeContentScripts,
         concatContentScripts,
     };

@@ -1,5 +1,6 @@
 import {ContentScriptConfig} from "@typing/content";
 import {BackgroundConfig} from "@typing/background";
+import {CommandConfig} from "@typing/command";
 
 type ManifestCommon = chrome.runtime.Manifest;
 type ManifestBase = chrome.runtime.ManifestBase;
@@ -69,9 +70,11 @@ export interface ManifestBuilder<T extends CoreManifest = Manifest> {
 
     setDescription(description: string): this;
 
-    resetBackground(background: ManifestBackground): this;
+    setBackground(background: ManifestBackground): this;
 
-    pushContentScript(...contentScript: ManifestContentScript[]): this;
+    setCommands(commands: ManifestCommandMap): this;
+
+    setContentScripts(contentScripts: ManifestContentScriptMap): this;
 
     setDependencies(dependencies: ManifestDependenciesMap): this;
 
@@ -89,6 +92,10 @@ export interface ManifestEntryFile extends ManifestEntry {
 export type ManifestBackground = ManifestEntry & BackgroundConfig;
 
 export type ManifestContentScript = ManifestEntry & ContentScriptConfig;
+export type ManifestContentScriptMap = Map<string, ManifestContentScript>;
+
+export type ManifestCommand = CommandConfig;
+export type ManifestCommandMap = Set<ManifestCommand>;
 
 export interface ManifestDependencies {
     js: Set<string>;

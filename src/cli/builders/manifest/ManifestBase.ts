@@ -60,26 +60,26 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
         return this;
     }
 
-    public setBackground(background: ManifestBackground): this {
+    public setBackground(background?: ManifestBackground): this {
         this.background = background;
 
         return this;
     }
 
-    public setCommands(commands: ManifestCommandMap): this {
-        this.commands = commands;
+    public setCommands(commands?: ManifestCommandMap): this {
+        this.commands = commands || new Set();
 
         return this;
     }
 
-    public setContentScripts(contentScripts: ManifestContentScriptMap): this {
-        this.contentScripts = contentScripts;
+    public setContentScripts(contentScripts?: ManifestContentScriptMap): this {
+        this.contentScripts = contentScripts || new Map();
 
         return this;
     }
 
     public setDependencies(dependencies: ManifestDependenciesMap): this {
-        this.dependencies = dependencies
+        this.dependencies = dependencies;
 
         return this;
     }

@@ -70,11 +70,11 @@ export interface ManifestBuilder<T extends CoreManifest = Manifest> {
 
     setDescription(description: string): this;
 
-    setBackground(background: ManifestBackground): this;
+    setBackground(background?: ManifestBackground): this;
 
-    setCommands(commands: ManifestCommandMap): this;
+    setCommands(commands?: ManifestCommandMap): this;
 
-    setContentScripts(contentScripts: ManifestContentScriptMap): this;
+    setContentScripts(contentScripts?: ManifestContentScriptMap): this;
 
     setDependencies(dependencies: ManifestDependenciesMap): this;
 

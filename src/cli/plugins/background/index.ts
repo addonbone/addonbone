@@ -14,41 +14,33 @@ import {getEntrypointFiles} from "@cli/resolvers/entrypoint";
 
 import {BackgroundEntrypointMap} from "@typing/background";
 import {Command} from "@typing/config";
-import {EntrypointFile, EntrypointType} from "@typing/entrypoint";
+import {EntrypointType} from "@typing/entrypoint";
 import {CommandEntrypointMap} from "@typing/command";
 import {ManifestCommand, ManifestCommandMap} from "@typing/manifest";
 
 const name = 'background';
 
-const isPersistent = (background: BackgroundEntrypointMap): boolean => {
+const isPersistent = (background?: BackgroundEntrypointMap): boolean => {
+    if (!background) {
+        return false;
+    }
+
     return Array.from(background.values()).some(({persistent}) => persistent);
 }
 
-const getCommands = (command: CommandEntrypointMap): ManifestCommandMap | undefined => {
-    if (command.size === 0) {
+const getCommands = (command?: CommandEntrypointMap): ManifestCommandMap | undefined => {
+    if (!command || command.size === 0) {
         return undefined;
     }
 
     return new Set<ManifestCommand>(command.values());
 }
 
-const getBackgroundEntry = (background: BackgroundEntrypointMap): EntrypointPluginEntries => {
-    return getEntry(background.keys());
-}
-
-const getCommandEntry = (command: CommandEntrypointMap): EntrypointPluginEntries => {
-    return getEntry(command.keys());
-}
-
-const getEntry = (files: MapIterator<EntrypointFile>): EntrypointPluginEntries => {
-    return {[name]: Array.from(files)};
+const getEntry = (entrypoint: BackgroundEntrypointMap | CommandEntrypointMap): EntrypointPluginEntries => {
+    return {[name]: Array.from(entrypoint.keys())};
 }
 
 export default definePlugin(() => {
-    let hasBackground: boolean = false;
-    let persistent: boolean | undefined;
-    let commands: ManifestCommandMap | undefined;
-
     let backgroundEntrypoint: BackgroundEntrypointMap | undefined;
     let commandEntrypoint: CommandEntrypointMap | undefined;
 
@@ -68,14 +60,10 @@ export default definePlugin(() => {
                 return {};
             }
 
-            hasBackground = true;
-            persistent = isPersistent(backgroundEntrypoint);
-            commands = getCommands(commandEntrypoint);
+            const backgroundEntrypointPlugin = (new EntrypointPlugin(getEntry(backgroundEntrypoint), 'background-entrypoint'))
+                .virtual(file => virtualBackgroundModule(file));
 
-            const backgroundEntrypointPlugin = (new EntrypointPlugin(getBackgroundEntry(backgroundEntrypoint), 'background-entrypoint'))
-                .virtual(file => virtualBackgroundModule(file.import));
-
-            const commandEntrypointPlugin = (new EntrypointPlugin(getCommandEntry(commandEntrypoint), 'command-entrypoint'))
+            const commandEntrypointPlugin = (new EntrypointPlugin(getEntry(commandEntrypoint), 'command-entrypoint'))
                 .virtual(file => {
                     if (!commandEntrypoint) {
                         throw new Error('Command entrypoint is not defined');
@@ -87,24 +75,20 @@ export default definePlugin(() => {
                         throw new Error('Command name is not defined');
                     }
 
-                    return virtualCommandModule(file.import, name);
+                    return virtualCommandModule(file, name);
                 });
 
             if (config.command === Command.Watch) {
                 backgroundEntrypointPlugin.watch(async () => {
                     backgroundEntrypoint = await getBackgroundEntrypoint(config);
 
-                    persistent = isPersistent(backgroundEntrypoint);
-
-                    return getBackgroundEntry(backgroundEntrypoint);
+                    return getEntry(backgroundEntrypoint);
                 });
 
                 commandEntrypointPlugin.watch(async () => {
                     commandEntrypoint = await getCommandEntrypoint(config);
 
-                    commands = getCommands(commandEntrypoint);
-
-                    return getCommandEntry(commandEntrypoint);
+                    return getEntry(commandEntrypoint);
                 });
             }
 
@@ -128,16 +112,12 @@ export default definePlugin(() => {
             return resolvedWebpack;
         },
         manifest: ({manifest}) => {
-            if (hasBackground) {
-                manifest.setBackground({
+            manifest
+                .setBackground(backgroundEntrypoint || commandEntrypoint ? {
                     entry: name,
-                    persistent,
-                });
-
-                if (commands) {
-                    manifest.setCommands(commands);
-                }
-            }
+                    persistent: isPersistent(backgroundEntrypoint),
+                } : undefined)
+                .setCommands(getCommands(commandEntrypoint));
         }
     };
 });

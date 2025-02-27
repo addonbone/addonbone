@@ -14,7 +14,8 @@ import ManifestPlugin from "../webpack/plugins/ManifestPlugin";
 import WatchPlugin from "../webpack/plugins/WatchPlugin";
 import mergeWebpack from "../webpack/utils/mergeConfig";
 
-import {Command, ReadonlyConfig} from "@typing/config";
+import {ReadonlyConfig} from "@typing/config";
+import {Command} from "@typing/app";
 
 const getConfigFromPlugins = async (webpack: Configuration, config: ReadonlyConfig): Promise<Configuration> => {
     let mergedConfig: Configuration = {};
@@ -87,7 +88,12 @@ export default async (config: ReadonlyConfig): Promise<Configuration> => {
                     ],
                 },
                 {
-                    test: /\.(png|apng|jpe?g|gif|webp|svg])$/i,
+                    test: /\.svg$/,
+                    use: ['@svgr/webpack', 'url-loader'],
+                    // issuer: /\.[jt]sx?$/,
+                },
+                {
+                    test: /\.(png|apng|jpe?g|gif|webp)$/i,
                     type: "asset/resource",
                 },
             ],

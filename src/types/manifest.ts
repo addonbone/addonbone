@@ -85,10 +85,6 @@ export interface ManifestEntry {
     entry: string,
 }
 
-export interface ManifestEntryFile extends ManifestEntry {
-    file: string,
-}
-
 export type ManifestBackground = ManifestEntry & BackgroundConfig;
 
 export type ManifestContentScript = ManifestEntry & ContentScriptConfig;

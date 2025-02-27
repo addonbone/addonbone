@@ -1,7 +1,7 @@
 import ManifestBase, {ManifestError} from "./ManifestBase";
 
 import {ManifestVersion} from "@typing/manifest";
-import {Browser} from "@typing/config";
+import {Browser} from "@typing/browser";
 
 type ManifestV3 = chrome.runtime.ManifestV3;
 

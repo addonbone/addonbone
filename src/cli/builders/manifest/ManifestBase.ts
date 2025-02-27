@@ -9,7 +9,7 @@ import {
     ManifestVersion
 } from "@typing/manifest";
 
-import {Browser} from "@typing/config";
+import {Browser} from "@typing/browser";
 
 export class ManifestError extends Error {
     public constructor(message: string) {

@@ -1,45 +1,33 @@
 import {ManifestBuilder} from "@typing/manifest";
 import {Configuration as WebpackConfig} from "webpack";
 
-import {ConfigOptions} from "@typing/config";
-import {ContentScriptEntrypointMap} from "@typing/content";
+import {ReadonlyConfig} from "@typing/config";
 import {EntrypointFile} from "@typing/entrypoint";
 
 export type PluginEntrypointResult = true | string | string[] | EntrypointFile | EntrypointFile[] | Set<EntrypointFile>;
 
+export interface PluginConfigOptions {
+    config: ReadonlyConfig;
+}
+
 // Manifest
-export interface PluginManifestOptions extends ConfigOptions {
+export interface PluginManifestOptions extends PluginConfigOptions {
     manifest: ManifestBuilder;
 }
 
 // Webpack
-export interface PluginWebpackOptions extends ConfigOptions {
+export interface PluginWebpackOptions extends PluginConfigOptions {
     webpack: Partial<WebpackConfig>;
 }
-
-// Content
-export interface PluginContentOptions extends ConfigOptions {
-    entries: ContentScriptEntrypointMap;
-}
-
-export type PluginContentResult = PluginEntrypointResult;
-
-// Background
-export type PluginBackgroundOptions = ConfigOptions;
-export type PluginBackgroundResult = PluginEntrypointResult;
-
-// Command
-export type PluginCommandOptions = ConfigOptions;
-export type PluginCommandResult = PluginEntrypointResult;
 
 interface PluginName {
     name: string;
 }
 
 export interface Plugin extends PluginName {
-    content?: PluginHandler<PluginContentOptions, PluginContentResult>;
-    background?: PluginHandler<PluginBackgroundOptions, PluginBackgroundResult>;
-    command?: PluginHandler<PluginCommandOptions, PluginCommandResult>;
+    content?: PluginHandler<PluginConfigOptions, PluginEntrypointResult>;
+    background?: PluginHandler<PluginConfigOptions, PluginEntrypointResult>;
+    command?: PluginHandler<PluginConfigOptions, PluginEntrypointResult>;
     manifest?: PluginHandlerCallback<PluginManifestOptions>;
     webpack?: PluginHandler<PluginWebpackOptions, WebpackConfig>;
 }

@@ -2,7 +2,8 @@ import cac from 'cac';
 
 import app from "./builders/app";
 
-import {Browser, Command} from "@typing/config";
+import {Command} from "@typing/app";
+import {Browser} from "@typing/browser";
 
 import {version} from '../../package.json';
 

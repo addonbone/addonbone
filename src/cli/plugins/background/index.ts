@@ -13,7 +13,7 @@ import EntrypointPlugin, {EntrypointPluginEntries} from "@cli/webpack/plugins/En
 import {getEntrypointFiles} from "@cli/resolvers/entrypoint";
 
 import {BackgroundEntrypointMap} from "@typing/background";
-import {Command} from "@typing/config";
+import {Command} from "@typing/app";
 import {EntrypointType} from "@typing/entrypoint";
 import {CommandEntrypointMap} from "@typing/command";
 import {ManifestCommand, ManifestCommandMap} from "@typing/manifest";
@@ -45,7 +45,7 @@ export default definePlugin(() => {
     let commandEntrypoint: CommandEntrypointMap | undefined;
 
     return {
-        name: import.meta.dirname,
+        name: 'adnbn:background',
         background: ({config}) => getEntrypointFiles(config, EntrypointType.Background),
         command: ({config}) => getEntrypointFiles(config, EntrypointType.Command),
         webpack: async ({config, webpack}) => {

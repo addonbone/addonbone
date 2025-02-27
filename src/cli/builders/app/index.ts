@@ -5,7 +5,8 @@ import {build, watch} from "./command";
 import configResolver from "../../resolvers/config";
 import webpackResolver from "../../resolvers/webpack";
 
-import {Command, OptionalConfig} from "@typing/config";
+import {OptionalConfig} from "@typing/config";
+import {Command} from "@typing/app";
 
 export default async (config: OptionalConfig): Promise<void> => {
     const resolverConfig = await configResolver(config);

@@ -7,7 +7,11 @@ import backgroundPlugin from "../plugins/background";
 
 import {getAppsPath, getConfigFile, getInputPath} from "../resolvers/path";
 
-import {Browser, Command, Config, Mode, OptionalConfig, ReadonlyConfig, UserConfig,} from "@typing/config";
+import {ConfigSchema} from "@typing/schema";
+
+import {Config, OptionalConfig, ReadonlyConfig, UserConfig} from "@typing/config";
+import {Command, Mode} from "@typing/app";
+import {Browser} from "@typing/browser";
 import {Plugin} from "@typing/plugin";
 
 
@@ -136,12 +140,14 @@ export default async (config: OptionalConfig): Promise<Config> => {
         backgroundPlugin(),
     ];
 
-    return {
+    resolvedConfig = {
         ...resolvedConfig,
         plugins: [
             ...plugins,
             ...userPlugins,
             ...corePlugins,
-        ]
+        ],
     };
+
+    return ConfigSchema.parse(resolvedConfig);
 }

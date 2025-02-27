@@ -1,4 +1,4 @@
-import {Browser} from "@typing/config";
+import {Browser} from "@typing/browser";
 
 export enum EntrypointType {
     Background = 'background',

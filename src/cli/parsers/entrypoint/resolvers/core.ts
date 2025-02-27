@@ -1,4 +1,6 @@
-import {Browser, Mode, Command} from "@typing/config";
+import {Mode, Command} from "@typing/app";
+import {Browser} from "@typing/browser";
+
 import {Resolver} from "../types";
 
 const name = 'adnbn';

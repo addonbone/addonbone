@@ -1,4 +1,4 @@
-import {Browser} from "@typing/config";
+import {Browser} from "@typing/browser";
 import {ManifestVersion} from "@typing/manifest";
 
 const env = process.env;

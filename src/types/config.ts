@@ -1,15 +1,36 @@
-import {z} from "zod";
-import {
-    ConfigDefinitionSchema,
-    ConfigSchema,
-    OptionalConfigSchema,
-    ReadonlyConfigSchema,
-    UserConfigSchema
-} from "@typing/schema";
+import {Command, Mode} from "@typing/app";
+import {Browser} from "@typing/browser";
+import {ManifestVersion} from "@typing/manifest";
+import {Plugin} from "@typing/plugin";
 
-export type Config = z.infer<typeof ConfigSchema>;
-export type OptionalConfig = z.infer<typeof OptionalConfigSchema>;
-export type UserConfig = z.infer<typeof UserConfigSchema>;
-export type ReadonlyConfig = z.infer<typeof ReadonlyConfigSchema>;
-export type ConfigDefinition = z.infer<typeof ConfigDefinitionSchema>;
+export interface Config {
+    debug: boolean;
+    command: Command;
+    mode: Mode;
+    app: string;
+    browser: Browser;
+    manifestVersion: ManifestVersion;
+    inputDir: string;
+    outputDir: string;
+    srcDir: string;
+    sharedDir: string;
+    appsDir: string;
+    jsDir: string;
+    cssDir: string;
+    assetsDir: string;
+    htmlDir: string;
+    plugins: Plugin[];
+    analyze: boolean;
+    configFile: string;
+    mergeBackground: boolean;
+    mergeCommands: boolean;
+    mergeContentScripts: boolean;
+    concatContentScripts: boolean;
+}
 
+export type OptionalConfig = Partial<Config>;
+export type UserConfig = Omit<OptionalConfig, 'configFile' | 'command'>;
+export type ReadonlyConfig = Readonly<Config>;
+
+export type UserConfigCallback = (config: ReadonlyConfig) => UserConfig;
+export type ConfigDefinition = UserConfigCallback | UserConfig;

@@ -134,4 +134,3 @@ export const ConfigDefinitionSchema = z.union([
     UserConfigCallbackSchema,
     UserConfigSchema
 ]);
-

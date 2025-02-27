@@ -1,4 +1,5 @@
 import ts from 'typescript';
+import _ from 'lodash';
 
 import SourceFile from "./SourceFile";
 
@@ -39,6 +40,12 @@ export default class<T extends Record<string, unknown>> extends SourceFile {
                 if (ts.isCallExpression(expr) && ts.isIdentifier(expr.expression)) {
                     const functionName = expr.expression.text;
 
+                    if (this.getImports().get(functionName) !== 'adnbn') {
+                        console.warn(`Function ${functionName} is not imported from 'adnbn' on file ${this.file}`);
+
+                        return;
+                    }
+
                     if (functionName === this.definition && expr.arguments.length > 0) {
                         const arg = expr.arguments[0];
 
@@ -54,6 +61,6 @@ export default class<T extends Record<string, unknown>> extends SourceFile {
 
         parse(this.getSourceFile());
 
-        return options;
+        return _.pickBy(options, (_, key) => this.properties.includes(key)) as T;
     }
 }

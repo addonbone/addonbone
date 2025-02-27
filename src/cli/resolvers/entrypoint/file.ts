@@ -1,7 +1,7 @@
 import fs, {type Dirent} from 'fs';
 import path from 'path';
 
-import {getAppsPath, getSharedPath} from "./path";
+import {getAppsPath, getSharedPath} from "../path";
 
 import {EntrypointFile, EntrypointType} from "@typing/entrypoint";
 import {ReadonlyConfig} from "@typing/config";

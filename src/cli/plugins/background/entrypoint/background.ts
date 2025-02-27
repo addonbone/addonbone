@@ -1,10 +1,12 @@
-import {getBackgroundOptions} from "@cli/parsers/entrypoint";
+
 import {getPluginEntrypointFiles} from "@cli/resolvers/plugin";
+import {getBackgroundOptions} from "@cli/resolvers/entrypoint";
 import {isValidEntrypointOptions} from "@cli/utils/option";
 
 import {EntrypointFile} from "@typing/entrypoint";
 import {ReadonlyConfig} from "@typing/config";
 import {BackgroundEntrypointMap} from "@typing/background";
+
 
 const backgroundFilesToEntries = (files: Set<EntrypointFile>): BackgroundEntrypointMap => {
     const entries: BackgroundEntrypointMap = new Map;

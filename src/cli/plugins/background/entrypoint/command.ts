@@ -1,11 +1,11 @@
-import {getCommandOptions} from "@cli/parsers/entrypoint";
-
 import {getPluginEntrypointFiles} from "@cli/resolvers/plugin";
+import {getCommandOptions} from "@cli/resolvers/entrypoint";
 import {isValidEntrypointOptions} from "@cli/utils/option";
 
 import {EntrypointFile} from "@typing/entrypoint";
 import {ReadonlyConfig} from "@typing/config";
 import {CommandEntrypointMap} from "@typing/command";
+
 
 const registeredCommands = new Set<string>();
 

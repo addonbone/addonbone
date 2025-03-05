@@ -12,7 +12,7 @@ const backgroundFilesToEntries = (files: Set<EntrypointFile>): BackgroundEntrypo
     const entries: BackgroundEntrypointMap = new Map;
 
     for (const file of files) {
-        entries.set(file, getBackgroundOptions(file.file));
+        entries.set(file, getBackgroundOptions(file));
     }
 
     return entries;

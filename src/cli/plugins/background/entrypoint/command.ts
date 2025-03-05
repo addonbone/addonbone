@@ -6,7 +6,6 @@ import {EntrypointFile} from "@typing/entrypoint";
 import {ReadonlyConfig} from "@typing/config";
 import {CommandEntrypointMap} from "@typing/command";
 
-
 const registeredCommands = new Set<string>();
 
 const generateUniqueName = (name: string): string => {
@@ -35,7 +34,7 @@ const commandFilesToEntries = (files: Set<EntrypointFile>): CommandEntrypointMap
     const entries: CommandEntrypointMap = new Map;
 
     for (const file of files) {
-        const {name, ...options} = getCommandOptions(file.file);
+        const {name, ...options} = getCommandOptions(file);
 
         entries.set(file, {
             name: name ? generateUniqueName(name) : extractNameFromFile(file),

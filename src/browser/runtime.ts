@@ -1,6 +1,7 @@
 import _isUndefined from "lodash/isUndefined";
 
 import {browser} from "./env";
+import {ManifestVersion} from "@typing/manifest";
 
 type Manifest = chrome.runtime.Manifest;
 
@@ -14,7 +15,9 @@ export const getUrl = (path: string) => runtime.getURL(path);
 
 export const getManifest = (): Manifest => runtime.getManifest();
 
-export const getVersion = (): string => getManifest().version;
+export const getManifestVersion = (): ManifestVersion => getManifest().manifest_version;
+
+export const isManifestVersion3 = (): boolean => getManifestVersion() === 3;
 
 export const getId = (): string => runtime.id;
 
@@ -34,4 +37,12 @@ export const isBackground = (): boolean => {
     }
 
     return !_isUndefined(window) && backgroundPaths.includes(location.pathname);
+}
+
+export const throwRuntimeError = (): void => {
+    const error = runtime.lastError;
+
+    if (error) {
+        throw new Error(error.message);
+    }
 }

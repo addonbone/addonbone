@@ -1,28 +1,34 @@
 import {ConfigDefinition} from "@typing/config";
 import {BackgroundDefinition} from "@typing/background";
 import {ContentScriptDefinition} from "@typing/content";
-import {Plugin, PluginDefinition} from "@typing/plugin";
-import {CommandDefinition} from "@typing/command";
+import {Plugin, PluginDefinition, PluginDefinitionInput} from "@typing/plugin";
+import {CommandDefinition, EXECUTE_ACTION_COMMAND_NAME} from "@typing/command";
 
-export function defineConfig(config: ConfigDefinition): ConfigDefinition {
+export const defineConfig = (config: ConfigDefinition): ConfigDefinition => {
     return config;
 }
 
-export function definePlugin<T>(plugin: (options?: T) => Plugin): (options?: T) => Plugin;
+export function definePlugin<T extends any[]>(plugin: (...args: T) => Plugin): (...args: T) => Plugin;
 export function definePlugin(plugin: Plugin): Plugin;
 
-export function definePlugin<T>(plugin: PluginDefinition<T>): PluginDefinition<T> {
+export function definePlugin<T extends any[], U extends PluginDefinition<T>>(
+    plugin: PluginDefinitionInput<T, U>
+): U {
     return plugin;
 }
 
-export function defineBackground(options: BackgroundDefinition): BackgroundDefinition {
+export const defineBackground = (options: BackgroundDefinition): BackgroundDefinition => {
     return options;
 }
 
-export function defineCommand(options: CommandDefinition): CommandDefinition {
+export const defineCommand = (options: CommandDefinition): CommandDefinition => {
     return options;
 }
 
-export function defineContentScript(options: ContentScriptDefinition): ContentScriptDefinition {
+export const defineExecuteActionCommand = (options: Omit<CommandDefinition, 'name'>): CommandDefinition => {
+    return {...options, name: EXECUTE_ACTION_COMMAND_NAME};
+}
+
+export const defineContentScript = (options: ContentScriptDefinition): ContentScriptDefinition => {
     return options;
 }

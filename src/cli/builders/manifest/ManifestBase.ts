@@ -1,6 +1,7 @@
 import {
     CoreManifest,
     Manifest,
+    ManifestAction,
     ManifestBackground,
     ManifestBuilder,
     ManifestCommandMap,
@@ -10,6 +11,7 @@ import {
 } from "@typing/manifest";
 
 import {Browser} from "@typing/browser";
+import {EXECUTE_ACTION_COMMAND_NAME} from "@typing/command";
 
 export class ManifestError extends Error {
     public constructor(message: string) {
@@ -23,6 +25,7 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
     protected description: string = "__MSG_app_description__";
     protected version: string = "0.0.0";
     protected background?: ManifestBackground;
+    protected action?: ManifestAction;
     protected commands: ManifestCommandMap = new Set();
     protected contentScripts: ManifestContentScriptMap = new Map();
     protected dependencies: ManifestDependenciesMap = new Map();
@@ -30,6 +33,8 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
     public abstract getManifestVersion(): ManifestVersion;
 
     protected abstract buildBackground(): Partial<T> | undefined;
+
+    protected abstract buildAction(): Partial<T> | undefined;
 
     protected abstract buildContentScripts(): Partial<T> | undefined;
 
@@ -78,6 +83,16 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
         return this;
     }
 
+    public setAction(action?: ManifestAction | true): this {
+        if (action === true) {
+            action = {title: this.name};
+        }
+
+        this.action = action;
+
+        return this;
+    }
+
     public setDependencies(dependencies: ManifestDependenciesMap): this {
         this.dependencies = dependencies;
 
@@ -107,6 +122,7 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
             manifest,
             this.buildBackground(),
             this.buildCommands(),
+            this.buildAction(),
             this.buildContentScripts()
         );
 
@@ -133,6 +149,11 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
 
             return {commands};
         }
+    }
+
+    protected hasExecuteActionCommand(): boolean {
+        return this.commands.size > 0 && Array.from(this.commands)
+            .some(({name}) => name === EXECUTE_ACTION_COMMAND_NAME);
     }
 
     public get(): T {

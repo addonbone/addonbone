@@ -4,6 +4,7 @@ import {loadConfig} from "c12";
 
 import dotenvPlugin from "../plugins/dotenv";
 import backgroundPlugin from "../plugins/background";
+import contentPlugin from "../plugins/content";
 
 import {getAppsPath, getConfigFile, getInputPath} from "../resolvers/path";
 
@@ -133,8 +134,8 @@ export default async (config: OptionalConfig): Promise<Config> => {
     vars = {...vars, ...loadDotenv(resolvedConfig)};
 
     const corePlugins: Plugin[] = [
-        dotenvPlugin({vars}),
-        // contentPlugin(),
+        dotenvPlugin(vars),
+        contentPlugin(),
         backgroundPlugin(),
     ];
 

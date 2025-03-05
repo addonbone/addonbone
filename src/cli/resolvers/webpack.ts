@@ -1,6 +1,5 @@
 import {Configuration, WebpackPluginInstance} from "webpack";
 import path from "path";
-
 import TsconfigPathsPlugin from "tsconfig-paths-webpack-plugin";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import {CleanWebpackPlugin} from "clean-webpack-plugin";
@@ -105,6 +104,14 @@ export default async (config: ReadonlyConfig): Promise<Configuration> => {
         await getConfigFromPlugins(webpack, config),
         await getConfigForManifest(config),
     );
+
+    if (config.debug) {
+        webpack = mergeWebpack(webpack, {
+            stats: {
+                errorDetails: true,
+            },
+        });
+    }
 
     if (config.command == Command.Watch) {
         webpack = mergeWebpack(webpack, {

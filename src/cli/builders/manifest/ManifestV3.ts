@@ -38,6 +38,26 @@ export default class extends ManifestBase<ManifestV3> {
         }
     }
 
+    protected buildAction(): Partial<ManifestV3> | undefined {
+        if (this.action) {
+            const {popup, icon, title} = this.action;
+
+            return {
+                action: {
+                    default_popup: popup,
+                    default_icon: icon,
+                    default_title: title
+                }
+            };
+        } else if (this.hasExecuteActionCommand()) {
+            return {
+                action: {
+                    default_title: this.name,
+                }
+            };
+        }
+    }
+
     protected buildContentScripts(): Partial<ManifestV3> | undefined {
         if (this.contentScripts.size > 0) {
             const contentScripts: ManifestV3['content_scripts'] = Array.from(this.contentScripts, ([_, contentScript]) => ({

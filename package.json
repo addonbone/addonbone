@@ -1,6 +1,6 @@
 {
   "name": "adnbn",
-  "version": "0.0.27",
+  "version": "0.0.30",
   "description": "Cross browser web extension framework with shared code base",
   "homepage": "https://github.com/addonbone/addonbone",
   "repository": {
@@ -31,6 +31,11 @@
       "types": "./dist/browser/index.d.ts",
       "import": "./dist/browser/index.js",
       "require": "./dist/browser/index.cjs"
+    },
+    "./client": {
+      "types": "./dist/client/index.d.ts",
+      "import": "./dist/client/index.js",
+      "require": "./dist/client/index.cjs"
     }
   },
   "main": "./dist/index.js",
@@ -48,6 +53,7 @@
     "build": "tsup"
   },
   "devDependencies": {
+    "@swc/core": "^1.11.7",
     "@types/generate-json-webpack-plugin": "^0.3.7",
     "@types/lodash": "^4.17.14",
     "@types/node": "^22.13.1",
@@ -57,11 +63,14 @@
     "fs-extra": "^11.3.0",
     "ts-node": "^10.9.2",
     "tsup": "^8.3.6",
-    "tsx": "^4.19.2"
+    "tsx": "^4.19.2",
+    "uglify-js": "^3.19.3"
   },
   "dependencies": {
+    "@rspack/cli": "^1.2.7",
+    "@rspack/core": "^1.2.7",
     "@svgr/webpack": "^8.1.0",
-    "@types/chrome": "^0.0.299",
+    "@types/chrome": "^0.0.307",
     "c12": "^2.0.1",
     "cac": "^6.7.14",
     "clean-webpack-plugin": "^4.0.0",

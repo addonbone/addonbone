@@ -21,6 +21,9 @@
     ],
     "baseUrl": "./src",
     "paths": {
+      "@browser/*": [
+        "browser/*"
+      ],
       "@cli/*": [
         "cli/*"
       ],

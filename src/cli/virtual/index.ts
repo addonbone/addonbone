@@ -1,5 +1,6 @@
 import background from "./background.ts?raw";
 import command from "./command.ts?raw";
+
 import {EntrypointFile} from "@typing/entrypoint";
 
 const templates = {background, command};
@@ -13,5 +14,6 @@ export const virtualBackgroundModule = (file: EntrypointFile): string => {
 }
 
 export const virtualCommandModule = (file: EntrypointFile, name: string): string => {
-    return getVirtualModule(file, 'command').replace('virtual:command-name', name);
+    return getVirtualModule(file, 'command')
+        .replace('virtual:command-name', name);
 }

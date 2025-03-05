@@ -16,6 +16,7 @@ const common: Options = {
     external: [/^node_modules/],
     esbuildOptions(options) {
         options.alias = {
+            '@browser': resolve(__dirname, './src/browser'),
             '@cli': resolve(__dirname, './src/cli'),
             '@typing': resolve(__dirname, './src/types'),
             '@core': resolve(__dirname, './src/core'),
@@ -38,6 +39,7 @@ const exports: Options = {
     entry: {
         'index': 'src/index.ts',
         'browser/index': 'src/browser/index.ts',
+        'client/index': 'src/client/index.ts',
     },
     format: ['esm', 'cjs'],
     outExtension({format}) {

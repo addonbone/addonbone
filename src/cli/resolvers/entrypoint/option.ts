@@ -5,6 +5,7 @@ import {OptionFile} from "../../parsers/entrypoint";
 import {BackgroundEntrypointOptions} from "@typing/background";
 import {CommandEntrypointOptions} from "@typing/command";
 import {Browser} from "@typing/browser";
+import {EntrypointFile} from "@typing/entrypoint";
 
 const CommonPropertiesSchema = z.object({
     includeApp: z.array(z.string()).optional(),
@@ -13,8 +14,8 @@ const CommonPropertiesSchema = z.object({
     excludeBrowser: z.array(z.nativeEnum(Browser)).optional(),
 });
 
-const parseOptions = <T extends typeof CommonPropertiesSchema>(file: string, schema: T, definition: string) => {
-    const options = OptionFile.make(file)
+const parseOptions = <T extends typeof CommonPropertiesSchema>(file: EntrypointFile, schema: T, definition: string) => {
+    const options = OptionFile.make(file.file)
         .setProperties(Object.keys(schema.shape))
         .setDefinition(definition)
         .getOptions();
@@ -24,13 +25,13 @@ const parseOptions = <T extends typeof CommonPropertiesSchema>(file: string, sch
     if (!success) {
         const e = error?.errors[0];
 
-        throw new Error(`Invalid options ${e.path.join(', ')} in "${file}": ${e.message}`);
+        throw new Error(`Invalid options ${e.path.join(', ')} in "${file.file}": ${e.message}`);
     }
 
     return data;
 }
 
-export const getBackgroundOptions = (file: string): BackgroundEntrypointOptions => {
+export const getBackgroundOptions = (file: EntrypointFile): BackgroundEntrypointOptions => {
     const BackgroundPropertiesSchema = CommonPropertiesSchema.extend({
         persistent: z.boolean().optional(),
     });
@@ -38,7 +39,7 @@ export const getBackgroundOptions = (file: string): BackgroundEntrypointOptions 
     return parseOptions(file, BackgroundPropertiesSchema, 'defineBackground');
 }
 
-export const getCommandOptions = (file: string): CommandEntrypointOptions => {
+export const getCommandOptions = (file: EntrypointFile): CommandEntrypointOptions => {
     const ShortcutKeySchema = z
         .string()
         .regex(/^(Ctrl|Command|MacCtrl|Alt|Option)(\+Shift)?\+[A-Z0-9]$/, 'Invalid shortcut key, expected format like: Ctrl+Shift+K or Command+Shift+P')

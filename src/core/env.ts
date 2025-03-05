@@ -1,12 +1,12 @@
 import {Browser} from "@typing/browser";
 import {ManifestVersion} from "@typing/manifest";
 
-const env = process.env;
-
 export const getEnv: {
     <T extends string>(key: string): T | undefined;
     <T extends string, D>(key: string, defaults: D): T | D;
 } = (key: string, defaults?: string) => {
+    const env = process.env;
+
     return (env[key] ?? defaults) as any;
 };
 

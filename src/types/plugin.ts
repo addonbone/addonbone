@@ -53,4 +53,8 @@ export interface PluginNameHandlerResult<K extends PluginHandlerKeys> extends Pl
     result: PluginHandlerResult<K>;
 }
 
-export type PluginDefinition<T> = ((options?: T) => Plugin) | Plugin;
+export type PluginDefinition<T extends any[]> = ((...args: T) => Plugin) | Plugin;
+
+export type PluginDefinitionInput<T extends any[], U> = U extends (...args: T) => any
+    ? ReturnType<U> extends Plugin ? U : never
+    : U extends Plugin ? U : never;

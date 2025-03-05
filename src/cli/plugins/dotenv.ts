@@ -3,13 +3,7 @@ import {type DotenvParseOutput} from "dotenv";
 
 import {definePlugin} from "@core/define";
 
-export interface DotenvOptions {
-    vars: DotenvParseOutput;
-}
-
-export default definePlugin<DotenvOptions>((options) => {
-    const {vars = {}} = options || {};
-
+export default definePlugin((vars: DotenvParseOutput = {}) => {
     return {
         name: 'adnbn:dotenv',
         webpack: {

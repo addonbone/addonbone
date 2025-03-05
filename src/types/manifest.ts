@@ -6,6 +6,7 @@ type ManifestCommon = chrome.runtime.Manifest;
 type ManifestBase = chrome.runtime.ManifestBase;
 type ManifestV3 = chrome.runtime.ManifestV3;
 type ManifestV2 = chrome.runtime.ManifestV2;
+type ManifestIcons = chrome.runtime.ManifestIcons;
 
 type ManifestFixed<T extends ManifestBase> = Omit<T, 'manifest_version'> & {
     manifest_version: ManifestVersion
@@ -76,6 +77,8 @@ export interface ManifestBuilder<T extends CoreManifest = Manifest> {
 
     setContentScripts(contentScripts?: ManifestContentScriptMap): this;
 
+    setAction(action?: ManifestAction | true): this;
+
     setDependencies(dependencies: ManifestDependenciesMap): this;
 
     get(): T;
@@ -92,6 +95,12 @@ export type ManifestContentScriptMap = Map<string, ManifestContentScript>;
 
 export type ManifestCommand = CommandConfig;
 export type ManifestCommandMap = Set<ManifestCommand>;
+
+export interface ManifestAction {
+    icon?: ManifestIcons;
+    title?: string;
+    popup?: string;
+}
 
 export interface ManifestDependencies {
     js: Set<string>;

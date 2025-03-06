@@ -1,4 +1,4 @@
-import webpack from "webpack";
+import {DefinePlugin} from '@rspack/core';
 import {type DotenvParseOutput} from "dotenv";
 
 import {definePlugin} from "@core/define";
@@ -6,12 +6,12 @@ import {definePlugin} from "@core/define";
 export default definePlugin((vars: DotenvParseOutput = {}) => {
     return {
         name: 'adnbn:dotenv',
-        webpack: {
+        rspack: {
             plugins: [
-                new webpack.DefinePlugin({
+                new DefinePlugin({
                     'process.env': JSON.stringify(vars)
                 })
-            ],
+            ]
         }
     }
 });

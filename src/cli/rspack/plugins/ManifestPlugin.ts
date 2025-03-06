@@ -1,4 +1,4 @@
-import webpack, {Compilation, Compiler} from 'webpack';
+import rspack, {Compilation, Compiler} from '@rspack/core';
 import {ManifestBuilder, ManifestDependencies, ManifestDependenciesMap} from "@typing/manifest";
 
 class ManifestPlugin {
@@ -57,7 +57,7 @@ class ManifestPlugin {
 
                     compilation.emitAsset(
                         'manifest.json',
-                        new webpack.sources.RawSource(json)
+                        new rspack.sources.RawSource(json)
                     );
                 }
             );

@@ -1,9 +1,9 @@
-import {Compiler} from "webpack";
+import {Compiler} from "@rspack/core";
 
 export const build = (compiler: Compiler) => {
     compiler.run((err, stats) => {
         if (err) {
-            console.error('Webpack compilation error:', err);
+            console.error('Rspack compilation error:', err);
             process.exit(1);
         }
 
@@ -20,7 +20,7 @@ export const build = (compiler: Compiler) => {
 
         compiler.close((closeErr) => {
             if (closeErr) {
-                console.error('Webpack close error:', closeErr);
+                console.error('Rspack close error:', closeErr);
                 process.exit(1);
             }
         });
@@ -33,7 +33,7 @@ export const watch = (compiler: Compiler) => {
         ignored: /node_modules/
     }, (err, stats) => {
         if (err) {
-            console.error('Webpack watch error:', err);
+            console.error('Rspack watch error:', err);
             process.exit(1);
         }
 
@@ -51,7 +51,7 @@ export const watch = (compiler: Compiler) => {
 
     process.on('SIGINT', () => {
         watching.close(() => {
-            console.log('Webpack watch mode stopped');
+            console.log('Rspack watch mode stopped');
             process.exit(0);
         });
     });

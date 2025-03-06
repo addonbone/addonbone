@@ -1,8 +1,8 @@
 import _ from "lodash"
 import path from "path";
 
-import {Compiler, EntryNormalized} from 'webpack';
-import VirtualModulesPlugin from 'webpack-virtual-modules';
+import {Compiler, EntryNormalized} from "@rspack/core";
+import VirtualModulesPlugin from 'rspack-plugin-virtual-module';
 
 import {EntrypointFile} from "@typing/entrypoint";
 
@@ -14,7 +14,7 @@ export type EntrypointPluginUpdate = (files: ReadonlySet<string>) => Promise<Ent
 
 export interface EntrypointPluginModule {
     /**
-     * Virtual module name, used in the webpack entry and virtual module.
+     * Virtual module name, used in the rspack entry and virtual module.
      */
     name: string;
 

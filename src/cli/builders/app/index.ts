@@ -1,18 +1,18 @@
-import webpack from 'webpack';
+import {rspack} from '@rspack/core';
 
 import {build, watch} from "./command";
 
 import configResolver from "../../resolvers/config";
-import webpackResolver from "../../resolvers/webpack";
+import rspackResolver from "../../resolvers/rspack";
 
 import {OptionalConfig} from "@typing/config";
 import {Command} from "@typing/app";
 
 export default async (config: OptionalConfig): Promise<void> => {
     const resolverConfig = await configResolver(config);
-    const webpackConfig = await webpackResolver(resolverConfig);
+    const rspackConfig = await rspackResolver(resolverConfig);
 
-    const compiler = webpack(webpackConfig);
+    const compiler = rspack(rspackConfig);
 
     switch (resolverConfig.command) {
         case Command.Build:

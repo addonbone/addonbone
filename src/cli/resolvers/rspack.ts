@@ -1,26 +1,24 @@
-import {Configuration, WebpackPluginInstance} from "webpack";
-import path from "path";
-import TsconfigPathsPlugin from "tsconfig-paths-webpack-plugin";
-import MiniCssExtractPlugin from "mini-css-extract-plugin";
+import {Configuration, RspackPluginInstance} from "@rspack/core";
 import {CleanWebpackPlugin} from "clean-webpack-plugin";
+import path from "path";
 
 import manifestFactory from "../builders/manifest";
 
 import {getOutputPath, getRootPath} from "./path";
 import {processPluginHandler} from "./plugin";
 
-import ManifestPlugin from "../webpack/plugins/ManifestPlugin";
-import WatchPlugin from "../webpack/plugins/WatchPlugin";
-import mergeWebpack from "../webpack/utils/mergeConfig";
+import ManifestPlugin from "@cli/rspack/plugins/ManifestPlugin";
+import WatchPlugin from "@cli/rspack/plugins/WatchPlugin";
+import mergeConfig from "@cli/rspack/utils/mergeConfig";
 
 import {ReadonlyConfig} from "@typing/config";
 import {Command} from "@typing/app";
 
-const getConfigFromPlugins = async (webpack: Configuration, config: ReadonlyConfig): Promise<Configuration> => {
+const getConfigFromPlugins = async (rspack: Configuration, config: ReadonlyConfig): Promise<Configuration> => {
     let mergedConfig: Configuration = {};
 
-    for await (const {result: pluginConfig} of processPluginHandler(config, 'webpack', {webpack, config})) {
-        mergedConfig = mergeWebpack(mergedConfig, pluginConfig);
+    for await (const {result: pluginConfig} of processPluginHandler(config, 'rspack', {rspack, config})) {
+        mergedConfig = mergeConfig(mergedConfig, pluginConfig);
     }
 
     return mergedConfig;
@@ -33,7 +31,7 @@ const getConfigForManifest = async (config: ReadonlyConfig): Promise<Configurati
 
     await update();
 
-    const plugins: WebpackPluginInstance[] = [];
+    const plugins: RspackPluginInstance[] = [];
 
     if (config.command === Command.Watch) {
         plugins.push(new WatchPlugin(async () => {
@@ -47,7 +45,7 @@ const getConfigForManifest = async (config: ReadonlyConfig): Promise<Configurati
 }
 
 export default async (config: ReadonlyConfig): Promise<Configuration> => {
-    let webpack: Configuration = {
+    let rspack: Configuration = {
         entry: {},
         mode: config.mode,
         cache: false,
@@ -58,55 +56,61 @@ export default async (config: ReadonlyConfig): Promise<Configuration> => {
         },
         resolve: {
             extensions: [".ts", ".tsx", ".js", ".scss"],
-            plugins: [new TsconfigPathsPlugin()],
+            alias: {
+                [config.srcDir]: getRootPath(path.join(config.srcDir))
+            }
         },
         module: {
             rules: [
                 {
                     test: /\.tsx?$/,
-                    use: "ts-loader",
+                    loader: "builtin:swc-loader",
+                    options: {
+                        sourceMap: true,
+                        jsc: {
+                            parser: {
+                                syntax: "typescript",
+                                tsx: true
+                            }
+                        }
+                    }
                 },
                 {
                     test: /\.(scss|css)$/,
                     use: [
-                        MiniCssExtractPlugin.loader,
                         {
                             loader: "css-loader",
                             options: {
                                 modules: {
                                     localIdentName: "[local]"
-                                },
+                                }
                             }
                         },
                         {
                             loader: "sass-loader",
                             options: {
-                                implementation: import("sass"),
-                            },
-                        },
+                                implementation: "sass"
+                            }
+                        }
                     ],
-                },
-                {
-                    test: /\.svg$/,
-                    use: ['@svgr/webpack', 'url-loader'],
-                    // issuer: /\.[jt]sx?$/,
+                    type: "css"
                 },
                 {
                     test: /\.(png|apng|jpe?g|gif|webp)$/i,
-                    type: "asset/resource",
-                },
-            ],
+                    type: "asset/resource"
+                }
+            ]
         }
     }
 
-    webpack = mergeWebpack(
-        webpack,
-        await getConfigFromPlugins(webpack, config),
+    rspack = mergeConfig(
+        rspack,
+        await getConfigFromPlugins(rspack, config),
         await getConfigForManifest(config),
     );
 
     if (config.debug) {
-        webpack = mergeWebpack(webpack, {
+        rspack = mergeConfig(rspack, {
             stats: {
                 errorDetails: true,
             },
@@ -114,18 +118,18 @@ export default async (config: ReadonlyConfig): Promise<Configuration> => {
     }
 
     if (config.command == Command.Watch) {
-        webpack = mergeWebpack(webpack, {
+        rspack = mergeConfig(rspack, {
             devtool: 'inline-source-map',
         });
     }
 
     if (config.command == Command.Build) {
-        webpack = mergeWebpack(webpack, {
+        rspack = mergeConfig(rspack, {
             plugins: [
                 new CleanWebpackPlugin(),
             ],
         });
     }
 
-    return webpack;
+    return rspack;
 }

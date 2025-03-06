@@ -1,5 +1,5 @@
 import {ManifestBuilder} from "@typing/manifest";
-import {Configuration as WebpackConfig} from "webpack";
+import {Configuration as RspackConfig} from "@rspack/core";
 
 import {ReadonlyConfig} from "@typing/config";
 import {EntrypointFile} from "@typing/entrypoint";
@@ -15,9 +15,9 @@ export interface PluginManifestOptions extends PluginConfigOptions {
     manifest: ManifestBuilder;
 }
 
-// Webpack
-export interface PluginWebpackOptions extends PluginConfigOptions {
-    webpack: Partial<WebpackConfig>;
+// Rspack
+export interface PluginRspackOptions extends PluginConfigOptions {
+    rspack: RspackConfig;
 }
 
 interface PluginName {
@@ -29,7 +29,7 @@ export interface Plugin extends PluginName {
     background?: PluginHandler<PluginConfigOptions, PluginEntrypointResult>;
     command?: PluginHandler<PluginConfigOptions, PluginEntrypointResult>;
     manifest?: PluginHandlerCallback<PluginManifestOptions>;
-    webpack?: PluginHandler<PluginWebpackOptions, WebpackConfig>;
+    rspack?: PluginHandler<PluginRspackOptions, RspackConfig>;
 }
 
 export type PluginHandler<O, T = void> = T | PluginHandlerCallback<O, T>;

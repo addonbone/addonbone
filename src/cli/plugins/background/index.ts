@@ -1,6 +1,6 @@
 import _ from "lodash";
 
-import {Configuration as WebpackConfig} from "webpack";
+import {Configuration as RspackConfig} from "@rspack/core";
 
 import getBackgroundEntrypoint from "./entrypoint/background";
 import getCommandEntrypoint from "./entrypoint/command";
@@ -8,7 +8,7 @@ import getCommandEntrypoint from "./entrypoint/command";
 import {definePlugin} from "@core/define";
 import {virtualBackgroundModule, virtualCommandModule} from "@cli/virtual";
 
-import EntrypointPlugin, {EntrypointPluginEntries} from "@cli/webpack/plugins/EntrypointPlugin";
+import EntrypointPlugin, {EntrypointPluginEntries} from "@cli/rspack/plugins/EntrypointPlugin";
 
 import {getEntrypointFiles} from "@cli/resolvers/entrypoint";
 
@@ -48,7 +48,7 @@ export default definePlugin(() => {
         name: 'adnbn:background',
         background: ({config}) => getEntrypointFiles(config, EntrypointType.Background),
         command: ({config}) => getEntrypointFiles(config, EntrypointType.Command),
-        webpack: async ({config, webpack}) => {
+        rspack: async ({config, rspack}) => {
             backgroundEntrypoint = await getBackgroundEntrypoint(config);
             commandEntrypoint = await getCommandEntrypoint(config);
 
@@ -92,12 +92,12 @@ export default definePlugin(() => {
                 });
             }
 
-            let resolvedWebpack: WebpackConfig = {
+            let resolvedRspack: RspackConfig = {
                 plugins: [backgroundEntrypointPlugin, commandEntrypointPlugin],
                 optimization: {
                     splitChunks: {
                         chunks(chunk) {
-                            const {chunks} = webpack.optimization?.splitChunks || {};
+                            const {chunks} = rspack.optimization?.splitChunks || {};
 
                             if (_.isFunction(chunks) && !chunks(chunk)) {
                                 return false;
@@ -109,7 +109,7 @@ export default definePlugin(() => {
                 }
             };
 
-            return resolvedWebpack;
+            return resolvedRspack;
         },
         manifest: ({manifest}) => {
             manifest

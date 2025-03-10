@@ -15,6 +15,7 @@ export interface Config {
     srcDir: string;
     sharedDir: string;
     appsDir: string;
+    appSrcDir: string;
     jsDir: string;
     cssDir: string;
     assetsDir: string;

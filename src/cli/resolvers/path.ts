@@ -11,7 +11,7 @@ export const getSharedPath = (config: ReadonlyConfig, to?: string): string => {
 }
 
 export const getAppsPath = (config: ReadonlyConfig, to?: string): string => {
-    return path.join(config.inputDir, config.srcDir, config.appsDir, config.app, to ?? '');
+    return path.join(config.inputDir, config.srcDir, config.appsDir, config.app, config.appSrcDir, to ?? '');
 }
 
 export const getInputPath = (config: ReadonlyConfig, to?: string): string => {

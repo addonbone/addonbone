@@ -1,5 +1,6 @@
 //@ts-ignore
 import {type CommandDefinition} from "adnbn";
+//@ts-ignore
 import {handleCommand} from "adnbn/client";
 
 import * as module from "virtual:command-entrypoint";

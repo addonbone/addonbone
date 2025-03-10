@@ -16,7 +16,7 @@ import {BackgroundEntrypointMap} from "@typing/background";
 import {Command} from "@typing/app";
 import {EntrypointType} from "@typing/entrypoint";
 import {CommandEntrypointMap} from "@typing/command";
-import {ManifestCommand, ManifestCommandMap} from "@typing/manifest";
+import {ManifestCommand, ManifestCommands} from "@typing/manifest";
 
 const name = 'background';
 
@@ -28,7 +28,7 @@ const isPersistent = (background?: BackgroundEntrypointMap): boolean => {
     return Array.from(background.values()).some(({persistent}) => persistent);
 }
 
-const getCommands = (command?: CommandEntrypointMap): ManifestCommandMap | undefined => {
+const getCommands = (command?: CommandEntrypointMap): ManifestCommands | undefined => {
     if (!command || command.size === 0) {
         return undefined;
     }

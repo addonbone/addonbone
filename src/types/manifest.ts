@@ -73,28 +73,30 @@ export interface ManifestBuilder<T extends CoreManifest = Manifest> {
 
     setBackground(background?: ManifestBackground): this;
 
-    setCommands(commands?: ManifestCommandMap): this;
+    setCommands(commands?: ManifestCommands): this;
 
-    setContentScripts(contentScripts?: ManifestContentScriptMap): this;
+    setContentScripts(contentScripts?: ManifestContentScripts): this;
 
     setAction(action?: ManifestAction | true): this;
 
-    setDependencies(dependencies: ManifestDependenciesMap): this;
+    setDependencies(dependencies: ManifestDependencies): this;
 
     get(): T;
 }
 
+type Entry = string;
+
 export interface ManifestEntry {
-    entry: string,
+    entry: Entry,
 }
 
 export type ManifestBackground = ManifestEntry & BackgroundConfig;
 
 export type ManifestContentScript = ManifestEntry & ContentScriptConfig;
-export type ManifestContentScriptMap = Map<string, ManifestContentScript>;
+export type ManifestContentScripts = Set<ManifestContentScript>;
 
 export type ManifestCommand = CommandConfig;
-export type ManifestCommandMap = Set<ManifestCommand>;
+export type ManifestCommands = Set<ManifestCommand>;
 
 export interface ManifestAction {
     icon?: ManifestIcons;
@@ -102,10 +104,10 @@ export interface ManifestAction {
     popup?: string;
 }
 
-export interface ManifestDependencies {
+export interface ManifestDependency {
     js: Set<string>;
     css: Set<string>;
     assets: Set<string>;
 }
 
-export type ManifestDependenciesMap = Map<string, ManifestDependencies>;
+export type ManifestDependencies = Map<Entry, ManifestDependency>;

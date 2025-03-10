@@ -1,5 +1,5 @@
 import rspack, {Compilation, Compiler} from '@rspack/core';
-import {ManifestBuilder, ManifestDependencies, ManifestDependenciesMap} from "@typing/manifest";
+import {ManifestBuilder, ManifestDependency, ManifestDependencies} from "@typing/manifest";
 
 class ManifestPlugin {
     constructor(private readonly manifest: ManifestBuilder) {
@@ -13,10 +13,10 @@ class ManifestPlugin {
                     stage: Compilation.PROCESS_ASSETS_STAGE_ADDITIONS
                 },
                 () => {
-                    const entryDependencies: ManifestDependenciesMap = new Map();
+                    const entryDependencies: ManifestDependencies = new Map();
 
                     compilation.entrypoints.forEach((entryPoint, entryName) => {
-                        const dependencies: ManifestDependencies = {
+                        const dependencies: ManifestDependency = {
                             assets: new Set(),
                             css: new Set(),
                             js: new Set(),

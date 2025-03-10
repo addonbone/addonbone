@@ -1,4 +1,6 @@
-import {EntrypointOptions} from "@typing/entrypoint";
+import {type FC} from "react"
+
+import {EntrypointFile, EntrypointOptions} from "@typing/entrypoint";
 
 type ExecutionWorld = chrome.scripting.ExecutionWorld;
 type RunAt = chrome.userScripts.RunAt;
@@ -48,8 +50,30 @@ export interface ContentScriptConfig {
 
 export type ContentScriptEntrypointOptions = ContentScriptConfig & EntrypointOptions;
 
-export type ContentScriptEntrypointMap = Map<string, ContentScriptDefinition>;
+export type ContentScriptEntrypointMap = Map<EntrypointFile, ContentScriptEntrypointOptions>;
+
+export enum ContentScriptAppendMode {
+    Last = 'last',
+    First = 'first',
+    Replace = 'replace',
+    Before = 'before',
+    After = 'after',
+}
+export type ContentScriptAppendHandler = (anchor: Element, ui: Element) => void;
+
+export type ContentScriptAnchor = string | Element | null | undefined;
+export type ContentScriptAnchorHandler = () => ContentScriptAnchor | Promise<ContentScriptAppendHandler>;
+
+export interface ContentScriptRenderProps extends ContentScriptEntrypointOptions {
+    anchor: Element;
+}
+
+export type ContentScriptRenderComponent = FC<ContentScriptRenderProps>;
+export type ContentScriptRenderHandler = (props: ContentScriptRenderProps) => any;
+
 
 export interface ContentScriptDefinition extends ContentScriptEntrypointOptions {
-    render?(): Promise<void>;
+    anchor?: ContentScriptAnchor | ContentScriptAnchorHandler;
+    append?: ContentScriptAppendMode | ContentScriptAppendHandler;
+    render?: ContentScriptRenderComponent | ContentScriptRenderHandler;
 }

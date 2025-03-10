@@ -6,6 +6,7 @@ import {BackgroundEntrypointOptions} from "@typing/background";
 import {CommandEntrypointOptions} from "@typing/command";
 import {Browser} from "@typing/browser";
 import {EntrypointFile} from "@typing/entrypoint";
+import {ContentScriptEntrypointOptions} from "@typing/content";
 
 const CommonPropertiesSchema = z.object({
     includeApp: z.array(z.string()).optional(),
@@ -57,4 +58,20 @@ export const getCommandOptions = (file: EntrypointFile): CommandEntrypointOption
     });
 
     return parseOptions(file, CommandPropertiesSchema, 'defineCommand');
+}
+
+export const getContentScriptOptions = (file: EntrypointFile): ContentScriptEntrypointOptions => {
+    const ContentScriptPropertiesSchema = CommonPropertiesSchema.extend({
+        matches: z.array(z.string()).optional(),
+        excludeMatches: z.array(z.string()).optional(),
+        matchAboutBlank: z.boolean().optional(),
+        includeGlobs: z.array(z.string()).optional(),
+        excludeGlobs: z.array(z.string()).optional(),
+        allFrames: z.boolean().optional(),
+        world: z.enum(['isolated', 'normal']).optional(),
+        runAt: z.enum(['document_start', 'document_end', 'document_idle']).optional(),
+        matchOriginAsFallback: z.boolean().optional(),
+    });
+
+    return parseOptions(file, ContentScriptPropertiesSchema, 'defineContentScript');
 }

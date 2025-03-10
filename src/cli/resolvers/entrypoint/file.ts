@@ -73,6 +73,20 @@ export const findEntrypointFiles = (
 
     finder(directory);
 
+    if (files.length === 0) {
+        try {
+            directory = path.join(directory, entrypoint);
+
+            const stat = fs.statSync(directory);
+
+            if (stat.isDirectory()) {
+                finder(directory);
+            }
+        } catch (e) {
+            //console.log('Error reading entrypoint directory:', directory);
+        }
+    }
+
     return new Set(files);
 };
 
@@ -92,6 +106,7 @@ export const getEntrypointFiles = (config: ReadonlyConfig, entrypoint: Entrypoin
     const mergeShared: boolean = {
         [EntrypointType.Background]: config.mergeBackground,
         [EntrypointType.Command]: config.mergeCommands,
+        [EntrypointType.ContentScript]: config.mergeContentScripts,
     }[entrypoint];
 
     if (appFiles.size > 0 && mergeShared || appFiles.size === 0) {

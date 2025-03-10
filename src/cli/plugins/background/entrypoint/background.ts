@@ -1,4 +1,3 @@
-
 import {getPluginEntrypointFiles} from "@cli/resolvers/plugin";
 import {getBackgroundOptions} from "@cli/resolvers/entrypoint";
 import {isValidEntrypointOptions} from "@cli/utils/option";

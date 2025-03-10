@@ -1,8 +1,10 @@
 import {getPluginEntrypointFiles} from "@cli/resolvers/plugin";
 import {getCommandOptions} from "@cli/resolvers/entrypoint";
-import {isValidEntrypointOptions} from "@cli/utils/option";
 
-import {EntrypointFile} from "@typing/entrypoint";
+import {isValidEntrypointOptions} from "@cli/utils/option";
+import {getEntrypointName} from "@cli/utils/entrypoint";
+
+import {EntrypointFile, EntrypointType} from "@typing/entrypoint";
 import {ReadonlyConfig} from "@typing/config";
 import {CommandEntrypointMap} from "@typing/command";
 
@@ -23,11 +25,7 @@ const generateUniqueName = (name: string): string => {
 }
 
 const extractNameFromFile = (file: EntrypointFile): string => {
-    const fileName = file.file.split('/').pop() ?? '';
-
-    const commandName = fileName.match(/^index\.(ts|tsx)$/) ? 'command' : fileName.replace(/\.command\.(ts|tsx)$/, '').replace(/\.(ts|tsx)$/, '');
-
-    return generateUniqueName(commandName ?? 'command');
+    return generateUniqueName(getEntrypointName(file, EntrypointType.Command));
 }
 
 const commandFilesToEntries = (files: Set<EntrypointFile>): CommandEntrypointMap => {

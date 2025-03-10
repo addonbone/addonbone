@@ -1,5 +1,5 @@
 declare module 'virtual:background-entrypoint' {
-    type BackgroundDefinition = import('adnbn').BackgroundDefinition;
+    type BackgroundDefinition = import('@typing/background').BackgroundDefinition;
 
     interface ModuleType extends BackgroundDefinition {
         default: BackgroundDefinition | BackgroundDefinition['main'] | undefined;
@@ -7,19 +7,26 @@ declare module 'virtual:background-entrypoint' {
 
     const module: ModuleType;
     export = module;
-
-    export as namespace virtualBackgroundEntrypoint;
 }
 
 declare module 'virtual:command-entrypoint' {
-    type CommandDefinition = import('adnbn').CommandDefinition;
+    type CommandDefinition = import('@typing/command').CommandDefinition;
 
     interface ModuleType extends CommandDefinition {
-        default: CommandDefinition | CommandDefinition['main'] | undefined;
+        default: CommandDefinition | CommandDefinition['execute'] | undefined;
     }
 
     const module: ModuleType;
     export = module;
+}
 
-    export as namespace virtualCommandEntrypoint;
+declare module 'virtual:content-entrypoint' {
+    type ContentScriptDefinition = import('@typing/content').ContentScriptDefinition;
+
+    interface ModuleType extends ContentScriptDefinition {
+        default: ContentScriptDefinition | ContentScriptDefinition['render'] | undefined;
+    }
+
+    const module: ModuleType;
+    export = module;
 }

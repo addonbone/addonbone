@@ -4,6 +4,7 @@ import {ManifestVersion} from "@typing/manifest";
 import {Browser} from "@typing/browser";
 
 type ManifestV2 = chrome.runtime.ManifestV2;
+type ManifestV3 = chrome.runtime.ManifestV3;
 
 export default class extends ManifestBase<ManifestV2> {
 
@@ -56,15 +57,17 @@ export default class extends ManifestBase<ManifestV2> {
     }
 
     protected buildContentScripts(): Partial<ManifestV2> | undefined {
-        if (this.contentScripts.size > 0) {
-            const contentScripts: ManifestV2['content_scripts'] = Array.from(this.contentScripts, ([_, contentScript]) => ({
-                matches: contentScript.matches,
-                exclude_matches: contentScript.excludeMatches,
-                all_frames: contentScript.allFrames,
-                run_at: contentScript.runAt,
-                exclude_globs: contentScript.excludeGlobs,
-                include_globs: contentScript.includeGlobs,
-            }));
+        const manifest = super.buildContentScripts() as Partial<ManifestV3>;
+
+        if (manifest) {
+            const {content_scripts} = manifest;
+
+            if (!content_scripts) {
+                return;
+            }
+
+            const contentScripts = content_scripts
+                .map(({world, ...script}) => script);
 
             return {content_scripts: contentScripts};
         }

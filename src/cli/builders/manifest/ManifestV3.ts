@@ -57,20 +57,4 @@ export default class extends ManifestBase<ManifestV3> {
             };
         }
     }
-
-    protected buildContentScripts(): Partial<ManifestV3> | undefined {
-        if (this.contentScripts.size > 0) {
-            const contentScripts: ManifestV3['content_scripts'] = Array.from(this.contentScripts, ([_, contentScript]) => ({
-                matches: contentScript.matches,
-                exclude_matches: contentScript.excludeMatches,
-                all_frames: contentScript.allFrames,
-                run_at: contentScript.runAt,
-                exclude_globs: contentScript.excludeGlobs,
-                include_globs: contentScript.includeGlobs,
-                world: contentScript.world,
-            }));
-
-            return {content_scripts: contentScripts};
-        }
-    }
 }

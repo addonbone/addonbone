@@ -4,9 +4,9 @@ import {
     ManifestAction,
     ManifestBackground,
     ManifestBuilder,
-    ManifestCommandMap,
-    ManifestContentScriptMap,
-    ManifestDependenciesMap,
+    ManifestCommands,
+    ManifestContentScripts,
+    ManifestDependencies,
     ManifestVersion
 } from "@typing/manifest";
 
@@ -26,17 +26,15 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
     protected version: string = "0.0.0";
     protected background?: ManifestBackground;
     protected action?: ManifestAction;
-    protected commands: ManifestCommandMap = new Set();
-    protected contentScripts: ManifestContentScriptMap = new Map();
-    protected dependencies: ManifestDependenciesMap = new Map();
+    protected commands: ManifestCommands = new Set();
+    protected contentScripts: ManifestContentScripts = new Set();
+    protected dependencies: ManifestDependencies = new Map();
 
     public abstract getManifestVersion(): ManifestVersion;
 
     protected abstract buildBackground(): Partial<T> | undefined;
 
     protected abstract buildAction(): Partial<T> | undefined;
-
-    protected abstract buildContentScripts(): Partial<T> | undefined;
 
     protected constructor(protected readonly browser: Browser = Browser.Chrome) {
     }
@@ -71,14 +69,14 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
         return this;
     }
 
-    public setCommands(commands?: ManifestCommandMap): this {
+    public setCommands(commands?: ManifestCommands): this {
         this.commands = commands || new Set();
 
         return this;
     }
 
-    public setContentScripts(contentScripts?: ManifestContentScriptMap): this {
-        this.contentScripts = contentScripts || new Map();
+    public setContentScripts(contentScripts?: ManifestContentScripts): this {
+        this.contentScripts = contentScripts || new Set();
 
         return this;
     }
@@ -93,7 +91,7 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
         return this;
     }
 
-    public setDependencies(dependencies: ManifestDependenciesMap): this {
+    public setDependencies(dependencies: ManifestDependencies): this {
         this.dependencies = dependencies;
 
         return this;
@@ -148,6 +146,42 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
             }, {} as T['commands']);
 
             return {commands};
+        }
+    }
+
+    protected buildContentScripts(): Partial<CoreManifest> | undefined {
+        if (this.contentScripts.size > 0) {
+            const contentScripts: CoreManifest['content_scripts'] = [];
+
+            for (const script of this.contentScripts.values()) {
+                const {entry, matches, excludeMatches, allFrames, runAt, excludeGlobs, includeGlobs, world} = script;
+
+                const dependencies = this.dependencies.get(entry);
+
+                if (!dependencies) {
+                    throw new ManifestError(`Content script entry "${entry}" not found in dependencies`);
+                }
+
+                const js = Array.from(dependencies.js);
+                const css = Array.from(dependencies.css);
+
+                if (js.length === 0 && css.length === 0) {
+                    throw new ManifestError(`Content script and style entry "${entry}" not found in dependencies`);
+                }
+
+                contentScripts.push({
+                    matches,
+                    exclude_matches: excludeMatches,
+                    all_frames: allFrames,
+                    run_at: runAt,
+                    exclude_globs: excludeGlobs,
+                    include_globs: includeGlobs,
+                    js,
+                    world,
+                });
+            }
+
+            return {content_scripts: contentScripts};
         }
     }
 

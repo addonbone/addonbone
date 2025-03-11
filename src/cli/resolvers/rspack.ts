@@ -1,5 +1,6 @@
 import {Configuration, RspackPluginInstance} from "@rspack/core";
 import {CleanWebpackPlugin} from "clean-webpack-plugin";
+import {RsdoctorRspackPlugin} from "@rsdoctor/rspack-plugin";
 import path from "path";
 
 import manifestFactory from "../builders/manifest";
@@ -129,6 +130,20 @@ export default async (config: ReadonlyConfig): Promise<Configuration> => {
                 new CleanWebpackPlugin(),
             ],
         });
+
+        if (config.analyze) {
+            rspack = mergeConfig(rspack, {
+                plugins: [
+                    new RsdoctorRspackPlugin({
+                        supports: {
+                            banner: true,
+                            parseBundle: true,
+                            generateTileGraph: true,
+                        }
+                    }),
+                ],
+            });
+        }
     }
 
     return rspack;

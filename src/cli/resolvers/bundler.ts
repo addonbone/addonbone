@@ -9,9 +9,9 @@ import manifestFactory from "../builders/manifest";
 import {getOutputPath, getRootPath} from "./path";
 import {processPluginHandler} from "./plugin";
 
-import ManifestPlugin from "@cli/rspack/plugins/ManifestPlugin";
-import WatchPlugin from "@cli/rspack/plugins/WatchPlugin";
-import mergeConfig from "@cli/rspack/utils/mergeConfig";
+import ManifestPlugin from "@cli/bundler/plugins/ManifestPlugin";
+import WatchPlugin from "@cli/bundler/plugins/WatchPlugin";
+import mergeConfig from "@cli/bundler/utils/mergeConfig";
 
 import {ReadonlyConfig} from "@typing/config";
 import {Command} from "@typing/app";
@@ -19,7 +19,7 @@ import {Command} from "@typing/app";
 const getConfigFromPlugins = async (rspack: Configuration, config: ReadonlyConfig): Promise<Configuration> => {
     let mergedConfig: Configuration = {};
 
-    for await (const {result: pluginConfig} of processPluginHandler(config, 'rspack', {rspack, config})) {
+    for await (const {result: pluginConfig} of processPluginHandler(config, 'bundler', {rspack, config})) {
         mergedConfig = mergeConfig(mergedConfig, pluginConfig);
     }
 

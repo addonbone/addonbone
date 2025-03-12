@@ -11,7 +11,7 @@ import {virtualContentScriptModule} from "@cli/virtual";
 import {getEntrypointName} from "@cli/utils/entrypoint";
 import {isValidEntrypointOptions} from "@cli/utils/option";
 
-import EntrypointPlugin, {EntrypointPluginEntries} from "@cli/rspack/plugins/EntrypointPlugin";
+import EntrypointPlugin, {EntrypointPluginEntries} from "@cli/bundler/plugins/EntrypointPlugin";
 
 import {EntrypointFile, EntrypointType} from "@typing/entrypoint";
 import {ContentScriptEntrypointMap, ContentScriptEntrypointOptions} from "@typing/content";
@@ -126,7 +126,7 @@ export default definePlugin(() => {
     return {
         name: 'adnbn:content',
         content: ({config}) => getEntrypointFiles(config, EntrypointType.ContentScript),
-        rspack: async ({config}) => {
+        bundler: async ({config}) => {
             contentScriptEntries = await getContentScriptEntries(config);
 
             if (_.isEmpty(contentScriptEntries)) {

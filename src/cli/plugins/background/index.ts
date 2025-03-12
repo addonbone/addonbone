@@ -8,7 +8,7 @@ import getCommandEntrypoint from "./entrypoint/command";
 import {definePlugin} from "@core/define";
 import {virtualBackgroundModule, virtualCommandModule} from "@cli/virtual";
 
-import EntrypointPlugin, {EntrypointPluginEntries} from "@cli/rspack/plugins/EntrypointPlugin";
+import EntrypointPlugin, {EntrypointPluginEntries} from "@cli/bundler/plugins/EntrypointPlugin";
 
 import {getEntrypointFiles} from "@cli/resolvers/entrypoint";
 
@@ -48,7 +48,7 @@ export default definePlugin(() => {
         name: 'adnbn:background',
         background: ({config}) => getEntrypointFiles(config, EntrypointType.Background),
         command: ({config}) => getEntrypointFiles(config, EntrypointType.Command),
-        rspack: async ({config, rspack}) => {
+        bundler: async ({config, rspack}) => {
             backgroundEntrypoint = await getBackgroundEntrypoint(config);
             commandEntrypoint = await getCommandEntrypoint(config);
 

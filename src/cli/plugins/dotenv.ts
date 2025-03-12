@@ -6,7 +6,7 @@ import {definePlugin} from "@core/define";
 export default definePlugin((vars: DotenvParseOutput = {}) => {
     return {
         name: 'adnbn:dotenv',
-        rspack: {
+        bundler: {
             plugins: [
                 new DefinePlugin({
                     'process.env': JSON.stringify(vars)

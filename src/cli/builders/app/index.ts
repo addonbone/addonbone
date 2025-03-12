@@ -3,14 +3,14 @@ import {rspack} from '@rspack/core';
 import {build, watch} from "./command";
 
 import configResolver from "../../resolvers/config";
-import rspackResolver from "../../resolvers/rspack";
+import bundlerResolver from "../../resolvers/bundler";
 
 import {OptionalConfig} from "@typing/config";
 import {Command} from "@typing/app";
 
 export default async (config: OptionalConfig): Promise<void> => {
     const resolverConfig = await configResolver(config);
-    const rspackConfig = await rspackResolver(resolverConfig);
+    const rspackConfig = await bundlerResolver(resolverConfig);
 
     const compiler = rspack(rspackConfig);
 

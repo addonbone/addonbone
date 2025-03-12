@@ -16,7 +16,7 @@ export interface PluginManifestOptions extends PluginConfigOptions {
 }
 
 // Rspack
-export interface PluginRspackOptions extends PluginConfigOptions {
+export interface PluginBundlerOptions extends PluginConfigOptions {
     rspack: RspackConfig;
 }
 
@@ -29,7 +29,7 @@ export interface Plugin extends PluginName {
     background?: PluginHandler<PluginConfigOptions, PluginEntrypointResult>;
     command?: PluginHandler<PluginConfigOptions, PluginEntrypointResult>;
     manifest?: PluginHandlerCallback<PluginManifestOptions>;
-    rspack?: PluginHandler<PluginRspackOptions, RspackConfig>;
+    bundler?: PluginHandler<PluginBundlerOptions, RspackConfig>;
 }
 
 export type PluginHandler<O, T = void> = T | PluginHandlerCallback<O, T>;
@@ -38,7 +38,7 @@ export type PluginHandlerCallback<O, T = void> = { (options: O): T | Promise<T> 
 
 export type PluginHandlerKeys = keyof Omit<Plugin, 'name'>;
 
-export type PluginEntrypointKeys = keyof Pick<Plugin, 'content' | 'background' | 'command'>;
+export type PluginEntrypointKeys = keyof Pick<Plugin, 'background' | 'command' | 'content'>;
 
 export type PluginHandlerType<T extends Plugin[PluginHandlerKeys]> =
     T extends PluginHandlerCallback<infer O, infer R> ? { options: O; result: R } : never;

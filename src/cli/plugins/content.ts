@@ -1,4 +1,5 @@
 import _ from "lodash";
+import path from "path";
 import stringify from "json-stringify-deterministic";
 
 import {definePlugin} from "@core/define";
@@ -20,7 +21,10 @@ import {Command} from "@typing/app";
 
 type ContentScriptEntries = Record<string, Array<{ options: ContentScriptEntrypointOptions, file: EntrypointFile }>>;
 
-const registeredEntryNames = new Set<string>();
+const contentEntryNameSuffix = EntrypointType.ContentScript;
+const frameworkContentEntryName = 'framework.' + contentEntryNameSuffix;
+
+const registeredEntryNames = new Set<string>([frameworkContentEntryName]);
 const entryNameByOptions = new Map<string, string>();
 
 const generateUniqueEntryName = (file: EntrypointFile): string => {
@@ -29,12 +33,12 @@ const generateUniqueEntryName = (file: EntrypointFile): string => {
     let entryName = name;
     let counter = 1;
 
-    if (entryName !== EntrypointType.ContentScript) {
-        entryName = `${entryName}.${EntrypointType.ContentScript}`;
+    if (entryName !== contentEntryNameSuffix) {
+        entryName = `${entryName}.${contentEntryNameSuffix}`;
     }
 
     while (registeredEntryNames.has(entryName)) {
-        entryName = name === EntrypointType.ContentScript ? `${counter}.${name}` : `${name}${counter}.${EntrypointType.ContentScript}`;
+        entryName = name === contentEntryNameSuffix ? `${counter}.${name}` : `${name}${counter}.${contentEntryNameSuffix}`;
 
         counter++;
     }
@@ -144,7 +148,32 @@ export default definePlugin(() => {
                 });
             }
 
-            return {plugins: [contentEntrypointPlugin]};
+            return {
+                plugins: [contentEntrypointPlugin],
+                optimization: {
+                    splitChunks: {
+                        cacheGroups: {
+                            frameworkContent: {
+                                name: frameworkContentEntryName,
+                                test: (module) => {
+                                    const modulePath = module.resource || '';
+
+                                    return [
+                                        path.join('node_modules', 'adnbn', 'client', 'content'),
+                                        path.join('addonbone', 'dist', 'client', 'content'), // TODO: Remove this when addonbone is published
+                                    ].some(p => modulePath.includes(p));
+                                },
+                                chunks: (chunk,) => {
+                                    return chunk.name === contentEntryNameSuffix || chunk.name?.includes(`.${contentEntryNameSuffix}`);
+                                },
+                                enforce: true,
+                                reuseExistingChunk: true,
+                                priority: -10
+                            }
+                        }
+                    }
+                }
+            };
         },
         manifest: ({manifest}) => {
             manifest.setContentScripts(contentScriptForManifest(contentScriptEntries));

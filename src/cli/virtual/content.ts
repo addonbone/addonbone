@@ -1,24 +1,24 @@
 //@ts-ignore
 import {type ContentScriptDefinition} from "adnbn";
+//@ts-ignore
+import {handleContentScript} from "adnbn/client/content";
 
 import * as module from "virtual:content-entrypoint";
-
-import _isFunction from "lodash/isFunction";
-import _isPlainObject from "lodash/isPlainObject";
 
 try {
     const {default: defaultDefinition, ...otherDefinition} = module;
 
     let definition: ContentScriptDefinition = otherDefinition;
 
-    if (_isPlainObject(defaultDefinition)) {
+    if (defaultDefinition && typeof defaultDefinition === 'object' && defaultDefinition.constructor === Object) {
         definition = {...definition, ...defaultDefinition};
-    } else if (_isFunction(defaultDefinition)) {
+    } else if (typeof defaultDefinition === 'function') {
         definition = {...definition, render: defaultDefinition};
     }
 
     const {render, ...options} = definition;
 
+    handleContentScript({render, ...options});
 } catch (e) {
     console.error('The content script crashed on startup:', e);
 }

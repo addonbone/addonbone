@@ -39,7 +39,9 @@ const exports: Options = {
     entry: {
         'index': 'src/index.ts',
         'browser/index': 'src/browser/index.ts',
-        'client/index': 'src/client/index.ts',
+        'client/background': 'src/client/background.ts',
+        'client/command': 'src/client/command.ts',
+        'client/content': 'src/client/content.ts',
     },
     format: ['esm', 'cjs'],
     outExtension({format}) {

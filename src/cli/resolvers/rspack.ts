@@ -2,6 +2,7 @@ import {Configuration, RspackPluginInstance} from "@rspack/core";
 import {CleanWebpackPlugin} from "clean-webpack-plugin";
 import {RsdoctorRspackPlugin} from "@rsdoctor/rspack-plugin";
 import path from "path";
+import _ from "lodash";
 
 import manifestFactory from "../builders/manifest";
 
@@ -54,12 +55,38 @@ export default async (config: ReadonlyConfig): Promise<Configuration> => {
             path: getRootPath(getOutputPath(config)),
             filename: path.join(config.jsDir, '[name].js'),
             assetModuleFilename: path.join(config.assetsDir, '[name]-[hash:4][ext]'),
+            hotUpdateGlobal: 'adnbnHotUpdate' + _.capitalize(config.app),
+            chunkLoadingGlobal: 'adnbnChunk' + _.capitalize(config.app),
+            devtoolNamespace: config.app,
+            uniqueName: config.app
         },
         resolve: {
             extensions: [".ts", ".tsx", ".js", ".scss"],
             alias: {
                 [config.srcDir]: getRootPath(path.join(config.srcDir))
             }
+        },
+        optimization: {
+            splitChunks: {
+                minSize: 10,
+                cacheGroups: {
+                    default: false,
+                    defaultVendors: false,
+                    react: {
+                        name: 'react',
+                        test: /[\\/]node_modules[\\/](react|@?react[^\\/]*|[^\\/]*@?react[^\\/]*)[\\/]/,
+                        priority: -5,
+                        reuseExistingChunk: true,
+                        enforce: true,
+                    },
+                    common: {
+                        name: "common",
+                        minChunks: 2,
+                        priority: -20,
+                        reuseExistingChunk: true,
+                    },
+                },
+            },
         },
         module: {
             rules: [
@@ -73,8 +100,10 @@ export default async (config: ReadonlyConfig): Promise<Configuration> => {
                                 syntax: "typescript",
                                 tsx: true
                             }
-                        }
-                    }
+                        },
+                        target: "es2020"
+                    },
+                    type: 'javascript/auto',
                 },
                 {
                     test: /\.(scss|css)$/,
@@ -139,7 +168,7 @@ export default async (config: ReadonlyConfig): Promise<Configuration> => {
                             banner: true,
                             parseBundle: true,
                             generateTileGraph: true,
-                        }
+                        },
                     }),
                 ],
             });

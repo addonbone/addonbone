@@ -1,29 +1,24 @@
 //@ts-ignore
 import {type BackgroundDefinition} from "adnbn";
+//@ts-ignore
+import {handleBackground} from "adnbn/client/background";
 
 import * as module from "virtual:background-entrypoint";
-
-import _isFunction from "lodash/isFunction";
-import _isPlainObject from "lodash/isPlainObject";
 
 try {
     const {default: defaultDefinition, ...otherDefinition} = module;
 
     let definition: BackgroundDefinition = otherDefinition;
 
-    if (_isPlainObject(defaultDefinition)) {
+    if (defaultDefinition && typeof defaultDefinition === 'object' && defaultDefinition.constructor === Object) {
         definition = {...definition, ...defaultDefinition};
-    } else if (_isFunction(defaultDefinition)) {
+    } else if (typeof defaultDefinition === 'function') {
         definition = {...definition, main: defaultDefinition};
     }
 
     const {main, ...options} = definition;
 
-    if (_isFunction(main)) {
-        Promise.resolve(main(options)).catch((e) => {
-            console.error('The background main function crashed:', e);
-        });
-    }
+    handleBackground({main, ...options});
 } catch (e) {
     console.error('The background crashed on startup:', e);
 }

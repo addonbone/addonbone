@@ -32,10 +32,20 @@
       "import": "./dist/browser/index.js",
       "require": "./dist/browser/index.cjs"
     },
-    "./client": {
-      "types": "./dist/client/index.d.ts",
-      "import": "./dist/client/index.js",
-      "require": "./dist/client/index.cjs"
+    "./client/background": {
+      "types": "./dist/client/background.d.ts",
+      "import": "./dist/client/background.js",
+      "require": "./dist/client/background.cjs"
+    },
+    "./client/command": {
+      "types": "./dist/client/command.d.ts",
+      "import": "./dist/client/command.js",
+      "require": "./dist/client/command.cjs"
+    },
+    "./client/content": {
+      "types": "./dist/client/content.d.ts",
+      "import": "./dist/client/content.js",
+      "require": "./dist/client/content.cjs"
     }
   },
   "main": "./dist/index.js",

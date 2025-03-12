@@ -62,18 +62,18 @@ export enum ContentScriptAppendMode {
 export type ContentScriptAppendHandler = (anchor: Element, ui: Element) => void;
 
 export type ContentScriptAnchor = string | Element | null | undefined;
-export type ContentScriptAnchorHandler = () => ContentScriptAnchor | Promise<ContentScriptAppendHandler>;
+export type ContentScriptAnchorGetter = () => ContentScriptAnchor | Promise<ContentScriptAnchor>;
 
 export interface ContentScriptRenderProps extends ContentScriptEntrypointOptions {
     anchor: Element;
 }
 
 export type ContentScriptRenderComponent = FC<ContentScriptRenderProps>;
-export type ContentScriptRenderHandler = (props: ContentScriptRenderProps) => any;
+export type ContentScriptRenderHandler = (props: ContentScriptRenderProps) => void | ContentScriptRenderComponent | Promise<void | ContentScriptRenderComponent>;
 
 
 export interface ContentScriptDefinition extends ContentScriptEntrypointOptions {
-    anchor?: ContentScriptAnchor | ContentScriptAnchorHandler;
+    anchor?: ContentScriptAnchor | ContentScriptAnchorGetter;
     append?: ContentScriptAppendMode | ContentScriptAppendHandler;
     render?: ContentScriptRenderComponent | ContentScriptRenderHandler;
 }

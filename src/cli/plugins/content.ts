@@ -1,6 +1,7 @@
 import _ from "lodash";
 import path from "path";
 import stringify from "json-stringify-deterministic";
+import {Configuration as RspackConfig} from "@rspack/core";
 
 import {definePlugin} from "@core/define";
 import {getPluginEntrypointFiles} from "@cli/resolvers/plugin";
@@ -148,7 +149,7 @@ export default definePlugin(() => {
                 });
             }
 
-            return {
+            const rspack: RspackConfig = {
                 plugins: [contentEntrypointPlugin],
                 optimization: {
                     splitChunks: {
@@ -164,7 +165,13 @@ export default definePlugin(() => {
                                     ].some(p => modulePath.includes(p));
                                 },
                                 chunks: (chunk,) => {
-                                    return chunk.name === contentEntryNameSuffix || chunk.name?.includes(`.${contentEntryNameSuffix}`);
+                                    const {name} = chunk;
+
+                                    if (!name) {
+                                        return false;
+                                    }
+
+                                    return name === contentEntryNameSuffix || name.includes(`.${contentEntryNameSuffix}`);
                                 },
                                 enforce: true,
                                 reuseExistingChunk: true,
@@ -174,6 +181,8 @@ export default definePlugin(() => {
                     }
                 }
             };
+
+            return rspack;
         },
         manifest: ({manifest}) => {
             manifest.setContentScripts(contentScriptForManifest(contentScriptEntries));

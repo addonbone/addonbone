@@ -96,6 +96,7 @@
     "rspack-plugin-virtual-module": "^0.1.13",
     "sass": "^1.83.4",
     "sass-loader": "^16.0.4",
+    "source-modifier-loader": "^1.0.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.7.3",
     "utility-types": "^3.11.0",

@@ -172,11 +172,12 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
                 contentScripts.push({
                     matches,
                     exclude_matches: excludeMatches,
+                    js: js.length > 0 ? js : undefined,
+                    css: css.length > 0 ? css : undefined,
                     all_frames: allFrames,
                     run_at: runAt,
                     exclude_globs: excludeGlobs,
                     include_globs: includeGlobs,
-                    js,
                     world,
                 });
             }

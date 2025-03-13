@@ -4,6 +4,7 @@ import {loadConfig} from "c12";
 
 import dotenvPlugin from "../plugins/dotenv";
 import backgroundPlugin from "../plugins/background";
+import stylePlugin from "../plugins/style";
 import contentPlugin from "../plugins/content";
 
 import {getAppsPath, getConfigFile, getInputPath} from "../resolvers/path";
@@ -99,6 +100,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         mergeCommands = false,
         mergeContentScripts = false,
         concatContentScripts = true,
+        mergeStyles = true,
     } = config;
 
     let resolvedConfig: Config = {
@@ -125,6 +127,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         mergeCommands,
         mergeContentScripts,
         concatContentScripts,
+        mergeStyles,
     };
 
     let vars = loadDotenv(resolvedConfig);
@@ -137,6 +140,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
 
     const corePlugins: Plugin[] = [
         dotenvPlugin(vars),
+        stylePlugin(),
         contentPlugin(),
         backgroundPlugin(),
     ];

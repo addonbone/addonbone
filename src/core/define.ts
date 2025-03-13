@@ -1,19 +1,14 @@
 import {ConfigDefinition} from "@typing/config";
 import {BackgroundDefinition} from "@typing/background";
 import {ContentScriptDefinition} from "@typing/content";
-import {Plugin, PluginDefinition, PluginDefinitionInput} from "@typing/plugin";
+import {PluginDefinition} from "@typing/plugin";
 import {CommandDefinition, EXECUTE_ACTION_COMMAND_NAME} from "@typing/command";
 
 export const defineConfig = (config: ConfigDefinition): ConfigDefinition => {
     return config;
 }
 
-export function definePlugin<T extends any[]>(plugin: (...args: T) => Plugin): (...args: T) => Plugin;
-export function definePlugin(plugin: Plugin): Plugin;
-
-export function definePlugin<T extends any[], U extends PluginDefinition<T>>(
-    plugin: PluginDefinitionInput<T, U>
-): U {
+export function definePlugin<T extends any[] = []>(plugin: PluginDefinition<T>): PluginDefinition<T> {
     return plugin;
 }
 

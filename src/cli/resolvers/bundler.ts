@@ -1,4 +1,4 @@
-import {Configuration, RspackPluginInstance} from "@rspack/core";
+import {Configuration as RspackConfig, RspackPluginInstance} from "@rspack/core";
 import {CleanWebpackPlugin} from "clean-webpack-plugin";
 import {RsdoctorRspackPlugin} from "@rsdoctor/rspack-plugin";
 import path from "path";
@@ -16,17 +16,20 @@ import mergeConfig from "@cli/bundler/utils/mergeConfig";
 import {ReadonlyConfig} from "@typing/config";
 import {Command} from "@typing/app";
 
-const getConfigFromPlugins = async (rspack: Configuration, config: ReadonlyConfig): Promise<Configuration> => {
-    let mergedConfig: Configuration = {};
+const getConfigFromPlugins = async (rspack: RspackConfig, config: ReadonlyConfig): Promise<RspackConfig> => {
+    let mergedConfig: RspackConfig = {};
 
-    for await (const {result: pluginConfig} of processPluginHandler(config, 'bundler', {rspack, config})) {
+    for await (const {result: pluginConfig} of processPluginHandler(config, 'bundler', {
+        rspack: mergeConfig(rspack, mergedConfig),
+        config
+    })) {
         mergedConfig = mergeConfig(mergedConfig, pluginConfig);
     }
 
     return mergedConfig;
 }
 
-const getConfigForManifest = async (config: ReadonlyConfig): Promise<Configuration> => {
+const getConfigForManifest = async (config: ReadonlyConfig): Promise<RspackConfig> => {
     const manifest = manifestFactory(config.browser, config.manifestVersion);
 
     const update = async () => await Array.fromAsync(processPluginHandler(config, 'manifest', {manifest, config}))
@@ -46,8 +49,8 @@ const getConfigForManifest = async (config: ReadonlyConfig): Promise<Configurati
     return {plugins};
 }
 
-export default async (config: ReadonlyConfig): Promise<Configuration> => {
-    let rspack: Configuration = {
+export default async (config: ReadonlyConfig): Promise<RspackConfig> => {
+    let rspack: RspackConfig = {
         entry: {},
         mode: config.mode,
         cache: false,
@@ -55,8 +58,8 @@ export default async (config: ReadonlyConfig): Promise<Configuration> => {
             path: getRootPath(getOutputPath(config)),
             filename: path.join(config.jsDir, '[name].js'),
             assetModuleFilename: path.join(config.assetsDir, '[name]-[hash:4][ext]'),
-            hotUpdateGlobal: 'adnbnHotUpdate' + _.capitalize(config.app),
-            chunkLoadingGlobal: 'adnbnChunk' + _.capitalize(config.app),
+            hotUpdateGlobal: _.snakeCase(config.app) + 'HotUpdate',
+            chunkLoadingGlobal: _.snakeCase(config.app) + 'Chunk',
             devtoolNamespace: config.app,
             uniqueName: config.app
         },
@@ -104,26 +107,6 @@ export default async (config: ReadonlyConfig): Promise<Configuration> => {
                         target: "es2020"
                     },
                     type: 'javascript/auto',
-                },
-                {
-                    test: /\.(scss|css)$/,
-                    use: [
-                        {
-                            loader: "css-loader",
-                            options: {
-                                modules: {
-                                    localIdentName: "[local]"
-                                }
-                            }
-                        },
-                        {
-                            loader: "sass-loader",
-                            options: {
-                                implementation: "sass"
-                            }
-                        }
-                    ],
-                    type: "css"
                 },
                 {
                     test: /\.(png|apng|jpe?g|gif|webp)$/i,

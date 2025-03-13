@@ -27,6 +27,7 @@ export interface Config {
     mergeCommands: boolean;
     mergeContentScripts: boolean;
     concatContentScripts: boolean;
+    mergeStyles: boolean;
 }
 
 export type OptionalConfig = Partial<Config>;

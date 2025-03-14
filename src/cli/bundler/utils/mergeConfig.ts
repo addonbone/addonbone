@@ -1,7 +1,6 @@
 import {mergeWithCustomize} from "webpack-merge";
 
-import WatchPlugin from "../plugins/WatchPlugin";
-import EntrypointPlugin from "../plugins/EntrypointPlugin";
+import UniqKeyPlugin from "../plugins/UniqKeyPlugin";
 
 export default mergeWithCustomize({
     customizeArray: (a: any[], b: any[], key: string) => {
@@ -11,7 +10,7 @@ export default mergeWithCustomize({
             return [...a, ...b].filter(plugin => {
                 let name: string | undefined = plugin?.constructor?.name;
 
-                if (plugin instanceof WatchPlugin || plugin instanceof EntrypointPlugin) {
+                if (plugin instanceof UniqKeyPlugin) {
                     name = plugin.key;
                 }
 

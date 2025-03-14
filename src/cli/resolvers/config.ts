@@ -2,10 +2,11 @@ import {existsSync} from "fs";
 import dotenv, {type DotenvParseOutput} from 'dotenv';
 import {loadConfig} from "c12";
 
-import dotenvPlugin from "../plugins/dotenv";
+import assetPlugin from "../plugins/asset";
 import backgroundPlugin from "../plugins/background";
-import stylePlugin from "../plugins/style";
 import contentPlugin from "../plugins/content";
+import dotenvPlugin from "../plugins/dotenv";
+import stylePlugin from "../plugins/style";
 
 import {getAppsPath, getConfigFile, getInputPath} from "../resolvers/path";
 
@@ -140,6 +141,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
 
     const corePlugins: Plugin[] = [
         dotenvPlugin(vars),
+        assetPlugin(),
         stylePlugin(),
         contentPlugin(),
         backgroundPlugin(),

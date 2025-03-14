@@ -1,9 +1,12 @@
 import {Compiler} from '@rspack/core';
 
+import UniqKeyPlugin from "./UniqKeyPlugin";
+
 export type WatchPluginCallback = (files: ReadonlySet<string>) => Promise<void>;
 
-class WatchPlugin {
-    constructor(private readonly callback: WatchPluginCallback, public readonly key: string) {
+class WatchPlugin extends UniqKeyPlugin {
+    constructor(private readonly callback: WatchPluginCallback, key: string) {
+        super(key);
     }
 
     public apply(compiler: Compiler): void {

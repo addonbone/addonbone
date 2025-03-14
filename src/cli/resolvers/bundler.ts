@@ -57,7 +57,6 @@ export default async (config: ReadonlyConfig): Promise<RspackConfig> => {
         output: {
             path: getRootPath(getOutputPath(config)),
             filename: path.join(config.jsDir, '[name].js'),
-            assetModuleFilename: path.join(config.assetsDir, '[name]-[hash:4][ext]'),
             hotUpdateGlobal: _.snakeCase(config.app) + 'HotUpdate',
             chunkLoadingGlobal: _.snakeCase(config.app) + 'Chunk',
             devtoolNamespace: config.app,
@@ -107,10 +106,6 @@ export default async (config: ReadonlyConfig): Promise<RspackConfig> => {
                         target: "es2020"
                     },
                     type: 'javascript/auto',
-                },
-                {
-                    test: /\.(png|apng|jpe?g|gif|webp)$/i,
-                    type: "asset/resource"
                 }
             ]
         }

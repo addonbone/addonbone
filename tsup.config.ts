@@ -1,5 +1,5 @@
-import {defineConfig, Options} from 'tsup';
 import {resolve} from 'path';
+import {defineConfig, Options} from 'tsup';
 import rawPlugin from 'esbuild-plugin-raw';
 
 const common: Options = {
@@ -34,7 +34,7 @@ const cli: Options = {
     outExtension: () => ({js: '.cjs'}),
 }
 
-const exports: Options = {
+const framework: Options = {
     ...common,
     entry: {
         'index': 'src/index.ts',
@@ -48,7 +48,7 @@ const exports: Options = {
         return {
             js: format === 'esm' ? '.js' : '.cjs'
         }
-    }
+    },
 }
 
-export default defineConfig([cli, exports]);
+export default defineConfig([cli, framework]);

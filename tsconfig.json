@@ -17,7 +17,8 @@
     "noImplicitAny": false,
     "jsx": "react",
     "typeRoots": [
-      "node_modules/@types"
+      "node_modules/@types",
+      "src/types.d.ts"
     ],
     "baseUrl": "./src",
     "paths": {
@@ -32,7 +33,7 @@
       ],
       "@core/*": [
         "core/*"
-      ],
+      ]
     },
     "isolatedModules": true,
     "allowJs": true,
@@ -41,7 +42,7 @@
     "declarationMap": true
   },
   "include": [
-    "./declaration.d.ts",
+    "./*.d.ts",
     "./src/**/*"
   ],
   "exclude": [

@@ -44,6 +44,9 @@ export default definePlugin(() => {
         name: 'adnbn:styles',
         bundler: ({config}) => {
             return {
+                resolve: {
+                    extensions: [".css", ".scss"],
+                },
                 plugins: [
                     new rspack.CssExtractRspackPlugin({
                         filename: path.join(config.cssDir, '[name].css'),

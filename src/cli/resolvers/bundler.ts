@@ -58,15 +58,9 @@ export default async (config: ReadonlyConfig): Promise<RspackConfig> => {
             path: getRootPath(getOutputPath(config)),
             filename: path.join(config.jsDir, '[name].js'),
             hotUpdateGlobal: _.snakeCase(config.app) + 'HotUpdate',
-            chunkLoadingGlobal: _.snakeCase(config.app) + 'Chunk',
+            chunkLoadingGlobal: _.snakeCase(config.app) + 'ChunkLoading',
             devtoolNamespace: config.app,
             uniqueName: config.app
-        },
-        resolve: {
-            extensions: [".ts", ".tsx", ".js", ".scss"],
-            alias: {
-                [config.srcDir]: getRootPath(path.join(config.srcDir))
-            }
         },
         optimization: {
             splitChunks: {
@@ -90,25 +84,6 @@ export default async (config: ReadonlyConfig): Promise<RspackConfig> => {
                 },
             },
         },
-        module: {
-            rules: [
-                {
-                    test: /\.tsx?$/,
-                    loader: "builtin:swc-loader",
-                    options: {
-                        sourceMap: true,
-                        jsc: {
-                            parser: {
-                                syntax: "typescript",
-                                tsx: true
-                            }
-                        },
-                        target: "es2020"
-                    },
-                    type: 'javascript/auto',
-                }
-            ]
-        }
     }
 
     rspack = mergeConfig(

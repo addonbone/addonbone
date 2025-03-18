@@ -1,5 +1,5 @@
-import rspack, {Compilation, Compiler} from '@rspack/core';
-import {ManifestBuilder, ManifestDependency, ManifestDependencies} from "@typing/manifest";
+import rspack, {Chunk, Compilation, Compiler} from '@rspack/core';
+import {ManifestBuilder, ManifestDependencies, ManifestDependency} from "@typing/manifest";
 
 class ManifestPlugin {
     constructor(private readonly manifest: ManifestBuilder) {
@@ -22,28 +22,26 @@ class ManifestPlugin {
                             js: new Set(),
                         };
 
-                        const files = entryPoint.getFiles();
+                        const allChunks = new Set<Chunk>();
 
-                        files.forEach(fileName => {
-                            if (fileName.endsWith('.js')) {
-                                dependencies.js.add(fileName);
-                            } else if (fileName.endsWith('.css')) {
-                                dependencies.css.add(fileName);
-                            }
-                        });
+                        this.collectAllChunks(entryPoint, allChunks);
 
-                        const chunks = entryPoint.chunks;
-
-                        chunks.forEach(chunk => {
-                            chunk.files.forEach(fileName => {
-                                if (this.isAsset(fileName)) {
+                        allChunks.forEach((chunk: Chunk) => {
+                            chunk.files.forEach((fileName: string) => {
+                                if (fileName.endsWith('.js')) {
+                                    dependencies.js.add(fileName);
+                                } else if (fileName.endsWith('.css')) {
+                                    dependencies.css.add(fileName);
+                                } else if (this.isAsset(fileName)) {
                                     dependencies.assets.add(fileName);
                                 }
                             });
 
                             const auxiliaryFiles = chunk.auxiliaryFiles || [];
-                            auxiliaryFiles.forEach(fileName => {
-                                if (this.isAsset(fileName)) {
+                            auxiliaryFiles.forEach((fileName: string) => {
+                                if (fileName.endsWith('.css')) {
+                                    dependencies.css.add(fileName);
+                                } else if (this.isAsset(fileName)) {
                                     dependencies.assets.add(fileName);
                                 }
                             });
@@ -62,6 +60,24 @@ class ManifestPlugin {
                 }
             );
         });
+    }
+
+    private collectAllChunks(entryPointOrChunkGroup: any, collectedChunks: Set<Chunk>): Set<Chunk> {
+        if (entryPointOrChunkGroup.chunks) {
+            entryPointOrChunkGroup.chunks.forEach((chunk: Chunk) => {
+                if (!collectedChunks.has(chunk)) {
+                    collectedChunks.add(chunk);
+                }
+            });
+        }
+
+        if (entryPointOrChunkGroup.childrenIterable) {
+            for (const childGroup of entryPointOrChunkGroup.childrenIterable) {
+                this.collectAllChunks(childGroup, collectedChunks);
+            }
+        }
+
+        return collectedChunks;
     }
 
     private isAsset(file: string): boolean {

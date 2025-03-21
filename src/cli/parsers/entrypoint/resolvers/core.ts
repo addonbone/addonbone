@@ -1,5 +1,6 @@
-import {Mode, Command} from "@typing/app";
+import {Command, Mode} from "@typing/app";
 import {Browser} from "@typing/browser";
+import {ContentScriptAppend} from "@typing/content";
 
 import {Resolver} from "../types";
 
@@ -30,6 +31,15 @@ export default (): Resolver[] => {
         resolvers.push({
             from: name,
             target: 'Command',
+            name: key,
+            value,
+        });
+    });
+
+    Object.entries(ContentScriptAppend).forEach(([key, value]) => {
+        resolvers.push({
+            from: name,
+            target: 'ContentScriptAppendMode',
             name: key,
             value,
         });

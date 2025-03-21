@@ -1,0 +1,40 @@
+import Builder from "./Builder";
+import Node from "./Node";
+import MountNode from "./MountNode";
+
+import {ContentScriptNode, ContentScriptProps, ContentScriptRenderValue} from "@typing/content";
+
+export default abstract class MountBuilder extends Builder {
+
+    private values = new Map<Element, null | ContentScriptRenderValue>();
+
+    protected getProps(anchor: Element): ContentScriptProps {
+        const {anchor: _, mount, watch, render, container, main, ...options} = this.definition;
+
+        return {...options, anchor};
+    }
+
+    protected async getValue(anchor: Element): Promise<undefined | ContentScriptRenderValue> {
+        if (!this.values.has(anchor)) {
+            const value = await this.definition.render(this.getProps(anchor));
+
+            this.values.set(anchor, value || null);
+        }
+
+        return this.values.get(anchor) || undefined;
+    }
+
+    protected async createNode(anchor: Element): Promise<ContentScriptNode> {
+        let container: Element | undefined;
+
+        if (await this.getValue(anchor)) {
+            container = await this.definition.container(this.getProps(anchor));
+        }
+
+        return new MountNode(new Node(anchor, container), this.definition.mount);
+    }
+
+    protected cleanupNode(anchor: Element): void {
+        this.values.delete(anchor);
+    }
+}

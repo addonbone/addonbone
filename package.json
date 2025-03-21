@@ -1,7 +1,7 @@
 {
   "name": "adnbn",
   "version": "0.0.31",
-  "description": "Cross browser web extension framework with shared code base",
+  "description": "Addon 💀 Bone - Cross browser web extension framework with shared code base",
   "homepage": "https://github.com/addonbone/addonbone",
   "repository": {
     "type": "git",
@@ -42,10 +42,10 @@
       "import": "./dist/client/command.js",
       "require": "./dist/client/command.cjs"
     },
-    "./client/content": {
-      "types": "./dist/client/content.d.ts",
-      "import": "./dist/client/content.js",
-      "require": "./dist/client/content.cjs"
+    "./client/content/vanilla": {
+      "types": "./dist/client/content/vanilla.d.ts",
+      "import": "./dist/client/content/vanilla.js",
+      "require": "./dist/client/content/vanilla.cjs"
     },
     "./client-types": {
       "types": "./types/client.d.ts"
@@ -71,14 +71,13 @@
     "@types/lodash": "^4.17.14",
     "@types/node": "^22.13.1",
     "@types/pluralize": "^0.0.33",
-    "@types/react": "^19.0.10",
-    "@types/react-dom": "^19.0.4",
     "dotenv": "^16.4.7",
     "esbuild-plugin-raw": "^0.1.8",
     "fs-extra": "^11.3.0",
     "ts-node": "^10.9.2",
     "tsup": "^8.3.6",
     "tsx": "^4.19.2",
+    "utility-types": "^3.11.0",
     "uglify-js": "^3.19.3"
   },
   "dependencies": {
@@ -92,11 +91,11 @@
     "css-loader": "^7.1.2",
     "file-loader": "^6.2.0",
     "json-stringify-deterministic": "^1.0.12",
+    "just-kebab-case": "^4.2.0",
     "lodash": "^4.17.21",
     "mini-css-extract-plugin": "^2.9.2",
+    "nanoid": "^5.1.4",
     "pluralize": "^8.0.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
     "rspack-plugin-virtual-module": "^0.1.13",
     "sass": "^1.83.4",
     "sass-loader": "^16.0.4",
@@ -104,8 +103,21 @@
     "tsconfig-paths": "^4.2.0",
     "type-fest": "^4.37.0",
     "typescript": "^5.7.3",
-    "utility-types": "^3.11.0",
     "webpack-merge": "^6.0.1",
     "zod": "^3.24.2"
+  },
+  "peerDependencies": {
+    "@types/react": "*",
+    "@types/react-dom": "*",
+    "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
+    "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
+  },
+  "peerDependenciesMeta": {
+    "@types/react": {
+      "optional": true
+    },
+    "@types/react-dom": {
+      "optional": true
+    }
   }
 }

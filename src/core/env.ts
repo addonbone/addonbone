@@ -10,6 +10,16 @@ export const getEnv: {
     return (env[key] ?? defaults) as any;
 };
 
+export const getApp = (): string => {
+    const app = getEnv('APP');
+
+    if (app === undefined) {
+        throw new Error('App is not defined');
+    }
+
+    return app;
+};
+
 export const getBrowser = (): Browser => {
     const browser = getEnv<Browser>('BROWSER');
 

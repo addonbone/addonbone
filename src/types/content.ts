@@ -1,6 +1,8 @@
 import {type FC} from "react"
+import {Optional} from 'utility-types';
 
 import {EntrypointFile, EntrypointOptions} from "@typing/entrypoint";
+import {Awaiter, PickNonFunctionProperties} from "@typing/helpers";
 
 type ExecutionWorld = chrome.scripting.ExecutionWorld;
 type RunAt = chrome.userScripts.RunAt;
@@ -52,28 +54,90 @@ export type ContentScriptEntrypointOptions = ContentScriptConfig & EntrypointOpt
 
 export type ContentScriptEntrypointMap = Map<EntrypointFile, ContentScriptEntrypointOptions>;
 
-export enum ContentScriptAppendMode {
+// Append
+export enum ContentScriptAppend {
     Last = 'last',
     First = 'first',
     Replace = 'replace',
     Before = 'before',
     After = 'after',
 }
-export type ContentScriptAppendHandler = (anchor: Element, ui: Element) => void;
 
-export type ContentScriptAnchor = string | Element | null | undefined;
-export type ContentScriptAnchorGetter = () => ContentScriptAnchor | Promise<ContentScriptAnchor>;
+// Mount
+export type ContentScriptMountFunction = (anchor: Element, container: Element) => void | (() => void);
 
-export interface ContentScriptRenderProps extends ContentScriptEntrypointOptions {
+export interface ContentScriptMount {
+    mount(): void;
+    unmount(): void;
+}
+
+// Props
+export interface ContentScriptProps extends ContentScriptEntrypointOptions {
     anchor: Element;
 }
 
-export type ContentScriptRenderComponent = FC<ContentScriptRenderProps>;
-export type ContentScriptRenderHandler = (props: ContentScriptRenderProps) => void | ContentScriptRenderComponent | Promise<void | ContentScriptRenderComponent>;
+// Anchor
+export type ContentScriptAnchor = string | Element | null | undefined;
+export type ContentScriptAnchorGetter = () => Awaiter<ContentScriptAnchor>;
 
+// Render
+export type ContentScriptRenderComponent = FC<ContentScriptProps>;
+export type ContentScriptRenderValue = string | number | Element | ContentScriptRenderComponent;
+export type ContentScriptRenderHandler = (props: ContentScriptProps) => Awaiter<void | ContentScriptRenderValue>;
 
+// Container
+export type ContentScriptContainerTag = Exclude<keyof HTMLElementTagNameMap, 'html' | 'body'>;
+
+export type ContentScriptContainerOptions = {
+    [Tag in ContentScriptContainerTag]: { tagName: Tag } & Exclude<Optional<PickNonFunctionProperties<HTMLElementTagNameMap[Tag]>>, 'id'>;
+}[ContentScriptContainerTag];
+
+export type ContentScriptContainerFactory = (props: ContentScriptProps) => Awaiter<Element | ContentScriptContainerTag | ContentScriptContainerOptions>;
+export type ContentScriptContainerCreator = (props: ContentScriptProps) => Awaiter<Element>;
+
+// Watch
+export type ContentScriptWatchStrategy = (update: () => Awaiter<void>) => () => void;
+
+// Context
+export interface ContentScriptContext extends ContentScriptMount {
+    nodes: ReadonlySet<ContentScriptNode>;
+}
+
+// Main
+export type ContentScriptMainFunction = (context: ContentScriptContext) => Awaiter<void>;
+
+// Node
+export interface ContentScriptNode extends ContentScriptMount {
+    anchor: Element;
+    container?: Element;
+}
+
+export type ContentScriptNodeSet = Set<ContentScriptNode>;
+
+// Definition
 export interface ContentScriptDefinition extends ContentScriptEntrypointOptions {
     anchor?: ContentScriptAnchor | ContentScriptAnchorGetter;
-    append?: ContentScriptAppendMode | ContentScriptAppendHandler;
-    render?: ContentScriptRenderComponent | ContentScriptRenderHandler;
+    mount?: ContentScriptMountFunction;
+    render?: ContentScriptRenderValue | ContentScriptRenderHandler;
+    container?: ContentScriptContainerTag | ContentScriptContainerOptions | ContentScriptContainerFactory;
+    watch?: true | ContentScriptWatchStrategy;
+    main?: ContentScriptMainFunction;
 }
+
+export interface ContentScriptResolvedDefinition extends ContentScriptDefinition {
+    mount: ContentScriptMountFunction;
+    render: ContentScriptRenderHandler;
+    container: ContentScriptContainerCreator;
+}
+
+export interface ContentScriptAppendDefinition extends Omit<ContentScriptDefinition, 'mount'> {
+    append?: ContentScriptAppend;
+}
+
+// Resolver
+export interface ContentScriptBuilder {
+    build(): Promise<void>;
+}
+
+// Invoker
+export type ContentScriptInvoker = (definition: ContentScriptDefinition) => ContentScriptBuilder;

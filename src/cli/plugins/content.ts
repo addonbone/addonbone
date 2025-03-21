@@ -156,15 +156,29 @@ export default definePlugin(() => {
                         cacheGroups: {
                             frameworkContent: {
                                 name: frameworkContentEntryName,
-                                test: (module) => {
-                                    const modulePath = module.resource || '';
-
-                                    return [
+                                test: (module, {moduleGraph}): boolean => {
+                                    const clientDirs = [
                                         path.join('node_modules', 'adnbn', 'client', 'content'),
-                                        path.join('addonbone', 'dist', 'client', 'content'), // TODO: Remove this when addonbone is published
-                                    ].some(p => modulePath.includes(p));
+                                        path.join('addonbone', 'dist', 'client', 'content'), // TODO: Remove this for production
+                                    ];
+
+                                    if (clientDirs.some((dir) => (module.resource || '').includes(dir))) {
+                                        return true;
+                                    }
+
+                                    let issuer = moduleGraph.getIssuer(module);
+
+                                    while (issuer) {
+                                        if (clientDirs.some((dir) => (issuer?.resource || '').includes(dir))) {
+                                            return true;
+                                        }
+
+                                        issuer = moduleGraph.getIssuer(issuer);
+                                    }
+
+                                    return false;
                                 },
-                                chunks: (chunk,) => {
+                                chunks: (chunk): boolean => {
                                     const {name} = chunk;
 
                                     if (!name) {

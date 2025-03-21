@@ -36,6 +36,7 @@ const getTypescriptConfig = (config: ReadonlyConfig): TsConfigJson => {
             resolveJsonModule: true,
             strict: true,
             skipLibCheck: true,
+            noEmit: true,
             outDir: outputDir,
             paths: _.reduce(getAlias(config), (paths, value, key) => ({
                 ...paths,

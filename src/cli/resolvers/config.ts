@@ -6,6 +6,7 @@ import assetPlugin from "../plugins/asset";
 import backgroundPlugin from "../plugins/background";
 import contentPlugin from "../plugins/content";
 import dotenvPlugin from "../plugins/dotenv";
+import reactPlugin from "../plugins/react";
 import stylePlugin from "../plugins/style";
 import typescriptPlugin from "../plugins/typescript";
 
@@ -143,6 +144,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
     const corePlugins: Plugin[] = [
         dotenvPlugin(vars),
         typescriptPlugin(),
+        reactPlugin(),
         assetPlugin(),
         stylePlugin(),
         contentPlugin(),

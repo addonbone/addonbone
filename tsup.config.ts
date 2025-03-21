@@ -18,8 +18,9 @@ const common: Options = {
         options.alias = {
             '@browser': resolve(__dirname, './src/browser'),
             '@cli': resolve(__dirname, './src/cli'),
-            '@typing': resolve(__dirname, './src/types'),
+            '@client': resolve(__dirname, './src/client'),
             '@core': resolve(__dirname, './src/core'),
+            '@typing': resolve(__dirname, './src/types'),
         }
     },
 }
@@ -41,7 +42,7 @@ const framework: Options = {
         'browser/index': 'src/browser/index.ts',
         'client/background': 'src/client/background.ts',
         'client/command': 'src/client/command.ts',
-        'client/content': 'src/client/content.ts',
+        'client/content/vanilla': 'src/client/content/vanilla/index.ts',
     },
     format: ['esm', 'cjs'],
     outExtension({format}) {

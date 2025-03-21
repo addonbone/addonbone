@@ -5,9 +5,9 @@ import app from "./builders/app";
 import {Command} from "@typing/app";
 import {Browser} from "@typing/browser";
 
-import {version} from '../../package.json';
+import {name, version} from '../../package.json';
 
-const cli = cac('adnbn');
+const cli = cac(name);
 
 cli.option('--debug', 'Enable debug mode');
 

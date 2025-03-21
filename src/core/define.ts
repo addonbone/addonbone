@@ -1,8 +1,10 @@
+import {contentScriptMountAppendResolver} from "@client/content";
+
 import {ConfigDefinition} from "@typing/config";
 import {BackgroundDefinition} from "@typing/background";
-import {ContentScriptDefinition} from "@typing/content";
+import {ContentScriptAppendDefinition, ContentScriptDefinition} from "@typing/content";
 import {PluginDefinition} from "@typing/plugin";
-import {CommandDefinition, EXECUTE_ACTION_COMMAND_NAME} from "@typing/command";
+import {CommandDefinition, EXECUTE_ACTION_COMMAND_NAME, ExecuteActionCommandDefinition} from "@typing/command";
 
 export const defineConfig = (config: ConfigDefinition): ConfigDefinition => {
     return config;
@@ -20,10 +22,17 @@ export const defineCommand = (options: CommandDefinition): CommandDefinition => 
     return options;
 }
 
-export const defineExecuteActionCommand = (options: Omit<CommandDefinition, 'name'>): CommandDefinition => {
+export const defineExecuteActionCommand = (options: ExecuteActionCommandDefinition): CommandDefinition => {
     return {...options, name: EXECUTE_ACTION_COMMAND_NAME};
 }
 
 export const defineContentScript = (options: ContentScriptDefinition): ContentScriptDefinition => {
     return options;
+}
+
+export const defineContentScriptAppend = (options: ContentScriptAppendDefinition): ContentScriptDefinition => {
+    return {
+        ...options,
+        mount: contentScriptMountAppendResolver(options.append),
+    };
 }

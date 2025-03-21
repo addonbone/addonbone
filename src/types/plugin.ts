@@ -3,6 +3,7 @@ import {Configuration as RspackConfig} from "@rspack/core";
 
 import {ReadonlyConfig} from "@typing/config";
 import {EntrypointFile} from "@typing/entrypoint";
+import {Awaiter} from "@typing/helpers";
 
 export type PluginEntrypointResult = true | string | string[] | EntrypointFile | EntrypointFile[] | Set<EntrypointFile>;
 
@@ -34,7 +35,7 @@ export interface Plugin extends PluginName {
 
 export type PluginHandler<O, T = void> = T | PluginHandlerCallback<O, T>;
 
-export type PluginHandlerCallback<O, T = void> = { (options: O): T | Promise<T> }
+export type PluginHandlerCallback<O, T = void> = { (options: O): Awaiter<T> }
 
 export type PluginHandlerKeys = keyof Omit<Plugin, 'name'>;
 

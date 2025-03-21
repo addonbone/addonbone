@@ -68,13 +68,6 @@ export default async (config: ReadonlyConfig): Promise<RspackConfig> => {
                 cacheGroups: {
                     default: false,
                     defaultVendors: false,
-                    react: {
-                        name: 'react',
-                        test: /[\\/]node_modules[\\/](react|@?react[^\\/]*|[^\\/]*@?react[^\\/]*)[\\/]/,
-                        priority: -5,
-                        reuseExistingChunk: true,
-                        enforce: true,
-                    },
                     common: {
                         name: "common",
                         minChunks: 2,

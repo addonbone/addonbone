@@ -1,5 +1,5 @@
 import {EntrypointFile, EntrypointOptions} from "@typing/entrypoint";
-import {Optional} from "utility-types";
+import {Required} from "utility-types";
 
 import {Awaiter} from "@typing/helpers";
 
@@ -20,7 +20,7 @@ export interface CommandConfig {
 
 export type CommandOptions = CommandConfig & EntrypointOptions;
 
-export type CommandEntrypointOptions = Optional<CommandOptions>;
+export type CommandEntrypointOptions = Partial<CommandOptions>;
 
 export type CommandExecute = (options: CommandOptions, tab?: Tab) => Awaiter<void>;
 
@@ -30,4 +30,14 @@ export interface CommandDefinition extends CommandEntrypointOptions {
 
 export type ExecuteActionCommandDefinition = Omit<CommandDefinition, 'name'>;
 
+export type CommandUnresolvedDefinition = Partial<CommandDefinition>;
+
+export type CommandResolvedDefinition = Required<CommandDefinition, 'name' | 'execute'>;
+
 export type CommandEntrypointMap = Map<EntrypointFile, CommandOptions>;
+
+export interface CommandBuilder {
+    build(): Promise<void>;
+
+    destroy(): Promise<void>;
+}

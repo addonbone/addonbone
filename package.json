@@ -37,25 +37,15 @@
       "import": "./dist/client/background.js",
       "require": "./dist/client/background.cjs"
     },
-    "./client/command": {
-      "types": "./dist/client/command.d.ts",
-      "import": "./dist/client/command.js",
-      "require": "./dist/client/command.cjs"
+    "./client/*": {
+      "types": "./dist/client/*/index.d.ts",
+      "import": "./dist/client/*/index.js",
+      "require": "./dist/client/*/index.cjs"
     },
-    "./client/content": {
-      "types": "./dist/client/content/index.d.ts",
-      "import": "./dist/client/content/index.js",
-      "require": "./dist/client/content/index.cjs"
-    },
-    "./client/content/vanilla": {
-      "types": "./dist/client/content/vanilla.d.ts",
-      "import": "./dist/client/content/vanilla.js",
-      "require": "./dist/client/content/vanilla.cjs"
-    },
-    "./client/content/react": {
-      "types": "./dist/client/content/react.d.ts",
-      "import": "./dist/client/content/react.js",
-      "require": "./dist/client/content/react.cjs"
+    "./client/content/*": {
+      "types": "./dist/client/content/*.d.ts",
+      "import": "./dist/client/content/*.js",
+      "require": "./dist/client/content/*.cjs"
     },
     "./client-types": {
       "types": "./types/client.d.ts"

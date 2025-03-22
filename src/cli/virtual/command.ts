@@ -1,7 +1,7 @@
 //@ts-ignore
-import {type CommandDefinition} from "adnbn";
+import type {CommandUnresolvedDefinition} from "adnbn";
 //@ts-ignore
-import {handleCommand} from "adnbn/client/command";
+import command, {isValidCommandDefinition, isValidCommandExecuteFunction} from "adnbn/client/command";
 
 import * as module from "virtual:command-entrypoint";
 
@@ -10,17 +10,17 @@ try {
 
     const {default: defaultDefinition, ...otherDefinition} = module;
 
-    let definition: Partial<CommandDefinition> = otherDefinition;
+    let definition: CommandUnresolvedDefinition = otherDefinition;
 
-    if (defaultDefinition && typeof defaultDefinition === 'object' && defaultDefinition.constructor === Object) {
+    if (isValidCommandDefinition(defaultDefinition)) {
         definition = {...definition, ...defaultDefinition};
-    } else if (typeof defaultDefinition === 'function') {
+    } else if (isValidCommandExecuteFunction(defaultDefinition)) {
         definition = {...definition, execute: defaultDefinition};
     }
 
     const {execute, name = commandName, ...options} = definition;
 
-    handleCommand({name, execute, ...options});
+    command({name, execute, ...options});
 } catch (e) {
     console.error('The command crashed on startup:', e);
 }

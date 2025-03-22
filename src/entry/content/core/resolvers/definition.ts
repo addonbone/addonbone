@@ -1,4 +1,4 @@
-import {isValidContentScriptRenderValue} from "@client/content";
+import {isValidContentScriptRenderValue} from "entry/content";
 
 import {ContentScriptDefinition, ContentScriptRenderHandler, ContentScriptRenderValue} from "@typing/content";
 

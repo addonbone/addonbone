@@ -23,5 +23,5 @@ export const virtualCommandModule = (file: EntrypointFile, name: string): string
 
 export const virtualContentScriptModule = (file: EntrypointFile): string => {
     return getVirtualModule(file, 'content')
-        .replace(`virtual:content-client`, 'adnbn/client/content/' + getEntrypointFileFramework(file));
+        .replace(`virtual:content-framework`, 'adnbn/entry/content/' + getEntrypointFileFramework(file));
 }

@@ -54,7 +54,7 @@ const getTypescriptConfig = (config: ReadonlyConfig): TsConfigJson => {
 };
 
 const getVendorTypes = (): string[] => {
-    return ['adnbn/client-types'].map((value) => `/// <reference types="${value}" />`);
+    return ['adnbn/entry-types'].map((value) => `/// <reference types="${value}" />`);
 }
 
 const generateTypescriptConfig = (config: ReadonlyConfig): void => {

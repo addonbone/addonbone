@@ -1,4 +1,4 @@
-import {isValidContentScriptRenderValue} from "@client/content";
+import {isValidContentScriptRenderValue} from "entry/content";
 
 import MountBuilder from "../core/MountBuilder";
 import VanillaNode from "./VanillaNode";

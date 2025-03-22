@@ -1,6 +1,6 @@
 import ReactBuilder from "./ReactBuilder";
 
-import {buildEntrypoint} from "@client/utils/entrypoint";
+import {buildEntrypoint} from "entry/utils/entrypoint";
 
 import {ContentScriptDefinition} from "@typing/content";
 

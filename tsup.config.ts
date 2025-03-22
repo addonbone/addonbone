@@ -18,7 +18,7 @@ const common: Options = {
         options.alias = {
             '@browser': resolve(__dirname, './src/browser'),
             '@cli': resolve(__dirname, './src/cli'),
-            '@client': resolve(__dirname, './src/client'),
+            '@entry': resolve(__dirname, './src/entryentry'),
             '@core': resolve(__dirname, './src/core'),
             '@typing': resolve(__dirname, './src/types'),
         }
@@ -40,11 +40,11 @@ const framework: Options = {
     entry: {
         'index': 'src/index.ts',
         'browser/index': 'src/browser/index.ts',
-        'client/background/index': 'src/client/background/index.ts',
-        'client/command/index': 'src/client/command/index.ts',
-        'client/content/index': 'src/client/content/index.ts',
-        'client/content/vanilla': 'src/client/content/vanilla/index.ts',
-        'client/content/react': 'src/client/content/react/index.ts',
+        'entry/background/index': 'src/entry/background/index.ts',
+        'entry/command/index': 'src/entry/command/index.ts',
+        'entry/content/index': 'src/entry/content/index.ts',
+        'entry/content/vanilla': 'src/entry/content/vanilla/index.ts',
+        'entry/content/react': 'src/entry/content/react/index.ts',
     },
     format: ['esm', 'cjs'],
     outExtension({format}) {

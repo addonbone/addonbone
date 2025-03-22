@@ -1,7 +1,7 @@
 //@ts-ignore
 import {type BackgroundDefinition} from "adnbn";
 //@ts-ignore
-import background, {isValidBackgroundDefinition, isValidBackgroundMainHandler} from "adnbn/client/background";
+import background, {isValidBackgroundDefinition, isValidBackgroundMainHandler} from "adnbn/entry/background";
 
 import * as module from "virtual:background-entrypoint";
 

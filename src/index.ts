@@ -4,4 +4,4 @@ export {
     contentScriptRenderResolver,
     contentScriptMountAppendResolver,
     contentScriptContainerResolver,
-} from "./client/content";
+} from "././entry/content";

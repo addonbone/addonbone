@@ -2,7 +2,7 @@ import {
     contentScriptContainerResolver,
     contentScriptMountAppendResolver,
     contentScriptRenderResolver
-} from "@client/content";
+} from "entry/content";
 
 import Node from "./Node";
 import ManagedContext from "./ManagedContext";

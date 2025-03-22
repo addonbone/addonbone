@@ -28,8 +28,8 @@
       "@cli/*": [
         "cli/*"
       ],
-      "@client/*": [
-        "client/*"
+      "@entry/*": [
+        "entry/*"
       ],
       "@core/*": [
         "core/*"

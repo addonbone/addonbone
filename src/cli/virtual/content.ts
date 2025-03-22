@@ -1,8 +1,10 @@
 //@ts-ignore
-import {type ContentScriptDefinition} from "adnbn";
-import {isContentScriptDefinition, isValidContentScriptDefinitionRenderValue} from "adnbn/client/content"
+import type {ContentScriptDefinition} from "adnbn";
+//@ts-ignore
+import {isContentScriptDefinition, isValidContentScriptDefinitionRenderValue} from "adnbn/entry/content"
 
-import contentScript from "virtual:content-client";
+import contentScript from "virtual:content-framework";
+
 import * as module from "virtual:content-entrypoint";
 
 try {

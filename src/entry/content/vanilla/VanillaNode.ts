@@ -1,6 +1,6 @@
 import {ContentScriptNode} from "@typing/content";
 
-export default class VanillaNode implements ContentScriptNode {
+export default class implements ContentScriptNode {
     constructor(
         protected readonly node: ContentScriptNode,
         protected readonly value?: null | string | number | Element

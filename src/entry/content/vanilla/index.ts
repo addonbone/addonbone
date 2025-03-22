@@ -1,6 +1,6 @@
 import VanillaBuilder from './VanillaBuilder';
 
-import {buildEntrypoint} from "@entry/utils/entrypoint";
+import {buildEntrypoint} from "../../utils/entrypoint";
 
 import {ContentScriptDefinition} from "@typing/content";
 

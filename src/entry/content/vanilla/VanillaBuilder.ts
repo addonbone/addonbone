@@ -1,12 +1,11 @@
-import {isValidContentScriptRenderValue} from "@entry/content";
+import {isValidContentScriptRenderValue} from "../core/resolvers/render";
 
 import MountBuilder from "../core/MountBuilder";
 import VanillaNode from "./VanillaNode";
 
 import {ContentScriptDefinition, ContentScriptNode} from "@typing/content";
 
-
-export default class VanillaBuilder extends MountBuilder {
+export default class extends MountBuilder {
     public constructor(definition: ContentScriptDefinition) {
         super(definition);
     }

@@ -12,7 +12,7 @@ import {
     ContentScriptRenderValue
 } from "@typing/content";
 
-export default class ReactBuilder extends MountBuilder {
+export default class extends MountBuilder {
     constructor(definition: ContentScriptDefinition) {
         super(definition);
     }

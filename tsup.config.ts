@@ -18,7 +18,7 @@ const common: Options = {
         options.alias = {
             '@browser': resolve(__dirname, './src/browser'),
             '@cli': resolve(__dirname, './src/cli'),
-            '@entry': resolve(__dirname, './src/entryentry'),
+            '@entry': resolve(__dirname, './src/entry'),
             '@core': resolve(__dirname, './src/core'),
             '@typing': resolve(__dirname, './src/types'),
         }

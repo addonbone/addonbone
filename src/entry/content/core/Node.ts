@@ -1,18 +1,15 @@
-import kebabCase from "just-kebab-case";
 import {customAlphabet} from "nanoid";
 
-import {getApp} from "@core/env";
+import {contentScriptAnchorAttribute} from "./resolvers/anchor";
 
 import {ContentScriptNode} from "@typing/content";
 
-const name = kebabCase(getApp());
+const generateId = customAlphabet('abcdefghijklmnopqrstuvwxyz', 7);
 
-export default class Node implements ContentScriptNode {
+export default class implements ContentScriptNode {
     private readonly _container?: Element;
 
-    static readonly attribute: string = `data-${name}-id`;
-
-    protected static generateId = customAlphabet('abcdefghijklmnopqrstuvwxyz', 7);
+    private readonly attr = contentScriptAnchorAttribute;
 
     constructor(public readonly anchor: Element, public container?: Element) {
         if (this.container) {
@@ -40,18 +37,18 @@ export default class Node implements ContentScriptNode {
     }
 
     protected mark(): string {
-        let id = this.anchor.getAttribute(Node.attribute)
+        let id = this.anchor.getAttribute(this.attr)
 
         if (typeof id !== "string" || id.length === 0) {
-            id = Node.generateId();
+            id = generateId();
 
-            this.anchor.setAttribute(Node.attribute, id);
+            this.anchor.setAttribute(this.attr, id);
         }
 
         return id;
     }
 
     protected unmark(): void {
-        this.anchor.setAttribute(Node.attribute, '');
+        this.anchor.setAttribute(this.attr, '');
     }
 }

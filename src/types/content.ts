@@ -79,6 +79,7 @@ export interface ContentScriptProps extends ContentScriptEntrypointOptions {
 // Anchor
 export type ContentScriptAnchor = string | Element | null | undefined;
 export type ContentScriptAnchorGetter = () => Awaiter<ContentScriptAnchor>;
+export type ContentScriptAnchorResolver = () => Awaiter<Element[]>;
 
 // Render
 export type ContentScriptRenderReactComponent = FC<ContentScriptProps>;
@@ -124,7 +125,8 @@ export interface ContentScriptDefinition extends ContentScriptEntrypointOptions 
     main?: ContentScriptMainFunction;
 }
 
-export interface ContentScriptResolvedDefinition extends ContentScriptDefinition {
+export interface ContentScriptResolvedDefinition extends Omit<ContentScriptDefinition, 'anchor' | 'mount' | 'container' | 'render'> {
+    anchor: ContentScriptAnchorResolver;
     mount: ContentScriptMountFunction;
     render: ContentScriptRenderHandler;
     container: ContentScriptContainerCreator;

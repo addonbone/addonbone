@@ -1,6 +1,6 @@
 import {ContentScriptContext, ContentScriptNode, ContentScriptNodeSet} from "@typing/content";
 
-export default class Context implements ContentScriptContext {
+export default class implements ContentScriptContext {
     public readonly collection: ContentScriptNodeSet = new Set();
 
     public get nodes(): ReadonlySet<ContentScriptNode> {

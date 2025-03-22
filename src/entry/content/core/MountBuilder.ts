@@ -4,7 +4,7 @@ import MountNode from "./MountNode";
 
 import {ContentScriptNode, ContentScriptProps, ContentScriptRenderValue} from "@typing/content";
 
-export default abstract class MountBuilder extends Builder {
+export default abstract class extends Builder {
 
     private values = new Map<Element, null | ContentScriptRenderValue>();
 

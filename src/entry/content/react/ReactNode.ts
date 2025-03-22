@@ -3,7 +3,7 @@ import {createRoot, Root} from "react-dom/client";
 
 import {ContentScriptNode} from "@typing/content";
 
-export default class ReactNode implements ContentScriptNode {
+export default class implements ContentScriptNode {
     protected root?: Root;
 
     constructor(

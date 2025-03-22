@@ -48,3 +48,9 @@ export interface EntrypointFile {
     import: string;
     external?: boolean;
 }
+
+export interface EntrypointBuilder {
+    build(): Promise<void>;
+
+    destroy(): Promise<void>;
+}

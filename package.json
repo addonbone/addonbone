@@ -32,11 +32,6 @@
       "import": "./dist/browser/index.js",
       "require": "./dist/browser/index.cjs"
     },
-    "./client/background": {
-      "types": "./dist/client/background.d.ts",
-      "import": "./dist/client/background.js",
-      "require": "./dist/client/background.cjs"
-    },
     "./client/*": {
       "types": "./dist/client/*/index.d.ts",
       "import": "./dist/client/*/index.js",

@@ -1,4 +1,4 @@
-import {EntrypointFile, EntrypointOptions} from "@typing/entrypoint";
+import {EntrypointBuilder, EntrypointFile, EntrypointOptions} from "@typing/entrypoint";
 import {Awaiter} from "@typing/helpers";
 
 export interface BackgroundConfig {
@@ -9,8 +9,12 @@ export type BackgroundOptions = BackgroundConfig & EntrypointOptions;
 
 export type BackgroundEntrypointOptions = BackgroundOptions;
 
+export type BackgroundMainHandler = (options: BackgroundOptions) => Awaiter<void>;
+
 export interface BackgroundDefinition extends BackgroundEntrypointOptions {
-    main?(options: BackgroundOptions): Awaiter<void>;
+    main?: BackgroundMainHandler;
 }
 
 export type BackgroundEntrypointMap = Map<EntrypointFile, BackgroundDefinition>;
+
+export type BackgroundBuilder = EntrypointBuilder;

@@ -124,6 +124,10 @@ export default abstract class implements ContentScriptBuilder {
         await this.definition.main?.(this.context);
     }
 
+    public async destroy(): Promise<void> {
+       // Not implemented yet
+    }
+
     protected async processing(): Promise<void> {
         const anchors = await this.findAnchors();
 

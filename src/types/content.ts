@@ -1,7 +1,7 @@
 import type {FC, ReactNode} from "react"
 import {Optional} from 'utility-types';
 
-import {EntrypointFile, EntrypointOptions} from "@typing/entrypoint";
+import {EntrypointBuilder, EntrypointFile, EntrypointOptions} from "@typing/entrypoint";
 import {Awaiter, PickNonFunctionProperties} from "@typing/helpers";
 
 type ExecutionWorld = chrome.scripting.ExecutionWorld;
@@ -134,10 +134,5 @@ export interface ContentScriptAppendDefinition extends Omit<ContentScriptDefinit
     append?: ContentScriptAppend;
 }
 
-// Resolver
-export interface ContentScriptBuilder {
-    build(): Promise<void>;
-}
-
-// Invoker
-export type ContentScriptInvoker = (definition: ContentScriptDefinition) => ContentScriptBuilder;
+// Builder
+export type ContentScriptBuilder = EntrypointBuilder;

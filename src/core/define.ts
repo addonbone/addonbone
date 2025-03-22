@@ -1,4 +1,4 @@
-import {contentScriptMountAppendResolver} from "entry/content";
+import {contentScriptMountAppendResolver} from "@entry/content";
 
 import {ConfigDefinition} from "@typing/config";
 import {BackgroundDefinition} from "@typing/background";

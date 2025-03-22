@@ -1,6 +1,6 @@
 import Builder from "./Builder";
 
-import {buildEntrypoint} from "entry/utils/entrypoint";
+import {buildEntrypoint} from "@entry/utils/entrypoint";
 
 import {CommandUnresolvedDefinition} from "@typing/command";
 

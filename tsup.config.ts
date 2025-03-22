@@ -42,7 +42,9 @@ const framework: Options = {
         'browser/index': 'src/browser/index.ts',
         'client/background': 'src/client/background.ts',
         'client/command': 'src/client/command.ts',
+        'client/content/index': 'src/client/content/index.ts',
         'client/content/vanilla': 'src/client/content/vanilla/index.ts',
+        'client/content/react': 'src/client/content/react/index.ts',
     },
     format: ['esm', 'cjs'],
     outExtension({format}) {

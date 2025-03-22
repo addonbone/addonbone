@@ -1,5 +1,3 @@
-import _isUndefined from "lodash/isUndefined";
-
 import {browser} from "./env";
 import {ManifestVersion} from "@typing/manifest";
 
@@ -33,10 +31,10 @@ export const isBackground = (): boolean => {
     }
 
     if (manifest.manifest_version === 3) {
-        return _isUndefined(window);
+        return window === undefined;
     }
 
-    return !_isUndefined(window) && backgroundPaths.includes(location.pathname);
+    return window !== undefined && backgroundPaths.includes(location.pathname);
 }
 
 export const throwRuntimeError = (): void => {

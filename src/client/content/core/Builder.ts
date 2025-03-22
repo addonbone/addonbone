@@ -10,41 +10,62 @@ import ManagedContext from "./ManagedContext";
 import {
     ContentScriptBuilder,
     ContentScriptContainerCreator,
+    ContentScriptContainerFactory,
+    ContentScriptContainerOptions,
+    ContentScriptContainerTag,
     ContentScriptDefinition,
     ContentScriptMountFunction,
     ContentScriptNode,
     ContentScriptRenderHandler,
+    ContentScriptRenderValue,
     ContentScriptResolvedDefinition
 } from "@typing/content";
 
 import {Awaiter} from "@typing/helpers";
 
 export default abstract class implements ContentScriptBuilder {
+    protected readonly definition: ContentScriptResolvedDefinition;
+
     protected context = new ManagedContext();
 
     static make<T extends ContentScriptBuilder>(
-        this: new (definition: ContentScriptResolvedDefinition) => T, definition: ContentScriptDefinition
+        this: new (definition: ContentScriptDefinition) => T, definition: ContentScriptDefinition
     ): T {
-        return new this({
-            ...definition,
-            get mount(): ContentScriptMountFunction {
-                return definition.mount || contentScriptMountAppendResolver();
-            },
-            get container(): ContentScriptContainerCreator {
-                return contentScriptContainerResolver(definition.container);
-            },
-            get render(): ContentScriptRenderHandler {
-                return contentScriptRenderResolver(definition.render);
-            }
-        });
+        return new this(definition);
     }
 
     protected abstract createNode(anchor: Element): Promise<ContentScriptNode>;
 
     protected abstract cleanupNode(anchor: Element): Awaiter<void>;
 
-    protected constructor(protected readonly definition: ContentScriptResolvedDefinition) {
+    protected constructor(definition: ContentScriptDefinition) {
+        this.definition = {
+            ...definition,
+            mount: this.resolveMount(definition.mount),
+            container: this.resolveContainer(definition.container),
+            render: this.resolveRender(definition.render),
+        }
+    }
 
+    protected resolveMount(
+        mount?: ContentScriptMountFunction
+    ): ContentScriptMountFunction {
+        return mount || contentScriptMountAppendResolver();
+    }
+
+    protected resolveContainer(
+        container?:
+            ContentScriptContainerTag |
+            ContentScriptContainerOptions |
+            ContentScriptContainerFactory
+    ): ContentScriptContainerCreator {
+        return contentScriptContainerResolver(container);
+    }
+
+    protected resolveRender(
+        render?: ContentScriptRenderValue | ContentScriptRenderHandler
+    ): ContentScriptRenderHandler {
+        return contentScriptRenderResolver(render);
     }
 
     protected async findAnchors(): Promise<Element[]> {

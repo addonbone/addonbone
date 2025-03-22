@@ -1,5 +1,9 @@
 import {ContentScriptRenderHandler, ContentScriptRenderValue} from "@typing/content";
 
+export const isValidContentScriptRenderValue = (value: unknown): value is string | number | Element => {
+    return (typeof value === "string" && value.length > 0) || typeof value === "number" || value instanceof Element;
+}
+
 export const contentScriptRenderResolver = (
     render?: ContentScriptRenderValue | ContentScriptRenderHandler
 ): ContentScriptRenderHandler => async (props): Promise<void | ContentScriptRenderValue> => {
@@ -9,11 +13,9 @@ export const contentScriptRenderResolver = (
         resolvedRender = await resolvedRender;
     }
 
-    if (
-        typeof resolvedRender === "function" ||
-        typeof resolvedRender === "string" ||
-        typeof resolvedRender === "number"
-    ) {
-        return resolvedRender;
+    if (!isValidContentScriptRenderValue(resolvedRender)) {
+        return;
     }
+
+    return resolvedRender;
 }

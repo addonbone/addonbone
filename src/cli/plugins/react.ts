@@ -13,7 +13,7 @@ export default definePlugin(() => {
                         cacheGroups: {
                             react: {
                                 name: 'react',
-                                test: /[\\/]node_modules[\\/](react|react-dom)([\\/]|$)/,
+                                test: /[\\/]node_modules[\\/](react|react-dom|scheduler)([\\/]|$)/,
                                 priority: -5,
                                 reuseExistingChunk: true,
                                 enforce: true,

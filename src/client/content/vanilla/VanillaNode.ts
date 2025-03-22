@@ -26,6 +26,8 @@ export default class VanillaNode implements ContentScriptNode {
             this.container.appendChild(this.value);
         } else if (typeof this.value === 'string' || typeof this.value === 'number') {
             this.container.textContent = String(this.value);
+        } else if (this.value === null || this.value === undefined) {
+            console.warn('Content script vanilla value is empty');
         }
     }
 

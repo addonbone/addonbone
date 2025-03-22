@@ -16,12 +16,16 @@ export default abstract class MountBuilder extends Builder {
 
     protected async getValue(anchor: Element): Promise<undefined | ContentScriptRenderValue> {
         if (!this.values.has(anchor)) {
-            const value = await this.definition.render(this.getProps(anchor));
+            const value = await this.renderValue(anchor);
 
             this.values.set(anchor, value || null);
         }
 
         return this.values.get(anchor) || undefined;
+    }
+
+    protected async renderValue(anchor: Element): Promise<void | ContentScriptRenderValue> {
+        return this.definition.render(this.getProps(anchor));
     }
 
     protected async createNode(anchor: Element): Promise<ContentScriptNode> {

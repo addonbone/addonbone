@@ -1,4 +1,5 @@
 import {EntrypointFile, EntrypointType} from "@typing/entrypoint";
+import {Framework} from "@typing/framework";
 
 export const getEntrypointName = (file: EntrypointFile, entrypoint: EntrypointType): string => {
     const normalizedPath = file.file.replace(/^\//, '');
@@ -32,4 +33,12 @@ export const getEntrypointName = (file: EntrypointFile, entrypoint: EntrypointTy
     }
 
     return fileNameWithoutExt;
+}
+
+export const getEntrypointFileFramework = (file: EntrypointFile): Framework => {
+    if (/\.(jsx|tsx)$/.test(file.file)) {
+        return Framework.React;
+    }
+
+    return Framework.Vanilla;
 }

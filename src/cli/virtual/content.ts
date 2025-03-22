@@ -1,5 +1,6 @@
 //@ts-ignore
 import {type ContentScriptDefinition} from "adnbn";
+import {isContentScriptDefinition, isValidContentScriptDefinitionRenderValue} from "adnbn/client/content"
 
 import contentScript from "virtual:content-client";
 import * as module from "virtual:content-entrypoint";
@@ -9,9 +10,9 @@ try {
 
     let definition: ContentScriptDefinition = otherDefinition;
 
-    if (defaultDefinition && typeof defaultDefinition === 'object' && defaultDefinition.constructor === Object) {
+    if (isContentScriptDefinition(defaultDefinition)){
         definition = {...definition, ...defaultDefinition};
-    } else if (typeof defaultDefinition === 'function' || typeof defaultDefinition === 'string' || typeof defaultDefinition === 'number') {
+    } else if (isValidContentScriptDefinitionRenderValue(defaultDefinition)) {
         definition = {...definition, render: defaultDefinition};
     }
 

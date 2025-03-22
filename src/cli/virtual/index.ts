@@ -2,6 +2,8 @@ import background from "./background.ts?raw";
 import command from "./command.ts?raw";
 import content from "./content.ts?raw";
 
+import {getEntrypointFileFramework} from "@cli/utils/entrypoint";
+
 import {EntrypointFile} from "@typing/entrypoint";
 
 const templates = {background, command, content};
@@ -21,5 +23,5 @@ export const virtualCommandModule = (file: EntrypointFile, name: string): string
 
 export const virtualContentScriptModule = (file: EntrypointFile): string => {
     return getVirtualModule(file, 'content')
-        .replace(`virtual:content-client`, 'adnbn/client/content/vanilla');
+        .replace(`virtual:content-client`, 'adnbn/client/content/' + getEntrypointFileFramework(file));
 }

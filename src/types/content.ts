@@ -1,4 +1,4 @@
-import {type FC} from "react"
+import type {FC, ReactNode} from "react"
 import {Optional} from 'utility-types';
 
 import {EntrypointFile, EntrypointOptions} from "@typing/entrypoint";
@@ -81,8 +81,8 @@ export type ContentScriptAnchor = string | Element | null | undefined;
 export type ContentScriptAnchorGetter = () => Awaiter<ContentScriptAnchor>;
 
 // Render
-export type ContentScriptRenderComponent = FC<ContentScriptProps>;
-export type ContentScriptRenderValue = string | number | Element | ContentScriptRenderComponent;
+export type ContentScriptRenderReactComponent = FC<ContentScriptProps>;
+export type ContentScriptRenderValue = Element | ReactNode | ContentScriptRenderReactComponent;
 export type ContentScriptRenderHandler = (props: ContentScriptProps) => Awaiter<void | ContentScriptRenderValue>;
 
 // Container

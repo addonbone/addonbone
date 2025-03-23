@@ -1,9 +1,5 @@
 import VanillaBuilder from './VanillaBuilder';
 
-import {buildEntrypoint} from "../../utils/entrypoint";
+import {createEntryResolver} from "../../utils/entry";
 
-import {ContentScriptDefinition} from "@typing/content";
-
-export default (definition: ContentScriptDefinition): void => {
-    buildEntrypoint(VanillaBuilder.make(definition));
-};
+export default createEntryResolver(VanillaBuilder);

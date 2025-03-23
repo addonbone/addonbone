@@ -1,11 +1,7 @@
 import Builder from "./Builder";
 
-import {buildEntrypoint} from "../utils/entrypoint";
-
-import {BackgroundDefinition} from "@typing/background";
+import {createEntryResolver} from "../utils/entry";
 
 export * from "./resolvers";
 
-export default (definition: BackgroundDefinition): void => {
-    buildEntrypoint(new Builder(definition));
-}
+export default createEntryResolver(Builder);

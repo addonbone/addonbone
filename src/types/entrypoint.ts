@@ -51,6 +51,7 @@ export interface EntrypointFile {
 
 export interface EntrypointBuilder {
     build(): Promise<void>;
-
     destroy(): Promise<void>;
 }
+
+export type EntrypointBuilderClass<T> = T extends new (arg: infer P, ...args: any[]) => any ? P : never;

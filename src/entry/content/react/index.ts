@@ -1,9 +1,5 @@
 import ReactBuilder from "./ReactBuilder";
 
-import {buildEntrypoint} from "../../utils/entrypoint";
+import {createEntryResolver} from "../../utils/entry";
 
-import {ContentScriptDefinition} from "@typing/content";
-
-export default (definition: ContentScriptDefinition): void => {
-    buildEntrypoint(ReactBuilder.make(definition));
-};
+export default createEntryResolver(ReactBuilder);

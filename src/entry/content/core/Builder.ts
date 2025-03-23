@@ -29,12 +29,6 @@ export default abstract class implements ContentScriptBuilder {
 
     protected context = new ManagedContext();
 
-    static make<T extends ContentScriptBuilder>(
-        this: new (definition: ContentScriptDefinition) => T, definition: ContentScriptDefinition
-    ): T {
-        return new this(definition);
-    }
-
     protected abstract createNode(anchor: Element): Promise<ContentScriptNode>;
 
     protected abstract cleanupNode(anchor: Element): Awaiter<void>;

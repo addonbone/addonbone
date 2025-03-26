@@ -8,8 +8,7 @@ import {definePlugin} from "@core/define";
 import {getInputPath, getRootPath} from "@cli/resolvers/path";
 
 import {ReadonlyConfig} from "@typing/config";
-
-const dir = '.adnbn';
+import {systemDir, packageName} from "@typing/app";
 
 const getAlias = (config: ReadonlyConfig): Record<string, string> => {
     const srcDir = config.srcDir;
@@ -54,14 +53,14 @@ const getTypescriptConfig = (config: ReadonlyConfig): TsConfigJson => {
 };
 
 const getVendorTypes = (): string[] => {
-    return ['adnbn/entry-types'].map((value) => `/// <reference types="${value}" />`);
+    return [`${packageName}/entry-types`].map((value) => `/// <reference types="${value}" />`);
 }
 
 const generateTypescriptConfig = (config: ReadonlyConfig): void => {
     const tsConfig = getTypescriptConfig(config);
     const vendorTypes = getVendorTypes();
 
-    const systemDirPath = getRootPath(getInputPath(config, dir));
+    const systemDirPath = getRootPath(getInputPath(config, systemDir));
 
     fs.mkdirSync(systemDirPath, {recursive: true});
 

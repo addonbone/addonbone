@@ -3,6 +3,8 @@ import _ from 'lodash';
 
 import SourceFile from "./SourceFile";
 
+import {packageName} from "@typing/app";
+
 export default class<T extends Record<string, unknown>> extends SourceFile {
     protected definition = new Set<string>();
 
@@ -44,8 +46,8 @@ export default class<T extends Record<string, unknown>> extends SourceFile {
                 if (ts.isCallExpression(expr) && ts.isIdentifier(expr.expression)) {
                     const functionName = expr.expression.text;
 
-                    if (this.getImports().get(functionName) !== 'adnbn') {
-                        console.warn(`Function ${functionName} is not imported from 'adnbn' on file ${this.file}`);
+                    if (this.getImports().get(functionName) !== packageName) {
+                        console.warn(`Function ${functionName} is not imported from '${packageName}' on file ${this.file}`);
 
                         return;
                     }

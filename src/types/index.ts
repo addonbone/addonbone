@@ -1,4 +1,4 @@
-export * from './app';
+export {Mode, Command} from './app';
 export * from './background';
 export * from './browser';
 export * from './command';

@@ -1,17 +1,16 @@
-import {Command, Mode} from "@typing/app";
+import {Command, Mode, packageName} from "@typing/app";
 import {Browser} from "@typing/browser";
 import {ContentScriptAppend} from "@typing/content";
 
 import {Resolver} from "../types";
 
-const name = 'adnbn';
 
 export default (): Resolver[] => {
     const resolvers: Resolver[] = [];
 
     Object.entries(Browser).forEach(([key, value]) => {
         resolvers.push({
-            from: name,
+            from: packageName,
             target: 'Browser',
             name: key,
             value,
@@ -20,7 +19,7 @@ export default (): Resolver[] => {
 
     Object.entries(Mode).forEach(([key, value]) => {
         resolvers.push({
-            from: name,
+            from: packageName,
             target: 'Mode',
             name: key,
             value,
@@ -29,7 +28,7 @@ export default (): Resolver[] => {
 
     Object.entries(Command).forEach(([key, value]) => {
         resolvers.push({
-            from: name,
+            from: packageName,
             target: 'Command',
             name: key,
             value,
@@ -38,7 +37,7 @@ export default (): Resolver[] => {
 
     Object.entries(ContentScriptAppend).forEach(([key, value]) => {
         resolvers.push({
-            from: name,
+            from: packageName,
             target: 'ContentScriptAppend',
             name: key,
             value,

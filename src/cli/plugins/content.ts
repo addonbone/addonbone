@@ -158,8 +158,8 @@ export default definePlugin(() => {
                                 name: frameworkContentEntryName,
                                 test: (module, {moduleGraph}): boolean => {
                                     const clientDirs = [
-                                        path.join('node_modules', 'adnbn', 'client', 'content'),
-                                        path.join('addonbone', 'dist', 'client', 'content'), // TODO: Remove this for production
+                                        path.join('node_modules', 'adnbn', 'entry', 'content'),
+                                        path.join('addonbone', 'dist', 'entry', 'content'), // TODO: Remove this for production
                                     ];
 
                                     if (clientDirs.some((dir) => (module.resource || '').includes(dir))) {

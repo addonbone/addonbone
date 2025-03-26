@@ -72,8 +72,8 @@
     "ts-node": "^10.9.2",
     "tsup": "^8.3.6",
     "tsx": "^4.19.2",
-    "utility-types": "^3.11.0",
-    "uglify-js": "^3.19.3"
+    "uglify-js": "^3.19.3",
+    "utility-types": "^3.11.0"
   },
   "dependencies": {
     "@rsdoctor/rspack-plugin": "^0.4.13",
@@ -84,6 +84,7 @@
     "cac": "^6.7.14",
     "clean-webpack-plugin": "^4.0.0",
     "css-loader": "^7.1.2",
+    "debounce": "^2.2.0",
     "file-loader": "^6.2.0",
     "json-stringify-deterministic": "^1.0.12",
     "just-kebab-case": "^4.2.0",

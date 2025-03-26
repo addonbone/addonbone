@@ -97,7 +97,7 @@ export type ContentScriptContainerFactory = (props: ContentScriptProps) => Await
 export type ContentScriptContainerCreator = (props: ContentScriptProps) => Awaiter<Element>;
 
 // Watch
-export type ContentScriptWatchStrategy = (update: () => Awaiter<void>) => () => void;
+export type ContentScriptWatchStrategy = (update: () => void, context: ContentScriptContext) => () => void;
 
 // Context
 export interface ContentScriptContext extends ContentScriptMount {
@@ -125,11 +125,12 @@ export interface ContentScriptDefinition extends ContentScriptEntrypointOptions 
     main?: ContentScriptMainFunction;
 }
 
-export interface ContentScriptResolvedDefinition extends Omit<ContentScriptDefinition, 'anchor' | 'mount' | 'container' | 'render'> {
+export interface ContentScriptResolvedDefinition extends Omit<ContentScriptDefinition, 'anchor' | 'mount' | 'container' | 'render' | 'watch'> {
     anchor: ContentScriptAnchorResolver;
     mount: ContentScriptMountFunction;
     render: ContentScriptRenderHandler;
     container: ContentScriptContainerCreator;
+    watch: ContentScriptWatchStrategy;
 }
 
 export interface ContentScriptAppendDefinition extends Omit<ContentScriptDefinition, 'mount'> {

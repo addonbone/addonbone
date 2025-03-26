@@ -4,18 +4,22 @@ import _ from 'lodash';
 import SourceFile from "./SourceFile";
 
 export default class<T extends Record<string, unknown>> extends SourceFile {
-    protected definition?: string;
+    protected definition = new Set<string>();
 
-    protected properties: string[] = [];
+    protected properties = new Set<string>();
 
-    public setDefinition(definition: string): this {
-        this.definition = definition;
+    public setDefinition(definition: string | string[]): this {
+        if (_.isString(definition)) {
+            definition = [definition];
+        }
+
+        definition.forEach(definition => this.definition.add(definition));
 
         return this;
     }
 
     public setProperties(properties: string[]): this {
-        this.properties = properties;
+        properties.forEach(property => this.properties.add(property));
 
         return this;
     }
@@ -26,7 +30,7 @@ export default class<T extends Record<string, unknown>> extends SourceFile {
 
     protected getOptionsFromVariables(): T {
         return Array.from(this.getVariables().values())
-            .filter(({name, exported}) => exported && this.properties.includes(name))
+            .filter(({name, exported}) => exported && this.properties.has(name))
             .reduce((config, {name, value}) => ({...config, [name]: value}), {} as T);
     }
 
@@ -46,7 +50,7 @@ export default class<T extends Record<string, unknown>> extends SourceFile {
                         return;
                     }
 
-                    if (functionName === this.definition && expr.arguments.length > 0) {
+                    if (this.definition.has(functionName) && expr.arguments.length > 0) {
                         const arg = expr.arguments[0];
 
                         if (ts.isObjectLiteralExpression(arg)) {
@@ -61,6 +65,6 @@ export default class<T extends Record<string, unknown>> extends SourceFile {
 
         parse(this.getSourceFile());
 
-        return _.pickBy(options, (_, key) => this.properties.includes(key)) as T;
+        return _.pickBy(options, (_, key) => this.properties.has(key)) as T;
     }
 }

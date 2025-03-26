@@ -15,7 +15,11 @@ const CommonPropertiesSchema = z.object({
     excludeBrowser: z.array(z.nativeEnum(Browser)).optional(),
 });
 
-const parseOptions = <T extends typeof CommonPropertiesSchema>(file: EntrypointFile, schema: T, definition: string) => {
+const parseOptions = <T extends typeof CommonPropertiesSchema>(
+    file: EntrypointFile,
+    schema: T,
+    definition: string | string[]
+): Record<string, unknown> => {
     const options = OptionFile.make(file.file)
         .setProperties(Object.keys(schema.shape))
         .setDefinition(definition)
@@ -73,5 +77,5 @@ export const getContentScriptOptions = (file: EntrypointFile): ContentScriptEntr
         matchOriginAsFallback: z.boolean().optional(),
     });
 
-    return parseOptions(file, ContentScriptPropertiesSchema, 'defineContentScript');
+    return parseOptions(file, ContentScriptPropertiesSchema, ['defineContentScript', 'defineContentScriptAppend']);
 }

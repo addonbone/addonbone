@@ -39,7 +39,7 @@ export default (): Resolver[] => {
     Object.entries(ContentScriptAppend).forEach(([key, value]) => {
         resolvers.push({
             from: name,
-            target: 'ContentScriptAppendMode',
+            target: 'ContentScriptAppend',
             name: key,
             value,
         });

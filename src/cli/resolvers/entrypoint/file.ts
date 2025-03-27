@@ -3,16 +3,15 @@ import path from 'path';
 
 import {getAppsPath, getSharedPath} from "../path";
 
+import {getEntrypointIndexFilenames, isEntrypointFilename, isSupportedEntrypointExtension} from "@cli/utils/entrypoint";
+
 import {EntrypointFile, EntrypointType} from "@typing/entrypoint";
 import {ReadonlyConfig} from "@typing/config";
 
-const escapeRegExp = (text: string): string =>
-    text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-export const pathToImport = (filePath: string): string => {
+const pathToImport = (filePath: string): string => {
     const {dir, name, ext} = path.parse(filePath);
 
-    if (name === 'index' && (ext === '.ts' || ext === '.tsx')) {
+    if (name === 'index' && isSupportedEntrypointExtension(ext)) {
         return dir;
     }
 
@@ -24,10 +23,6 @@ export const findEntrypointFiles = (
     entrypoint: EntrypointType
 ): Set<EntrypointFile> => {
     const files: EntrypointFile[] = [];
-
-    const regex = new RegExp(
-        `^(?:.*\\.)?${escapeRegExp(entrypoint)}\\.(ts|tsx)$`
-    );
 
     const finder = (dir: string): void => {
         let entries: Dirent[];
@@ -45,7 +40,7 @@ export const findEntrypointFiles = (
 
             if (entry.isDirectory()) {
                 if (entry.name === entrypoint || entry.name.endsWith(`.${entrypoint}`)) {
-                    const possibleIndexFiles = ['index.ts', 'index.tsx'];
+                    const possibleIndexFiles = getEntrypointIndexFilenames();
 
                     for (const indexFile of possibleIndexFiles) {
                         const indexPath = path.join(fullPath, indexFile);
@@ -64,7 +59,7 @@ export const findEntrypointFiles = (
 
                 finder(fullPath);
             } else if (entry.isFile()) {
-                if (regex.test(entry.name)) {
+                if (isEntrypointFilename(entry.name, entrypoint)) {
                     files.push({file: fullPath, import: pathToImport(fullPath)});
                 }
             }

@@ -1,6 +1,16 @@
 import {EntrypointFile, EntrypointType} from "@typing/entrypoint";
 import {Framework} from "@typing/framework";
 
+const extensions = ['ts', 'tsx', 'js', 'jsx', 'vue', 'svelte', 'solid.ts'];
+
+const extensionsPattern = extensions
+    .map(ext => ext.replace('.', '\\.'))
+    .join('|');
+
+const indexRegex = new RegExp(`^index\\.(${extensionsPattern})$`, 'i');
+
+const extensionRegex = new RegExp(`\\.(${extensionsPattern})$`, 'i');
+
 export const getEntrypointName = (file: EntrypointFile, entrypoint: EntrypointType): string => {
     const normalizedPath = file.file.replace(/^\//, '');
 
@@ -10,7 +20,7 @@ export const getEntrypointName = (file: EntrypointFile, entrypoint: EntrypointTy
 
     const lastPart = parts[parts.length - 1];
 
-    if (lastPart === 'index.ts' || lastPart === 'index.tsx') {
+    if (indexRegex.test(lastPart)) {
         const dirName = parts[parts.length - 2];
 
         if (dirName.includes(key)) {
@@ -22,7 +32,7 @@ export const getEntrypointName = (file: EntrypointFile, entrypoint: EntrypointTy
         }
     }
 
-    const fileNameWithoutExt = lastPart.replace(/\.(ts|tsx)$/, '');
+    const fileNameWithoutExt = lastPart.replace(extensionRegex, '');
 
     if (fileNameWithoutExt.includes(key)) {
         return fileNameWithoutExt.split(key)[0];
@@ -41,4 +51,24 @@ export const getEntrypointFileFramework = (file: EntrypointFile): Framework => {
     }
 
     return Framework.Vanilla;
+}
+
+export const getEntrypointIndexFilenames = (): Set<string> => {
+    return new Set(extensions.map((ext) => `index.${ext}`));
+}
+
+export const isSupportedEntrypointExtension = (ext: string): boolean => {
+    if (ext.startsWith('.')) {
+        ext = ext.slice(1);
+    }
+
+    return extensions.includes(ext);
+}
+
+export const isEntrypointFilename = (filename: string, entrypoint: EntrypointType): boolean => {
+    const entry = entrypoint.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+    const pattern = new RegExp(`^(?:.*\\.)?${entry}\\.(${extensionsPattern})$`);
+
+    return pattern.test(filename);
 }

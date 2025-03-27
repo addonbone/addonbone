@@ -15,11 +15,11 @@ const CommonPropertiesSchema = z.object({
     excludeBrowser: z.array(z.nativeEnum(Browser)).optional(),
 });
 
-const parseOptions = <T extends typeof CommonPropertiesSchema>(
+const parseOptions = <T extends typeof CommonPropertiesSchema, R extends Record<string, any>>(
     file: EntrypointFile,
     schema: T,
     definition: string | string[]
-): Record<string, unknown> => {
+): R => {
     const options = OptionFile.make(file.file)
         .setProperties(Object.keys(schema.shape))
         .setDefinition(definition)
@@ -30,10 +30,14 @@ const parseOptions = <T extends typeof CommonPropertiesSchema>(
     if (!success) {
         const e = error?.errors[0];
 
-        throw new Error(`Invalid options ${e.path.join(', ')} in "${file.file}": ${e.message}`);
+        if (e) {
+            throw new Error(`Invalid options ${e.path.join(', ')} in "${file.file}": ${e.message}`);
+        } else {
+            throw new Error(`Invalid options in "${file.file}"`);
+        }
     }
 
-    return data;
+    return data || {} as R;
 }
 
 export const getBackgroundOptions = (file: EntrypointFile): BackgroundEntrypointOptions => {

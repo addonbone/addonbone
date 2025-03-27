@@ -5,6 +5,25 @@ import {ReadonlyConfig} from "@typing/config";
 import {EntrypointFile} from "@typing/entrypoint";
 import {Awaiter} from "@typing/helpers";
 
+/**
+ * The result of executing the `entrypoint` function in a plugin.
+ *
+ * Can be one of the following values:
+ *
+ * - `true` — the entrypoint is considered active, and the file path is automatically
+ *   inferred based on the key name of the entrypoint. For example, if the key is `background`,
+ *   the file named `background` will be used by default.
+ *
+ * - `string` — a path to a single **file**
+ *
+ * - `string[]` — an array of paths to **files**
+ *
+ * - `EntrypointFile` — an object describing a single entrypoint file.
+ *
+ * - `EntrypointFile[]` — an array of `EntrypointFile` objects.
+ *
+ * - `Set<EntrypointFile>` — a unique set of `EntrypointFile` objects.
+ */
 export type PluginEntrypointResult = true | string | string[] | EntrypointFile | EntrypointFile[] | Set<EntrypointFile>;
 
 export interface PluginConfigOptions {
@@ -16,21 +35,40 @@ export interface PluginManifestOptions extends PluginConfigOptions {
     manifest: ManifestBuilder;
 }
 
-// Rspack
+// Bundler
 export interface PluginBundlerOptions extends PluginConfigOptions {
     rspack: RspackConfig;
 }
+
+/**
+ * The result of executing the `locales` function in a plugin.
+ *
+ * Can be one of the following values:
+ *
+ * - `true` — the system will look for a directory named `locales` and treat all files inside
+ *   it as localization files.
+ *
+ * - `string` — a path to a specific **directory**, and all files inside will be treated as localization files.
+ *
+ * - `EntrypointFile` — a single localization file.
+ *
+ * - `EntrypointFile[]` — an array of localization files.
+ *
+ * - `Set<EntrypointFile>` — a unique set of localization files.
+ */
+export type PluginLocaleResult = true | string | EntrypointFile | EntrypointFile[] | Set<EntrypointFile>;
 
 interface PluginName {
     name: string;
 }
 
 export interface Plugin extends PluginName {
-    content?: PluginHandler<PluginConfigOptions, PluginEntrypointResult>;
     background?: PluginHandler<PluginConfigOptions, PluginEntrypointResult>;
-    command?: PluginHandler<PluginConfigOptions, PluginEntrypointResult>;
-    manifest?: PluginHandlerCallback<PluginManifestOptions>;
     bundler?: PluginHandler<PluginBundlerOptions, RspackConfig>;
+    command?: PluginHandler<PluginConfigOptions, PluginEntrypointResult>;
+    content?: PluginHandler<PluginConfigOptions, PluginEntrypointResult>;
+    locale?: PluginHandler<PluginConfigOptions, PluginLocaleResult>;
+    manifest?: PluginHandlerCallback<PluginManifestOptions>;
 }
 
 export type PluginHandler<O, T = void> = T | PluginHandlerCallback<O, T>;

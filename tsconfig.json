@@ -46,7 +46,8 @@
   },
   "include": [
     "./*.d.ts",
-    "./src/**/*"
+    "./src/**/*",
+    "node_modules/@types/node/*.d.ts"
   ],
   "exclude": [
     "**/*.test.ts",

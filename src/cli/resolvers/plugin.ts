@@ -56,7 +56,7 @@ export const getPluginEntrypointFiles = async <K extends PluginEntrypointKeys>(c
             } else if (_.isArray(result)) {
                 endpoints = result;
             } else if (result instanceof Set) {
-                endpoints = Array.from(result);
+                endpoints = Array.from(result as Set<EntrypointFile>);
             }
 
             const endpointFiles: EntrypointFile[] = [];

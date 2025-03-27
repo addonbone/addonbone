@@ -1,17 +1,15 @@
 import {type Compiler} from '@rspack/core';
-import UniqKeyPlugin from "@cli/bundler/plugins/UniqKeyPlugin";
+
+import UniqKeyPlugin from "./UniqKeyPlugin";
 
 interface ReplaceOptions {
     values: Record<string, string>;
 }
 
 class ReplacePlugin extends UniqKeyPlugin {
-    private options: ReplaceOptions;
 
-    constructor(options: ReplaceOptions, key: string) {
+    constructor(private options: ReplaceOptions, key: string) {
         super(key);
-
-        this.options = options;
     }
 
     apply(compiler: Compiler): void {

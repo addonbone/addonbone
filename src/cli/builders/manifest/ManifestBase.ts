@@ -13,6 +13,7 @@ import {
 import {Browser} from "@typing/browser";
 import {EXECUTE_ACTION_COMMAND_NAME} from "@typing/command";
 
+type ManifestV3 = chrome.runtime.ManifestV3;
 type ManifestPermission = chrome.runtime.ManifestPermissions;
 
 export class ManifestError extends Error {
@@ -113,7 +114,13 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
             return manifest;
         }
 
-        return Object.assign({}, manifest, ...sources);
+        const result = {...manifest};
+
+        for (const source of sources) {
+            Object.assign(result, source);
+        }
+
+        return result;
     }
 
     public build(): T {
@@ -153,7 +160,7 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
                 };
 
                 return {...commands, [command.name]: item};
-            }, {} as T['commands']);
+            }, {} as CoreManifest['commands']);
 
             return {commands};
         }
@@ -161,7 +168,7 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
 
     protected buildContentScripts(): Partial<CoreManifest> | undefined {
         if (this.contentScripts.size > 0) {
-            const contentScripts: CoreManifest['content_scripts'] = [];
+            const contentScripts: ManifestV3['content_scripts'] = [];
 
             for (const script of this.contentScripts.values()) {
                 const {entry, matches, excludeMatches, allFrames, runAt, excludeGlobs, includeGlobs, world} = script;

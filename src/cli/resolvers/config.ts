@@ -6,6 +6,7 @@ import assetPlugin from "../plugins/asset";
 import backgroundPlugin from "../plugins/background";
 import contentPlugin from "../plugins/content";
 import dotenvPlugin from "../plugins/dotenv";
+import localePlugin from "../plugins/locale";
 import reactPlugin from "../plugins/react";
 import stylePlugin from "../plugins/style";
 import typescriptPlugin from "../plugins/typescript";
@@ -16,6 +17,7 @@ import {Config, OptionalConfig, ReadonlyConfig, UserConfig} from "@typing/config
 import {Command, Mode} from "@typing/app";
 import {Browser} from "@typing/browser";
 import {Plugin} from "@typing/plugin";
+import {ManifestVersion} from "@typing/manifest";
 
 
 const getUserConfig = async (config: ReadonlyConfig): Promise<UserConfig> => {
@@ -31,7 +33,7 @@ const getUserConfig = async (config: ReadonlyConfig): Promise<UserConfig> => {
             console.log('Loaded user config:', configFilePath);
         }
 
-        return userConfig
+        return userConfig || {};
     } else if (config.debug) {
         console.warn('Config file not found:', configFilePath);
     }
@@ -95,7 +97,8 @@ export default async (config: OptionalConfig): Promise<Config> => {
         cssDir = 'css',
         assetsDir = 'assets',
         htmlDir = '.',
-        manifestVersion = [Browser.Firefox, Browser.Safari].includes(browser) ? 2 : 3,
+        localeDir = 'locales',
+        manifestVersion = (new Set<Browser>([Browser.Firefox, Browser.Safari]).has(browser) ? 2 : 3) as ManifestVersion,
         mode = Mode.Development,
         analyze = false,
         plugins = [],
@@ -104,6 +107,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         mergeContentScripts = false,
         concatContentScripts = true,
         mergeStyles = true,
+        mergeLocales = true,
     } = config;
 
     let resolvedConfig: Config = {
@@ -123,6 +127,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         cssDir,
         assetsDir,
         htmlDir,
+        localeDir,
         plugins,
         analyze,
         configFile,
@@ -131,6 +136,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         mergeContentScripts,
         concatContentScripts,
         mergeStyles,
+        mergeLocales,
     };
 
     let vars = loadDotenv(resolvedConfig);
@@ -147,6 +153,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         reactPlugin(),
         assetPlugin(),
         stylePlugin(),
+        //localePlugin(),
         contentPlugin(),
         backgroundPlugin(),
     ];

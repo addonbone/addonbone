@@ -1,4 +1,4 @@
-import {Command, Mode, packageName} from "@typing/app";
+import {Command, Mode, PackageName} from "@typing/app";
 import {Browser} from "@typing/browser";
 import {ContentScriptAppend} from "@typing/content";
 
@@ -10,7 +10,7 @@ export default (): Resolver[] => {
 
     Object.entries(Browser).forEach(([key, value]) => {
         resolvers.push({
-            from: packageName,
+            from: PackageName,
             target: 'Browser',
             name: key,
             value,
@@ -19,7 +19,7 @@ export default (): Resolver[] => {
 
     Object.entries(Mode).forEach(([key, value]) => {
         resolvers.push({
-            from: packageName,
+            from: PackageName,
             target: 'Mode',
             name: key,
             value,
@@ -28,7 +28,7 @@ export default (): Resolver[] => {
 
     Object.entries(Command).forEach(([key, value]) => {
         resolvers.push({
-            from: packageName,
+            from: PackageName,
             target: 'Command',
             name: key,
             value,
@@ -37,7 +37,7 @@ export default (): Resolver[] => {
 
     Object.entries(ContentScriptAppend).forEach(([key, value]) => {
         resolvers.push({
-            from: packageName,
+            from: PackageName,
             target: 'ContentScriptAppend',
             name: key,
             value,

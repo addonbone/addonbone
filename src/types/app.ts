@@ -1,5 +1,5 @@
-export const packageName = 'adnbn';
-export const systemDir = '.adnbn';
+export const PackageName = 'adnbn';
+export const SystemDir = '.adnbn';
 
 export enum Mode {
     None = 'none',

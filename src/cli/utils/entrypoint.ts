@@ -1,15 +1,13 @@
-import {EntrypointFile, EntrypointType} from "@typing/entrypoint";
+import {EntrypointFile, EntrypointFileExtensions, EntrypointType} from "@typing/entrypoint";
 import {Framework} from "@typing/framework";
 
-const extensions = ['ts', 'tsx', 'js', 'jsx', 'vue', 'svelte', 'solid.ts'];
-
-const extensionsPattern = extensions
+const extPattern = [...EntrypointFileExtensions]
     .map(ext => ext.replace('.', '\\.'))
     .join('|');
 
-const indexRegex = new RegExp(`^index\\.(${extensionsPattern})$`, 'i');
+const indexRegex = new RegExp(`^index\\.(${extPattern})$`, 'i');
 
-const extensionRegex = new RegExp(`\\.(${extensionsPattern})$`, 'i');
+const extRegex = new RegExp(`\\.(${extPattern})$`, 'i');
 
 export const getEntrypointName = (file: EntrypointFile, entrypoint: EntrypointType): string => {
     const normalizedPath = file.file.replace(/^\//, '');
@@ -32,7 +30,7 @@ export const getEntrypointName = (file: EntrypointFile, entrypoint: EntrypointTy
         }
     }
 
-    const fileNameWithoutExt = lastPart.replace(extensionRegex, '');
+    const fileNameWithoutExt = lastPart.replace(extRegex, '');
 
     if (fileNameWithoutExt.includes(key)) {
         return fileNameWithoutExt.split(key)[0];
@@ -52,23 +50,22 @@ export const getEntrypointFileFramework = (file: EntrypointFile): Framework => {
 
     return Framework.Vanilla;
 }
-
-export const getEntrypointIndexFilenames = (): Set<string> => {
-    return new Set(extensions.map((ext) => `index.${ext}`));
-}
-
 export const isSupportedEntrypointExtension = (ext: string): boolean => {
     if (ext.startsWith('.')) {
         ext = ext.slice(1);
     }
 
-    return extensions.includes(ext);
+    return EntrypointFileExtensions.has(ext);
+}
+
+export const isValidEntrypointFilename = (filename: string): boolean => {
+    return extRegex.test(filename);
 }
 
 export const isEntrypointFilename = (filename: string, entrypoint: EntrypointType): boolean => {
-    const entry = entrypoint.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const name = entrypoint.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-    const pattern = new RegExp(`^(?:.*\\.)?${entry}\\.(${extensionsPattern})$`);
+    const pattern = new RegExp(`^(?:.*\\.)?${name}\\.(${extPattern})$`);
 
     return pattern.test(filename);
 }

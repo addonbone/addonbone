@@ -3,19 +3,24 @@ import ts from "typescript";
 import path from "path";
 import {createMatchPath} from "tsconfig-paths";
 
+import {isValidEntrypointFilename} from "@cli/utils/entrypoint";
+
+import {PackageName} from "@typing/app";
+import {EntrypointFileExtensions} from "@typing/entrypoint";
+
 interface ResolveOptions {
     tsconfigPath?: string;
     baseDir?: string;
 }
 
-function findFileWithExtensions(basePath: string, exts: string[]): string | null {
-    for (const ext of exts) {
-        const candidate = basePath + ext;
+const findFileWithExtensions = (basePath: string): string | undefined => {
+    for (const ext of EntrypointFileExtensions) {
+        const candidate = `${basePath}.${ext}`;
+
         if (fs.existsSync(candidate)) {
             return candidate;
         }
     }
-    return null;
 }
 
 export default (importPath: string, options: ResolveOptions = {}): string => {
@@ -46,42 +51,38 @@ export default (importPath: string, options: ResolveOptions = {}): string => {
         parsedConfig.options.paths || {}
     );
 
-    if (importPath.startsWith(".") || importPath.startsWith("/")) {
-        const resolvedLocal = path.resolve(baseDir, importPath);
+    if (importPath.startsWith('.') || importPath.startsWith('/')) {
+        let resolvedLocal: string | undefined = path.resolve(baseDir, importPath);
 
-        if (fs.existsSync(resolvedLocal)) {
+        if (isValidEntrypointFilename(resolvedLocal) && fs.existsSync(resolvedLocal)) {
             return resolvedLocal;
         }
 
-        const candidate = resolvedLocal.endsWith(".ts") || resolvedLocal.endsWith(".tsx")
-            ? resolvedLocal
-            : findFileWithExtensions(resolvedLocal, [".ts", ".tsx"]);
+        resolvedLocal = findFileWithExtensions(resolvedLocal);
 
-        if (candidate && fs.existsSync(candidate)) {
-            return candidate;
+        if (resolvedLocal) {
+            return resolvedLocal;
         }
 
         throw new Error(`File not found at path "${resolvedLocal}" or with .ts/.tsx extensions`);
     }
 
-    const aliased = matchPath(importPath);
-
-    if (aliased && fs.existsSync(aliased)) {
-        return path.resolve(aliased);
-    }
+    let aliased = matchPath(importPath);
 
     if (aliased) {
-        const candidate = aliased.endsWith(".ts") || aliased.endsWith(".tsx")
-            ? aliased
-            : findFileWithExtensions(aliased, [".ts", ".tsx"]);
+        if (isValidEntrypointFilename(aliased) && fs.existsSync(aliased)) {
+            return path.resolve(aliased);
+        }
 
-        if (candidate && fs.existsSync(candidate)) {
-            return path.resolve(candidate);
+        aliased = findFileWithExtensions(aliased);
+
+        if (aliased) {
+            return path.resolve(aliased);
         }
     }
 
     try {
-        if (importPath === 'adnbn') {
+        if (importPath === PackageName) {
             return importPath;
         }
 

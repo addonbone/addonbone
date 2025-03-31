@@ -18,7 +18,7 @@ import {EntrypointFile, EntrypointType} from "@typing/entrypoint";
 import {ContentScriptEntrypointMap, ContentScriptEntrypointOptions} from "@typing/content";
 import {ReadonlyConfig} from "@typing/config";
 import {ManifestContentScript, ManifestContentScripts} from "@typing/manifest";
-import {Command, packageName} from "@typing/app";
+import {Command, PackageName} from "@typing/app";
 
 type ContentScriptEntries = Record<string, Array<{ options: ContentScriptEntrypointOptions, file: EntrypointFile }>>;
 
@@ -158,7 +158,7 @@ export default definePlugin(() => {
                                 name: frameworkContentEntryName,
                                 test: (module, {moduleGraph}): boolean => {
                                     const clientDirs = [
-                                        path.join('node_modules', packageName, 'entry', 'content'),
+                                        path.join('node_modules', PackageName, 'entry', 'content'),
                                         path.join('addonbone', 'dist', 'entry', 'content'), // TODO: Remove this for production
                                     ];
 

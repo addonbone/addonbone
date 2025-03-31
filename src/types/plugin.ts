@@ -50,13 +50,11 @@ export interface PluginBundlerOptions extends PluginConfigOptions {
  *
  * - `string` — a path to a specific **directory**, and all files inside will be treated as localization files.
  *
- * - `EntrypointFile` — a single localization file.
+ * - `string[]` — an array of paths to **files** will be treated as localization files.
  *
- * - `EntrypointFile[]` — an array of localization files.
- *
- * - `Set<EntrypointFile>` — a unique set of localization files.
+ * - `Set<string>` — a unique set of localization files.
  */
-export type PluginLocaleResult = true | string | EntrypointFile | EntrypointFile[] | Set<EntrypointFile>;
+export type PluginLocaleResult = true | string | string[] | Set<string>;
 
 interface PluginName {
     name: string;

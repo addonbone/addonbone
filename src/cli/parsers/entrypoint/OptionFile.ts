@@ -3,9 +3,9 @@ import _ from 'lodash';
 
 import SourceFile from "./SourceFile";
 
-import {packageName} from "@typing/app";
+import {PackageName} from "@typing/app";
 
-export default class<T extends Record<string, unknown>> extends SourceFile {
+export default class<T extends Record<string, any>> extends SourceFile {
     protected definition = new Set<string>();
 
     protected properties = new Set<string>();
@@ -31,9 +31,11 @@ export default class<T extends Record<string, unknown>> extends SourceFile {
     }
 
     protected getOptionsFromVariables(): T {
-        return Array.from(this.getVariables().values())
+        const options = Array.from(this.getVariables().values())
             .filter(({name, exported}) => exported && this.properties.has(name))
-            .reduce((config, {name, value}) => ({...config, [name]: value}), {} as T);
+            .reduce((config, {name, value}) => ({...config, [name]: value}), {});
+
+        return options as T;
     }
 
     protected getOptionsFromDefinition(): T {
@@ -46,8 +48,8 @@ export default class<T extends Record<string, unknown>> extends SourceFile {
                 if (ts.isCallExpression(expr) && ts.isIdentifier(expr.expression)) {
                     const functionName = expr.expression.text;
 
-                    if (this.getImports().get(functionName) !== packageName) {
-                        console.warn(`Function ${functionName} is not imported from '${packageName}' on file ${this.file}`);
+                    if (this.getImports().get(functionName) !== PackageName) {
+                        console.warn(`Function ${functionName} is not imported from '${PackageName}' on file ${this.file}`);
 
                         return;
                     }

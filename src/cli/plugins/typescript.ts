@@ -8,7 +8,7 @@ import {definePlugin} from "@core/define";
 import {getInputPath, getRootPath} from "@cli/resolvers/path";
 
 import {ReadonlyConfig} from "@typing/config";
-import {systemDir, packageName} from "@typing/app";
+import {SystemDir, PackageName} from "@typing/app";
 
 const getAlias = (config: ReadonlyConfig): Record<string, string> => {
     const srcDir = config.srcDir;
@@ -53,14 +53,14 @@ const getTypescriptConfig = (config: ReadonlyConfig): TsConfigJson => {
 };
 
 const getVendorTypes = (): string[] => {
-    return [`${packageName}/entry-types`].map((value) => `/// <reference types="${value}" />`);
+    return [`${PackageName}/entry-types`].map((value) => `/// <reference types="${value}" />`);
 }
 
 const generateTypescriptConfig = (config: ReadonlyConfig): void => {
     const tsConfig = getTypescriptConfig(config);
     const vendorTypes = getVendorTypes();
 
-    const systemDirPath = getRootPath(getInputPath(config, systemDir));
+    const systemDirPath = getRootPath(getInputPath(config, SystemDir));
 
     fs.mkdirSync(systemDirPath, {recursive: true});
 

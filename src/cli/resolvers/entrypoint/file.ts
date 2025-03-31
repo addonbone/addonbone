@@ -3,10 +3,12 @@ import path from 'path';
 
 import {getAppsPath, getSharedPath} from "../path";
 
-import {getEntrypointIndexFilenames, isEntrypointFilename, isSupportedEntrypointExtension} from "@cli/utils/entrypoint";
+import {isEntrypointFilename, isSupportedEntrypointExtension} from "@cli/utils/entrypoint";
 
-import {EntrypointFile, EntrypointType} from "@typing/entrypoint";
+import {EntrypointFile, EntrypointFileExtensions, EntrypointType} from "@typing/entrypoint";
 import {ReadonlyConfig} from "@typing/config";
+
+const possibleIndexFiles = new Set([...EntrypointFileExtensions].map((ext) => `index.${ext}`));
 
 const pathToImport = (filePath: string): string => {
     const {dir, name, ext} = path.parse(filePath);
@@ -40,8 +42,6 @@ export const findEntrypointFiles = (
 
             if (entry.isDirectory()) {
                 if (entry.name === entrypoint || entry.name.endsWith(`.${entrypoint}`)) {
-                    const possibleIndexFiles = getEntrypointIndexFilenames();
-
                     for (const indexFile of possibleIndexFiles) {
                         const indexPath = path.join(fullPath, indexFile);
 

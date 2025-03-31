@@ -7,13 +7,14 @@ type ManifestBase = chrome.runtime.ManifestBase;
 type ManifestV3 = chrome.runtime.ManifestV3;
 type ManifestV2 = chrome.runtime.ManifestV2;
 type ManifestIcons = chrome.runtime.ManifestIcons;
+type ManifestPermission = chrome.runtime.ManifestPermissions;
 
 type ManifestFixed<T extends ManifestBase> = Omit<T, 'manifest_version'> & {
     manifest_version: ManifestVersion
 };
 
 interface ManifestUnstable {
-    permissions?: (chrome.runtime.ManifestPermissions | (string & Record<never, never>))[];
+    permissions?: (ManifestPermission | (string & Record<never, never>))[];
     web_accessible_resources?: string[] | chrome.runtime.ManifestV3['web_accessible_resources'];
 }
 
@@ -81,6 +82,8 @@ export interface ManifestBuilder<T extends CoreManifest = Manifest> {
 
     setDependencies(dependencies: ManifestDependencies): this;
 
+    addPermission(permission: ManifestPermission): this;
+
     get(): T;
 }
 
@@ -111,3 +114,5 @@ export interface ManifestDependency {
 }
 
 export type ManifestDependencies = Map<Entry, ManifestDependency>;
+
+export type ManifestPermissions = Set<ManifestPermission>;

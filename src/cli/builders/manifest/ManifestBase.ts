@@ -7,11 +7,13 @@ import {
     ManifestCommands,
     ManifestContentScripts,
     ManifestDependencies,
+    ManifestPermissions,
     ManifestVersion
 } from "@typing/manifest";
-
 import {Browser} from "@typing/browser";
 import {EXECUTE_ACTION_COMMAND_NAME} from "@typing/command";
+
+type ManifestPermission = chrome.runtime.ManifestPermissions;
 
 export class ManifestError extends Error {
     public constructor(message: string) {
@@ -29,6 +31,7 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
     protected commands: ManifestCommands = new Set();
     protected contentScripts: ManifestContentScripts = new Set();
     protected dependencies: ManifestDependencies = new Map();
+    protected permissions: ManifestPermissions = new Set();
 
     public abstract getManifestVersion(): ManifestVersion;
 
@@ -97,6 +100,12 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
         return this;
     }
 
+    public addPermission(permission: ManifestPermission): this {
+        this.permissions.add(permission);
+
+        return this;
+    }
+
     private marge<T extends CoreManifest>(manifest: T, ...sources: Array<Partial<T> | undefined>): T {
         sources = sources.filter((source) => source !== undefined);
 
@@ -116,12 +125,13 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
             manifest_version: this.getManifestVersion(),
         };
 
-        manifest = this.marge(
+        manifest = this.marge<Manifest>(
             manifest,
             this.buildBackground(),
             this.buildCommands(),
             this.buildAction(),
-            this.buildContentScripts()
+            this.buildContentScripts(),
+            this.buildPermissions(),
         );
 
         return manifest as T;
@@ -183,6 +193,12 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
             }
 
             return {content_scripts: contentScripts};
+        }
+    }
+
+    protected buildPermissions(): Partial<Manifest> | undefined {
+        if (this.permissions.size > 0) {
+            return {permissions: Array.from(this.permissions)};
         }
     }
 

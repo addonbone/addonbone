@@ -13,11 +13,9 @@ const possibleIndexFiles = new Set([...EntrypointFileExtensions].map((ext) => `i
 const pathToImport = (filePath: string): string => {
     const {dir, name, ext} = path.parse(filePath);
 
-    if (name === 'index' && isSupportedEntrypointExtension(ext)) {
-        return dir;
-    }
+    const result = name === 'index' && isSupportedEntrypointExtension(ext) ? dir : path.join(dir, name);
 
-    return path.join(dir, name);
+    return path.posix.join(...result.split(path.sep));
 }
 
 export const findEntrypointFiles = (

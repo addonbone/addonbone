@@ -57,4 +57,10 @@ export default class extends ManifestBase<ManifestV3> {
             };
         }
     }
+
+    protected buildHostPermissions(): Partial<ManifestV3> | undefined {
+        if (this.hostPermissions.size > 0) {
+            return {host_permissions: Array.from(this.hostPermissions)};
+        }
+    }
 }

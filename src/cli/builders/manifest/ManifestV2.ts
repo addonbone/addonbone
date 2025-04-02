@@ -72,4 +72,8 @@ export default class extends ManifestBase<ManifestV2> {
             return {content_scripts: contentScripts};
         }
     }
+
+    protected buildHostPermissions(): Partial<ManifestV2> | undefined {
+        return undefined;
+    }
 }

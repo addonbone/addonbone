@@ -4,6 +4,7 @@ import path from 'path';
 import {getAppsPath, getSharedPath} from "../path";
 
 import {isEntrypointFilename, isSupportedEntrypointExtension} from "@cli/utils/entrypoint";
+import {toPosix} from "@cli/utils/path";
 
 import {EntrypointFile, EntrypointFileExtensions, EntrypointType} from "@typing/entrypoint";
 import {ReadonlyConfig} from "@typing/config";
@@ -15,7 +16,7 @@ const pathToImport = (filePath: string): string => {
 
     const result = name === 'index' && isSupportedEntrypointExtension(ext) ? dir : path.join(dir, name);
 
-    return path.posix.join(...result.split(path.sep));
+    return toPosix(result);
 }
 
 export const findEntrypointFiles = (

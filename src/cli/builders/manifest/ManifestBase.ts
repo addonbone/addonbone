@@ -6,12 +6,13 @@ import {
     ManifestBuilder,
     ManifestCommands,
     ManifestContentScripts,
-    ManifestDependencies,
+    ManifestDependencies, ManifestHostPermissions,
     ManifestPermissions,
     ManifestVersion
 } from "@typing/manifest";
 import {Browser} from "@typing/browser";
 import {EXECUTE_ACTION_COMMAND_NAME} from "@typing/command";
+
 
 type ManifestV3 = chrome.runtime.ManifestV3;
 type ManifestPermission = chrome.runtime.ManifestPermissions;
@@ -33,12 +34,15 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
     protected contentScripts: ManifestContentScripts = new Set();
     protected dependencies: ManifestDependencies = new Map();
     protected permissions: ManifestPermissions = new Set();
+    protected hostPermissions: ManifestHostPermissions = new Set();
 
     public abstract getManifestVersion(): ManifestVersion;
 
     protected abstract buildBackground(): Partial<T> | undefined;
 
     protected abstract buildAction(): Partial<T> | undefined;
+
+    protected abstract buildHostPermissions(): Partial<T> | undefined;
 
     protected constructor(protected readonly browser: Browser = Browser.Chrome) {
     }
@@ -107,6 +111,24 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
         return this;
     }
 
+    public setPermissions(permissions: ManifestPermissions): this {
+        this.permissions = permissions;
+
+        return this;
+    }
+
+    public addHostPermission(permission: string): this {
+        this.hostPermissions.add(permission);
+
+        return this;
+    }
+
+    public setHostPermissions(permissions: ManifestHostPermissions): this {
+        this.hostPermissions = permissions;
+
+        return this;
+    }
+
     private marge<T extends CoreManifest>(manifest: T, ...sources: Array<Partial<T> | undefined>): T {
         sources = sources.filter((source) => source !== undefined);
 
@@ -139,6 +161,7 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
             this.buildAction(),
             this.buildContentScripts(),
             this.buildPermissions(),
+            this.buildHostPermissions(),
         );
 
         return manifest as T;

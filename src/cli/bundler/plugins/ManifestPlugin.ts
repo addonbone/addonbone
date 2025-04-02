@@ -1,5 +1,6 @@
 import rspack, {Chunk, Compilation, Compiler} from '@rspack/core';
 import {ManifestBuilder, ManifestDependencies, ManifestDependency} from "@typing/manifest";
+import {toPosix} from "@cli/utils/path";
 
 class ManifestPlugin {
     constructor(private readonly manifest: ManifestBuilder) {
@@ -28,6 +29,8 @@ class ManifestPlugin {
 
                         allChunks.forEach((chunk: Chunk) => {
                             chunk.files.forEach((fileName: string) => {
+                                fileName = toPosix(fileName);
+
                                 if (fileName.endsWith('.js')) {
                                     dependencies.js.add(fileName);
                                 } else if (fileName.endsWith('.css')) {
@@ -38,7 +41,10 @@ class ManifestPlugin {
                             });
 
                             const auxiliaryFiles = chunk.auxiliaryFiles || [];
+
                             auxiliaryFiles.forEach((fileName: string) => {
+                                fileName = toPosix(fileName);
+
                                 if (fileName.endsWith('.css')) {
                                     dependencies.css.add(fileName);
                                 } else if (this.isAsset(fileName)) {

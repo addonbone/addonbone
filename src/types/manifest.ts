@@ -84,6 +84,12 @@ export interface ManifestBuilder<T extends CoreManifest = Manifest> {
 
     addPermission(permission: ManifestPermission): this;
 
+    setPermissions(permissions: ManifestPermissions): this;
+
+    addHostPermission(permission: string): this;
+
+    setHostPermissions(permissions: ManifestHostPermissions): this;
+
     get(): T;
 }
 
@@ -116,3 +122,5 @@ export interface ManifestDependency {
 export type ManifestDependencies = Map<Entry, ManifestDependency>;
 
 export type ManifestPermissions = Set<ManifestPermission>;
+
+export type ManifestHostPermissions = Set<string>;

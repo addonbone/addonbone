@@ -2,6 +2,7 @@ export * from "./action";
 export * from "./command";
 export * from "./env";
 export * from "./i18n";
+export * from "./management";
 export * from "./notification";
 export * from "./offscreen";
 export * from "./runtime";

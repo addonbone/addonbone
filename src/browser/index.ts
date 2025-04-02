@@ -5,3 +5,4 @@ export * from "./i18n";
 export * from "./notification";
 export * from "./runtime";
 export * from "./sidebar";
+export * from "./tabs";

@@ -9,6 +9,7 @@ export * from "./offscreen";
 export * from "./runtime";
 export * from "./scripting";
 export * from "./sidebar";
+export * from "./tabCapture";
 export * from "./tabs";
 export * from "./webNavigation";
 export * from "./webRequest";

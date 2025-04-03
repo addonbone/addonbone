@@ -122,13 +122,13 @@ export const getSettingsDownloadsUrl = (): string => {
     }
 }
 
-export const onDownloadsCreated = (callback: Parameters<typeof chrome.downloads.onCreated.addListener>[0]) => {
+export const onDownloadsCreated = (callback: Parameters<typeof downloads.onCreated.addListener>[0]) => {
     downloads.onCreated.addListener(callback);
 
     return () => downloads.onCreated.removeListener(callback);
 }
 
-export const onDownloadsChanged = (callback: Parameters<typeof chrome.downloads.onChanged.addListener>[0]) => {
+export const onDownloadsChanged = (callback: Parameters<typeof downloads.onChanged.addListener>[0]) => {
     downloads.onChanged.addListener(callback);
 
     return () => downloads.onChanged.removeListener(callback);

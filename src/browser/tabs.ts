@@ -160,26 +160,25 @@ export const executeScriptTab = (tabId: number, details: InjectDetails) => new P
     });
 });
 
-export const onTabActivated = (callback: Parameters<typeof chrome.tabs.onActivated.addListener>[0]): Function => {
+export const onTabActivated = (callback: Parameters<typeof tabs.onActivated.addListener>[0]): Function => {
     tabs.onActivated.addListener(callback);
 
     return () => tabs.onActivated.removeListener(callback);
 }
 
-export const onTabCreated = (callback: Parameters<typeof chrome.tabs.onCreated.addListener>[0]): Function => {
+export const onTabCreated = (callback: Parameters<typeof tabs.onCreated.addListener>[0]): Function => {
     tabs.onCreated.addListener(callback);
 
     return () => tabs.onCreated.removeListener(callback);
 }
 
-export const onTabRemoved = (callback: Parameters<typeof chrome.tabs.onRemoved.addListener>[0]): Function => {
+export const onTabRemoved = (callback: Parameters<typeof tabs.onRemoved.addListener>[0]): Function => {
     tabs.onRemoved.addListener(callback);
 
     return () => tabs.onRemoved.removeListener(callback);
 };
 
-
-export const onTabUpdated = (callback: Parameters<typeof chrome.tabs.onUpdated.addListener>[0]): Function => {
+export const onTabUpdated = (callback: Parameters<typeof tabs.onUpdated.addListener>[0]): Function => {
     tabs.onUpdated.addListener(callback);
 
     return () => tabs.onUpdated.removeListener(callback);

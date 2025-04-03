@@ -85,7 +85,7 @@ export const getNotificationPermissionLevel = (): Promise<string> => new Promise
     });
 });
 
-export const onNotificationsClicked = (callback: Parameters<typeof chrome.notifications.onClicked.addListener>[0]) => {
+export const onNotificationsClicked = (callback: Parameters<typeof notifications.onClicked.addListener>[0]) => {
     if (!isSupportNotifications()) return;
 
     notifications.onClicked.addListener(callback);
@@ -93,7 +93,7 @@ export const onNotificationsClicked = (callback: Parameters<typeof chrome.notifi
     return () => notifications.onClicked.removeListener(callback);
 }
 
-export const onNotificationsClosed = (callback: Parameters<typeof chrome.notifications.onClosed.addListener>[0]) => {
+export const onNotificationsClosed = (callback: Parameters<typeof notifications.onClosed.addListener>[0]) => {
     if (!isSupportNotifications()) return;
 
     notifications.onClosed.addListener(callback);
@@ -101,7 +101,7 @@ export const onNotificationsClosed = (callback: Parameters<typeof chrome.notific
     return () => notifications.onClosed.removeListener(callback);
 }
 
-export const onNotificationsButtonClicked = (callback: Parameters<typeof chrome.notifications.onButtonClicked.addListener>[0]) => {
+export const onNotificationsButtonClicked = (callback: Parameters<typeof notifications.onButtonClicked.addListener>[0]) => {
     if (!isSupportNotifications()) return;
 
     notifications.onButtonClicked.addListener(callback);
@@ -109,7 +109,7 @@ export const onNotificationsButtonClicked = (callback: Parameters<typeof chrome.
     return () => notifications.onButtonClicked.removeListener(callback);
 }
 
-export const onNotificationsPermissionLevelChanged = (callback: Parameters<typeof chrome.notifications.onPermissionLevelChanged.addListener>[0]) => {
+export const onNotificationsPermissionLevelChanged = (callback: Parameters<typeof notifications.onPermissionLevelChanged.addListener>[0]) => {
     if (!isSupportNotifications()) return;
 
     notifications.onPermissionLevelChanged.addListener(callback);

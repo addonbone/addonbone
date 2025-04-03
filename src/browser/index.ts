@@ -1,5 +1,5 @@
 export * from "./action";
-export * from "./command";
+export * from "./commands";
 export * from "./downloads";
 export * from "./env";
 export * from "./i18n";

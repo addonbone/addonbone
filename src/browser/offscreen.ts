@@ -17,7 +17,7 @@ export const hasOffscreenDocument = () => new Promise<boolean>((resolve, reject)
     });
 });
 
-export const createOffscreenDocument = async (createParameters: CreateParameters): Promise<void> => new Promise<void>((resolve, reject) => {
+export const createOffscreenDocument = (createParameters: CreateParameters): Promise<void> => new Promise<void>((resolve, reject) => {
     offscreen.createDocument(createParameters, () => {
         try {
             throwRuntimeError();
@@ -29,7 +29,7 @@ export const createOffscreenDocument = async (createParameters: CreateParameters
     });
 });
 
-export const removeOffscreenDocument = async (): Promise<void> => new Promise<void>((resolve, reject) => {
+export const removeOffscreenDocument = (): Promise<void> => new Promise<void>((resolve, reject) => {
     offscreen.closeDocument(() => {
         try {
             throwRuntimeError();

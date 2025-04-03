@@ -72,7 +72,7 @@ export const throwRuntimeError = (): void => {
     }
 }
 
-export const onRuntimeInstalled = (callback: Parameters<typeof runtime.onInstalled.addListener>[0]) => {
+export const onRuntimeInstalled = (callback: Parameters<typeof runtime.onInstalled.addListener>[0]): () => void => {
     runtime.onInstalled.addListener(callback);
 
     return () => runtime.onInstalled.removeListener(callback);

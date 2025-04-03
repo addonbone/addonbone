@@ -85,32 +85,32 @@ export const getNotificationPermissionLevel = (): Promise<string> => new Promise
     });
 });
 
-export const onNotificationsClicked = (callback: Parameters<typeof notifications.onClicked.addListener>[0]) => {
-    if (!isSupportNotifications()) return;
+export const onNotificationsClicked = (callback: Parameters<typeof notifications.onClicked.addListener>[0]): () => void => {
+    if (!isSupportNotifications()) return () => ({});
 
     notifications.onClicked.addListener(callback);
 
     return () => notifications.onClicked.removeListener(callback);
 }
 
-export const onNotificationsClosed = (callback: Parameters<typeof notifications.onClosed.addListener>[0]) => {
-    if (!isSupportNotifications()) return;
+export const onNotificationsClosed = (callback: Parameters<typeof notifications.onClosed.addListener>[0]): () => void => {
+    if (!isSupportNotifications()) return () => ({});
 
     notifications.onClosed.addListener(callback);
 
     return () => notifications.onClosed.removeListener(callback);
 }
 
-export const onNotificationsButtonClicked = (callback: Parameters<typeof notifications.onButtonClicked.addListener>[0]) => {
-    if (!isSupportNotifications()) return;
+export const onNotificationsButtonClicked = (callback: Parameters<typeof notifications.onButtonClicked.addListener>[0]): () => void => {
+    if (!isSupportNotifications()) return () => ({});
 
     notifications.onButtonClicked.addListener(callback);
 
     return () => notifications.onButtonClicked.removeListener(callback);
 }
 
-export const onNotificationsPermissionLevelChanged = (callback: Parameters<typeof notifications.onPermissionLevelChanged.addListener>[0]) => {
-    if (!isSupportNotifications()) return;
+export const onNotificationsPermissionLevelChanged = (callback: Parameters<typeof notifications.onPermissionLevelChanged.addListener>[0]): () => void => {
+    if (!isSupportNotifications()) return () => ({});
 
     notifications.onPermissionLevelChanged.addListener(callback);
 

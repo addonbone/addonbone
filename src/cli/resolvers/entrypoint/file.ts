@@ -1,7 +1,7 @@
 import fs, {type Dirent} from 'fs';
 import path from 'path';
 
-import {getAppsPath, getSharedPath} from "../path";
+import {getAppSourcePath, getSharedPath} from "../path";
 
 import {isEntrypointFilename, isSupportedEntrypointExtension} from "@cli/utils/entrypoint";
 
@@ -88,7 +88,7 @@ export const findEntrypointFiles = (
 export const getEntrypointFiles = (config: ReadonlyConfig, entrypoint: EntrypointType): Set<EntrypointFile> => {
     let files = new Set<EntrypointFile>();
 
-    const appFiles = findEntrypointFiles(getAppsPath(config), entrypoint);
+    const appFiles = findEntrypointFiles(getAppSourcePath(config), entrypoint);
 
     if (appFiles.size > 0) {
         files = appFiles;

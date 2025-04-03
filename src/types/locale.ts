@@ -59,3 +59,5 @@ export enum Language {
 export const LanguageCodes: ReadonlySet<string> = new Set(Object.values(Language));
 
 export const LocaleFileExtensions: ReadonlySet<string> = new Set(['yaml', 'yml']);
+
+export const LocaleDirectoryName = 'locales';

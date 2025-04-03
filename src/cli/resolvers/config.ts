@@ -11,7 +11,7 @@ import reactPlugin from "../plugins/react";
 import stylePlugin from "../plugins/style";
 import typescriptPlugin from "../plugins/typescript";
 
-import {getAppsPath, getConfigFile, getInputPath} from "../resolvers/path";
+import {getAppSourcePath, getConfigFile, getInputPath} from "../resolvers/path";
 
 import {Config, OptionalConfig, ReadonlyConfig, UserConfig} from "@typing/config";
 import {Command, Mode} from "@typing/app";
@@ -70,7 +70,7 @@ const loadDotenv = (config: ReadonlyConfig): DotenvParseOutput => {
         `.env`,
     ];
 
-    const appPaths = preset.map((file) => getAppsPath(config, file));
+    const appPaths = preset.map((file) => getAppSourcePath(config, file));
     const rootPaths = preset.map((file) => getInputPath(config, file));
 
     const paths = [...appPaths, ...rootPaths];
@@ -153,7 +153,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         reactPlugin(),
         assetPlugin(),
         stylePlugin(),
-        //localePlugin(),
+        localePlugin(),
         contentPlugin(),
         backgroundPlugin(),
     ];

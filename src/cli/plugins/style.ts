@@ -4,7 +4,7 @@ import fs from "fs";
 
 import {definePlugin} from "@core/define"
 
-import {getAppsPath, getRootPath, getSharedPath} from "@cli/resolvers/path";
+import {getAppSourcePath, getRootPath, getSharedPath} from "@cli/resolvers/path";
 
 import {ReadonlyConfig} from "@typing/config";
 
@@ -17,7 +17,7 @@ const styleMergerLoader = (config: ReadonlyConfig) => (
     if (sharedPath.startsWith(sharedDir)) {
         const relativePath = path.relative(sharedDir, sharedPath);
 
-        const appDir = getRootPath(getAppsPath(config));
+        const appDir = getRootPath(getAppSourcePath(config));
         const appPath = getRootPath(path.join(appDir, relativePath));
 
         if (fs.existsSync(appPath)) {

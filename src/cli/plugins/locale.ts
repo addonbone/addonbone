@@ -7,7 +7,7 @@ import {definePlugin} from "@core/define";
 import {processPluginHandler} from "@cli/resolvers/plugin";
 import {getAppPath, getAppSourcePath, getRootPath, getSharedPath, getSourcePath} from "@cli/resolvers/path";
 
-import {isValidLocaleFilename} from "@cli/utils/locale";
+import {getLanguageFromFilename, isValidLocaleFilename} from "@cli/utils/locale";
 
 import {ReadonlyConfig} from "@typing/config";
 import {LanguageCodes, LocaleDirectoryName} from "@typing/locale";
@@ -111,6 +111,13 @@ const getPluginLocaleFiles = async (config: ReadonlyConfig): Promise<Set<string>
     return new Set(files);
 }
 
+const getLocaleEntries = async (config: ReadonlyConfig) => {
+    const localeFiles = await getPluginLocaleFiles(config);
+
+    const localeByLanguage = _.groupBy(Array.from(localeFiles), (file) => getLanguageFromFilename(file));
+
+    console.log(localeByLanguage);
+}
 
 export default definePlugin(() => {
 
@@ -119,9 +126,8 @@ export default definePlugin(() => {
         name: 'adnbn:locale',
         locale: ({config}) => getLocaleFiles(config),
         bundler: async ({config}) => {
-            const localeFiles = await getPluginLocaleFiles(config);
+            const localeEntries = await getLocaleEntries(config);
 
-            console.log('-->>', localeFiles);
 
             return {};
         }

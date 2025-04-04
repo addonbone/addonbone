@@ -9,9 +9,9 @@ type ManifestV2 = chrome.runtime.ManifestV2;
 type ManifestIcons = chrome.runtime.ManifestIcons;
 type ManifestPermission = chrome.runtime.ManifestPermissions;
 
-type ManifestFixed<T extends ManifestBase> = Omit<T, 'manifest_version'> & {
+interface ManifestFixed<T extends ManifestBase> extends Omit<T, 'manifest_version'> {
     manifest_version: ManifestVersion
-};
+}
 
 interface ManifestUnstable {
     permissions?: (ManifestPermission | (string & Record<never, never>))[];

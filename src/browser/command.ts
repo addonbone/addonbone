@@ -22,8 +22,6 @@ export const getAllCommands = () => new Promise<Command[]>((resolve, reject) => 
 });
 
 export const onCommand = (callback: Parameters<typeof commands.onCommand.addListener>[0]): () => void => {
-    if (!isSupportCommands()) return () => ({});
-
     commands.onCommand.addListener(callback);
 
     return () => commands.onCommand.removeListener(callback);

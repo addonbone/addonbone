@@ -1,5 +1,5 @@
 import {onActionClicked} from "@browser/action";
-import {onCommand} from "@browser/commands";
+import {onCommand} from "@browser/command";
 
 import {isValidCommandExecuteFunction, isValidCommandName} from "./resolvers";
 

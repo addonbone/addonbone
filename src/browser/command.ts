@@ -8,8 +8,6 @@ const commands = browser().commands;
 export const isSupportCommands = (): boolean => !!commands;
 
 export const getAllCommands = () => new Promise<Command[]>((resolve, reject) => {
-    if (!isSupportCommands()) resolve([]);
-
     commands.getAll((commands) => {
         try {
             throwRuntimeError();

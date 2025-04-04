@@ -4,6 +4,7 @@ import path from 'path';
 import {getAppSourcePath, getSharedPath} from "../path";
 
 import {isEntrypointFilename, isSupportedEntrypointExtension} from "@cli/utils/entrypoint";
+import {toPosix} from "@cli/utils/path";
 
 import {EntrypointFile, EntrypointFileExtensions, EntrypointType} from "@typing/entrypoint";
 import {ReadonlyConfig} from "@typing/config";
@@ -13,11 +14,9 @@ const possibleIndexFiles = new Set([...EntrypointFileExtensions].map((ext) => `i
 const pathToImport = (filePath: string): string => {
     const {dir, name, ext} = path.parse(filePath);
 
-    if (name === 'index' && isSupportedEntrypointExtension(ext)) {
-        return dir;
-    }
+    const result = name === 'index' && isSupportedEntrypointExtension(ext) ? dir : path.join(dir, name);
 
-    return path.join(dir, name);
+    return toPosix(result);
 }
 
 export const findEntrypointFiles = (

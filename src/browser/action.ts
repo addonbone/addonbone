@@ -1,4 +1,4 @@
-import {getManifest, isManifestVersion3, throwRuntimeError} from "./runtime";
+import {getRuntimeManifest, isManifestVersion3, throwRuntimeError} from "./runtime";
 import {browser} from "./env";
 
 type BadgeBackgroundColorDetails = chrome.browserAction.BadgeBackgroundColorDetails;
@@ -66,7 +66,7 @@ export const setActionIcon = (
 });
 
 export const getActionDefaultPopup = (): string => {
-    const manifest = getManifest();
+    const manifest = getRuntimeManifest();
 
     return isManifestVersion3() ? manifest.action.default_popup : manifest.browser_action.default_popup;
 }

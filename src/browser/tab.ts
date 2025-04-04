@@ -305,7 +305,7 @@ export const executeScriptTab = (tabId: number, details: InjectDetails) => new P
 // ======== CUSTOM METHODS =========
 // =================================
 export const getTabUrl = async (tabId: number): Promise<string> => {
-    const tab = await getTab(tabId);
+    const tab = await findTabById(tabId);
 
     if (!tab) {
         throw new Error(`Tab id "${tabId}" not exist`);

@@ -1,8 +1,6 @@
 import {browser} from "./env";
 import {throwRuntimeError} from "./runtime";
 
-import {TabsMap} from "@typing/tab";
-
 type Tab = chrome.tabs.Tab;
 
 type Window = chrome.windows.Window;
@@ -331,13 +329,6 @@ export const getCurrentTab = async (): Promise<Tab> => {
 
     return tabs[0];
 }
-
-export const queryTabsMap = async (queryInfo?: QueryInfo): Promise<TabsMap> => (await queryTabs(queryInfo)).reduce((map, tab) => {
-    if (typeof tab.id === 'number') {
-        return {...map, [tab.id]: tab};
-    }
-    return map;
-}, {} as TabsMap);
 
 export const queryTabIds = async (queryInfo?: QueryInfo): Promise<number[]> => (await queryTabs(queryInfo)).reduce((ids, {id}) => {
     if (typeof id === 'number') {

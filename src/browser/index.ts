@@ -1,6 +1,6 @@
 export * from "./action";
 export * from "./command";
-export * from "./downloads";
+export * from "./download";
 export * from "./env";
 export * from "./i18n";
 export * from "./management";
@@ -10,6 +10,6 @@ export * from "./runtime";
 export * from "./scripting";
 export * from "./sidebar";
 export * from "./tabCapture";
-export * from "./tabs";
+export * from "./tab";
 export * from "./webNavigation";
 export * from "./webRequest";

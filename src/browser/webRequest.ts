@@ -1,4 +1,4 @@
-import {getTabUrl} from "./tabs";
+import {getTabUrl} from "./tab";
 import {browser, isBrowser} from "./env";
 import {throwRuntimeError} from "./runtime";
 

@@ -9,7 +9,8 @@ type ManifestV2 = chrome.runtime.ManifestV2;
 type ManifestIcons = chrome.runtime.ManifestIcons;
 type ManifestPermission = chrome.runtime.ManifestPermissions;
 
-interface ManifestFixed<T extends ManifestBase> extends Omit<T, 'manifest_version'> {
+
+type ManifestFixed<T extends ManifestBase> = Omit<T, 'manifest_version'> & {
     manifest_version: ManifestVersion
 }
 

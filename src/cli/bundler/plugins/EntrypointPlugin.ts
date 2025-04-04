@@ -55,7 +55,7 @@ class EntrypointPlugin extends UniqKeyPlugin {
 
         const modules = Object.fromEntries(this.getModuleContents(this.modules));
 
-        return this._plugin = new VirtualModulesPlugin(modules);
+        return this._plugin = new VirtualModulesPlugin(modules, 'entrypoint');
     }
 
     protected get modules(): EntrypointPluginEntryModules {
@@ -149,11 +149,11 @@ class EntrypointPlugin extends UniqKeyPlugin {
         const updatedContents = this.getModuleContents(updatedModules);
 
         const removedContents = new Map(
-            Array.from(currentContents).filter(([key]) => !updatedContents.has(key))
+            Array.from(currentContents).filter(entry => !updatedContents.has(entry[0]))
         );
 
         const addedContents = new Map(
-            Array.from(updatedContents).filter(([key]) => !currentContents.has(key))
+            Array.from(updatedContents).filter(entry => !currentContents.has(entry[0]))
         );
 
         if (removedContents.size > 0 || addedContents.size > 0) {

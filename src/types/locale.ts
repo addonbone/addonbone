@@ -58,6 +58,28 @@ export enum Language {
 
 export const LanguageCodes: ReadonlySet<string> = new Set(Object.values(Language));
 
-export const LocaleFileExtensions: ReadonlySet<string> = new Set(['yaml', 'yml']);
+export const LocaleFileExtensions: ReadonlySet<string> = new Set(['yaml', 'yml', 'json']);
 
 export const LocaleDirectoryName = 'locales';
+
+export type LocaleRawData = {
+    [key: string]: string | number | LocaleRawData;
+};
+
+export type LocaleFlatData = Record<string, string>;
+
+export type LocaleFileData = {
+    [key: string]: {
+        message: string;
+    };
+};
+
+
+export interface LocaleBuilder {
+    lang(): Language;
+    merge(data: LocaleRawData): this;
+    build(): LocaleFileData;
+    get(): LocaleFlatData;
+    filename(): string;
+    keys(separator?: string): string[];
+}

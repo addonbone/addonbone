@@ -2,6 +2,7 @@ import {Command, Mode} from "@typing/app";
 import {Browser} from "@typing/browser";
 import {ManifestVersion} from "@typing/manifest";
 import {Plugin} from "@typing/plugin";
+import {Language} from "@typing/locale";
 
 export interface Config {
     /**
@@ -131,6 +132,11 @@ export interface Config {
      * - `{{inputDir}}/{{appsDir}}/{{appDir}}/{{localeDir}}`
      */
     localeDir: string;
+
+    /**
+     * Default locale for the extension.
+     */
+    localeLang: string | Language;
 
     /**
      * Array of plugins used when building the extension.

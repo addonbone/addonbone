@@ -1,16 +1,22 @@
 import fs from "fs";
 import path from "path";
 import _ from "lodash";
+import yaml from "js-yaml";
 
 import {definePlugin} from "@core/define";
+
+import localeFactory from "@cli/builders/locale";
+import GenerateJsonPlugin, {GenerateJsonPluginData} from "@cli/bundler/plugins/GenerateJsonPlugin";
 
 import {processPluginHandler} from "@cli/resolvers/plugin";
 import {getAppPath, getAppSourcePath, getRootPath, getSharedPath, getSourcePath} from "@cli/resolvers/path";
 
 import {getLanguageFromFilename, isValidLocaleFilename} from "@cli/utils/locale";
+import {isFileExtension} from "@cli/utils/path";
 
+import {Command} from "@typing/app";
 import {ReadonlyConfig} from "@typing/config";
-import {LanguageCodes, LocaleDirectoryName} from "@typing/locale";
+import {Language, LanguageCodes, LocaleBuilder, LocaleDirectoryName, LocaleRawData} from "@typing/locale";
 
 
 const findLocaleFiles = (directory: string): Set<string> => {
@@ -111,25 +117,52 @@ const getPluginLocaleFiles = async (config: ReadonlyConfig): Promise<Set<string>
     return new Set(files);
 }
 
-const getLocaleEntries = async (config: ReadonlyConfig) => {
+const getLocaleBuilders = async (config: ReadonlyConfig): Promise<LocaleBuilder[]> => {
     const localeFiles = await getPluginLocaleFiles(config);
 
-    const localeByLanguage = _.groupBy(Array.from(localeFiles), (file) => getLanguageFromFilename(file));
+    return _.chain(Array.from(localeFiles))
+        .groupBy(file => getLanguageFromFilename(file))
+        .map((files, lang: Language) => {
+            const locale = localeFactory(lang, config.browser);
 
-    console.log(localeByLanguage);
+            for (const file of files) {
+                const content = fs.readFileSync(file, 'utf8');
+
+                if (isFileExtension(file, ['yaml', 'yml'])) {
+                    locale.merge(yaml.load(content) as LocaleRawData);
+                } else if (isFileExtension(file, 'json')) {
+                    locale.merge(JSON.parse(content));
+                }
+            }
+
+            return locale;
+        }).value();
+}
+
+const getLocaleJsonData = async (config: ReadonlyConfig): Promise<GenerateJsonPluginData> => {
+    const locales = await getLocaleBuilders(config);
+
+    return locales.reduce((entries, locale) => {
+        return {...entries, [locale.filename()]: locale.build()};
+    }, {});
 }
 
 export default definePlugin(() => {
-
-
     return {
         name: 'adnbn:locale',
         locale: ({config}) => getLocaleFiles(config),
         bundler: async ({config}) => {
-            const localeEntries = await getLocaleEntries(config);
+            const data = await getLocaleJsonData(config);
 
+            const plugin = new GenerateJsonPlugin(data, 'locale');
 
-            return {};
+            if (config.command === Command.Watch) {
+                plugin.watch(async () => {
+                    return await getLocaleJsonData(config);
+                });
+            }
+
+            return {plugins: [plugin]};
         }
     };
 });

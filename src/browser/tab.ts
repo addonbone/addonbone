@@ -96,7 +96,7 @@ export const getTab = (tabId: number) => new Promise<Tab>((resolve, reject) => {
     });
 });
 
-export const getCurrentTabNative = () => new Promise<Tab | undefined>((resolve, reject) => {
+export const getCurrentTab = () => new Promise<Tab | undefined>((resolve, reject) => {
     // Returns undefined if called from a non-tab context (for example, a background page or popup view)
     tabs.getCurrent((tab) => {
         try {
@@ -320,7 +320,7 @@ export const getTabUrl = async (tabId: number): Promise<string> => {
     return url;
 }
 
-export const getCurrentTab = async (): Promise<Tab> => {
+export const getActiveTab = async (): Promise<Tab> => {
     const tabs = await queryTabs({active: true, currentWindow: true})
 
     if (!tabs || !tabs[0]) {

@@ -86,14 +86,14 @@ export const duplicateTab = (tabId: number) => new Promise<Tab | undefined>((res
     });
 });
 
-export const getTab = (tabId: number) => new Promise<Tab | undefined>(resolve => {
+export const getTab = (tabId: number) => new Promise<Tab>((resolve, reject) => {
     tabs.get(tabId, (tab) => {
         try {
             throwRuntimeError();
 
             resolve(tab);
         } catch (e) {
-            resolve(undefined);
+            reject(e);
         }
     });
 });
@@ -348,6 +348,8 @@ export const queryTabIds = async (queryInfo?: QueryInfo): Promise<number[]> => (
 }, [] as number[]);
 
 export const findTab = (queryInfo?: QueryInfo): Promise<Tab | undefined> => queryTabs(queryInfo).then(tabs => tabs.length ? tabs[0] : undefined);
+
+export const findTabById = (tabId: number): Promise<Tab | undefined> => getTab(tabId).then(tab => tab).catch(() => undefined);
 
 export const updateTabAsSelected = (tabId: number) => updateTab(tabId, {highlighted: true});
 

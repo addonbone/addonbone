@@ -6,8 +6,7 @@ interface ReplaceOptions {
     values: Record<string, string>;
 }
 
-class ReplacePlugin extends UniqKeyPlugin {
-
+export default class ReplacePlugin extends UniqKeyPlugin {
     constructor(private options: ReplaceOptions, key: string) {
         super(key);
     }
@@ -48,5 +47,3 @@ class ReplacePlugin extends UniqKeyPlugin {
         });
     }
 }
-
-export default ReplacePlugin;

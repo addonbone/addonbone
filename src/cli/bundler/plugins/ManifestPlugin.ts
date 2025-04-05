@@ -1,6 +1,8 @@
 import rspack, {Chunk, Compilation, Compiler} from '@rspack/core';
-import {ManifestBuilder, ManifestDependencies, ManifestDependency} from "@typing/manifest";
+
 import {toPosix} from "@cli/utils/path";
+
+import {ManifestBuilder, ManifestDependencies, ManifestDependency} from "@typing/manifest";
 
 class ManifestPlugin {
     constructor(private readonly manifest: ManifestBuilder) {

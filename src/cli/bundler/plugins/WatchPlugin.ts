@@ -4,7 +4,7 @@ import UniqKeyPlugin from "./UniqKeyPlugin";
 
 export type WatchPluginCallback = (files: ReadonlySet<string>) => Promise<void>;
 
-class WatchPlugin extends UniqKeyPlugin {
+export default class WatchPlugin extends UniqKeyPlugin {
     constructor(private readonly callback: WatchPluginCallback, key: string) {
         super(key);
     }
@@ -23,5 +23,3 @@ class WatchPlugin extends UniqKeyPlugin {
         });
     }
 }
-
-export default WatchPlugin;

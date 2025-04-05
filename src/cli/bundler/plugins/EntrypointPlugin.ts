@@ -30,7 +30,9 @@ export type EntrypointPluginModules = Map<EntrypointFile, EntrypointPluginModule
 
 export type EntrypointPluginEntryModules = Map<string, EntrypointPluginModules>;
 
-class EntrypointPlugin extends UniqKeyPlugin {
+export default class EntrypointPlugin extends UniqKeyPlugin {
+    private readonly pluginName: string = 'EntrypointPlugin';
+
     private _plugin?: VirtualModulesPlugin;
     private _modules?: EntrypointPluginEntryModules;
 
@@ -93,12 +95,12 @@ class EntrypointPlugin extends UniqKeyPlugin {
     public apply(compiler: Compiler): void {
         this.plugin.apply(compiler);
 
-        compiler.hooks.entryOption.tap('EntrypointPlugin', (_, entry) => {
+        compiler.hooks.entryOption.tap(this.pluginName, (_, entry) => {
             this.hookEntryOption(entry);
         });
 
         if (this.update) {
-            compiler.hooks.watchRun.tapAsync('EntrypointPlugin', (compiler, callback) => {
+            compiler.hooks.watchRun.tapAsync(this.pluginName, (compiler, callback) => {
                 this.hookWatchRun(compiler).then(() => callback()).catch(callback);
             });
         }
@@ -215,5 +217,3 @@ class EntrypointPlugin extends UniqKeyPlugin {
         return content;
     }
 }
-
-export default EntrypointPlugin;

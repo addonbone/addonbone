@@ -32,6 +32,11 @@
       "import": "./dist/browser/index.js",
       "require": "./dist/browser/index.cjs"
     },
+    "./storage": {
+      "types": "./dist/storage/index.d.ts",
+      "import": "./dist/storage/index.js",
+      "require": "./dist/storage/index.cjs"
+    },
     "./entry/*": {
       "types": "./dist/entry/*/index.d.ts",
       "import": "./dist/entry/*/index.js",

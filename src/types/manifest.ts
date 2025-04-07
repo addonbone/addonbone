@@ -1,6 +1,7 @@
 import {ContentScriptConfig} from "@typing/content";
 import {BackgroundConfig} from "@typing/background";
 import {CommandConfig} from "@typing/command";
+import {Language} from "@typing/locale";
 
 type ManifestCommon = chrome.runtime.Manifest;
 type ManifestBase = chrome.runtime.ManifestBase;
@@ -67,11 +68,13 @@ export type Manifest = ChromeManifest | FirefoxManifest | SafariManifest;
 export interface ManifestBuilder<T extends CoreManifest = Manifest> {
     setVersion(version: string): this;
 
+    setLocale(lang?: Language): this;
+
     setName(name: string): this;
 
-    setShortName(shortName: string): this;
+    setShortName(shortName?: string): this;
 
-    setDescription(description: string): this;
+    setDescription(description?: string): this;
 
     setBackground(background?: ManifestBackground): this;
 

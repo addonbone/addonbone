@@ -19,6 +19,7 @@ const common: Options = {
             '@browser': resolve(__dirname, './src/browser'),
             '@cli': resolve(__dirname, './src/cli'),
             '@entry': resolve(__dirname, './src/entry'),
+            '@locale': resolve(__dirname, './src/locale'),
             '@core': resolve(__dirname, './src/core'),
             '@typing': resolve(__dirname, './src/types'),
         }
@@ -40,6 +41,7 @@ const framework: Options = {
     entry: {
         'index': 'src/index.ts',
         'browser/index': 'src/browser/index.ts',
+        'locale/index': 'src/locale/index.ts',
         'entry/background/index': 'src/entry/background/index.ts',
         'entry/command/index': 'src/entry/command/index.ts',
         'entry/content/index': 'src/entry/content/index.ts',

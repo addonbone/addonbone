@@ -18,7 +18,7 @@ export default abstract class extends Builder {
         if (!this.values.has(anchor)) {
             const value = await this.renderValue(anchor);
 
-            this.values.set(anchor, value || null);
+            this.values.set(anchor, value === undefined ? undefined : value);
         }
 
         return this.values.get(anchor) || undefined;
@@ -32,7 +32,7 @@ export default abstract class extends Builder {
         let container: Element | undefined;
 
         if (await this.getValue(anchor)) {
-            container = await this.definition.container(this.getProps(anchor));
+            container = await this.definition.container(this.getProps(anchor)) as Element | undefined;
         }
 
         return new MountNode(new Node(anchor, container), this.definition.mount);

@@ -32,6 +32,11 @@
       "import": "./dist/browser/index.js",
       "require": "./dist/browser/index.cjs"
     },
+    "./locale": {
+      "types": "./dist/locale/index.d.ts",
+      "import": "./dist/locale/index.js",
+      "require": "./dist/locale/index.cjs"
+    },
     "./entry/*": {
       "types": "./dist/entry/*/index.d.ts",
       "import": "./dist/entry/*/index.js",
@@ -84,6 +89,7 @@
     "c12": "^2.0.1",
     "cac": "^6.7.14",
     "clean-webpack-plugin": "^4.0.0",
+    "consola": "^3.4.2",
     "css-loader": "^7.1.2",
     "debounce": "^2.2.0",
     "file-loader": "^6.2.0",

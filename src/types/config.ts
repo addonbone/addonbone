@@ -134,9 +134,33 @@ export interface Config {
     localeDir: string;
 
     /**
-     * Default locale for the extension.
+     * Locale configuration for the extension.
      */
-    localeLang: string | Language;
+    locale: {
+        /**
+         * Default locale for the extension.
+         * @example "en"
+         */
+        lang?: string | Language;
+
+        /**
+         * Default locale key from translation files.
+         * @example "app.name"
+         */
+        nameKey?: string;
+
+        /**
+         * Default locale key for description from translation files.
+         * @example "app.description"
+         */
+        descriptionKey?: string;
+
+        /**
+         * Default locale key for short name from translation files.
+         * @example "app.short_name"
+         */
+        shortNameKey?: string;
+    }
 
     /**
      * Array of plugins used when building the extension.

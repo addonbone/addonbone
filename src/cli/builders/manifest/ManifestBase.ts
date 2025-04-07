@@ -6,12 +6,14 @@ import {
     ManifestBuilder,
     ManifestCommands,
     ManifestContentScripts,
-    ManifestDependencies, ManifestHostPermissions,
+    ManifestDependencies,
+    ManifestHostPermissions,
     ManifestPermissions,
     ManifestVersion
 } from "@typing/manifest";
 import {Browser} from "@typing/browser";
 import {EXECUTE_ACTION_COMMAND_NAME} from "@typing/command";
+import {Language} from "@typing/locale";
 
 
 type ManifestV3 = chrome.runtime.ManifestV3;
@@ -25,9 +27,10 @@ export class ManifestError extends Error {
 
 export default abstract class<T extends CoreManifest> implements ManifestBuilder<T> {
     protected name: string = "__MSG_app_name__";
-    protected shortName: string = "__MSG_app_short_name__";
-    protected description: string = "__MSG_app_description__";
+    protected shortName?: string;
+    protected description?: string;
     protected version: string = "0.0.0";
+    protected locale?: Language;
     protected background?: ManifestBackground;
     protected action?: ManifestAction;
     protected commands: ManifestCommands = new Set();
@@ -53,13 +56,13 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
         return this;
     }
 
-    public setShortName(shortName: string): this {
+    public setShortName(shortName?: string): this {
         this.shortName = shortName;
 
         return this;
     }
 
-    public setDescription(description: string): this {
+    public setDescription(description?: string): this {
         this.description = description;
 
         return this;
@@ -70,6 +73,13 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
 
         return this;
     }
+
+    public setLocale(lang?: Language): this {
+        this.locale = lang;
+
+        return this;
+    }
+
 
     public setBackground(background?: ManifestBackground): this {
         this.background = background;
@@ -156,6 +166,7 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
 
         manifest = this.marge<Manifest>(
             manifest,
+            this.buildLocale(),
             this.buildBackground(),
             this.buildCommands(),
             this.buildAction(),
@@ -229,6 +240,12 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
     protected buildPermissions(): Partial<Manifest> | undefined {
         if (this.permissions.size > 0) {
             return {permissions: Array.from(this.permissions)};
+        }
+    }
+
+    protected buildLocale(): Partial<CoreManifest> | undefined {
+        if (this.locale) {
+            return {default_locale: this.locale};
         }
     }
 

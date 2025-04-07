@@ -56,30 +56,70 @@ export enum Language {
     ChineseTaiwan = 'zh_TW',
 }
 
+export enum LocaleDir {
+    RightToLeft = 'rtl',
+    LeftToRight = 'ltr',
+}
+
+export const LocaleNestedKeysSeparator = '.';
+
+export const LocaleKeysSeparator = '_';
+
+export const LocaleValuesSeparator = '|';
+
 export const LanguageCodes: ReadonlySet<string> = new Set(Object.values(Language));
 
 export const LocaleFileExtensions: ReadonlySet<string> = new Set(['yaml', 'yml', 'json']);
 
 export const LocaleDirectoryName = 'locales';
 
-export type LocaleRawData = {
-    [key: string]: string | number | LocaleRawData;
+export type LocaleValue = string | number | string[] | number[];
+
+export type LocaleValueParams = {
+    [key: string]: string | number,
 };
 
-export type LocaleFlatData = Record<string, string>;
 
-export type LocaleFileData = {
+export type LocaleData = {
+    [key: string]: LocaleValue | LocaleData;
+};
+
+export type LocaleItems = Map<string, string>;
+
+export type LocaleKeys = ReadonlySet<string>;
+
+export type LocaleMessages = {
     [key: string]: {
         message: string;
     };
 };
 
-
 export interface LocaleBuilder {
     lang(): Language;
-    merge(data: LocaleRawData): this;
-    build(): LocaleFileData;
-    get(): LocaleFlatData;
-    filename(): string;
-    keys(separator?: string): string[];
+
+    merge(data: LocaleData): this;
+
+    build(): LocaleMessages;
+
+    get(): LocaleItems;
+
+    keys(): LocaleKeys;
+
+    isValid(): boolean;
+
+    validate(): this;
+}
+
+export interface LocaleValidator {
+    isValid(locale: LocaleBuilder): boolean;
+
+    validate(locale: LocaleBuilder): this;
+}
+
+export interface LocaleProvider {
+    lang(): Language;
+
+    get(key: string, params?: LocaleValueParams): string;
+
+    choice(key: string, count: number, params?: LocaleValueParams): string;
 }

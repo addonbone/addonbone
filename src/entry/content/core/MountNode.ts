@@ -22,7 +22,11 @@ export default class implements ContentScriptNode {
             return;
         }
 
-        this.unmounting = this.mounter?.(this.anchor, this.container) || undefined;
+        const unmounting = this.mounter?.(this.anchor, this.container);
+
+        if (unmounting) {
+            this.unmounting = unmounting;
+        }
     }
 
     public unmount(): void {

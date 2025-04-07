@@ -1,4 +1,5 @@
 import cac from 'cac';
+import {consola} from "consola";
 
 import app from "./builders/app";
 
@@ -25,16 +26,20 @@ cli
     .option('-b, --browser <browser>', 'Specify a browser')
     .option('--mv2', 'Target manifest v2')
     .action(async (root, options) => {
-        await app({
-            command: Command.Watch,
-            mode: options.mode,
-            debug: options.debug,
-            app: options.app,
-            browser: options.browser,
-            manifestVersion: options.mv2 ? 2 : 3,
-            inputDir: root,
-            configFile: options.config,
-        });
+        try {
+            await app({
+                command: Command.Watch,
+                mode: options.mode,
+                debug: options.debug,
+                app: options.app,
+                browser: options.browser,
+                manifestVersion: options.mv2 ? 2 : 3,
+                inputDir: root,
+                configFile: options.config,
+            });
+        } catch (e) {
+            consola.error(e);
+        }
     });
 
 cli
@@ -46,17 +51,21 @@ cli
     .option('--mv2', 'Target manifest v2')
     .option('--analyze', 'Visualize extension bundle')
     .action(async (root, options) => {
-        await app({
-            command: Command.Build,
-            mode: options.mode,
-            debug: options.debug,
-            app: options.app,
-            browser: options.browser,
-            manifestVersion: options.mv2 ? 2 : 3,
-            inputDir: root,
-            configFile: options.config,
-            analyze: options.analyze,
-        });
+        try {
+            await app({
+                command: Command.Build,
+                mode: options.mode,
+                debug: options.debug,
+                app: options.app,
+                browser: options.browser,
+                manifestVersion: options.mv2 ? 2 : 3,
+                inputDir: root,
+                configFile: options.config,
+                analyze: options.analyze,
+            });
+        } catch (e) {
+            consola.error(e);
+        }
     });
 
 cli.version(version);

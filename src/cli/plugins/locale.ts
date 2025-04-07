@@ -5,6 +5,8 @@ import yaml from "js-yaml";
 
 import {definePlugin} from "@core/define";
 
+import {convertLocaleMessageKey, getLocaleFilename} from "@locale/utils";
+
 import localeFactory from "@cli/builders/locale";
 import GenerateJsonPlugin, {GenerateJsonPluginData} from "@cli/bundler/plugins/GenerateJsonPlugin";
 
@@ -16,7 +18,13 @@ import {isFileExtension} from "@cli/utils/path";
 
 import {Command} from "@typing/app";
 import {ReadonlyConfig} from "@typing/config";
-import {Language, LanguageCodes, LocaleBuilder, LocaleDirectoryName, LocaleRawData} from "@typing/locale";
+import {
+    Language,
+    LanguageCodes,
+    LocaleBuilder as LocaleBuilderContract,
+    LocaleData,
+    LocaleDirectoryName
+} from "@typing/locale";
 
 
 const findLocaleFiles = (directory: string): Set<string> => {
@@ -117,23 +125,43 @@ const getPluginLocaleFiles = async (config: ReadonlyConfig): Promise<Set<string>
     return new Set(files);
 }
 
-const getLocaleBuilders = async (config: ReadonlyConfig): Promise<LocaleBuilder[]> => {
+const getLocaleBuilders = async (config: ReadonlyConfig): Promise<LocaleBuilderContract[]> => {
+    const localeDirs = [
+        'node_modules',
+        getSharedPath(config),
+        getAppPath(config),
+        getAppSourcePath(config),
+    ];
+
+    const getLocaleDirPriority = (path: string): number => {
+        return _.findIndex(localeDirs, dir => path.includes(dir));
+    }
+
     const localeFiles = await getPluginLocaleFiles(config);
 
     return _.chain(Array.from(localeFiles))
         .groupBy(file => getLanguageFromFilename(file))
         .map((files, lang: Language) => {
-            const locale = localeFactory(lang, config.browser);
+            const locale = localeFactory(lang, config);
 
-            for (const file of files) {
+            files.sort((a, b) => {
+                const priorityA = getLocaleDirPriority(a);
+                const priorityB = getLocaleDirPriority(b);
+
+                if (priorityA !== priorityB) {
+                    return priorityA - priorityB;
+                }
+
+                return a.length - b.length;
+            }).forEach(file => {
                 const content = fs.readFileSync(file, 'utf8');
 
                 if (isFileExtension(file, ['yaml', 'yml'])) {
-                    locale.merge(yaml.load(content) as LocaleRawData);
+                    locale.merge(yaml.load(content) as LocaleData);
                 } else if (isFileExtension(file, 'json')) {
                     locale.merge(JSON.parse(content));
                 }
-            }
+            });
 
             return locale;
         }).value();
@@ -143,26 +171,58 @@ const getLocaleJsonData = async (config: ReadonlyConfig): Promise<GenerateJsonPl
     const locales = await getLocaleBuilders(config);
 
     return locales.reduce((entries, locale) => {
-        return {...entries, [locale.filename()]: locale.build()};
+        return {...entries, [getLocaleFilename(locale.lang())]: locale.build()};
     }, {});
 }
 
 export default definePlugin(() => {
+    let hasTranslations = false;
+
     return {
         name: 'adnbn:locale',
         locale: ({config}) => getLocaleFiles(config),
         bundler: async ({config}) => {
             const data = await getLocaleJsonData(config);
 
+            hasTranslations = !_.isEmpty(data);
+
             const plugin = new GenerateJsonPlugin(data, 'locale');
 
             if (config.command === Command.Watch) {
                 plugin.watch(async () => {
-                    return await getLocaleJsonData(config);
+                    const data = await getLocaleJsonData(config);
+
+                    hasTranslations = !_.isEmpty(data);
+
+                    return data;
                 });
             }
 
             return {plugins: [plugin]};
+        },
+        manifest: ({config, manifest}) => {
+            const {locale} = config;
+            const {lang = Language.English, nameKey, shortNameKey, descriptionKey} = locale;
+
+            manifest.setLocale(hasTranslations ? lang : undefined);
+
+            if (hasTranslations) {
+                if (nameKey) {
+                    manifest.setName(convertLocaleMessageKey(nameKey));
+
+                    if (shortNameKey) {
+                        manifest.setShortName(convertLocaleMessageKey(shortNameKey));
+                    }
+
+                    if (descriptionKey) {
+                        manifest.setDescription(convertLocaleMessageKey(descriptionKey));
+                    }
+
+                    return;
+                }
+            }
+
+            manifest.setName(_.startCase(config.app));
         }
     };
 });

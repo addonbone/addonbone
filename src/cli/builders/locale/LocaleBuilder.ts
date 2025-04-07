@@ -1,0 +1,116 @@
+import _ from "lodash";
+
+import {convertLocaleKey} from "@locale/utils";
+
+import {LocaleError} from "./LocaleValidator";
+
+import {
+    Language,
+    LocaleBuilder as LocaleBuilderContract,
+    LocaleData,
+    LocaleItems,
+    LocaleKeys,
+    LocaleMessages,
+    LocaleNestedKeysSeparator,
+    LocaleValidator,
+    LocaleValuesSeparator
+} from "@typing/locale";
+import {Browser} from "@typing/browser";
+
+export default class LocaleBuilder implements LocaleBuilderContract {
+    protected data: LocaleData[] = [];
+    protected items?: LocaleItems;
+
+    protected validator?: LocaleValidator;
+
+    constructor(
+        protected readonly browser: Browser,
+        protected readonly language: Language
+    ) {
+    }
+
+    public get(): LocaleItems {
+        if (this.items) {
+            return this.items;
+        }
+
+        const items: LocaleItems = new Map();
+
+        for (const data of this.data) {
+            for (const [key, value] of this.convert(data).entries()) {
+                items.set(key, value);
+            }
+        }
+
+        return this.items = items;
+    }
+
+    public keys(): LocaleKeys {
+        return new Set(this.get().keys());
+    }
+
+    public build(): LocaleMessages {
+        return this.validate().get().entries().reduce((locale, [key, value]) => (
+            {
+                ...locale,
+                [convertLocaleKey(key)]: {message: value}
+            }
+        ), {});
+    }
+
+    public merge(data: LocaleData): this {
+        this.data.push(data);
+        this.items = undefined;
+
+        return this;
+    }
+
+    public lang(): Language {
+        return this.language;
+    }
+
+    public isValid(): boolean {
+        try {
+            this.validate();
+            return true;
+        } catch {
+            return false;
+        }
+    }
+
+    public validate(): this {
+        if (!this.validator) {
+            throw new LocaleError(this.browser, this.language, "Validator is not set");
+        }
+
+        this.validator.validate(this);
+
+        return this;
+    }
+
+    public setValidator(validator: LocaleValidator): this {
+        this.validator = validator;
+
+        return this;
+    }
+
+    protected convert(data: LocaleData, prefix?: string): LocaleItems {
+        const items: LocaleItems = new Map;
+
+        for (const [key, value] of Object.entries(data)) {
+            const resolvedKey = prefix ? [prefix, key].join(LocaleNestedKeysSeparator) : key;
+
+            if (_.isString(value) || _.isNumber(value)) {
+                items.set(resolvedKey, value.toString());
+            } else if (_.isArray(value)) {
+                items.set(resolvedKey, _.filter(value, v => _.isString(v) || _.isNumber(v)).join(LocaleValuesSeparator));
+            } else if (_.isPlainObject(value)) {
+                for (const [k, v] of this.convert(value, resolvedKey).entries()) {
+                    items.set(k, v);
+                }
+            }
+        }
+
+        return items;
+    }
+}

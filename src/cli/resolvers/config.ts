@@ -18,7 +18,7 @@ import {Command, Mode} from "@typing/app";
 import {Browser} from "@typing/browser";
 import {Plugin} from "@typing/plugin";
 import {ManifestVersion} from "@typing/manifest";
-import {Language, LocaleDirectoryName} from "@typing/locale";
+import {LocaleDirectoryName} from "@typing/locale";
 
 
 const getUserConfig = async (config: ReadonlyConfig): Promise<UserConfig> => {
@@ -99,7 +99,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         assetsDir = 'assets',
         htmlDir = '.',
         localeDir = LocaleDirectoryName,
-        localeLang = Language.English,
+        locale = {},
         manifestVersion = (new Set<Browser>([Browser.Firefox, Browser.Safari]).has(browser) ? 2 : 3) as ManifestVersion,
         mode = Mode.Development,
         analyze = false,
@@ -130,7 +130,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         assetsDir,
         htmlDir,
         localeDir,
-        localeLang,
+        locale,
         plugins,
         analyze,
         configFile,

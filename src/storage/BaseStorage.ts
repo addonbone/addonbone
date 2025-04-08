@@ -1,16 +1,28 @@
+import {browser} from '@browser/env'
 import {throwRuntimeError} from '@browser/runtime'
-import {BaseStorageOptions, StorageArea, StorageChange, WatchOptions} from '@typing/storage'
+import {StorageProvider, WatchOptions} from '@typing/storage'
 
-abstract class BaseStorage {
+const storage = browser().storage;
+
+type StorageArea = chrome.storage.StorageArea;
+type StorageChange = chrome.storage.StorageChange;
+type StorageAreaName = Parameters<Parameters<typeof chrome.storage.onChanged.addListener>[0]>[1];
+
+export interface BaseStorageOptions {
+    area?: StorageAreaName,
+    namespace?: string,
+}
+
+abstract class BaseStorage implements StorageProvider {
     private storage: StorageArea;
     private readonly namespace: string;
 
     protected constructor({area = "local", namespace = ""}: BaseStorageOptions = {}) {
-        this.storage = chrome.storage[area];
+        this.storage = storage[area];
         this.namespace = namespace?.trim();
     }
 
-    async set<T>(key: string, value: T): Promise<void> {
+    public async set<T>(key: string, value: T): Promise<void> {
         return new Promise((resolve, reject) => {
             this.storage.set({[this.getFullKey(key)]: value}, () => {
                 try {
@@ -23,7 +35,7 @@ abstract class BaseStorage {
         });
     }
 
-    async get<T>(key: string): Promise<T | undefined> {
+    public async get<T>(key: string): Promise<T | undefined> {
         const fullKey = this.getFullKey(key);
         return new Promise((resolve, reject) => {
             this.storage.get(fullKey, (result) => {
@@ -37,7 +49,7 @@ abstract class BaseStorage {
         });
     }
 
-    async getAll(): Promise<Record<string, any>> {
+    public async getAll(): Promise<Record<string, any>> {
         return new Promise((resolve, reject) => {
             this.storage.get(null, (result) => {
                 try {
@@ -51,7 +63,7 @@ abstract class BaseStorage {
     }
 
 
-    async remove(key: string): Promise<void> {
+    public async remove(key: string): Promise<void> {
         return new Promise((resolve, reject) => {
             this.storage.remove(this.getFullKey(key), () => {
                 try {
@@ -64,7 +76,7 @@ abstract class BaseStorage {
         });
     }
 
-    async clear(): Promise<void> {
+    public async clear(): Promise<void> {
         return new Promise((resolve, reject) => {
             this.storage.clear(() => {
                 try {
@@ -77,7 +89,7 @@ abstract class BaseStorage {
         });
     }
 
-    watch(options: WatchOptions): () => void {
+    public watch(options: WatchOptions): () => void {
         const listener = (changes: Record<string, StorageChange>) => {
             if (typeof options === 'function') {
                 Object.values(changes).forEach((change) => {
@@ -97,7 +109,9 @@ abstract class BaseStorage {
         return () => chrome.storage.onChanged.removeListener(listener);
     };
 
-    private getFullKey = (key: string): string => this.namespace ? `${this.namespace}_${key}` : key;
+    private getFullKey(key: string): string {
+        return this.namespace ? `${this.namespace}_${key}` : key;
+    }
 }
 
 export default BaseStorage

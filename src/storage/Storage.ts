@@ -1,5 +1,6 @@
-import {StorageOptions,} from '@typing/storage'
-import BaseStorage from "./BaseStorage";
+import BaseStorage, {BaseStorageOptions} from "./BaseStorage";
+
+export interface StorageOptions extends BaseStorageOptions {}
 
 export class Storage extends BaseStorage {
     static Sync = (namespace?: string) => new this({area: 'sync', namespace});

@@ -1,38 +1,50 @@
-import {SecureStorageOptions,} from '@typing/storage'
-import BaseStorage from "./BaseStorage";
+import BaseStorage, {BaseStorageOptions} from "./BaseStorage";
+
+export interface SecureStorageOptions extends BaseStorageOptions {
+    secureKey?: string;
+}
 
 export class SecureStorage extends BaseStorage {
-    private cryptoKey!: CryptoKey;
+    private cryptoKey: CryptoKey | null = null;
+    private secureKey: string = 'SecureKey';
 
-    static Sync = (secureKey: string, namespace?: string) => new this({area: 'sync', namespace, secureKey});
-    static Local = (secureKey: string, namespace?: string) => new this({area: 'local', namespace, secureKey});
-    static Session = (secureKey: string, namespace?: string) => new this({area: 'session', namespace, secureKey});
-    static Managed = (secureKey: string, namespace?: string) => new this({area: 'managed', namespace, secureKey});
+    static Sync = (namespace?: string, secureKey?: string) => new this({area: 'sync', namespace, secureKey});
+    static Local = (namespace?: string, secureKey?: string) => new this({area: 'local', namespace, secureKey});
+    static Session = (namespace?: string, secureKey?: string) => new this({area: 'session', namespace, secureKey});
+    static Managed = (namespace?: string, secureKey?: string) => new this({area: 'managed', namespace, secureKey});
 
     constructor({secureKey, ...options}: SecureStorageOptions) {
         super(options)
-        this.generateCryptoKey(secureKey)
-            .then(cryptoKey => this.cryptoKey = cryptoKey)
-            .catch(() => {})
+        secureKey && this.setSecureKey(secureKey)
     }
 
-    private async generateCryptoKey(key: string): Promise<CryptoKey> {
-        const hash = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(key));
-        return await crypto.subtle.importKey(
+    private setSecureKey = (secureKey: string) => {
+        this.cryptoKey = null;
+        this.secureKey = secureKey;
+    }
+
+    private async generateCryptoKey(): Promise<CryptoKey> {
+        if(this.cryptoKey) return this.cryptoKey;
+
+        const hash = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(this.secureKey));
+        const key = await crypto.subtle.importKey(
             "raw",
             hash.slice(0, 32),
             {name: "AES-GCM"},
             false,
             ["encrypt", "decrypt"]
         );
+        this.cryptoKey = key;
+        return key;
     }
 
     private async encrypt(data: any): Promise<string> {
         const iv = crypto.getRandomValues(new Uint8Array(12));
         const encoded = new TextEncoder().encode(JSON.stringify(data));
+        const cryptoKey = await this.generateCryptoKey();
         const cipher = await crypto.subtle.encrypt(
             {name: "AES-GCM", iv},
-            this.cryptoKey,
+            cryptoKey,
             encoded
         );
         return `${btoa(String.fromCharCode(...new Uint8Array(iv)))}:${btoa(String.fromCharCode(...new Uint8Array(cipher)))}`;
@@ -42,9 +54,10 @@ export class SecureStorage extends BaseStorage {
         const [ivStr, cipherStr] = data.split(":");
         const iv = new Uint8Array(atob(ivStr).split("").map(c => c.charCodeAt(0)));
         const cipher = new Uint8Array(atob(cipherStr).split("").map(c => c.charCodeAt(0)));
+        const cryptoKey = await this.generateCryptoKey();
         const decrypted = await crypto.subtle.decrypt(
             {name: "AES-GCM", iv},
-            this.cryptoKey,
+            cryptoKey,
             cipher
         );
         return JSON.parse(new TextDecoder().decode(decrypted));

@@ -68,12 +68,12 @@ export default async (config: ReadonlyConfig): Promise<RspackConfig> => {
                 cacheGroups: {
                     default: false,
                     defaultVendors: false,
-                    common: {
-                        name: "common",
-                        minChunks: 2,
-                        priority: -20,
-                        reuseExistingChunk: true,
-                    },
+                    // common: {
+                    //     name: "common",
+                    //     minChunks: 2,
+                    //     priority: -20,
+                    //     reuseExistingChunk: true,
+                    // },
                 },
             },
         },

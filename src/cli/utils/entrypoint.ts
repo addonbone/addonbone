@@ -1,3 +1,5 @@
+import path from "path";
+
 import {EntrypointFile, EntrypointFileExtensions, EntrypointType} from "@typing/entrypoint";
 import {Framework} from "@typing/framework";
 
@@ -5,21 +7,15 @@ const extPattern = [...EntrypointFileExtensions]
     .map(ext => ext.replace('.', '\\.'))
     .join('|');
 
-const indexRegex = new RegExp(`^index\\.(${extPattern})$`, 'i');
-
 const extRegex = new RegExp(`\\.(${extPattern})$`, 'i');
 
 export const getEntrypointName = (file: EntrypointFile, entrypoint: EntrypointType): string => {
-    const normalizedPath = file.file.replace(/^\//, '');
-
     const key = '.' + entrypoint;
 
-    const parts = normalizedPath.split('/');
+    const {name, dir} = path.parse(file.file);
 
-    const lastPart = parts[parts.length - 1];
-
-    if (indexRegex.test(lastPart)) {
-        const dirName = parts[parts.length - 2];
+    if (name === 'index') {
+        const dirName = path.basename(dir);
 
         if (dirName.includes(key)) {
             return dirName.split(key)[0];
@@ -30,17 +26,15 @@ export const getEntrypointName = (file: EntrypointFile, entrypoint: EntrypointTy
         }
     }
 
-    const fileNameWithoutExt = lastPart.replace(extRegex, '');
-
-    if (fileNameWithoutExt.includes(key)) {
-        return fileNameWithoutExt.split(key)[0];
+    if (name.includes(key)) {
+        return name.split(key)[0];
     }
 
-    if (fileNameWithoutExt === entrypoint) {
+    if (name === entrypoint) {
         return entrypoint;
     }
 
-    return fileNameWithoutExt;
+    return name;
 }
 
 export const getEntrypointFileFramework = (file: EntrypointFile): Framework => {

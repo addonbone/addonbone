@@ -12,18 +12,10 @@ const extRegex = new RegExp(`\\.(${extPattern})$`, 'i');
 export const getEntrypointName = (file: EntrypointFile, entrypoint: EntrypointType): string => {
     const key = '.' + entrypoint;
 
-    const {name, dir} = path.parse(file.file);
+    let {name, dir} = path.parse(file.file);
 
     if (name === 'index') {
-        const dirName = path.basename(dir);
-
-        if (dirName.includes(key)) {
-            return dirName.split(key)[0];
-        }
-
-        if (dirName === entrypoint) {
-            return entrypoint;
-        }
+        name = path.basename(dir);
     }
 
     if (name.includes(key)) {

@@ -11,7 +11,7 @@ import {
     LocaleItems,
     LocaleKeys,
     LocaleMessages,
-    LocaleNestedKeysSeparator,
+    LocaleNestedKeysSeparator, LocaleStructure,
     LocaleValidator,
     LocaleValuesSeparator
 } from "@typing/locale";
@@ -56,6 +56,29 @@ export default class LocaleBuilder implements LocaleBuilderContract {
                 [convertLocaleKey(key)]: {message: value}
             }
         ), {});
+    }
+
+    public structure(): LocaleStructure {
+        const substitutions = (value: string): string[] => {
+            const pattern = /{{([^{}]+)}}/g;
+            const substitutions: string[] = [];
+
+            let match: RegExpExecArray | null;
+
+            while ((match = pattern.exec(value)) !== null) {
+                substitutions.push(match[1].trim());
+            }
+
+            return substitutions;
+        }
+
+        return this.get().entries().reduce((structure, [key, value]) => ({
+            ...structure,
+            [key]: {
+                plural: value.includes(LocaleValuesSeparator),
+                substitutions: substitutions(value),
+            }
+        }), {} as LocaleStructure);
     }
 
     public merge(data: LocaleData): this {

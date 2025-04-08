@@ -44,7 +44,8 @@ const getTypescriptConfig = (config: ReadonlyConfig): TsConfigJson => {
         },
         include: [
             '../**/*',
-            './vendor.d.ts'
+            './vendor.d.ts',
+            './locale.d.ts',
         ],
         exclude: [
             outputDir

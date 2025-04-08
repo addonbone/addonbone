@@ -75,11 +75,6 @@ export const LocaleDirectoryName = 'locales';
 
 export type LocaleValue = string | number | string[] | number[];
 
-export type LocaleValueParams = {
-    [key: string]: string | number,
-};
-
-
 export type LocaleData = {
     [key: string]: LocaleValue | LocaleData;
 };
@@ -105,6 +100,8 @@ export interface LocaleBuilder {
 
     keys(): LocaleKeys;
 
+    structure(): LocaleStructure;
+
     isValid(): boolean;
 
     validate(): this;
@@ -116,10 +113,42 @@ export interface LocaleValidator {
     validate(locale: LocaleBuilder): this;
 }
 
-export interface LocaleProvider {
+export type LocaleFutures = {
+    plural: boolean;
+    substitutions: readonly string[];
+};
+
+export type LocaleStructure = Record<string, LocaleFutures>;
+
+export type LocaleNonPluralKeys<T extends LocaleStructure> = {
+    [K in keyof T]: T[K]['plural'] extends false ? K : never;
+}[keyof T];
+
+export type LocalePluralKeys<T extends LocaleStructure> = {
+    [K in keyof T]: T[K]['plural'] extends true ? K : never;
+}[keyof T];
+
+export type SubstitutionsFor<
+    T extends LocaleStructure,
+    K extends keyof T
+> = {
+    [P in T[K]['substitutions'][number]]?: string | number;
+};
+
+export type LocaleNonPluralKeysOf<S extends LocaleStructure> = Extract<keyof S, LocaleNonPluralKeys<S>>;
+export type LocalePluralKeysOf<S extends LocaleStructure> = Extract<keyof S, LocalePluralKeys<S>>;
+
+export interface LocaleProvider<S extends LocaleStructure> {
     lang(): Language;
 
-    get(key: string, params?: LocaleValueParams): string;
+    trans<K extends LocaleNonPluralKeysOf<S>>(
+        key: K,
+        substitutions?: SubstitutionsFor<S, K>
+    ): string;
 
-    choice(key: string, count: number, params?: LocaleValueParams): string;
+    choice<K extends LocalePluralKeysOf<S>>(
+        key: K,
+        count: number,
+        substitutions?: SubstitutionsFor<S, K>
+    ): string;
 }

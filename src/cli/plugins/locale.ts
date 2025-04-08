@@ -11,19 +11,27 @@ import localeFactory from "@cli/builders/locale";
 import GenerateJsonPlugin, {GenerateJsonPluginData} from "@cli/bundler/plugins/GenerateJsonPlugin";
 
 import {processPluginHandler} from "@cli/resolvers/plugin";
-import {getAppPath, getAppSourcePath, getRootPath, getSharedPath, getSourcePath} from "@cli/resolvers/path";
+import {
+    getAppPath,
+    getAppSourcePath,
+    getInputPath,
+    getRootPath,
+    getSharedPath,
+    getSourcePath
+} from "@cli/resolvers/path";
 
 import {getLanguageFromFilename, isValidLocaleFilename} from "@cli/utils/locale";
 import {isFileExtension} from "@cli/utils/path";
 
-import {Command} from "@typing/app";
+import {Command, PackageName, SystemDir} from "@typing/app";
 import {ReadonlyConfig} from "@typing/config";
 import {
     Language,
     LanguageCodes,
     LocaleBuilder as LocaleBuilderContract,
     LocaleData,
-    LocaleDirectoryName
+    LocaleDirectoryName,
+    LocaleStructure
 } from "@typing/locale";
 
 
@@ -167,12 +175,34 @@ const getLocaleBuilders = async (config: ReadonlyConfig): Promise<LocaleBuilderC
         }).value();
 }
 
+const generateLocaleDeclaration = (config: ReadonlyConfig, structure: LocaleStructure): void => {
+    const template = `import type {LocaleNativeStructure} from '${PackageName}/locale';
+    
+declare module '${PackageName}/locale' {
+type LocaleNativeStructure = ${JSON.stringify(structure, null, 2)};
+}`;
+
+    const systemDirPath = getRootPath(getInputPath(config, SystemDir));
+
+    fs.mkdirSync(systemDirPath, {recursive: true});
+
+    fs.writeFileSync(path.join(systemDirPath, 'locale.d.ts'), template);
+}
+
 const getLocaleJsonData = async (config: ReadonlyConfig): Promise<GenerateJsonPluginData> => {
     const locales = await getLocaleBuilders(config);
 
-    return locales.reduce((entries, locale) => {
-        return {...entries, [getLocaleFilename(locale.lang())]: locale.build()};
-    }, {});
+    const data: GenerateJsonPluginData = {};
+    let structure: LocaleStructure = {};
+
+    for (const locale of locales) {
+        structure = _.merge(structure, locale.structure());
+        data[getLocaleFilename(locale.lang())] = locale.build();
+    }
+
+    generateLocaleDeclaration(config, structure);
+
+    return data;
 }
 
 export default definePlugin(() => {

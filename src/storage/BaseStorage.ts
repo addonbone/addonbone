@@ -110,7 +110,7 @@ abstract class BaseStorage implements StorageProvider {
     };
 
     private getFullKey(key: string): string {
-        return this.namespace ? `${this.namespace}_${key}` : key;
+        return this.namespace ? `${this.namespace}:${key}` : key;
     }
 }
 

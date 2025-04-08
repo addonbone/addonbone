@@ -49,7 +49,10 @@ function useStorage<T>(arg1: string | UseStorageOptions<T>, arg2?: T): UseStorag
 
     const removeValue = useCallback((key: string) => {
         storageRef.current.remove(key)
-            .then(() => isRemovedRef.current = true)
+            .then(() => {
+                setValue(undefined);
+                isRemovedRef.current = true;
+            })
             .catch((e) => console.error('useStorage remove storage value error', e));
     }, [key])
 

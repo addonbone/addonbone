@@ -1,17 +1,29 @@
+import {StorageState} from "@typing/storage";
 import BaseStorage, {BaseStorageOptions} from "./BaseStorage";
 
 export interface SecureStorageOptions extends BaseStorageOptions {
     secureKey?: string;
 }
 
-export class SecureStorage extends BaseStorage {
+export class SecureStorage<T extends StorageState> extends BaseStorage<T> {
     private cryptoKey: CryptoKey | null = null;
     private secureKey: string = 'SecureKey';
 
-    static Sync = (namespace?: string, secureKey?: string) => new this({area: 'sync', namespace, secureKey});
-    static Local = (namespace?: string, secureKey?: string) => new this({area: 'local', namespace, secureKey});
-    static Session = (namespace?: string, secureKey?: string) => new this({area: 'session', namespace, secureKey});
-    static Managed = (namespace?: string, secureKey?: string) => new this({area: 'managed', namespace, secureKey});
+    static Sync<T extends StorageState>(options: Omit<SecureStorageOptions, 'area'>): SecureStorage<T> {
+        return new SecureStorage<T>({ area: 'sync', ...options });
+    }
+
+    static Local<T extends StorageState>(options: Omit<SecureStorageOptions, 'area'>): SecureStorage<T> {
+        return new SecureStorage<T>({ area: 'local', ...options });
+    }
+
+    static Session<T extends StorageState>(options: Omit<SecureStorageOptions, 'area'>): SecureStorage<T> {
+        return new SecureStorage<T>({ area: 'session', ...options });
+    }
+
+    static Managed<T extends StorageState>(options: Omit<SecureStorageOptions, 'area'>): SecureStorage<T> {
+        return new SecureStorage<T>({ area: 'managed', ...options });
+    }
 
     constructor({secureKey, ...options}: SecureStorageOptions) {
         super(options)
@@ -63,13 +75,13 @@ export class SecureStorage extends BaseStorage {
         return JSON.parse(new TextDecoder().decode(decrypted));
     }
 
-    async set<T>(key: string, value: T): Promise<void> {
+    async set<K extends keyof T>(key: K, value: T[K]): Promise<void> {
         const encryptedValue = await this.encrypt(value);
-        return super.set(key, encryptedValue);
+        return super.set(key, encryptedValue as T[K]);
     }
 
-    async get<T>(key: string): Promise<T | undefined> {
-        const encryptedValue = await super.get<string>(key);
+    async get<K extends keyof T>(key: K): Promise<T[K] | undefined> {
+        const encryptedValue = await super.get(key) as string;
         return encryptedValue ? this.decrypt(encryptedValue) : undefined;
     }
 }

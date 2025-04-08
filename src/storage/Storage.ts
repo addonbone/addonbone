@@ -1,12 +1,25 @@
+import {StorageState} from '@typing/storage'
+
 import BaseStorage, {BaseStorageOptions} from "./BaseStorage";
 
 export interface StorageOptions extends BaseStorageOptions {}
 
-export class Storage extends BaseStorage {
-    static Sync = (namespace?: string) => new this({area: 'sync', namespace});
-    static Local = (namespace?: string) => new this({area: 'local', namespace});
-    static Session = (namespace?: string) => new this({area: 'session', namespace});
-    static Managed = (namespace?: string) => new this({area: 'managed', namespace});
+export class Storage<T extends StorageState> extends BaseStorage<T> {
+    static Sync<T extends StorageState>(namespace?: string): Storage<T> {
+        return new Storage<T>({ area: 'sync', namespace });
+    }
+
+    static Local<T extends StorageState>(namespace?: string): Storage<T> {
+        return new Storage<T>({ area: 'local', namespace });
+    }
+
+    static Session<T extends StorageState>(namespace?: string): Storage<T> {
+        return new Storage<T>({ area: 'session', namespace });
+    }
+
+    static Managed<T extends StorageState>(namespace?: string): Storage<T> {
+        return new Storage<T>({ area: 'managed', namespace });
+    }
 
     constructor(options: StorageOptions = {}) {
         super(options)

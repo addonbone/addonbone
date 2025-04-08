@@ -1,11 +1,15 @@
-export type WatchCallback = (newValue: any, oldValue: any) => void;
-export type WatchOptions = Record<string, WatchCallback> | WatchCallback;
+export type StorageState = Record<string, unknown>
 
-export interface StorageProvider {
-    set<T>(key: string, value: T): Promise<void>;
-    get<T>(key: string): Promise<T | undefined>;
-    getAll(): Promise<Record<string, any>>;
-    remove(key: string): Promise<void>;
+export type WatchOptions<T> = {
+    [K in keyof T]?: (newValue: T[K] | undefined, oldValue: T[K] | undefined) => void;
+} | ((newValue: Partial<T>, oldValue: Partial<T>) => void);
+
+
+export interface StorageProvider<T extends StorageState> {
+    set<K extends keyof T>(key: K, value: T[K]): Promise<void>;
+    get<K extends keyof T>(key: K): Promise<T[K] | undefined>;
+    getAll(): Promise<Partial<T>>;
+    remove<K extends keyof T>(key: K): Promise<void>;
     clear(): Promise<void>;
-    watch(options: WatchOptions): () => void;
+    watch(options: WatchOptions<T>): () => void;
 }

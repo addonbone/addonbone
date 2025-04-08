@@ -5,8 +5,6 @@ import {Language} from "@typing/locale";
 
 type ManifestCommon = chrome.runtime.Manifest;
 type ManifestBase = chrome.runtime.ManifestBase;
-type ManifestV3 = chrome.runtime.ManifestV3;
-type ManifestV2 = chrome.runtime.ManifestV2;
 type ManifestIcons = chrome.runtime.ManifestIcons;
 type ManifestPermission = chrome.runtime.ManifestPermissions;
 
@@ -21,10 +19,6 @@ interface ManifestUnstable {
 }
 
 export type ManifestVersion = 2 | 3;
-
-export type ManifestMapping = {
-    [Key in ManifestVersion]: Key extends 2 ? ManifestFixed<ManifestV2> : ManifestFixed<ManifestV3>;
-};
 
 export type CoreManifest = ManifestFixed<ManifestBase>;
 

@@ -1,10 +1,12 @@
 import ManifestV2 from './ManifestV2';
 import ManifestV3 from './ManifestV3';
 
-import {ManifestBuilder, ManifestMapping, ManifestVersion} from "@typing/manifest";
-import {Browser} from "@typing/browser";
+import {ManifestBuilder, ManifestVersion} from "@typing/manifest";
+import {ReadonlyConfig} from "@typing/config";
 
-export default <T extends ManifestVersion>(browser: Browser, manifestVersion: T): ManifestBuilder<ManifestMapping[T]> => {
+export default <T extends ManifestVersion>(config: ReadonlyConfig): ManifestBuilder => {
+    const {manifestVersion, browser} = config;
+
     if (manifestVersion === 2) {
         return new ManifestV2(browser);
     }

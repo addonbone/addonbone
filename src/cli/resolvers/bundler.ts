@@ -30,7 +30,7 @@ const getConfigFromPlugins = async (rspack: RspackConfig, config: ReadonlyConfig
 }
 
 const getConfigForManifest = async (config: ReadonlyConfig): Promise<RspackConfig> => {
-    const manifest = manifestFactory(config.browser, config.manifestVersion);
+    const manifest = manifestFactory(config);
 
     const update = async () => await Array.fromAsync(processPluginHandler(config, 'manifest', {manifest, config}))
 

@@ -236,7 +236,7 @@ export default definePlugin(() => {
                 plugins: [
                     plugin,
                     new DefinePlugin({
-                        'locale.keys': JSON.stringify([...keys]),
+                        'LOCALE_KEYS': JSON.stringify([...keys]),
                     })
                 ]
             };

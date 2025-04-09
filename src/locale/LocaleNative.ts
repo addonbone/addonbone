@@ -40,7 +40,7 @@ export default class LocaleNative<S extends LocaleStructure = LocaleNativeStruct
     public keys(): LocaleKeys {
         try {
             // @ts-expect-error
-            return new Set<string>(locale.keys);
+            return new Set<string>(LOCALE_KEYS);
         } catch (e) {
             console.error("Locale Native: Unable to get keys", e);
 

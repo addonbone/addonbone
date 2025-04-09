@@ -1,5 +1,5 @@
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
-import {StorageProvider, StorageState, WatchOptions} from '@typing/storage'
+import {StorageProvider, StorageState, StorageWatchOptions} from '@typing/storage'
 
 import {Storage} from "./Storage";
 
@@ -33,7 +33,7 @@ function useStorage<T extends StorageState>(arg1: keyof T | UseStorageOptions<T>
 
         const unsubscribe = storageRef.current.watch({
             [key as keyof T]: (newValue: T[keyof T] | undefined) => setValue(newValue),
-        } as unknown as WatchOptions<T>);
+        } as unknown as StorageWatchOptions<T>);
 
         return () => unsubscribe();
     }, [key, storageRef, defaultValue]);

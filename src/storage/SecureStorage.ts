@@ -1,5 +1,7 @@
-import {StorageState} from "@typing/storage";
+import {StorageState, StorageWatchOptions} from "@typing/storage";
 import BaseStorage, {BaseStorageOptions} from "./BaseStorage";
+
+type StorageChange = chrome.storage.StorageChange;
 
 export interface SecureStorageOptions extends BaseStorageOptions {
     secureKey?: string;
@@ -10,19 +12,19 @@ export class SecureStorage<T extends StorageState> extends BaseStorage<T> {
     private secureKey: string = 'SecureKey';
 
     static Sync<T extends StorageState>(options: Omit<SecureStorageOptions, 'area'>): SecureStorage<T> {
-        return new SecureStorage<T>({ area: 'sync', ...options });
+        return new SecureStorage<T>({area: 'sync', ...options});
     }
 
     static Local<T extends StorageState>(options: Omit<SecureStorageOptions, 'area'>): SecureStorage<T> {
-        return new SecureStorage<T>({ area: 'local', ...options });
+        return new SecureStorage<T>({area: 'local', ...options});
     }
 
     static Session<T extends StorageState>(options: Omit<SecureStorageOptions, 'area'>): SecureStorage<T> {
-        return new SecureStorage<T>({ area: 'session', ...options });
+        return new SecureStorage<T>({area: 'session', ...options});
     }
 
     static Managed<T extends StorageState>(options: Omit<SecureStorageOptions, 'area'>): SecureStorage<T> {
-        return new SecureStorage<T>({ area: 'managed', ...options });
+        return new SecureStorage<T>({area: 'managed', ...options});
     }
 
     constructor({secureKey, ...options}: SecureStorageOptions) {
@@ -36,7 +38,7 @@ export class SecureStorage<T extends StorageState> extends BaseStorage<T> {
     }
 
     private async generateCryptoKey(): Promise<CryptoKey> {
-        if(this.cryptoKey) return this.cryptoKey;
+        if (this.cryptoKey) return this.cryptoKey;
 
         const hash = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(this.secureKey));
         const key = await crypto.subtle.importKey(
@@ -83,5 +85,19 @@ export class SecureStorage<T extends StorageState> extends BaseStorage<T> {
     async get<K extends keyof T>(key: K): Promise<T[K] | undefined> {
         const encryptedValue = await super.get(key) as string;
         return encryptedValue ? this.decrypt(encryptedValue) : undefined;
+    }
+
+    protected async handleStorageChange<P extends T>(key: string, changes: StorageChange, options: StorageWatchOptions<P>) {
+        if (!this.isSecuredKey(key)) return;
+        const newValue = changes.newValue !== undefined ? await this.decrypt(changes.newValue) : undefined;
+        const oldValue = changes.oldValue !== undefined ? await this.decrypt(changes.oldValue) : undefined;
+        await this.notifyChangeListeners(key, {newValue, oldValue}, options)
+    };
+
+    protected getFullKey(key: keyof T): string {
+        if (this.namespace) {
+            return `secure${this.separator}${this.namespace}${this.separator}${key.toString()}`;
+        }
+        return `secure${this.separator}${key.toString()}`;
     }
 }

@@ -24,6 +24,7 @@ import {getLanguageFromFilename, isValidLocaleFilename} from "@cli/utils/locale"
 import {isFileExtension} from "@cli/utils/path";
 
 import {Command, PackageName, SystemDir} from "@typing/app";
+import {Browser} from "@typing/browser";
 import {ReadonlyConfig} from "@typing/config";
 import {
     Language,
@@ -33,7 +34,9 @@ import {
     LocaleDirectoryName,
     LocaleStructure
 } from "@typing/locale";
+import {DefinePlugin} from "@rspack/core";
 
+type LocaleBuilderMap = Map<Language, LocaleBuilderContract>;
 
 const findLocaleFiles = (directory: string): Set<string> => {
     const files = new Set<string>;
@@ -133,7 +136,7 @@ const getPluginLocaleFiles = async (config: ReadonlyConfig): Promise<Set<string>
     return new Set(files);
 }
 
-const getLocaleBuilders = async (config: ReadonlyConfig): Promise<LocaleBuilderContract[]> => {
+const getLocaleBuilders = async (config: ReadonlyConfig): Promise<LocaleBuilderMap> => {
     const localeDirs = [
         'node_modules',
         getSharedPath(config),
@@ -149,7 +152,7 @@ const getLocaleBuilders = async (config: ReadonlyConfig): Promise<LocaleBuilderC
 
     return _.chain(Array.from(localeFiles))
         .groupBy(file => getLanguageFromFilename(file))
-        .map((files, lang: Language) => {
+        .reduce((map, files, lang: Language) => {
             const locale = localeFactory(lang, config);
 
             files.sort((a, b) => {
@@ -171,8 +174,10 @@ const getLocaleBuilders = async (config: ReadonlyConfig): Promise<LocaleBuilderC
                 }
             });
 
-            return locale;
-        }).value();
+            map.set(locale.lang(), locale);
+
+            return map;
+        }, new Map as LocaleBuilderMap).value();
 }
 
 const generateLocaleDeclaration = (config: ReadonlyConfig, structure: LocaleStructure): void => {
@@ -189,64 +194,83 @@ type LocaleNativeStructure = ${JSON.stringify(structure, null, 2)};
     fs.writeFileSync(path.join(systemDirPath, 'locale.d.ts'), template);
 }
 
-const getLocaleJsonData = async (config: ReadonlyConfig): Promise<GenerateJsonPluginData> => {
-    const locales = await getLocaleBuilders(config);
-
-    const data: GenerateJsonPluginData = {};
-    let structure: LocaleStructure = {};
-
-    for (const locale of locales) {
-        structure = _.merge(structure, locale.structure());
-        data[getLocaleFilename(locale.lang())] = locale.build();
-    }
-
-    generateLocaleDeclaration(config, structure);
-
-    return data;
-}
-
 export default definePlugin(() => {
-    let hasTranslations = false;
+    let builders: LocaleBuilderMap = new Map;
+
+    const processing = async (config: ReadonlyConfig): Promise<GenerateJsonPluginData> => {
+        builders = await getLocaleBuilders(config);
+
+        const data: GenerateJsonPluginData = {};
+
+        let structure: LocaleStructure = {};
+
+        for (const locale of builders.values()) {
+            structure = _.merge(structure, locale.structure());
+            data[getLocaleFilename(locale.lang())] = locale.build();
+        }
+
+        generateLocaleDeclaration(config, structure);
+
+        return data;
+    }
 
     return {
         name: 'adnbn:locale',
         locale: ({config}) => getLocaleFiles(config),
         bundler: async ({config}) => {
-            const data = await getLocaleJsonData(config);
-
-            hasTranslations = !_.isEmpty(data);
+            const data = await processing(config);
 
             const plugin = new GenerateJsonPlugin(data, 'locale');
 
             if (config.command === Command.Watch) {
                 plugin.watch(async () => {
-                    const data = await getLocaleJsonData(config);
-
-                    hasTranslations = !_.isEmpty(data);
-
-                    return data;
+                    return await processing(config);
                 });
             }
 
-            return {plugins: [plugin]};
+            const keys = builders.values().reduce((keys, builder) => {
+                return new Set([...keys, ...builder.keys()]);
+            }, new Set<string>());
+
+            return {
+                plugins: [
+                    plugin,
+                    new DefinePlugin({
+                        'locale.keys': JSON.stringify([...keys]),
+                    })
+                ]
+            };
         },
         manifest: ({config, manifest}) => {
-            const {locale} = config;
+            const {locale, browser} = config;
             const {lang = Language.English, nameKey, shortNameKey, descriptionKey} = locale;
 
-            manifest.setLocale(hasTranslations ? lang : undefined);
+            manifest.setLocale(builders.size > 0 ? lang : undefined);
 
-            if (hasTranslations) {
+            if (builders.size > 0) {
+                if (shortNameKey) {
+                    let shortName: string | undefined = convertLocaleMessageKey(shortNameKey);
+
+                    /** Opera/Edge do not support localization in manifest's short_name field */
+                    if (browser === Browser.Opera || browser === Browser.Edge) {
+                        const instance = builders.get(lang);
+
+                        if (!instance) {
+                            throw new Error(`Locale not found for ${lang}`);
+                        }
+
+                        shortName = instance.get().get(shortNameKey);
+                    }
+
+                    manifest.setShortName(shortName);
+                }
+
+                if (descriptionKey) {
+                    manifest.setDescription(convertLocaleMessageKey(descriptionKey));
+                }
+
                 if (nameKey) {
                     manifest.setName(convertLocaleMessageKey(nameKey));
-
-                    if (shortNameKey) {
-                        manifest.setShortName(convertLocaleMessageKey(shortNameKey));
-                    }
-
-                    if (descriptionKey) {
-                        manifest.setDescription(convertLocaleMessageKey(descriptionKey));
-                    }
 
                     return;
                 }

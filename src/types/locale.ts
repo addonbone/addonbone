@@ -61,11 +61,19 @@ export enum LocaleDir {
     LeftToRight = 'ltr',
 }
 
+export const RtlLanguages: ReadonlySet<Language> = new Set([
+    Language.Arabic,
+    Language.Persian,
+    Language.Hebrew,
+]);
+
 export const LocaleNestedKeysSeparator = '.';
 
 export const LocaleKeysSeparator = '_';
 
 export const LocaleValuesSeparator = '|';
+
+export const LocaleCustomKeyForLanguage = 'locale';
 
 export const LanguageCodes: ReadonlySet<string> = new Set(Object.values(Language));
 
@@ -140,6 +148,8 @@ export type LocalePluralKeysOf<S extends LocaleStructure> = Extract<keyof S, Loc
 
 export interface LocaleProvider<S extends LocaleStructure> {
     lang(): Language;
+
+    keys(): LocaleKeys;
 
     trans<K extends LocaleNonPluralKeysOf<S>>(
         key: K,

@@ -7,13 +7,16 @@ import {LocaleError} from "./LocaleValidator";
 import {
     Language,
     LocaleBuilder as LocaleBuilderContract,
+    LocaleCustomKeyForLanguage,
     LocaleData,
     LocaleItems,
     LocaleKeys,
     LocaleMessages,
-    LocaleNestedKeysSeparator, LocaleStructure,
+    LocaleNestedKeysSeparator,
+    LocaleStructure,
     LocaleValidator,
-    LocaleValuesSeparator
+    LocaleValuesSeparator,
+    RtlLanguages
 } from "@typing/locale";
 import {Browser} from "@typing/browser";
 
@@ -40,6 +43,16 @@ export default class LocaleBuilder implements LocaleBuilderContract {
             for (const [key, value] of this.convert(data).entries()) {
                 items.set(key, value);
             }
+        }
+
+        if (this.browser === Browser.Opera && RtlLanguages.has(this.language)) {
+            /**
+             * The Opera browser does not support RTL languages,
+             * and for Opera you need to directly indicate what kind of language it is.
+             * interface language is always different
+             */
+
+            items.set(LocaleCustomKeyForLanguage, this.language);
         }
 
         return this.items = items;

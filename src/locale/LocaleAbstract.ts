@@ -1,14 +1,18 @@
 import {
     Language,
+    LocaleKeys,
     LocaleNonPluralKeysOf,
     LocalePluralKeysOf,
     LocaleProvider,
-    LocaleStructure, LocaleValuesSeparator,
+    LocaleStructure,
+    LocaleValuesSeparator,
     SubstitutionsFor
 } from "@typing/locale";
 
 export default abstract class LocaleAbstract<S extends LocaleStructure> implements LocaleProvider<S> {
     public abstract lang(): Language;
+
+    public abstract keys(): LocaleKeys;
 
     protected abstract value(key: keyof S): string | undefined;
 

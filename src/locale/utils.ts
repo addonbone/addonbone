@@ -1,6 +1,6 @@
 import {Language, LocaleKeysSeparator, LocaleNestedKeysSeparator} from "@typing/locale";
 
-export const getLocaleFilename = (lang: Language):string => {
+export const getLocaleFilename = (lang: Language): string => {
     return `_locales/${lang}/messages.json`;
 };
 

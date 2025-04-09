@@ -40,6 +40,7 @@ const framework: Options = {
     entry: {
         'index': 'src/index.ts',
         'browser/index': 'src/browser/index.ts',
+        'storage/index': 'src/storage/index.ts',
         'entry/background/index': 'src/entry/background/index.ts',
         'entry/command/index': 'src/entry/command/index.ts',
         'entry/content/index': 'src/entry/content/index.ts',

@@ -18,13 +18,12 @@ function useStorage<T extends StorageState>(arg1: keyof T | UseStorageOptions<T>
     const key = isObject ? arg1.key : arg1;
     const storageRef = useRef(isObject ? arg1.storage ?? new Storage<T>({area: "local"}) : new Storage<T>({area: "local"}));
     const defaultValue = useMemo(() => isObject ? arg1.defaultValue : arg2, [arg1, arg2]);
-    const isRemovedRef = useRef(false);
 
     const [value, setValue] = useState<T[keyof T] | undefined>(undefined);
 
     const fetchValue = useCallback((): void => {
         storageRef.current.get(key)
-            .then((value) => setValue(value ?? (isRemovedRef.current ? undefined : defaultValue)))
+            .then((value) => setValue(value ?? defaultValue))
             .catch((e) => console.error('useStorage get storage value error', e));
     }, [])
 
@@ -49,10 +48,7 @@ function useStorage<T extends StorageState>(arg1: keyof T | UseStorageOptions<T>
 
     const removeValue = useCallback((key: keyof T) => {
         storageRef.current.remove(key)
-            .then(() => {
-                setValue(undefined);
-                isRemovedRef.current = true;
-            })
+            .then(() => setValue(undefined))
             .catch((e) => console.error('useStorage remove storage value error', e));
     }, [key])
 

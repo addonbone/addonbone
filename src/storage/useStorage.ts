@@ -1,29 +1,29 @@
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
-import {StorageProvider, StorageState, StorageWatchOptions} from '@typing/storage'
+import {StorageProvider, StorageWatchOptions} from '@typing/storage'
 
 import {Storage} from "./Storage";
 
-interface UseStorageOptions<T extends StorageState> {
-    key: keyof T;
-    storage?: StorageProvider<T>;
-    defaultValue?: T[keyof T];
+interface UseStorageOptions<T> {
+    key: string;
+    storage?: StorageProvider<Record<string, any>>;
+    defaultValue?: T;
 }
 
-type UseStorageReturnValue<T> = [T[keyof T] | undefined, (value: T[keyof T]) => void, (key: keyof T) => void];
+type UseStorageReturnValue<T> = [T | undefined, (value: T) => void, () => void];
 
-function useStorage<T extends StorageState>(options: UseStorageOptions<T>): UseStorageReturnValue<T>;
-function useStorage<T extends StorageState>(key: keyof T, defaultValue?: T[keyof T]): UseStorageReturnValue<T>
-function useStorage<T extends StorageState>(arg1: keyof T | UseStorageOptions<T>, arg2?: T[keyof T]): UseStorageReturnValue<T> {
+function useStorage<T = any>(options: UseStorageOptions<T>): UseStorageReturnValue<T>;
+function useStorage<T = any>(key: string, defaultValue?: T): UseStorageReturnValue<T>
+function useStorage<T = any>(arg1: string | UseStorageOptions<T>, arg2?: T): UseStorageReturnValue<T> {
     const isObject = typeof arg1 === "object";
     const key = isObject ? arg1.key : arg1;
-    const storageRef = useRef(isObject ? arg1.storage ?? new Storage<T>({area: "local"}) : new Storage<T>({area: "local"}));
+    const storageRef = useRef(isObject ? arg1.storage ?? Storage.Local<Record<string, T>>() : Storage.Local<Record<string, T>>());
     const defaultValue = useMemo(() => isObject ? arg1.defaultValue : arg2, [arg1, arg2]);
 
-    const [value, setValue] = useState<T[keyof T] | undefined>(undefined);
+    const [value, setValue] = useState<T | undefined>(undefined);
 
     const fetchValue = useCallback((): void => {
         storageRef.current.get(key)
-            .then((value) => setValue(value ?? defaultValue))
+            .then((storedValue) => setValue(storedValue ?? defaultValue))
             .catch((e) => console.error('useStorage get storage value error', e));
     }, [])
 
@@ -31,13 +31,13 @@ function useStorage<T extends StorageState>(arg1: keyof T | UseStorageOptions<T>
         fetchValue()
 
         const unsubscribe = storageRef.current.watch({
-            [key as keyof T]: (newValue: T[keyof T] | undefined) => setValue(newValue),
-        } as unknown as StorageWatchOptions<T>);
+            [key]: (newValue: T | undefined) => setValue(newValue),
+        } as unknown as StorageWatchOptions<Record<string, T>>);
 
         return () => unsubscribe();
     }, [key, storageRef, defaultValue]);
 
-    const updateValue = useCallback((newValue: T[keyof T]) => {
+    const updateValue = useCallback((newValue: T) => {
         const prevValue = value;
         setValue(newValue);
         storageRef.current.set(key, newValue).catch((e) => {
@@ -46,7 +46,7 @@ function useStorage<T extends StorageState>(arg1: keyof T | UseStorageOptions<T>
         });
     }, [key])
 
-    const removeValue = useCallback((key: keyof T) => {
+    const removeValue = useCallback(() => {
         storageRef.current.remove(key)
             .then(() => setValue(undefined))
             .catch((e) => console.error('useStorage remove storage value error', e));

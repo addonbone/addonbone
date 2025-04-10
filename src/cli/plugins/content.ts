@@ -138,7 +138,7 @@ export default definePlugin(() => {
                 return {};
             }
 
-            const contentEntrypointPlugin = (new EntrypointPlugin(contentScriptEntryForPlugin(contentScriptEntries), 'content-entrypoint'))
+            const contentEntrypointPlugin = (new EntrypointPlugin(contentScriptEntryForPlugin(contentScriptEntries)))
                 .virtual(file => virtualContentScriptModule(file));
 
             if (config.command === Command.Watch) {

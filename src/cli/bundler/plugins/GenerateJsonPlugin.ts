@@ -1,7 +1,5 @@
 import {Compilation, Compiler, sources} from '@rspack/core';
 
-import UniqKeyPlugin from "./UniqKeyPlugin";
-
 type JsonValue = string | number | boolean | null | JsonObject | JsonArray;
 
 interface JsonObject {
@@ -14,13 +12,13 @@ export type GenerateJsonPluginData = Record<string, JsonValue>;
 
 export type GenerateJsonPluginUpdate = () => Promise<GenerateJsonPluginData>;
 
-export default class GenerateJsonPlugin extends UniqKeyPlugin {
+export default class GenerateJsonPlugin {
     private readonly pluginName: string = 'GenerateJsonPlugin';
 
     private update?: GenerateJsonPluginUpdate;
 
-    constructor(protected data: GenerateJsonPluginData, key: string) {
-        super(key);
+    constructor(protected data: GenerateJsonPluginData) {
+
     }
 
     public apply(compiler: Compiler): void {

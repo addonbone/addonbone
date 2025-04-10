@@ -60,10 +60,10 @@ export default definePlugin(() => {
                 return {};
             }
 
-            const backgroundEntrypointPlugin = (new EntrypointPlugin(getEntry(backgroundEntrypoint), 'background-entrypoint'))
+            const backgroundEntrypointPlugin = (new EntrypointPlugin(getEntry(backgroundEntrypoint)))
                 .virtual(file => virtualBackgroundModule(file));
 
-            const commandEntrypointPlugin = (new EntrypointPlugin(getEntry(commandEntrypoint), 'command-entrypoint'))
+            const commandEntrypointPlugin = (new EntrypointPlugin(getEntry(commandEntrypoint)))
                 .virtual(file => {
                     if (!commandEntrypoint) {
                         throw new Error('Command entrypoint is not defined');

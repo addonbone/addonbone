@@ -4,8 +4,6 @@ import path from "path";
 import {Compiler, EntryNormalized} from "@rspack/core";
 import VirtualModulesPlugin from 'rspack-plugin-virtual-module';
 
-import UniqKeyPlugin from "./UniqKeyPlugin";
-
 import {EntrypointFile} from "@typing/entrypoint";
 
 export type EntrypointPluginEntries = Record<string, EntrypointFile[]>;
@@ -30,7 +28,7 @@ export type EntrypointPluginModules = Map<EntrypointFile, EntrypointPluginModule
 
 export type EntrypointPluginEntryModules = Map<string, EntrypointPluginModules>;
 
-export default class EntrypointPlugin extends UniqKeyPlugin {
+export default class EntrypointPlugin {
     private readonly pluginName: string = 'EntrypointPlugin';
 
     private _plugin?: VirtualModulesPlugin;
@@ -73,11 +71,7 @@ export default class EntrypointPlugin extends UniqKeyPlugin {
         return new Set(files);
     }
 
-    constructor(
-        private readonly entries: EntrypointPluginEntries = {},
-        key: string
-    ) {
-        super(key);
+    constructor(private readonly entries: EntrypointPluginEntries = {}) {
     }
 
     public virtual(template: EntrypointPluginTemplate): this {

@@ -1,6 +1,7 @@
 import {Configuration as RspackConfig, RspackPluginInstance} from "@rspack/core";
 import {CleanWebpackPlugin} from "clean-webpack-plugin";
 import {RsdoctorRspackPlugin} from "@rsdoctor/rspack-plugin";
+import {merge as mergeConfig} from "webpack-merge";
 import path from "path";
 import _ from "lodash";
 
@@ -11,7 +12,6 @@ import {processPluginHandler} from "./plugin";
 
 import ManifestPlugin from "@cli/bundler/plugins/ManifestPlugin";
 import WatchPlugin from "@cli/bundler/plugins/WatchPlugin";
-import mergeConfig from "@cli/bundler/utils/mergeConfig";
 
 import {ReadonlyConfig} from "@typing/config";
 import {Command} from "@typing/app";
@@ -41,7 +41,7 @@ const getConfigForManifest = async (config: ReadonlyConfig): Promise<RspackConfi
     if (config.command === Command.Watch) {
         plugins.push(new WatchPlugin(async () => {
             await update();
-        }, 'manifest'));
+        }));
     }
 
     plugins.push(new ManifestPlugin(manifest));

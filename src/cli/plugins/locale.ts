@@ -152,8 +152,8 @@ const getLocaleBuilders = async (config: ReadonlyConfig): Promise<LocaleBuilderM
 
     return _.chain(Array.from(localeFiles))
         .groupBy(file => getLanguageFromFilename(file))
-        .reduce((map, files, lang: Language) => {
-            const locale = localeFactory(lang, config);
+        .reduce((map, files, lang) => {
+            const locale = localeFactory(lang as Language, config);
 
             files.sort((a, b) => {
                 const priorityA = getLocaleDirPriority(a);
@@ -220,7 +220,7 @@ export default definePlugin(() => {
         bundler: async ({config}) => {
             const data = await processing(config);
 
-            const plugin = new GenerateJsonPlugin(data, 'locale');
+            const plugin = new GenerateJsonPlugin(data);
 
             if (config.command === Command.Watch) {
                 plugin.watch(async () => {
@@ -243,9 +243,19 @@ export default definePlugin(() => {
         },
         manifest: ({config, manifest}) => {
             const {locale, browser} = config;
-            const {lang = Language.English, nameKey, shortNameKey, descriptionKey} = locale;
+            const {lang, nameKey, shortNameKey, descriptionKey} = locale;
 
-            manifest.setLocale(builders.size > 0 ? lang : undefined);
+            let language: Language = Language.English;
+
+            if (lang) {
+                if (LanguageCodes.has(lang)) {
+                    language = lang as Language;
+                } else {
+                    throw new Error(`Invalid lang "${lang}" provided by config`);
+                }
+            }
+
+            manifest.setLocale(builders.size > 0 ? language : undefined);
 
             if (builders.size > 0) {
                 if (shortNameKey) {
@@ -253,7 +263,7 @@ export default definePlugin(() => {
 
                     /** Opera/Edge do not support localization in manifest's short_name field */
                     if (browser === Browser.Opera || browser === Browser.Edge) {
-                        const instance = builders.get(lang);
+                        const instance = builders.get(language);
 
                         if (!instance) {
                             throw new Error(`Locale not found for ${lang}`);

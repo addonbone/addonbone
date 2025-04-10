@@ -12,7 +12,7 @@ import {
     ManifestVersion
 } from "@typing/manifest";
 import {Browser} from "@typing/browser";
-import {EXECUTE_ACTION_COMMAND_NAME} from "@typing/command";
+import {CommandExecuteActionName} from "@typing/command";
 import {Language} from "@typing/locale";
 
 
@@ -251,7 +251,7 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
 
     protected hasExecuteActionCommand(): boolean {
         return this.commands.size > 0 && Array.from(this.commands)
-            .some(({name}) => name === EXECUTE_ACTION_COMMAND_NAME);
+            .some(({name}) => name === CommandExecuteActionName);
     }
 
     public get(): T {

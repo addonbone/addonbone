@@ -7,7 +7,7 @@ import {
     CommandBuilder,
     CommandResolvedDefinition,
     CommandUnresolvedDefinition,
-    EXECUTE_ACTION_COMMAND_NAME
+    CommandExecuteActionName
 } from "@typing/command";
 
 type Tab = chrome.tabs.Tab;
@@ -34,7 +34,7 @@ export default class implements CommandBuilder {
     public async build(): Promise<void> {
         const {name} = this.definition;
 
-        if (name == EXECUTE_ACTION_COMMAND_NAME) {
+        if (name == CommandExecuteActionName) {
             this.unsubscribe = onActionClicked((tab) => {
                 this.handle(tab);
             });
@@ -57,7 +57,7 @@ export default class implements CommandBuilder {
         const {name, execute, ...options} = this.definition;
 
         try {
-            Promise.resolve(execute({name, ...options}, tab)).catch((e) => {
+            Promise.resolve(execute(tab, {name, ...options})).catch((e) => {
                 console.error('The command execute async function crashed:', e);
             });
         } catch (e) {

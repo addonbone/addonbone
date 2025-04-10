@@ -31,7 +31,7 @@ export const findEntrypointFiles = (
         try {
             entries = fs.readdirSync(dir, {withFileTypes: true});
         } catch (e) {
-            console.log('Error reading entrypoint directory:', dir);
+            // console.warn(`Error reading ${entrypoint} entrypoint directory: ${dir}`);
 
             return;
         }
@@ -51,7 +51,7 @@ export const findEntrypointFiles = (
                                 files.push({file: indexPath, import: pathToImport(indexPath)});
                             }
                         } catch (e) {
-                            //console.log('Error reading entrypoint index file:', indexPath);
+                           // console.log(`Error reading ${entrypoint} entrypoint index file: ${indexPath}`);
                         }
                     }
                 }

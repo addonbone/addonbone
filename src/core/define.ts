@@ -4,7 +4,7 @@ import {ConfigDefinition} from "@typing/config";
 import {BackgroundDefinition} from "@typing/background";
 import {ContentScriptAppendDefinition, ContentScriptDefinition} from "@typing/content";
 import {PluginDefinition} from "@typing/plugin";
-import {CommandDefinition, EXECUTE_ACTION_COMMAND_NAME, ExecuteActionCommandDefinition} from "@typing/command";
+import {CommandDefinition, CommandExecuteActionName, ExecuteActionCommandDefinition} from "@typing/command";
 
 export const defineConfig = (config: ConfigDefinition): ConfigDefinition => {
     return config;
@@ -23,7 +23,7 @@ export const defineCommand = (options: CommandDefinition): CommandDefinition => 
 }
 
 export const defineExecuteActionCommand = (options: ExecuteActionCommandDefinition): CommandDefinition => {
-    return {...options, name: EXECUTE_ACTION_COMMAND_NAME};
+    return {...options, name: CommandExecuteActionName};
 }
 
 export const defineContentScript = (options: ContentScriptDefinition): ContentScriptDefinition => {
@@ -31,8 +31,10 @@ export const defineContentScript = (options: ContentScriptDefinition): ContentSc
 }
 
 export const defineContentScriptAppend = (options: ContentScriptAppendDefinition): ContentScriptDefinition => {
+    const {append, ...definition} = options;
+
     return {
-        ...options,
-        mount: contentScriptMountAppendResolver(options.append),
+        ...definition,
+        mount: contentScriptMountAppendResolver(append),
     };
 }

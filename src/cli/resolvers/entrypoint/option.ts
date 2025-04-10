@@ -65,7 +65,7 @@ export const getCommandOptions = (file: EntrypointFile): CommandEntrypointOption
         linuxKey: ShortcutKeySchema,
     });
 
-    return parseOptions(file, CommandPropertiesSchema, 'defineCommand');
+    return parseOptions(file, CommandPropertiesSchema, ['defineCommand', 'defineExecuteActionCommand']);
 }
 
 export const getContentScriptOptions = (file: EntrypointFile): ContentScriptEntrypointOptions => {

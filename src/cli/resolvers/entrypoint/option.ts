@@ -67,7 +67,7 @@ export const getCommandOptions = (file: EntrypointFile): CommandEntrypointOption
         linuxKey: ShortcutKeySchema,
     });
 
-    const options =  parseOptions(file, CommandPropertiesSchema, ['defineCommand', 'defineExecuteActionCommand']);
+    const options = parseOptions(file, CommandPropertiesSchema, ['defineCommand', 'defineExecuteActionCommand']);
 
     return {
         ...options,

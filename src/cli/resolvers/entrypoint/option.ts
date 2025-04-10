@@ -2,6 +2,8 @@ import {z} from "zod";
 
 import {OptionFile} from "../../parsers/entrypoint";
 
+import {modifyLocaleMessageKey} from "@locale/utils";
+
 import {BackgroundEntrypointOptions} from "@typing/background";
 import {CommandEntrypointOptions} from "@typing/command";
 import {Browser} from "@typing/browser";
@@ -37,7 +39,7 @@ const parseOptions = <T extends typeof CommonPropertiesSchema, R extends Record<
         }
     }
 
-    return data || {} as R;
+    return (data || {}) as R;
 }
 
 export const getBackgroundOptions = (file: EntrypointFile): BackgroundEntrypointOptions => {
@@ -65,7 +67,12 @@ export const getCommandOptions = (file: EntrypointFile): CommandEntrypointOption
         linuxKey: ShortcutKeySchema,
     });
 
-    return parseOptions(file, CommandPropertiesSchema, ['defineCommand', 'defineExecuteActionCommand']);
+    const options =  parseOptions(file, CommandPropertiesSchema, ['defineCommand', 'defineExecuteActionCommand']);
+
+    return {
+        ...options,
+        description: modifyLocaleMessageKey(options.description),
+    };
 }
 
 export const getContentScriptOptions = (file: EntrypointFile): ContentScriptEntrypointOptions => {

@@ -144,22 +144,22 @@ export interface Config {
         lang?: string | Language;
 
         /**
-         * Default locale key from translation files.
-         * @example "app.name"
+         * Default locale key from translation files or a string.
+         * @example "#app.name" or "Awesome App"
          */
-        nameKey?: string;
+        name?: string;
 
         /**
-         * Default locale key for description from translation files.
-         * @example "app.description"
+         * Default locale key for short name from translation files or a string.
+         * @example "#app.short_name" or "Awesome"
          */
-        descriptionKey?: string;
+        shortName?: string;
 
         /**
-         * Default locale key for short name from translation files.
-         * @example "app.short_name"
+         * Default locale key for description from translation files or a string.
+         * @example "#app.description" or "My awesome app description"
          */
-        shortNameKey?: string;
+        description?: string;
     }
 
     /**

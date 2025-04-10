@@ -49,6 +49,12 @@ export default class LocaleNative<S extends LocaleStructure = LocaleNativeStruct
     }
 
     protected value(key: keyof S): string | undefined {
-        return getI18nMessage(convertLocaleKey(key as string));
+        const value = getI18nMessage(convertLocaleKey(key as string));
+
+        if (!value || value.length === 0) {
+            return undefined;
+        }
+
+        return value;
     }
 }

@@ -1,13 +1,15 @@
 import {onActionClicked} from "@browser/action";
 import {onCommand} from "@browser/command";
 
+import {__t} from "@locale/native";
+
 import {isValidCommandExecuteFunction, isValidCommandName} from "./resolvers";
 
 import {
     CommandBuilder,
+    CommandExecuteActionName,
     CommandResolvedDefinition,
-    CommandUnresolvedDefinition,
-    CommandExecuteActionName
+    CommandUnresolvedDefinition
 } from "@typing/command";
 
 type Tab = chrome.tabs.Tab;
@@ -18,7 +20,7 @@ export default class implements CommandBuilder {
     protected unsubscribe?: () => void;
 
     public constructor(definition: CommandUnresolvedDefinition) {
-        const {name, execute} = definition;
+        const {name, execute, description} = definition;
 
         if (!isValidCommandExecuteFunction(execute)) {
             throw new Error('The command entrypoint must export a execute function');
@@ -28,7 +30,12 @@ export default class implements CommandBuilder {
             throw new Error('The command entrypoint must export a name string');
         }
 
-        this.definition = {...definition, name, execute};
+        this.definition = {
+            ...definition,
+            name,
+            execute,
+            description: description ? __t(description) : undefined,
+        };
     }
 
     public async build(): Promise<void> {

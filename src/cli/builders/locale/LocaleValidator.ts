@@ -46,16 +46,20 @@ export default class implements LocaleValidator {
     public validate(locale: LocaleBuilder): this {
         const data = locale.get();
 
-        if (this.nameKey && data.get(this.nameKey)?.length > this.nameLimit) {
-            throw new LocaleError(this.browser, this.language, `Name "${data.get(this.nameKey)}" [${this.nameKey}] exceeds ${this.nameLimit} characters`);
+        const name = this.nameKey && data.get(this.nameKey);
+        const shortName = this.shortNameKey && data.get(this.shortNameKey);
+        const description = this.descriptionKey && data.get(this.descriptionKey);
+
+        if (name && name.length > this.nameLimit) {
+            throw new LocaleError(this.browser, this.language, `Name "${name}" [${this.nameKey}] exceeds ${this.nameLimit} characters`);
         }
 
-        if (this.descriptionKey && data.get(this.descriptionKey)?.length > this.descriptionLimit) {
-            throw new LocaleError(this.browser, this.language, `Description "${data.get(this.descriptionKey)}" [${this.descriptionKey}] exceeds ${this.descriptionLimit} characters`);
+        if (shortName && shortName.length > this.shortNameLimit) {
+            throw new LocaleError(this.browser, this.language, `Short name ${shortName} [${this.shortNameKey}] exceeds ${this.shortNameLimit} characters`);
         }
 
-        if (this.shortNameKey && data.get(this.shortNameKey)?.length > this.shortNameLimit) {
-            throw new LocaleError(this.browser, this.language, `Short name ${data.get(this.shortNameKey)} [${this.shortNameKey}] exceeds ${this.shortNameLimit} characters`);
+        if (description && description.length > this.descriptionLimit) {
+            throw new LocaleError(this.browser, this.language, `Description "${description}" [${this.descriptionKey}] exceeds ${this.descriptionLimit} characters`);
         }
 
         return this;

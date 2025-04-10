@@ -1,9 +1,5 @@
-import {LocaleProvider} from "@typing/locale";
-import LocaleNative, {type LocaleNativeStructure} from "./LocaleNative";
-
-export const createLocale = (): LocaleProvider<LocaleNativeStructure> => new LocaleNative;
-
-export {default as LocaleAbstract} from "./LocaleAbstract";
+export {default as LocaleNative, type LocaleNativeStructure} from "./providers/LocaleNative";
+export {default as LocaleAbstract} from "./providers/LocaleAbstract";
+export {_, __, _c, __t} from "./native";
 
 export {Language, LanguageCodes, LocaleDir} from "@typing/locale";
-export type {LocaleNativeStructure};

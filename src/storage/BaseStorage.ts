@@ -20,10 +20,10 @@ abstract class BaseStorage<T extends StorageState> implements StorageProvider<T>
     protected readonly namespace: string;
     protected separator: string = ':';
 
-    protected constructor({area = "local", namespace = ""}: BaseStorageOptions = {}) {
-        this.area = area;
-        this.storage = storage[area];
-        this.namespace = namespace?.trim();
+    protected constructor({area, namespace}: BaseStorageOptions = {}) {
+        this.area = area ?? "local";
+        this.storage = storage[this.area];
+        this.namespace = (namespace ?? "")?.trim();
     }
 
     public async set<K extends keyof T>(key: K, value: T[K]): Promise<void> {
@@ -98,20 +98,20 @@ abstract class BaseStorage<T extends StorageState> implements StorageProvider<T>
             if (area !== this.area) return;
 
             Object.entries(changes).forEach(async ([key, change]) => {
-                if (this.getNamespaceOfKey(key) !== this.namespace) return;
-                await this.handleStorageChange(key, change, options);
+                if (this.canChange(key)) {
+                    this.handleStorageChange(key, change, options);
+                }
             });
         };
 
-        chrome.storage.onChanged.addListener(listener);
+        storage.onChanged.addListener(listener);
 
-        return () => chrome.storage.onChanged.removeListener(listener);
+        return () => storage.onChanged.removeListener(listener);
     };
 
-    protected async handleStorageChange<P extends T>(key: string, changes: StorageChange, options: StorageWatchOptions<P>) {
-        if (this.isSecuredKey(key)) return;
-        await this.notifyChangeListeners(key, changes, options)
-    };
+    protected canChange(key: string): boolean {
+        return this.getNamespaceOfKey(key) === this.namespace;
+    }
 
     protected async notifyChangeListeners<P extends T>(key: string, changes: StorageChange, options: StorageWatchOptions<P>) {
         const {newValue, oldValue} = changes;
@@ -124,25 +124,16 @@ abstract class BaseStorage<T extends StorageState> implements StorageProvider<T>
         }
     };
 
-    protected getFullKey(key: keyof T): string {
-        return this.namespace ? `${this.namespace}${this.separator}${key.toString()}` : key.toString();
-    }
-
     protected getOriginalKey(key: string): keyof T {
         const fullKeyParts = key.split(this.separator);
         return fullKeyParts.length > 1 ? fullKeyParts[fullKeyParts.length - 1] : key;
     }
 
-    protected getNamespaceOfKey(key: string): string {
-        const fullKeyParts = key.split(this.separator);
-        if (fullKeyParts.length === 2) return fullKeyParts[0];
-        if (fullKeyParts.length === 3) return fullKeyParts[1];
-        return ''
-    }
+    protected abstract getFullKey(key: keyof T): string;
 
-    protected isSecuredKey(key: string): boolean {
-        return key.includes('secure');
-    }
+    protected abstract getNamespaceOfKey(key: string): string
+
+    protected abstract handleStorageChange<P extends T>(key: string, changes: StorageChange, options: StorageWatchOptions<P>): void
 }
 
 export default BaseStorage

@@ -17,13 +17,13 @@ export interface BaseStorageOptions {
 abstract class BaseStorage<T extends StorageState> implements StorageProvider<T> {
     private storage: StorageArea;
     private readonly area: AreaName;
-    protected readonly namespace: string;
+    protected readonly namespace?: string;
     protected separator: string = ':';
 
     protected constructor({area, namespace}: BaseStorageOptions = {}) {
         this.area = area ?? "local";
         this.storage = storage[this.area];
-        this.namespace = (namespace ?? "")?.trim();
+        this.namespace = namespace?.trim() ? namespace?.trim() : undefined;
     }
 
     public async set<K extends keyof T>(key: K, value: T[K]): Promise<void> {

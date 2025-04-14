@@ -9,7 +9,7 @@ export interface SecureStorageOptions extends BaseStorageOptions {
 
 export class SecureStorage<T extends StorageState> extends BaseStorage<T> {
     private cryptoKey: CryptoKey | null = null;
-    private secureKey: string = 'SecureKey';
+    private secureKey: string;
 
     static Sync<T extends StorageState>(options: Omit<SecureStorageOptions, 'area'>): SecureStorage<T> {
         return new SecureStorage<T>({area: 'sync', ...options});
@@ -29,12 +29,7 @@ export class SecureStorage<T extends StorageState> extends BaseStorage<T> {
 
     constructor({secureKey, ...options}: SecureStorageOptions) {
         super(options)
-        secureKey && this.setSecureKey(secureKey)
-    }
-
-    private setSecureKey = (secureKey: string) => {
-        this.cryptoKey = null;
-        this.secureKey = secureKey;
+        this.secureKey = secureKey?.trim() || 'SecureKey';
     }
 
     private async generateCryptoKey(): Promise<CryptoKey> {

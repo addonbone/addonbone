@@ -72,14 +72,26 @@ export class SecureStorage<T extends StorageState> extends BaseStorage<T> {
         return JSON.parse(new TextDecoder().decode(decrypted));
     }
 
-    async set<K extends keyof T>(key: K, value: T[K]): Promise<void> {
+    public async set<K extends keyof T>(key: K, value: T[K]): Promise<void> {
         const encryptedValue = await this.encrypt(value);
         return super.set(key, encryptedValue as T[K]);
     }
 
-    async get<K extends keyof T>(key: K): Promise<T[K] | undefined> {
+    public async get<K extends keyof T>(key: K): Promise<T[K] | undefined> {
         const encryptedValue = await super.get(key) as string;
         return encryptedValue ? this.decrypt(encryptedValue) : undefined;
+    }
+
+    public async getAll<P extends T>(): Promise<P> {
+        const encryptedValues = await super.getAll<P>();
+
+        const decryptedValues: Partial<Record<keyof P, any>> = {};
+
+        for (const [key, value] of Object.entries(encryptedValues)) {
+            decryptedValues[key as keyof P] = value ? await this.decrypt(value.toString()) : undefined;
+        }
+
+        return decryptedValues as P;
     }
 
     protected canChange(key: string): boolean {

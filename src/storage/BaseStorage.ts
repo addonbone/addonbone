@@ -64,7 +64,16 @@ export default abstract class BaseStorage<T extends StorageState> implements Sto
             this.storage.get(null, (result) => {
                 try {
                     throwRuntimeError()
-                    resolve(result as P);
+
+                    const formattedResult = {} as P;
+
+                    for (const [key, value] of Object.entries(result)) {
+                        if (this.canChange(key)) {
+                            formattedResult[this.getOriginalKey(key)] = value;
+                        }
+                    }
+
+                    resolve(formattedResult);
                 } catch (e) {
                     reject(e);
                 }

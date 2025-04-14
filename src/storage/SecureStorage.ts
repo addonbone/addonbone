@@ -87,17 +87,29 @@ export class SecureStorage<T extends StorageState> extends BaseStorage<T> {
         return encryptedValue ? this.decrypt(encryptedValue) : undefined;
     }
 
+    protected canChange(key: string): boolean {
+        if (!super.canChange(key)) return false;
+
+        return key.startsWith(`secure${this.separator}`);
+    }
+
     protected async handleStorageChange<P extends T>(key: string, changes: StorageChange, options: StorageWatchOptions<P>) {
-        if (!this.isSecuredKey(key)) return;
         const newValue = changes.newValue !== undefined ? await this.decrypt(changes.newValue) : undefined;
         const oldValue = changes.oldValue !== undefined ? await this.decrypt(changes.oldValue) : undefined;
+
         await this.notifyChangeListeners(key, {newValue, oldValue}, options)
     };
 
     protected getFullKey(key: keyof T): string {
-        if (this.namespace) {
-            return `secure${this.separator}${this.namespace}${this.separator}${key.toString()}`;
-        }
-        return `secure${this.separator}${key.toString()}`;
+        const parts: string[] = ['secure'];
+
+        this.namespace && parts.push(this.namespace);
+
+        return [...parts, key.toString()].join(this.separator);
+    }
+
+    protected getNamespaceOfKey(key: string): string {
+        const fullKeyParts = key.split(this.separator);
+        return fullKeyParts.length === 3 ? fullKeyParts[1] : '';
     }
 }

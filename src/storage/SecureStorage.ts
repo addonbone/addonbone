@@ -93,11 +93,11 @@ export class SecureStorage<T extends StorageState> extends BaseStorage<T> {
         return key.startsWith(`secure${this.separator}`);
     }
 
-    protected async handleStorageChange<P extends T>(key: string, changes: StorageChange, options: StorageWatchOptions<P>) {
+    protected async handleChange<P extends T>(key: string, changes: StorageChange, options: StorageWatchOptions<P>) {
         const newValue = changes.newValue !== undefined ? await this.decrypt(changes.newValue) : undefined;
         const oldValue = changes.oldValue !== undefined ? await this.decrypt(changes.oldValue) : undefined;
 
-        await this.notifyChangeListeners(key, {newValue, oldValue}, options)
+        await this.triggerChange(key, {newValue, oldValue}, options)
     };
 
     protected getFullKey(key: keyof T): string {
@@ -108,8 +108,8 @@ export class SecureStorage<T extends StorageState> extends BaseStorage<T> {
         return [...parts, key.toString()].join(this.separator);
     }
 
-    protected getNamespaceOfKey(key: string): string {
+    protected getNamespaceOfKey(key: string): string | undefined {
         const fullKeyParts = key.split(this.separator);
-        return fullKeyParts.length === 3 ? fullKeyParts[1] : '';
+        return fullKeyParts.length === 3 ? fullKeyParts[1] : undefined;
     }
 }

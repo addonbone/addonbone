@@ -14,11 +14,17 @@ export interface BaseStorageOptions {
     namespace?: string,
 }
 
-abstract class BaseStorage<T extends StorageState> implements StorageProvider<T> {
+export default abstract class BaseStorage<T extends StorageState> implements StorageProvider<T> {
     private storage: StorageArea;
     private readonly area: AreaName;
     protected readonly namespace?: string;
     protected separator: string = ':';
+
+    protected abstract getFullKey(key: keyof T): string;
+
+    protected abstract getNamespaceOfKey(key: string): string | undefined;
+
+    protected abstract handleChange<P extends T>(key: string, changes: StorageChange, options: StorageWatchOptions<P>): void
 
     protected constructor({area, namespace}: BaseStorageOptions = {}) {
         this.area = area ?? "local";
@@ -99,7 +105,7 @@ abstract class BaseStorage<T extends StorageState> implements StorageProvider<T>
 
             Object.entries(changes).forEach(async ([key, change]) => {
                 if (this.canChange(key)) {
-                    this.handleStorageChange(key, change, options);
+                    this.handleChange(key, change, options);
                 }
             });
         };
@@ -113,7 +119,7 @@ abstract class BaseStorage<T extends StorageState> implements StorageProvider<T>
         return this.getNamespaceOfKey(key) === this.namespace;
     }
 
-    protected async notifyChangeListeners<P extends T>(key: string, changes: StorageChange, options: StorageWatchOptions<P>) {
+    protected async triggerChange<P extends T>(key: string, changes: StorageChange, options: StorageWatchOptions<P>) {
         const {newValue, oldValue} = changes;
         const originalKey = this.getOriginalKey(key)
 
@@ -129,11 +135,4 @@ abstract class BaseStorage<T extends StorageState> implements StorageProvider<T>
         return fullKeyParts.length > 1 ? fullKeyParts[fullKeyParts.length - 1] : key;
     }
 
-    protected abstract getFullKey(key: keyof T): string;
-
-    protected abstract getNamespaceOfKey(key: string): string
-
-    protected abstract handleStorageChange<P extends T>(key: string, changes: StorageChange, options: StorageWatchOptions<P>): void
 }
-
-export default BaseStorage

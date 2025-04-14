@@ -20,6 +20,8 @@ export default abstract class BaseStorage<T extends StorageState> implements Sto
     protected readonly namespace?: string;
     protected separator: string = ':';
 
+    public abstract clear(): Promise<void>;
+
     protected abstract getFullKey(key: keyof T): string;
 
     protected abstract getNamespaceOfKey(key: string): string | undefined;
@@ -85,19 +87,6 @@ export default abstract class BaseStorage<T extends StorageState> implements Sto
     public async remove<K extends keyof T>(key: K): Promise<void> {
         return new Promise((resolve, reject) => {
             this.storage.remove(this.getFullKey(key), () => {
-                try {
-                    throwRuntimeError()
-                    resolve();
-                } catch (e) {
-                    reject(e);
-                }
-            });
-        });
-    }
-
-    public async clear(): Promise<void> {
-        return new Promise((resolve, reject) => {
-            this.storage.clear(() => {
                 try {
                     throwRuntimeError()
                     resolve();

@@ -94,6 +94,12 @@ export class SecureStorage<T extends StorageState> extends BaseStorage<T> {
         return decryptedValues as P;
     }
 
+    public async clear(): Promise<void> {
+        const allValues = await super.getAll();
+
+        await Promise.all(Object.keys(allValues).map(key => this.remove(key)));
+    }
+
     protected canChange(key: string): boolean {
         if (!super.canChange(key)) return false;
 

@@ -6,9 +6,11 @@ export enum EntrypointType {
     Background = 'background',
     Command = 'command',
     ContentScript = 'content',
+    Page = 'page',
     Options = 'options',
     Popup = 'popup',
     Sidebar = 'sidebar',
+    Offscreen = 'offscreen',
 }
 
 export interface EntrypointOptions {
@@ -50,6 +52,16 @@ export interface EntrypointFile {
     import: string;
     external?: boolean;
 }
+
+/**
+* Dictionary of entrypoint for the build configuration.
+*
+* @key {string} - The name of the entrypoint that will be used in the bundler configuration.
+* @value {EntrypointFile[]} - Array of files that will be included in this entrypoint.
+* These files will be compiled and bundled together as part of the specified entrypoint.
+*/
+export type EntrypointEntries = Record<string, EntrypointFile[]>;
+
 
 export interface EntrypointBuilder {
     build(): Promise<void>;

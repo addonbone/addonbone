@@ -65,6 +65,7 @@ export interface Plugin extends PluginName {
     bundler?: PluginHandler<PluginBundlerOptions, RspackConfig>;
     command?: PluginHandler<PluginConfigOptions, PluginEntrypointResult>;
     content?: PluginHandler<PluginConfigOptions, PluginEntrypointResult>;
+    page?: PluginHandler<PluginConfigOptions, PluginEntrypointResult>;
     locale?: PluginHandler<PluginConfigOptions, PluginLocaleResult>;
     manifest?: PluginHandlerCallback<PluginManifestOptions>;
 }
@@ -75,7 +76,7 @@ export type PluginHandlerCallback<O, T = void> = { (options: O): Awaiter<T> }
 
 export type PluginHandlerKeys = keyof Omit<Plugin, 'name'>;
 
-export type PluginEntrypointKeys = keyof Pick<Plugin, 'background' | 'command' | 'content'>;
+export type PluginEntrypointKeys = keyof Pick<Plugin, 'background' | 'command' | 'content' | 'page'>;
 
 export type PluginHandlerType<T extends Plugin[PluginHandlerKeys]> =
     T extends PluginHandlerCallback<infer O, infer R> ? { options: O; result: R } : never;

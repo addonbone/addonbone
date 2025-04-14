@@ -10,6 +10,7 @@ import localePlugin from "../plugins/locale";
 import reactPlugin from "../plugins/react";
 import stylePlugin from "../plugins/style";
 import typescriptPlugin from "../plugins/typescript";
+import pagePlugin from "../plugins/page";
 
 import {getAppSourcePath, getConfigFile, getInputPath} from "../resolvers/path";
 
@@ -110,6 +111,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         concatContentScripts = true,
         mergeStyles = true,
         mergeLocales = true,
+        mergePages = true,
     } = config;
 
     let resolvedConfig: Config = {
@@ -140,6 +142,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         concatContentScripts,
         mergeStyles,
         mergeLocales,
+        mergePages
     };
 
     let vars = loadDotenv(resolvedConfig);
@@ -159,6 +162,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         localePlugin(),
         contentPlugin(),
         backgroundPlugin(),
+        pagePlugin(),
     ];
 
     return {

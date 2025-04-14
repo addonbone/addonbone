@@ -9,7 +9,7 @@ type ExtensionContext = chrome.runtime.ExtensionContext;
 const runtime = browser().runtime;
 
 const backgroundPaths = [
-    '/_generated_background_page.html',
+    '/_generated_background_page.view',
 ];
 
 export const getRuntimeId = (): string => runtime.id;

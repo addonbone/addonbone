@@ -5,6 +5,7 @@ import {BackgroundDefinition} from "@typing/background";
 import {ContentScriptAppendDefinition, ContentScriptDefinition} from "@typing/content";
 import {PluginDefinition} from "@typing/plugin";
 import {CommandDefinition, CommandExecuteActionName, ExecuteActionCommandDefinition} from "@typing/command";
+import {PageDefinition} from "@typing/page";
 
 export const defineConfig = (config: ConfigDefinition): ConfigDefinition => {
     return config;
@@ -38,3 +39,7 @@ export const defineContentScriptAppend = (options: ContentScriptAppendDefinition
         mount: contentScriptMountAppendResolver(append),
     };
 }
+
+export const definePage = (options: PageDefinition): PageDefinition => {
+    return options;
+};

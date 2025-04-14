@@ -97,7 +97,7 @@ export const getTab = (tabId: number) => new Promise<Tab>((resolve, reject) => {
 });
 
 export const getCurrentTab = () => new Promise<Tab | undefined>((resolve, reject) => {
-    // Returns undefined if called from a non-tab context (for example, a background page or popup view)
+    // Returns undefined if called from a non-tab context (for example, a background view or popup view)
     tabs.getCurrent((tab) => {
         try {
             throwRuntimeError();

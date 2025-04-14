@@ -1,4 +1,4 @@
-import {EntrypointBuilder, EntrypointFile, EntrypointOptions} from "@typing/entrypoint";
+import {EntrypointBuilder, EntrypointOptions} from "@typing/entrypoint";
 import {Required} from "utility-types";
 
 import {Awaiter} from "@typing/helpers";
@@ -33,7 +33,5 @@ export type ExecuteActionCommandDefinition = Omit<CommandDefinition, 'name'>;
 export type CommandUnresolvedDefinition = Partial<CommandDefinition>;
 
 export type CommandResolvedDefinition = Required<CommandDefinition, 'name' | 'execute'>;
-
-export type CommandEntrypointMap = Map<EntrypointFile, CommandOptions>;
 
 export type CommandBuilder = EntrypointBuilder;

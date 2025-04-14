@@ -40,13 +40,20 @@ const framework: Options = {
     ...common,
     entry: {
         'index': 'src/index.ts',
+
         'browser/index': 'src/browser/index.ts',
+
         'locale/index': 'src/locale/index.ts',
+
         'entry/background/index': 'src/entry/background/index.ts',
+
         'entry/command/index': 'src/entry/command/index.ts',
         'entry/content/index': 'src/entry/content/index.ts',
         'entry/content/vanilla': 'src/entry/content/vanilla/index.ts',
         'entry/content/react': 'src/entry/content/react/index.ts',
+
+        'entry/view/index': 'src/entry/view/index.ts',
+        'entry/view/vanilla': 'src/entry/view/vanilla/index.ts',
     },
     format: ['esm', 'cjs'],
     outExtension({format}) {

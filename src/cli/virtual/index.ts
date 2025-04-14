@@ -1,12 +1,14 @@
 import background from "./background.ts?raw";
 import command from "./command.ts?raw";
 import content from "./content.ts?raw";
+import view from "./view.ts?raw";
 
-import {getEntrypointFileFramework} from "@cli/utils/entrypoint";
+import {getEntrypointFileFramework} from "@cli/entrypoint";
 
+import {PackageName} from "@typing/app";
 import {EntrypointFile} from "@typing/entrypoint";
 
-const templates = {background, command, content};
+const templates = {background, command, content, view};
 
 const getVirtualModule = (file: EntrypointFile, template: keyof typeof templates): string => {
     return templates[template].replace(`virtual:${template}-entrypoint`, file.import);
@@ -23,5 +25,10 @@ export const virtualCommandModule = (file: EntrypointFile, name: string): string
 
 export const virtualContentScriptModule = (file: EntrypointFile): string => {
     return getVirtualModule(file, 'content')
-        .replace(`virtual:content-framework`, 'adnbn/entry/content/' + getEntrypointFileFramework(file));
+        .replace(`virtual:content-framework`, PackageName + '/entry/content/' + getEntrypointFileFramework(file));
+}
+
+export const virtualViewModule = (file: EntrypointFile): string => {
+    return getVirtualModule(file, 'view')
+        .replace(`virtual:view-framework`, PackageName + '/entry/view/' + getEntrypointFileFramework(file));
 }

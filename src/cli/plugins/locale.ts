@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import _ from "lodash";
 import yaml from "js-yaml";
+import {DefinePlugin} from "@rspack/core";
 
 import {definePlugin} from "@core/define";
 
@@ -20,7 +21,6 @@ import {
     getSourcePath
 } from "@cli/resolvers/path";
 
-import {getLanguageFromFilename, isValidLocaleFilename} from "@cli/utils/locale";
 import {isFileExtension} from "@cli/utils/path";
 
 import {Command, PackageName, SystemDir} from "@typing/app";
@@ -32,11 +32,39 @@ import {
     LocaleBuilder as LocaleBuilderContract,
     LocaleData,
     LocaleDirectoryName,
+    LocaleFileExtensions,
     LocaleStructure
 } from "@typing/locale";
-import {DefinePlugin} from "@rspack/core";
 
 type LocaleBuilderMap = Map<Language, LocaleBuilderContract>;
+
+export const isValidLocaleFilename = (filename: string): boolean => {
+    let {name, ext} = path.parse(filename);
+
+    if (ext.startsWith('.')) {
+        ext = ext.slice(1);
+    }
+
+    if (name.includes('.')) {
+        name = name.split('.').slice(0, -1).join('.');
+    }
+
+    return LocaleFileExtensions.has(ext) && LanguageCodes.has(name);
+}
+
+export const getLanguageFromFilename = (filename: string): Language => {
+    let {name} = path.parse(filename);
+
+    if (name.includes('.')) {
+        name = name.split('.').slice(0, -1).join('.');
+    }
+
+    if (LanguageCodes.has(name)) {
+        return name as Language;
+    }
+
+    throw new Error(`Invalid locale filename: ${filename}`);
+}
 
 const findLocaleFiles = (directory: string): Set<string> => {
     const files = new Set<string>;

@@ -4,53 +4,33 @@ import stringify from "json-stringify-deterministic";
 import {Configuration as RspackConfig} from "@rspack/core";
 
 import {definePlugin} from "@core/define";
+import {getContentScriptOptions, isValidEntrypointOptions, NameGenerator} from "@cli/entrypoint";
+
 import {getPluginEntrypointFiles} from "@cli/resolvers/plugin";
-import {getContentScriptOptions, getEntrypointFiles} from "@cli/resolvers/entrypoint";
+import {getEntrypointFiles} from "@cli/resolvers/entrypoint";
 
 import {virtualContentScriptModule} from "@cli/virtual";
-
-import {getEntrypointName} from "@cli/utils/entrypoint";
-import {isValidEntrypointOptions} from "@cli/utils/option";
 
 import EntrypointPlugin, {EntrypointPluginEntries} from "@cli/bundler/plugins/EntrypointPlugin";
 
 import {EntrypointFile, EntrypointType} from "@typing/entrypoint";
-import {ContentScriptEntrypointMap, ContentScriptEntrypointOptions} from "@typing/content";
+import {ContentScriptEntrypointOptions} from "@typing/content";
 import {ReadonlyConfig} from "@typing/config";
 import {ManifestContentScript, ManifestContentScripts} from "@typing/manifest";
 import {Command, PackageName} from "@typing/app";
 
+type ContentScriptEntrypointMap = Map<EntrypointFile, ContentScriptEntrypointOptions>;
+
 type ContentScriptEntries = Record<string, Array<{ options: ContentScriptEntrypointOptions, file: EntrypointFile }>>;
 
-const contentEntryNameSuffix = EntrypointType.ContentScript;
-const frameworkContentEntryName = 'framework.' + contentEntryNameSuffix;
+const frameworkContentEntryName = 'framework.' + EntrypointType.ContentScript;
 
-const registeredEntryNames = new Set<string>([frameworkContentEntryName]);
+const nameGenerator = new NameGenerator(EntrypointType.ContentScript).reserve(frameworkContentEntryName);
+
 const entryNameByOptions = new Map<string, string>();
 
-const generateUniqueEntryName = (file: EntrypointFile): string => {
-    let name = getEntrypointName(file, EntrypointType.ContentScript);
-
-    let entryName = name;
-    let counter = 1;
-
-    if (entryName !== contentEntryNameSuffix) {
-        entryName = `${entryName}.${contentEntryNameSuffix}`;
-    }
-
-    while (registeredEntryNames.has(entryName)) {
-        entryName = name === contentEntryNameSuffix ? `${counter}.${name}` : `${name}${counter}.${contentEntryNameSuffix}`;
-
-        counter++;
-    }
-
-    registeredEntryNames.add(entryName);
-
-    return entryName;
-}
-
 const getContentScriptEntryName = (file: EntrypointFile, options: ContentScriptEntrypointOptions, concat: boolean = true): string => {
-    const entry = generateUniqueEntryName(file);
+    const entry = nameGenerator.file(file);
 
     if (!concat) {
         return entry;
@@ -99,7 +79,8 @@ const getContentScriptEntries = async (config: ReadonlyConfig): Promise<ContentS
             .value();
     }
 
-    registeredEntryNames.clear();
+    nameGenerator.reset();
+
     entryNameByOptions.clear();
 
     return entries;
@@ -185,7 +166,7 @@ export default definePlugin(() => {
                                         return false;
                                     }
 
-                                    return name === contentEntryNameSuffix || name.includes(`.${contentEntryNameSuffix}`);
+                                    return nameGenerator.likely(name);
                                 },
                                 enforce: true,
                                 reuseExistingChunk: true,

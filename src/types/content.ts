@@ -1,7 +1,7 @@
 import type {FC, ReactNode} from "react"
 import {Optional} from 'utility-types';
 
-import {EntrypointBuilder, EntrypointFile, EntrypointOptions} from "@typing/entrypoint";
+import {EntrypointBuilder, EntrypointOptions} from "@typing/entrypoint";
 import {Awaiter, PickNonFunctionProperties} from "@typing/helpers";
 
 type ExecutionWorld = chrome.scripting.ExecutionWorld;
@@ -52,8 +52,6 @@ export interface ContentScriptConfig {
 
 export type ContentScriptEntrypointOptions = ContentScriptConfig & EntrypointOptions;
 
-export type ContentScriptEntrypointMap = Map<EntrypointFile, ContentScriptEntrypointOptions>;
-
 // Append
 export enum ContentScriptAppend {
     Last = 'last',
@@ -68,6 +66,7 @@ export type ContentScriptMountFunction = (anchor: Element, container: Element) =
 
 export interface ContentScriptMount {
     mount(): void;
+
     unmount(): void;
 }
 
@@ -90,7 +89,9 @@ export type ContentScriptRenderHandler = (props: ContentScriptProps) => Awaiter<
 export type ContentScriptContainerTag = Exclude<keyof HTMLElementTagNameMap, 'html' | 'body'>;
 
 export type ContentScriptContainerOptions = {
-    [Tag in ContentScriptContainerTag]: { tagName: Tag } & Exclude<Optional<PickNonFunctionProperties<HTMLElementTagNameMap[Tag]>>, 'id'>;
+    [Tag in ContentScriptContainerTag]: {
+    tagName: Tag
+} & Exclude<Optional<PickNonFunctionProperties<HTMLElementTagNameMap[Tag]>>, 'id'>;
 }[ContentScriptContainerTag];
 
 export type ContentScriptContainerFactory = (props: ContentScriptProps) => Awaiter<Element | ContentScriptContainerTag | ContentScriptContainerOptions>;

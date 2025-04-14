@@ -75,7 +75,7 @@ export const LocaleValuesSeparator = '|';
 
 export const LocaleCustomKeyForLanguage = 'locale';
 
-export const LocaleKeyMarker = '#';
+export const LocaleKeyMarker = '@';
 
 export const LanguageCodes: ReadonlySet<string> = new Set(Object.values(Language));
 

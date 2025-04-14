@@ -1,9 +1,9 @@
 import fs, {type Dirent} from 'fs';
 import path from 'path';
 
-import {getAppSourcePath, getSharedPath} from "../path";
+import {getAppSourcePath, getSharedPath} from "./path";
 
-import {isEntrypointFilename, isSupportedEntrypointExtension} from "@cli/utils/entrypoint";
+import {isEntrypointFilename, isSupportedEntrypointExtension} from "@cli/entrypoint";
 import {toPosix} from "@cli/utils/path";
 
 import {EntrypointFile, EntrypointFileExtensions, EntrypointType} from "@typing/entrypoint";
@@ -101,7 +101,8 @@ export const getEntrypointFiles = (config: ReadonlyConfig, entrypoint: Entrypoin
         [EntrypointType.Background]: config.mergeBackground,
         [EntrypointType.Command]: config.mergeCommands,
         [EntrypointType.ContentScript]: config.mergeContentScripts,
-    }[entrypoint];
+        [EntrypointType.Page]: config.mergePages,
+    }[entrypoint] || false;
 
     if (appFiles.size > 0 && mergeShared || appFiles.size === 0) {
         const sharedFiles = findEntrypointFiles(getSharedPath(config), entrypoint);

@@ -1,6 +1,6 @@
 import {z} from "zod";
 
-import {OptionFile} from "../../parsers/entrypoint";
+import {OptionFile} from "./drivers";
 
 import {modifyLocaleMessageKey} from "@locale/utils";
 
@@ -9,12 +9,19 @@ import {CommandEntrypointOptions} from "@typing/command";
 import {Browser} from "@typing/browser";
 import {EntrypointFile} from "@typing/entrypoint";
 import {ContentScriptEntrypointOptions} from "@typing/content";
+import {PageEntrypointOptions} from "@typing/page";
 
 const CommonPropertiesSchema = z.object({
     includeApp: z.array(z.string()).optional(),
     excludeApp: z.array(z.string()).optional(),
     includeBrowser: z.array(z.nativeEnum(Browser)).optional(),
     excludeBrowser: z.array(z.nativeEnum(Browser)).optional(),
+});
+
+const ViewPropertiesSchema = CommonPropertiesSchema.extend({
+    title: z.string().nonempty().optional(),
+    filename: z.string().nonempty().optional(),
+    template: z.string().nonempty().optional(),
 });
 
 const parseOptions = <T extends typeof CommonPropertiesSchema, R extends Record<string, any>>(
@@ -89,4 +96,17 @@ export const getContentScriptOptions = (file: EntrypointFile): ContentScriptEntr
     });
 
     return parseOptions(file, ContentScriptPropertiesSchema, ['defineContentScript', 'defineContentScriptAppend']);
+}
+
+export const getPageOptions = (file: EntrypointFile): PageEntrypointOptions => {
+    const PagePropertiesSchema = ViewPropertiesSchema.extend({
+        name: z.string().nonempty().optional(),
+    });
+
+    const options = parseOptions(file, PagePropertiesSchema, 'definePage');
+
+    return {
+        ...options,
+        title: modifyLocaleMessageKey(options.title),
+    };
 }

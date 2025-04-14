@@ -42,3 +42,25 @@ declare module 'virtual:content-framework' {
     const module: (definition: ContentScriptDefinition) => void;
     export = module;
 }
+
+declare module 'virtual:view-entrypoint' {
+    import {ViewConfig} from "@typing/view";
+
+    type ViewDefinition = import('@typing/view').ViewDefinition<ViewConfig>;
+
+    interface ModuleType extends ViewDefinition {
+        default: ViewDefinition | ViewDefinition['render'] | undefined;
+    }
+
+    const module: ModuleType;
+    export = module;
+}
+
+declare module 'virtual:view-framework' {
+    import {ViewConfig} from "@typing/view";
+
+    type ViewDefinition = import('@typing/view').ViewDefinition<ViewConfig>;
+
+    const module: (definition: ViewDefinition) => void;
+    export = module;
+}

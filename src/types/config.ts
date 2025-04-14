@@ -114,7 +114,7 @@ export interface Config {
 
     /**
      * Directory for HTML files in outputDir.
-     * @example "html"
+     * @example "view"
      * @path Full path: `{{inputDir}}/{{outputDir}}/{{appDir}}/{{htmlDir}}`
      */
     htmlDir: string;
@@ -216,6 +216,12 @@ export interface Config {
      * When `true`, localization files from both directories will be combined.
      */
     mergeLocales: boolean;
+
+    /**
+     * Flag indicating whether to merge page files from App and Shared directories.
+     * When `true`, page files from both directories will be combined.
+     */
+    mergePages: boolean;
 }
 
 

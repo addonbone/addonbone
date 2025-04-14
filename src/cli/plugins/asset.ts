@@ -37,7 +37,7 @@ export default definePlugin(() => {
                         values: {
                             '__MSG_%40@extension_id__': '__MSG_@@extension_id__'
                         }
-                    }, 'chrome-extension-resource-fix')
+                    })
                 ]
             };
         },

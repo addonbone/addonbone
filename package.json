@@ -47,6 +47,11 @@
       "import": "./dist/entry/content/*.js",
       "require": "./dist/entry/content/*.cjs"
     },
+    "./entry/view/*": {
+      "types": "./dist/entry/view/*.d.ts",
+      "import": "./dist/entry/view/*.js",
+      "require": "./dist/entry/view/*.cjs"
+    },
     "./client-types": {
       "types": "./types/client.d.ts"
     }

@@ -3,7 +3,7 @@ import ts from "typescript";
 import path from "path";
 import {createMatchPath} from "tsconfig-paths";
 
-import {isValidEntrypointFilename} from "@cli/utils/entrypoint";
+import {isValidEntrypointFilename} from "@cli/entrypoint";
 
 import {PackageName} from "@typing/app";
 import {EntrypointFileExtensions} from "@typing/entrypoint";

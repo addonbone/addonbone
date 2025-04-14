@@ -9,7 +9,7 @@ export interface SecureStorageOptions extends BaseStorageOptions {
 
 export class SecureStorage<T extends StorageState> extends BaseStorage<T> {
     private cryptoKey: CryptoKey | null = null;
-    private secureKey: string = 'SecureKey';
+    private secureKey: string;
 
     static Sync<T extends StorageState>(options: Omit<SecureStorageOptions, 'area'>): SecureStorage<T> {
         return new SecureStorage<T>({area: 'sync', ...options});
@@ -29,12 +29,7 @@ export class SecureStorage<T extends StorageState> extends BaseStorage<T> {
 
     constructor({secureKey, ...options}: SecureStorageOptions) {
         super(options)
-        secureKey && this.setSecureKey(secureKey)
-    }
-
-    private setSecureKey = (secureKey: string) => {
-        this.cryptoKey = null;
-        this.secureKey = secureKey;
+        this.secureKey = secureKey?.trim() || 'SecureKey';
     }
 
     private async generateCryptoKey(): Promise<CryptoKey> {
@@ -77,14 +72,32 @@ export class SecureStorage<T extends StorageState> extends BaseStorage<T> {
         return JSON.parse(new TextDecoder().decode(decrypted));
     }
 
-    async set<K extends keyof T>(key: K, value: T[K]): Promise<void> {
+    public async set<K extends keyof T>(key: K, value: T[K]): Promise<void> {
         const encryptedValue = await this.encrypt(value);
         return super.set(key, encryptedValue as T[K]);
     }
 
-    async get<K extends keyof T>(key: K): Promise<T[K] | undefined> {
+    public async get<K extends keyof T>(key: K): Promise<T[K] | undefined> {
         const encryptedValue = await super.get(key) as string;
         return encryptedValue ? this.decrypt(encryptedValue) : undefined;
+    }
+
+    public async getAll<P extends T>(): Promise<P> {
+        const encryptedValues = await super.getAll<P>();
+
+        const decryptedValues: Partial<Record<keyof P, any>> = {};
+
+        for (const [key, value] of Object.entries(encryptedValues)) {
+            decryptedValues[key as keyof P] = value ? await this.decrypt(value.toString()) : undefined;
+        }
+
+        return decryptedValues as P;
+    }
+
+    public async clear(): Promise<void> {
+        const allValues = await super.getAll();
+
+        await this.remove(Object.keys(allValues));
     }
 
     protected canChange(key: string): boolean {
@@ -93,11 +106,11 @@ export class SecureStorage<T extends StorageState> extends BaseStorage<T> {
         return key.startsWith(`secure${this.separator}`);
     }
 
-    protected async handleStorageChange<P extends T>(key: string, changes: StorageChange, options: StorageWatchOptions<P>) {
+    protected async handleChange<P extends T>(key: string, changes: StorageChange, options: StorageWatchOptions<P>) {
         const newValue = changes.newValue !== undefined ? await this.decrypt(changes.newValue) : undefined;
         const oldValue = changes.oldValue !== undefined ? await this.decrypt(changes.oldValue) : undefined;
 
-        await this.notifyChangeListeners(key, {newValue, oldValue}, options)
+        await this.triggerChange(key, {newValue, oldValue}, options)
     };
 
     protected getFullKey(key: keyof T): string {
@@ -108,8 +121,8 @@ export class SecureStorage<T extends StorageState> extends BaseStorage<T> {
         return [...parts, key.toString()].join(this.separator);
     }
 
-    protected getNamespaceOfKey(key: string): string {
+    protected getNamespaceOfKey(key: string): string | undefined {
         const fullKeyParts = key.split(this.separator);
-        return fullKeyParts.length === 3 ? fullKeyParts[1] : '';
+        return fullKeyParts.length === 3 ? fullKeyParts[1] : undefined;
     }
 }

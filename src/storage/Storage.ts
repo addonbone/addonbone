@@ -28,6 +28,12 @@ export class Storage<T extends StorageState> extends BaseStorage<T> {
         super(options)
     }
 
+    public async clear(): Promise<void> {
+        const allValues = await this.getAll();
+
+        await this.remove(Object.keys(allValues));
+    }
+
     protected canChange(key: string): boolean {
         if (!super.canChange(key)) return false;
 
@@ -36,16 +42,16 @@ export class Storage<T extends StorageState> extends BaseStorage<T> {
         return (parts.length === 1 || (parts.length === 2 && parts[0] === this.namespace))
     }
 
-    protected async handleStorageChange<P extends T>(key: string, changes: StorageChange, options: StorageWatchOptions<P>) {
-        await this.notifyChangeListeners(key, changes, options)
+    protected async handleChange<P extends T>(key: string, changes: StorageChange, options: StorageWatchOptions<P>) {
+        await this.triggerChange(key, changes, options)
     };
 
     protected getFullKey(key: keyof T): string {
         return this.namespace ? `${this.namespace}${this.separator}${key.toString()}` : key.toString();
     }
 
-    protected getNamespaceOfKey(key: string): string {
+    protected getNamespaceOfKey(key: string): string | undefined {
         const fullKeyParts = key.split(this.separator);
-        return fullKeyParts.length === 2 ? fullKeyParts[0] : '';
+        return fullKeyParts.length === 2 ? fullKeyParts[0] : undefined;
     }
 }

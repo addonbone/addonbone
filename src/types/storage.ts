@@ -9,7 +9,7 @@ export interface StorageProvider<T extends StorageState> {
     set<K extends keyof T>(key: K, value: T[K]): Promise<void>;
     get<K extends keyof T>(key: K): Promise<T[K] | undefined>;
     getAll(): Promise<Partial<T>>;
-    remove<K extends keyof T>(key: K): Promise<void>;
+    remove<K extends keyof T>(keys: K | K[]): Promise<void>;
     clear(): Promise<void>;
     watch(options: StorageWatchOptions<T>): () => void;
 }

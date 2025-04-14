@@ -138,19 +138,19 @@ export default definePlugin(() => {
                             frameworkContent: {
                                 name: frameworkContentEntryName,
                                 test: (module, {moduleGraph}): boolean => {
-                                    const clientDirs = [
+                                    const entryDirs = [
                                         path.join('node_modules', PackageName, 'entry', 'content'),
                                         path.join('addonbone', 'dist', 'entry', 'content'), // TODO: Remove this for production
                                     ];
 
-                                    if (clientDirs.some((dir) => (module.resource || '').includes(dir))) {
+                                    if (entryDirs.some((dir) => (module.resource || '').includes(dir))) {
                                         return true;
                                     }
 
                                     let issuer = moduleGraph.getIssuer(module);
 
                                     while (issuer) {
-                                        if (clientDirs.some((dir) => (issuer?.resource || '').includes(dir))) {
+                                        if (entryDirs.some((dir) => (issuer?.resource || '').includes(dir))) {
                                             return true;
                                         }
 

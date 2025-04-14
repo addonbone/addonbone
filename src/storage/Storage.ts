@@ -31,7 +31,7 @@ export class Storage<T extends StorageState> extends BaseStorage<T> {
     public async clear(): Promise<void> {
         const allValues = await this.getAll();
 
-        await Promise.all(Object.keys(allValues).map(key => this.remove(key)));
+        await this.remove(Object.keys(allValues));
     }
 
     protected canChange(key: string): boolean {

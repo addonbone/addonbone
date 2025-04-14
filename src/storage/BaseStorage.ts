@@ -84,9 +84,13 @@ export default abstract class BaseStorage<T extends StorageState> implements Sto
     }
 
 
-    public async remove<K extends keyof T>(key: K): Promise<void> {
+    public async remove<K extends keyof T>(keys: K | K[]): Promise<void> {
         return new Promise((resolve, reject) => {
-            this.storage.remove(this.getFullKey(key), () => {
+            const fullKeys = Array.isArray(keys)
+                ? keys.map(this.getFullKey)
+                : this.getFullKey(keys);
+
+            this.storage.remove(fullKeys, () => {
                 try {
                     throwRuntimeError()
                     resolve();

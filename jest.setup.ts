@@ -30,7 +30,7 @@ global.simulateStorageChange = (
 
 global.storageLocalGet = (key: string | string[]): Promise<any> => {
     return new Promise(resolve => {
-        chrome.storage.local.get(key, (res) => {
+        chrome.storage.local.get(null, (res) => {
             resolve(
                 Array.isArray(key)
                     ? key.reduce((acc, k) => ({ ...acc, [k]: res[k] }), {})

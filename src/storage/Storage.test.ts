@@ -51,4 +51,80 @@ describe('Storage: basic operations', () => {
         expect(secondResult).toEqual({ c: 3, d: 4 });
     });
 
+    test('watch - calls specific key callback on change', () => {
+        const keyCallback = jest.fn();
+        storage.watch({theme: keyCallback});
+
+        global.simulateStorageChange(
+            {
+                theme: {
+                    oldValue: 'light',
+                    newValue: 'dark',
+                }
+            }
+        );
+
+        expect(keyCallback).toHaveBeenCalledWith('dark', 'light');
+    });
+
+    test('watch - does not call key callback for unrelated key', () => {
+        const keyCallback = jest.fn();
+        storage.watch({theme: keyCallback});
+
+        global.simulateStorageChange(
+            {
+                volume: {
+                    oldValue: 50,
+                    newValue: 80,
+                },
+            }
+        );
+
+        expect(keyCallback).not.toHaveBeenCalled();
+    });
+
+    test('watch - calls global callback on any change', () => {
+        const globalCallback = jest.fn();
+        storage.watch(globalCallback);
+
+        global.simulateStorageChange(
+            {
+                volume: {
+                    oldValue: 50,
+                    newValue: 80,
+                },
+                theme: {
+                    oldValue: 'light',
+                    newValue: 'dark',
+                }
+            }
+        );
+
+        expect(globalCallback).toHaveBeenCalledWith(80, 50);
+        expect(globalCallback).toHaveBeenCalledWith('dark', 'light');
+    });
+
+    test('watch - calls both key and global callbacks', () => {
+        const keyCallback = jest.fn();
+        const globalCallback = jest.fn();
+        storage.watch({theme: keyCallback});
+        storage.watch(globalCallback);
+
+        global.simulateStorageChange(
+            {
+                theme: {
+                    oldValue: 'light',
+                    newValue: 'dark',
+                },
+                volume: {
+                    oldValue: 50,
+                    newValue: 80,
+                }
+            }
+        );
+
+        expect(keyCallback).toHaveBeenCalledWith('dark', 'light');
+        expect(globalCallback).toHaveBeenCalledWith(80, 50);
+        expect(globalCallback).toHaveBeenCalledWith('dark', 'light');
+    });
 });

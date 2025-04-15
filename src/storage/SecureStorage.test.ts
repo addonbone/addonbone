@@ -25,7 +25,7 @@ describe('SecureStorage: set, get, getAll, clear, remove, watch methods', () => 
         const encryptedValue = await global.storageLocalGet('key', securedStorage);
         const decryptedValue = (await securedStorage.getAll())['key']
 
-        expect(encryptedValue).not.toEqual(value);
+        value !== undefined && expect(encryptedValue).not.toEqual(value);
         expect(decryptedValue).toEqual(value);
     });
 

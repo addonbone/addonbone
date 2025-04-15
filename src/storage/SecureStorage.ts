@@ -73,6 +73,7 @@ export class SecureStorage<T extends StorageState> extends BaseStorage<T> {
     }
 
     public async set<K extends keyof T>(key: K, value: T[K]): Promise<void> {
+        if (value === undefined) return;
         const encryptedValue = await this.encrypt(value);
         return super.set(key, encryptedValue as T[K]);
     }

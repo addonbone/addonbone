@@ -1,0 +1,145 @@
+import {Storage} from "./Storage";
+
+describe('Storage: basic operations', () => {
+    const namespace = 'user'
+    const storage = new Storage();
+    const secondStorage = new Storage({namespace});
+
+    beforeEach(async () => {
+        await chrome.storage.local.clear();
+    });
+
+    test.each([
+        ['string', 'hello'],
+        ['number', 42],
+        ['boolean', true],
+        ['null', null],
+        ['object', {a: 1, b: true}],
+        ['array', [1, 2, 3]],
+    ])('set/get %s', async (_, value) => {
+        await storage.set('key', value);
+        const result = await storage.get('key');
+        expect(result).toEqual(value);
+    });
+
+    test('set - saves data with namespace', async () => {
+        await secondStorage.set('theme', 'dark');
+        const result = await global.storageLocalGet(`${namespace}:theme`);
+        const all = await secondStorage.getAll();
+
+        expect(result).toEqual('dark');
+        expect(all['theme']).toEqual('dark');
+    });
+
+    test('getAll - returns only saved values', async () => {
+        await storage.set('a', 1);
+        await storage.set('b', 2);
+        await secondStorage.set('c', 3);
+        await secondStorage.set('d', 4);
+
+        const result = await storage.getAll();
+        const secondResult = await secondStorage.getAll();
+
+        expect(result).toEqual({a: 1, b: 2});
+        expect(secondResult).toEqual({c: 3, d: 4});
+    });
+
+    test('remove - deletes the key', async () => {
+        await storage.set('key', 1);
+        await storage.remove('key');
+        const result = await storage.get('key');
+        expect(result).toBeUndefined();
+    });
+
+    test('clear - removes all keys from current namespace', async () => {
+        await storage.set('a', 1);
+        await storage.set('b', 2);
+        await secondStorage.set('c', 3);
+        await secondStorage.set('d', 4);
+
+        await storage.clear();
+
+        const result = await storage.getAll();
+        const secondResult = await secondStorage.getAll();
+
+        expect(result).toEqual({});
+        expect(secondResult).toEqual({c: 3, d: 4});
+    });
+
+    test('watch - calls specific key callback on change', () => {
+        const keyCallback = jest.fn();
+        storage.watch({theme: keyCallback});
+
+        global.simulateStorageChange(
+            {
+                theme: {
+                    oldValue: 'light',
+                    newValue: 'dark',
+                }
+            }
+        );
+
+        expect(keyCallback).toHaveBeenCalledWith('dark', 'light');
+    });
+
+    test('watch - does not call key callback for unrelated key', () => {
+        const keyCallback = jest.fn();
+        storage.watch({theme: keyCallback});
+
+        global.simulateStorageChange(
+            {
+                volume: {
+                    oldValue: 50,
+                    newValue: 80,
+                },
+            }
+        );
+
+        expect(keyCallback).not.toHaveBeenCalled();
+    });
+
+    test('watch - calls global callback on any change', () => {
+        const globalCallback = jest.fn();
+        storage.watch(globalCallback);
+
+        global.simulateStorageChange(
+            {
+                volume: {
+                    oldValue: 50,
+                    newValue: 80,
+                },
+                theme: {
+                    oldValue: 'light',
+                    newValue: 'dark',
+                }
+            }
+        );
+
+        expect(globalCallback).toHaveBeenCalledWith(80, 50);
+        expect(globalCallback).toHaveBeenCalledWith('dark', 'light');
+    });
+
+    test('watch - calls both key and global callbacks', () => {
+        const keyCallback = jest.fn();
+        const globalCallback = jest.fn();
+        storage.watch({theme: keyCallback});
+        storage.watch(globalCallback);
+
+        global.simulateStorageChange(
+            {
+                theme: {
+                    oldValue: 'light',
+                    newValue: 'dark',
+                },
+                volume: {
+                    oldValue: 50,
+                    newValue: 80,
+                }
+            }
+        );
+
+        expect(keyCallback).toHaveBeenCalledWith('dark', 'light');
+        expect(globalCallback).toHaveBeenCalledWith(80, 50);
+        expect(globalCallback).toHaveBeenCalledWith('dark', 'light');
+    });
+});

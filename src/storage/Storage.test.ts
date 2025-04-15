@@ -1,8 +1,9 @@
 import {Storage} from "./Storage";
 
 describe('Storage: basic operations', () => {
+    const namespace = 'user'
     const storage = new Storage();
-    const secondStorage = new Storage({namespace: 'test'});
+    const secondStorage = new Storage({namespace});
 
     beforeEach(async () => {
         await chrome.storage.local.clear();
@@ -19,6 +20,15 @@ describe('Storage: basic operations', () => {
         await storage.set('key', value);
         const result = await storage.get('key');
         expect(result).toEqual(value);
+    });
+
+    test('set - saves data with namespace', async () => {
+        await secondStorage.set('theme', 'dark');
+        const result = await global.storageLocalGet(`${namespace}:theme`);
+        const all = await secondStorage.getAll();
+
+        expect(result).toEqual('dark');
+        expect(all['theme']).toEqual('dark');
     });
 
     test('getAll - returns only saved values', async () => {

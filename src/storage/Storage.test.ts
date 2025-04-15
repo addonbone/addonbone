@@ -15,6 +15,7 @@ describe('Storage: set, get, getAll, clear, remove, watch methods', () => {
         ['number', 42],
         ['boolean', true],
         ['null', null],
+        ['undefined', undefined],
         ['object', {a: 1, b: true}],
         ['array', [1, 2, 3]],
     ])('set/get - works with %s', async (_, value) => {
@@ -134,6 +135,7 @@ describe('SecureStorage: set, get, getAll, clear, remove, watch methods', () => 
         ['number', 42],
         ['boolean', true],
         ['null', null],
+        ['undefined', undefined],
         ['object', {a: 1, b: true}],
         ['array', [1, 2, 3]],
     ])('set/get - works and saves %s in secured format', async (_, value) => {

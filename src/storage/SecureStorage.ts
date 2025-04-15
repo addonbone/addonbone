@@ -27,7 +27,7 @@ export class SecureStorage<T extends StorageState> extends BaseStorage<T> {
         return new SecureStorage<T>({area: 'managed', ...options});
     }
 
-    constructor({secureKey, ...options}: SecureStorageOptions) {
+    constructor({secureKey, ...options}: SecureStorageOptions = {}) {
         super(options)
         this.secureKey = secureKey?.trim() || 'SecureKey';
     }

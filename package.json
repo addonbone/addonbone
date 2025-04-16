@@ -1,6 +1,6 @@
 {
   "name": "adnbn",
-  "version": "0.0.32",
+  "version": "0.0.33",
   "description": "Addon 💀 Bone - Cross browser web extension framework with shared code base",
   "homepage": "https://github.com/addonbone/addonbone",
   "repository": {
@@ -98,6 +98,7 @@
     "css-loader": "^7.1.2",
     "debounce": "^2.2.0",
     "file-loader": "^6.2.0",
+    "html-rspack-tags-plugin": "^0.0.3",
     "js-yaml": "^4.1.0",
     "json-stringify-deterministic": "^1.0.12",
     "just-kebab-case": "^4.2.0",

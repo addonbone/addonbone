@@ -1,16 +1,16 @@
 import type {FC, ReactNode} from "react";
-import {Optional} from "utility-types";
+import type {Optional} from "utility-types";
+import type {Options as HtmlOptions} from "html-rspack-tags-plugin";
 
 import {Awaiter, PickNonFunctionProperties} from "@typing/helpers";
 import {EntrypointBuilder, EntrypointOptions} from "@typing/entrypoint";
 
 export interface ViewConfig {
     title?: string;
-    filename?: string;
     template?: string;
 }
 
-export type ViewOptions = ViewConfig & EntrypointOptions;
+export type ViewOptions = ViewConfig & HtmlOptions & EntrypointOptions;
 
 // Render
 export type ViewRenderReactComponent<T extends ViewConfig> = FC<T>;

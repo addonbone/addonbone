@@ -1,11 +1,10 @@
-import {ViewConfig, ViewDefinition} from "@typing/view";
-import {EntrypointOptions} from "@typing/entrypoint";
+import {ViewDefinition, ViewOptions} from "@typing/view";
 
-export interface PageConfig extends ViewConfig {
+export interface PageConfig {
     name?: string;
 }
 
-export type PageEntrypointOptions = PageConfig & EntrypointOptions;
+export type PageEntrypointOptions = PageConfig & ViewOptions;
 
 export type PageProps = PageEntrypointOptions;
 

@@ -12,13 +12,13 @@ const backgroundPaths = [
     '/_generated_background_page.view',
 ];
 
-export const getRuntimeId = (): string => runtime.id;
+export const getId = (): string => runtime.id;
 
-export const getRuntimeUrl = (path: string) => runtime.getURL(path);
+export const getUrl = (path: string) => runtime.getURL(path);
 
-export const getRuntimeManifest = (): Manifest => runtime.getManifest();
+export const getManifest = (): Manifest => runtime.getManifest();
 
-export const getRuntimeManifestVersion = (): ManifestVersion => getRuntimeManifest().manifest_version;
+export const getManifestVersion = (): ManifestVersion => getManifest().manifest_version;
 
 export const getRuntimeContexts = (filter: ContextFilter) => new Promise<ExtensionContext[]>((resolve, reject) => {
     runtime.getContexts(filter, contexts => {
@@ -32,7 +32,7 @@ export const getRuntimeContexts = (filter: ContextFilter) => new Promise<Extensi
     });
 });
 
-export const getRuntimePlatformInfo = (): Promise<PlatformInfo> => new Promise<PlatformInfo>((resolve, reject) => {
+export const getPlatformInfo = (): Promise<PlatformInfo> => new Promise<PlatformInfo>((resolve, reject) => {
     runtime.getPlatformInfo((platformInfo) => {
         try {
             throwRuntimeError();
@@ -44,14 +44,14 @@ export const getRuntimePlatformInfo = (): Promise<PlatformInfo> => new Promise<P
     });
 });
 
-export const isManifestVersion3 = (): boolean => getRuntimeManifestVersion() === 3;
+export const isManifestVersion3 = (): boolean => getManifestVersion() === 3;
 
 export const isBackground = (): boolean => {
-    if (!getRuntimeId()) {
+    if (!getId()) {
         return false;
     }
 
-    const manifest = getRuntimeManifest();
+    const manifest = getManifest();
 
     if (!manifest.background) {
         return false;

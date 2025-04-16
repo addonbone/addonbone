@@ -68,7 +68,7 @@ export const getPluginEntrypointFiles = async <K extends PluginEntrypointKeys>(c
                     endpointFiles.push({
                         file: require.resolve(resolved, {paths: [process.cwd()]}),
                         import: resolved,
-                        external: true
+                        external: name,
                     });
                 } else {
                     endpointFiles.push(endpoint);

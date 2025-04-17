@@ -1,9 +1,10 @@
-import {act, renderHook, waitFor} from '@testing-library/react'
-import useStorage from './useStorage'
-import {Storage} from './Storage'
-import {SecureStorage} from './SecureStorage'
+import {act, renderHook, waitFor} from "@testing-library/react"
 
-beforeEach( async () => {
+import {SecureStorage, Storage} from "../providers";
+
+import useStorage from "./useStorage";
+
+beforeEach(async () => {
     await chrome.storage.local.clear()
 })
 
@@ -124,7 +125,7 @@ test("removes watch listener when unmounting", async () => {
     chrome.storage.onChanged.addListener = jest.fn();
     chrome.storage.onChanged.removeListener = jest.fn();
 
-    const { unmount } = renderHook(() => useStorage("theme", "dark"))
+    const {unmount} = renderHook(() => useStorage("theme", "dark"))
 
     expect(chrome.storage.onChanged.addListener).toHaveBeenCalled()
 

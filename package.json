@@ -37,6 +37,11 @@
       "import": "./dist/storage/index.js",
       "require": "./dist/storage/index.cjs"
     },
+    "./storage/react": {
+      "types": "./dist/storage/react.d.ts",
+      "import": "./dist/storage/react.js",
+      "require": "./dist/storage/react.cjs"
+    },
     "./entry/*": {
       "types": "./dist/entry/*/index.d.ts",
       "import": "./dist/entry/*/index.js",

@@ -1,13 +1,10 @@
 import {StorageState, StorageWatchOptions} from '@typing/storage'
 
-import BaseStorage, {BaseStorageOptions} from "./BaseStorage";
+import AbstractStorage, {StorageOptions} from "./AbstractStorage";
 
 type StorageChange = chrome.storage.StorageChange;
 
-export interface StorageOptions extends BaseStorageOptions {
-}
-
-export class Storage<T extends StorageState> extends BaseStorage<T> {
+export default class Storage<T extends StorageState> extends AbstractStorage<T> {
     static Sync<T extends StorageState>(namespace?: string): Storage<T> {
         return new Storage<T>({area: 'sync', namespace});
     }

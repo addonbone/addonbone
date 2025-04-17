@@ -9,12 +9,12 @@ type StorageArea = chrome.storage.StorageArea;
 type StorageChange = chrome.storage.StorageChange;
 type onChangedListener = Parameters<typeof chrome.storage.onChanged.addListener>[0];
 
-export interface BaseStorageOptions {
+export interface StorageOptions {
     area?: AreaName,
     namespace?: string,
 }
 
-export default abstract class BaseStorage<T extends StorageState> implements StorageProvider<T> {
+export default abstract class AbstractStorage<T extends StorageState> implements StorageProvider<T> {
     private storage: StorageArea;
     private readonly area: AreaName;
     protected readonly namespace?: string;
@@ -28,7 +28,7 @@ export default abstract class BaseStorage<T extends StorageState> implements Sto
 
     protected abstract handleChange<P extends T>(key: string, changes: StorageChange, options: StorageWatchOptions<P>): void
 
-    protected constructor({area, namespace}: BaseStorageOptions = {}) {
+    protected constructor({area, namespace}: StorageOptions = {}) {
         this.area = area ?? "local";
         this.storage = storage[this.area];
         this.namespace = namespace?.trim() ? namespace?.trim() : undefined;

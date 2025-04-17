@@ -1,15 +1,17 @@
+import AbstractStorage, {StorageOptions} from "./AbstractStorage";
+
 import {StorageState, StorageWatchOptions} from "@typing/storage";
-import BaseStorage, {BaseStorageOptions} from "./BaseStorage";
 
 type StorageChange = chrome.storage.StorageChange;
 
-export interface SecureStorageOptions extends BaseStorageOptions {
+export interface SecureStorageOptions extends StorageOptions {
     secureKey?: string;
 }
 
-export class SecureStorage<T extends StorageState> extends BaseStorage<T> {
+export default class SecureStorage<T extends StorageState> extends AbstractStorage<T> {
+    private readonly secureKey: string;
+
     private cryptoKey: CryptoKey | null = null;
-    private secureKey: string;
 
     static Sync<T extends StorageState>(options: Omit<SecureStorageOptions, 'area'>): SecureStorage<T> {
         return new SecureStorage<T>({area: 'sync', ...options});

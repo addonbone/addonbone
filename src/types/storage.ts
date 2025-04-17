@@ -1,4 +1,4 @@
-export type StorageState = Record<string, unknown>
+export type StorageState = Record<string, unknown>;
 
 export type StorageWatchOptions<T> = {
     [K in keyof T]?: (newValue: T[K] | undefined, oldValue: T[K] | undefined) => void;

@@ -1,4 +1,4 @@
-import {SecureStorage} from "./SecureStorage";
+import SecureStorage from "./SecureStorage";
 
 const namespace = 'user'
 

@@ -1,7 +1,7 @@
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {StorageProvider, StorageWatchOptions} from '@typing/storage'
 
-import {Storage} from "./Storage";
+import {Storage} from "../providers";
 
 interface UseStorageOptions<T> {
     key: string;
@@ -51,7 +51,7 @@ function useStorage<T = any>(arg1: string | UseStorageOptions<T>, arg2?: T): Use
         setValue(newValue);
         storageRef.current.set(key, newValue).catch((e) => {
             setValue(prevValue);
-            console.error('useStorage set storage value error', e);
+            console.error('Storage useStorage error - set storage value error', e);
         });
     }, [key])
 

@@ -1,4 +1,4 @@
-import {Storage} from "./Storage";
+import Storage from "./Storage";
 
 const namespace = 'user'
 const storage = new Storage();

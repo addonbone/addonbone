@@ -101,8 +101,8 @@ export class SecureStorage<T extends StorageState> extends BaseStorage<T> {
         await this.remove(Object.keys(allValues));
     }
 
-    protected canChange(key: string): boolean {
-        if (!super.canChange(key)) return false;
+    protected isKeyValid(key: string): boolean {
+        if (!super.isKeyValid(key)) return false;
 
         return key.startsWith(`secure${this.separator}`);
     }

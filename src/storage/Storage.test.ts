@@ -65,14 +65,14 @@ describe('remove method', () => {
     test('deletes the key without namespace', async () => {
         await storage.set('theme', 'dark');
         await storage.remove('theme');
-        const result = (await storage.getAll())['theme'];
+        const result = await global.storageLocalGet('theme');
         expect(result).toBeUndefined();
     });
 
     test('deletes the key with namespace', async () => {
         await storageWithNamespace.set('theme', 'dark');
         await storageWithNamespace.remove('theme');
-        const result = (await storageWithNamespace.getAll())['theme'];
+        const result = await global.storageLocalGet('theme', storageWithNamespace);
         expect(result).toBeUndefined();
     });
 })

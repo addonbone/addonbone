@@ -1,6 +1,7 @@
 import {act, renderHook, waitFor} from '@testing-library/react'
 import useStorage from './useStorage'
 import {Storage} from './Storage'
+import {SecureStorage} from './SecureStorage'
 
 beforeEach( async () => {
     await chrome.storage.local.clear()
@@ -52,6 +53,16 @@ describe('behavior of default value', () => {
         await waitFor(() => expect(result.current[0]).not.toBe('default value'))
         await waitFor(() => expect(result.current[0]).toBe('stored value'))
     })
+})
+
+test('works correctly with SecureStorage instances', async () => {
+    const storage = new SecureStorage({namespace: 'user'})
+    const {result} = renderHook(() => useStorage({key: 'theme', storage}))
+
+    act(() => result.current[1]('dark'))
+
+    await waitFor(() => expect(result.current[0]).toBe('dark'))
+    expect(await global.storageLocalGet('theme', storage)).not.toBe('dark')
 })
 
 test('uses the provided storage instance instead default (Storage.Local)', async () => {

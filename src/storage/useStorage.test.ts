@@ -54,6 +54,18 @@ describe('behavior of default value', () => {
     })
 })
 
+test('uses the provided storage instance instead default (Storage.Local)', async () => {
+    const storage = new Storage()
+    const userStorage = new Storage({namespace: 'user'})
+    const {result} = renderHook(() => useStorage({key: 'theme', storage: userStorage}))
+
+    await storage.set('theme', 'light')
+    act(() => result.current[1]('dark'))
+
+    await waitFor(() => expect(result.current[0]).toBe('dark'))
+    expect(await global.storageLocalGet('theme')).toBe('light')
+})
+
 test('sets and retrieves value correctly', async () => {
     const {result} = renderHook(() => useStorage('theme', 'light'))
 

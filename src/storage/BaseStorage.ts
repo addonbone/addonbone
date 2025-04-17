@@ -70,7 +70,7 @@ export default abstract class BaseStorage<T extends StorageState> implements Sto
                     const formattedResult = {} as P;
 
                     for (const [key, value] of Object.entries(result)) {
-                        if (this.canChange(key)) {
+                        if (this.isKeyValid(key)) {
                             formattedResult[this.getOriginalKey(key)] = value;
                         }
                     }
@@ -106,7 +106,7 @@ export default abstract class BaseStorage<T extends StorageState> implements Sto
             if (area !== this.area) return;
 
             Object.entries(changes).forEach(async ([key, change]) => {
-                if (this.canChange(key)) {
+                if (this.isKeyValid(key)) {
                     this.handleChange(key, change, options);
                 }
             });
@@ -117,7 +117,7 @@ export default abstract class BaseStorage<T extends StorageState> implements Sto
         return () => storage.onChanged.removeListener(listener);
     };
 
-    protected canChange(key: string): boolean {
+    protected isKeyValid(key: string): boolean {
         return this.getNamespaceOfKey(key) === this.namespace;
     }
 

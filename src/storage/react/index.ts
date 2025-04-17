@@ -1,1 +1,1 @@
-export {default as useStorage} from "./useStorage";
+export {default as useStorage, type UseStorageOptions, type UseStorageReturnValue} from "./useStorage";

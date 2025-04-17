@@ -1,7 +1,7 @@
 import {isBrowser} from "@browser/env";
 import {getI18nMessage, getI18nUILanguage} from "@browser/i18n";
 
-import LocaleAbstract from "./LocaleAbstract";
+import AbstractLocale from "./AbstractLocale";
 
 import {convertLocaleKey} from "@locale/utils";
 
@@ -11,7 +11,7 @@ import {Browser} from "@typing/browser";
 
 export type LocaleNativeStructure = LocaleStructure;
 
-export default class LocaleNative<S extends LocaleStructure = LocaleNativeStructure> extends LocaleAbstract<S> {
+export default class NativeLocale<S extends LocaleStructure = LocaleNativeStructure> extends AbstractLocale<S> {
     public lang(): Language {
         let lang: Language | undefined;
 

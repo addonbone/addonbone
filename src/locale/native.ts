@@ -1,10 +1,10 @@
-import LocaleNative, {LocaleNativeStructure} from "./providers/LocaleNative";
+import NativeLocale, {LocaleNativeStructure} from "./providers/NativeLocale";
 
 import {convertLocaleMessageKey, extractLocaleKey} from "./utils";
 
 import {LocaleNonPluralKeysOf, SubstitutionsFor} from "@typing/locale";
 
-const locale = new LocaleNative();
+const locale = new NativeLocale();
 
 export const _ = <K extends LocaleNonPluralKeysOf<LocaleNativeStructure>>(
     key: K,

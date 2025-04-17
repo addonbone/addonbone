@@ -3,13 +3,13 @@ import {StorageProvider, StorageWatchOptions} from '@typing/storage'
 
 import {Storage} from "../providers";
 
-interface UseStorageOptions<T> {
+export interface UseStorageOptions<T> {
     key: string;
     storage?: StorageProvider<Record<string, any>>;
     defaultValue?: T;
 }
 
-type UseStorageReturnValue<T> = readonly [T | undefined, (value: T) => void, () => void];
+export type UseStorageReturnValue<T> = readonly [T | undefined, (value: T) => void, () => void];
 
 function isOptions<T>(arg: any): arg is UseStorageOptions<T> {
     if (typeof arg === 'object' && arg !== null && 'key' in arg) {

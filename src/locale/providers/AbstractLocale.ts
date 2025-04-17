@@ -9,7 +9,7 @@ import {
     SubstitutionsFor
 } from "@typing/locale";
 
-export default abstract class LocaleAbstract<S extends LocaleStructure> implements LocaleProvider<S> {
+export default abstract class AbstractLocale<S extends LocaleStructure> implements LocaleProvider<S> {
     public abstract lang(): Language;
 
     public abstract keys(): LocaleKeys;

@@ -37,6 +37,11 @@
       "import": "./dist/locale/index.js",
       "require": "./dist/locale/index.cjs"
     },
+    "./message": {
+      "types": "./dist/message/index.d.ts",
+      "import": "./dist/message/index.js",
+      "require": "./dist/message/index.cjs"
+    },
     "./storage": {
       "types": "./dist/storage/index.d.ts",
       "import": "./dist/storage/index.js",

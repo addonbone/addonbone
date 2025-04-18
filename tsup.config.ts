@@ -46,6 +46,8 @@ const framework: Options = {
         'storage/index': 'src/storage/index.ts',
         'storage/react': 'src/storage/react/index.ts',
 
+        'message/index': 'src/message/index.ts',
+
         'locale/index': 'src/locale/index.ts',
 
         'entry/background/index': 'src/entry/background/index.ts',

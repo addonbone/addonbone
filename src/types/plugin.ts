@@ -68,6 +68,7 @@ export interface Plugin extends PluginName {
     page?: PluginHandler<PluginConfigOptions, PluginEntrypointResult>;
     locale?: PluginHandler<PluginConfigOptions, PluginLocaleResult>;
     manifest?: PluginHandlerCallback<PluginManifestOptions>;
+    startup?: PluginHandlerCallback<PluginConfigOptions>;
 }
 
 export type PluginHandler<O, T = void> = T | PluginHandlerCallback<O, T>;

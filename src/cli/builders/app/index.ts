@@ -2,14 +2,22 @@ import {rspack} from '@rspack/core';
 
 import {build, watch} from "./command";
 
-import configResolver from "../../resolvers/config";
-import bundlerResolver from "../../resolvers/bundler";
+import configResolver from "@cli/resolvers/config";
+import bundlerResolver from "@cli/resolvers/bundler";
+import {processPluginHandler} from "@cli/resolvers/plugin";
 
-import {OptionalConfig} from "@typing/config";
+import {OptionalConfig, ReadonlyConfig} from "@typing/config";
 import {Command} from "@typing/app";
+
+const startup = async (config: ReadonlyConfig): Promise<void> => {
+    await Array.fromAsync(processPluginHandler(config.plugins, 'startup', {config}));
+}
 
 export default async (config: OptionalConfig): Promise<void> => {
     const resolverConfig = await configResolver(config);
+
+    await startup(resolverConfig);
+
     const rspackConfig = await bundlerResolver(resolverConfig);
 
     const compiler = rspack(rspackConfig);

@@ -129,7 +129,7 @@ const getVendorLocaleFiles = (config: ReadonlyConfig, name: string, directory: s
 }
 
 const getPluginLocaleFiles = async (config: ReadonlyConfig): Promise<Set<string>> => {
-    const pluginResult = await Array.fromAsync(processPluginHandler(config, 'locale', {
+    const pluginResult = await Array.fromAsync(processPluginHandler(config.plugins, 'locale', {
         config,
     }));
 

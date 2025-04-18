@@ -4,7 +4,7 @@ import path from "path";
 import {Compiler, EntryNormalized} from "@rspack/core";
 import VirtualModulesPlugin from 'rspack-plugin-virtual-module';
 
-import {EntrypointFile} from "@typing/entrypoint";
+import {EntrypointEntries, EntrypointFile} from "@typing/entrypoint";
 
 export type EntrypointPluginEntries = Record<string, EntrypointFile[]>;
 
@@ -69,6 +69,14 @@ export default class EntrypointPlugin {
             .map(({file}) => file);
 
         return new Set(files);
+    }
+
+    public static from(entries: EntrypointEntries): EntrypointPlugin {
+        const data = entries.entries().reduce((collect, [name, files]) => {
+            return {...collect, [name]: Array.from(files)};
+        }, {} as EntrypointPluginEntries);
+
+        return new EntrypointPlugin(data);
     }
 
     constructor(private readonly entries: EntrypointPluginEntries = {}) {

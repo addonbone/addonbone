@@ -2,6 +2,7 @@ import _ from "lodash";
 import path from "path";
 
 import {
+    Plugin,
     PluginEntrypointKeys,
     PluginHandler,
     PluginHandlerKeys,
@@ -26,9 +27,7 @@ export const resolvePluginHandler = async <O extends object, T>(handler: PluginH
 };
 
 
-export const processPluginHandler = async function* <K extends PluginHandlerKeys>(config: ReadonlyConfig, key: K, options: PluginHandlerOptions<K>): AsyncGenerator<PluginNameHandlerResult<K>, void, void> {
-    const {plugins = []} = config;
-
+export const processPluginHandler = async function* <K extends PluginHandlerKeys>(plugins: Plugin[], key: K, options: PluginHandlerOptions<K>): AsyncGenerator<PluginNameHandlerResult<K>, void, void> {
     for await (const plugin of plugins) {
         const handler = plugin[key] as PluginHandler<PluginHandlerOptions<K>> | undefined;
 
@@ -41,7 +40,7 @@ export const processPluginHandler = async function* <K extends PluginHandlerKeys
 }
 
 export const getPluginEntrypointFiles = async <K extends PluginEntrypointKeys>(config: ReadonlyConfig, key: K): Promise<Set<EntrypointFile>> => {
-    const pluginResult = await Array.fromAsync(processPluginHandler(config, key, {
+    const pluginResult = await Array.fromAsync(processPluginHandler(config.plugins, key, {
         config,
     }));
 

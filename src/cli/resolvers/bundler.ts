@@ -19,7 +19,7 @@ import {Command} from "@typing/app";
 const getConfigFromPlugins = async (rspack: RspackConfig, config: ReadonlyConfig): Promise<RspackConfig> => {
     let mergedConfig: RspackConfig = {};
 
-    for await (const {result: pluginConfig} of processPluginHandler(config, 'bundler', {
+    for await (const {result: pluginConfig} of processPluginHandler(config.plugins, 'bundler', {
         rspack: mergeConfig(rspack, mergedConfig),
         config
     })) {
@@ -32,7 +32,7 @@ const getConfigFromPlugins = async (rspack: RspackConfig, config: ReadonlyConfig
 const getConfigForManifest = async (config: ReadonlyConfig): Promise<RspackConfig> => {
     const manifest = manifestFactory(config);
 
-    const update = async () => await Array.fromAsync(processPluginHandler(config, 'manifest', {manifest, config}))
+    const update = async () => await Array.fromAsync(processPluginHandler(config.plugins, 'manifest', {manifest, config}))
 
     await update();
 

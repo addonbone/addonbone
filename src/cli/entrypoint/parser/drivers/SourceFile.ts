@@ -3,9 +3,9 @@ import fs from 'fs';
 
 import resolveImport from "./helpers/resolveImport";
 
-import resolvers from "../resolvers";
+import resolvers from "./resolvers";
 
-import {EnumMap, ImportMap, Variable, VariableMap} from "../types";
+import {EnumMap, ImportMap, Variable, VariableMap} from "./types";
 
 export default class EntryFile {
     private sourceFile?: ts.SourceFile;

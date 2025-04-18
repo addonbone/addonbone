@@ -53,8 +53,37 @@ export interface EntrypointFile {
     external?: string;
 }
 
+/**
+ * Dictionary of entrypoint for the build configuration.
+ *
+ * @key {string} - The name of the entrypoint that will be used in the bundler configuration.
+ * @value {EntrypointFile[]} - Array of files that will be included in this entrypoint.
+ * These files will be compiled and bundled together as part of the specified entrypoint.
+ */
+export type EntrypointEntries = Map<string, Set<EntrypointFile>>;
+
+export interface EntrypointParser<O extends EntrypointOptions> {
+    options(file: EntrypointFile): O;
+}
+
+export interface EntrypointFinder<O extends EntrypointOptions> {
+    type(): EntrypointType;
+
+    files(): Promise<Set<EntrypointFile>>;
+
+    options(): Promise<Map<EntrypointFile, O>>;
+
+    empty(): Promise<boolean>;
+
+    exists(): Promise<boolean>;
+
+    clear(): this;
+}
+
+
 export interface EntrypointBuilder {
     build(): Promise<void>;
+
     destroy(): Promise<void>;
 }
 

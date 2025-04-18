@@ -1,5 +1,8 @@
 import {z} from "zod";
 
+export {default as BackgroundParser} from "./BackgroundParser";
+export {default as CommandParser} from "./CommandParser";
+
 import {OptionFile} from "./drivers";
 
 import {modifyLocaleMessageKey} from "@locale/utils";

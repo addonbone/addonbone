@@ -77,6 +77,10 @@ export default class extends AbstractPluginFinder<ContentScriptEntrypointOptions
         return this.names.likely(name);
     }
 
+    public canMerge(): boolean {
+        return this.config.mergeContentScripts;
+    }
+
     public clear(): this {
         this.names.reset();
 

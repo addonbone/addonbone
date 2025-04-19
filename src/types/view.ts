@@ -12,6 +12,8 @@ export interface ViewConfig {
 
 export type ViewOptions = ViewConfig & HtmlOptions & EntrypointOptions;
 
+export type ViewEntrypointOptions = ViewOptions;
+
 // Render
 export type ViewRenderReactComponent<T extends ViewConfig> = FC<T>;
 export type ViewRenderValue<T extends ViewConfig> = string | Element | ReactNode | ViewRenderReactComponent<T>;

@@ -55,6 +55,10 @@ export default class extends AbstractPluginFinder<CommandEntrypointOptions> {
         return this._commands = await this.getCommands();
     }
 
+    public canMerge(): boolean {
+        return this.config.mergeCommands;
+    }
+
     public clear(): this {
         this.names.reset();
         this._commands = undefined;

@@ -25,7 +25,7 @@ export default class extends AbstractParser<ContentScriptEntrypointOptions> {
     }
 
     public options(file: EntrypointFile): ContentScriptEntrypointOptions {
-        const options =  super.options(file);
+        const options = super.options(file);
 
         return {
             matches: ['*://*/*'],

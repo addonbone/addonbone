@@ -1,10 +1,11 @@
 import AbstractFinder from "./AbstractFinder";
 
-import {EntrypointFile, EntrypointOptions, EntrypointParser} from "@typing/entrypoint";
 import {ReadonlyConfig} from "@typing/config";
+import {EntrypointFile, EntrypointOptions, EntrypointOptionsFinder, EntrypointParser} from "@typing/entrypoint";
 
-export default abstract class<O extends EntrypointOptions> extends AbstractFinder<O> {
+export default abstract class<O extends EntrypointOptions> extends AbstractFinder implements EntrypointOptionsFinder<O> {
     protected _parser?: EntrypointParser<O>;
+    protected _options?: Map<EntrypointFile, O>;
 
     protected abstract getParser(): EntrypointParser<O>;
 
@@ -18,6 +19,20 @@ export default abstract class<O extends EntrypointOptions> extends AbstractFinde
         }
 
         return this._parser = this.getParser();
+    }
+
+    public clear(): this {
+        this._options = undefined;
+
+        return super.clear();
+    }
+
+    public async options(): Promise<Map<EntrypointFile, O>> {
+        if (this._options) {
+            return this._options;
+        }
+
+        return this._options = await this.getOptions();
     }
 
     protected async getOptions(): Promise<Map<EntrypointFile, O>> {

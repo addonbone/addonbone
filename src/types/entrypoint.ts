@@ -66,18 +66,20 @@ export interface EntrypointParser<O extends EntrypointOptions> {
     options(file: EntrypointFile): O;
 }
 
-export interface EntrypointFinder<O extends EntrypointOptions> {
+export interface EntrypointFinder {
     type(): EntrypointType;
 
     files(): Promise<Set<EntrypointFile>>;
-
-    options(): Promise<Map<EntrypointFile, O>>;
 
     empty(): Promise<boolean>;
 
     exists(): Promise<boolean>;
 
     clear(): this;
+}
+
+export interface EntrypointOptionsFinder<O extends EntrypointOptions> extends EntrypointFinder {
+    options(): Promise<Map<EntrypointFile, O>>;
 }
 
 

@@ -5,9 +5,9 @@ import OptionsFinder from "./OptionsFinder";
 
 import {processPluginHandler} from "@cli/resolvers/plugin";
 
-import {EntrypointFile, EntrypointOptions, EntrypointParser, EntrypointType} from "@typing/entrypoint";
 import {ReadonlyConfig} from "@typing/config";
 import {PluginHandlerKeys} from "@typing/plugin";
+import {EntrypointFile, EntrypointOptions, EntrypointParser, EntrypointType} from "@typing/entrypoint";
 
 export default class<O extends EntrypointOptions> extends OptionsFinder<O> {
     constructor(

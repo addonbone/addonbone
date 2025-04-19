@@ -8,7 +8,13 @@ import {InlineNameGenerator, NameGenerator} from "../name";
 
 import {ReadonlyConfig} from "@typing/config";
 import {PageEntrypointOptions} from "@typing/page";
-import {EntrypointFile, EntrypointFinder, EntrypointParser, EntrypointType} from "@typing/entrypoint";
+import {
+    EntrypointFile,
+    EntrypointFinder,
+    EntrypointOptionsFinder,
+    EntrypointParser,
+    EntrypointType
+} from "@typing/entrypoint";
 
 export interface PageItem {
     filename: string;
@@ -49,7 +55,7 @@ export default class extends AbstractPluginFinder<PageEntrypointOptions> {
         return new PageParser();
     }
 
-    protected getPlugin(): EntrypointFinder<PageEntrypointOptions> {
+    protected getPlugin(): EntrypointOptionsFinder<PageEntrypointOptions> {
         return new PluginFinder(this.config, 'page', this);
     }
 

@@ -8,9 +8,9 @@ import PluginFinder from "./PluginFinder";
 import {NameGenerator} from "../name";
 import {ContentParser} from "../parser";
 
-import {ContentScriptEntrypointOptions} from "@typing/content";
-import {EntrypointFile, EntrypointFinder, EntrypointParser, EntrypointType} from "@typing/entrypoint";
 import {ReadonlyConfig} from "@typing/config";
+import {ContentScriptEntrypointOptions} from "@typing/content";
+import {EntrypointFile, EntrypointOptionsFinder, EntrypointParser, EntrypointType} from "@typing/entrypoint";
 
 export interface ContentItem {
     file: EntrypointFile;
@@ -36,7 +36,7 @@ export default class extends AbstractPluginFinder<ContentScriptEntrypointOptions
         return EntrypointType.ContentScript;
     }
 
-    protected getPlugin(): EntrypointFinder<ContentScriptEntrypointOptions> {
+    protected getPlugin(): EntrypointOptionsFinder<ContentScriptEntrypointOptions> {
         return new PluginFinder(this.config, 'content', this);
     }
 

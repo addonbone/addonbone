@@ -1,5 +1,5 @@
-import {EntrypointEntries, EntrypointOptions} from "@typing/entrypoint";
 import {AbstractPluginFinder} from "@cli/entrypoint";
+import {EntrypointEntries, EntrypointOptions} from "@typing/entrypoint";
 
 export default class BackgroundEntry<O extends EntrypointOptions> {
     public static readonly name: string = 'background';

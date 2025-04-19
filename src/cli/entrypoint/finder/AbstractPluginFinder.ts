@@ -1,13 +1,13 @@
 import EntrypointFinder from "./EntrypointFinder";
 
-import {EntrypointFinder as EntrypointFinderContract, EntrypointOptions} from "@typing/entrypoint";
+import {EntrypointOptions, EntrypointOptionsFinder} from "@typing/entrypoint";
 
 export default abstract class<O extends EntrypointOptions> extends EntrypointFinder<O> {
-    protected _plugin?: EntrypointFinderContract<O>;
+    protected _plugin?: EntrypointOptionsFinder<O>;
 
-    protected abstract getPlugin(): EntrypointFinderContract<O>;
+    protected abstract getPlugin(): EntrypointOptionsFinder<O>;
 
-    public plugin(): EntrypointFinderContract<O> {
+    public plugin(): EntrypointOptionsFinder<O> {
         if (this._plugin) {
             return this._plugin;
         }
@@ -19,5 +19,13 @@ export default abstract class<O extends EntrypointOptions> extends EntrypointFin
         this.plugin().clear();
 
         return super.clear();
+    }
+
+    async empty(): Promise<boolean> {
+        return this.plugin().empty();
+    }
+
+    async exists(): Promise<boolean> {
+        return this.plugin().exists();
     }
 }

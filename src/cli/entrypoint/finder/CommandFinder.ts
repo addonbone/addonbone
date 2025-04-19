@@ -4,9 +4,9 @@ import PluginFinder from "./PluginFinder";
 import {CommandParser} from "../parser";
 import {InlineNameGenerator} from "../name";
 
-import {CommandEntrypointOptions, CommandOptions} from "@typing/command";
-import {EntrypointFile, EntrypointFinder, EntrypointParser, EntrypointType} from "@typing/entrypoint";
 import {ReadonlyConfig} from "@typing/config";
+import {CommandEntrypointOptions, CommandOptions} from "@typing/command";
+import {EntrypointFile, EntrypointOptionsFinder, EntrypointParser, EntrypointType} from "@typing/entrypoint";
 
 
 export default class extends AbstractPluginFinder<CommandEntrypointOptions> {
@@ -28,7 +28,7 @@ export default class extends AbstractPluginFinder<CommandEntrypointOptions> {
         return new CommandParser();
     }
 
-    protected getPlugin(): EntrypointFinder<CommandEntrypointOptions> {
+    protected getPlugin(): EntrypointOptionsFinder<CommandEntrypointOptions> {
         return new PluginFinder(this.config, 'command', this);
     }
 

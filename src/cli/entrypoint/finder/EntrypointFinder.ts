@@ -20,7 +20,7 @@ export default abstract class<O extends EntrypointOptions> extends OptionsFinder
         return false;
     }
 
-    public async getFiles(): Promise<Set<EntrypointFile>> {
+    protected async getFiles(): Promise<Set<EntrypointFile>> {
         const entrypoint = this.type();
 
         let files = new Set<EntrypointFile>();

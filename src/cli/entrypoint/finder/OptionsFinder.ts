@@ -20,7 +20,7 @@ export default abstract class<O extends EntrypointOptions> extends AbstractFinde
         return this._parser = this.getParser();
     }
 
-    public async getOptions(): Promise<Map<EntrypointFile, O>> {
+    protected async getOptions(): Promise<Map<EntrypointFile, O>> {
         const collect = new Map<EntrypointFile, O>();
 
         for (const file of await this.files()) {

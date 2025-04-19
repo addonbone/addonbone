@@ -5,7 +5,7 @@ import {EntrypointFinder as EntrypointFinderContract, EntrypointOptions} from "@
 export default abstract class<O extends EntrypointOptions> extends EntrypointFinder<O> {
     protected _plugin?: EntrypointFinderContract<O>;
 
-    public abstract getPlugin(): EntrypointFinderContract<O>;
+    protected abstract getPlugin(): EntrypointFinderContract<O>;
 
     public plugin(): EntrypointFinderContract<O> {
         if (this._plugin) {

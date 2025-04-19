@@ -22,11 +22,11 @@ export default class<O extends EntrypointOptions> extends OptionsFinder<O> {
         return this.finder.type();
     }
 
-    public getParser(): EntrypointParser<O> {
+    protected getParser(): EntrypointParser<O> {
         return this.finder.parser();
     }
 
-    public async getFiles(): Promise<Set<EntrypointFile>> {
+    protected async getFiles(): Promise<Set<EntrypointFile>> {
         const pluginResult = await Array.fromAsync(processPluginHandler(this.config.plugins, this.key, {
             config: this.config,
         }));

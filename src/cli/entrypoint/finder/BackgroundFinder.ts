@@ -22,11 +22,11 @@ export default class extends AbstractPluginFinder<BackgroundEntrypointOptions> {
         return this.config.mergeBackground;
     }
 
-    public getParser(): EntrypointParser<BackgroundEntrypointOptions> {
+    protected getParser(): EntrypointParser<BackgroundEntrypointOptions> {
         return new BackgroundParser();
     }
 
-    public getPlugin(): EntrypointFinder<BackgroundEntrypointOptions> {
+    protected getPlugin(): EntrypointFinder<BackgroundEntrypointOptions> {
         return new PluginFinder(this.config, 'background', this);
     }
 }

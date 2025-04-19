@@ -36,11 +36,11 @@ export default class extends AbstractPluginFinder<ContentScriptEntrypointOptions
         return EntrypointType.ContentScript;
     }
 
-    public getPlugin(): EntrypointFinder<ContentScriptEntrypointOptions> {
+    protected getPlugin(): EntrypointFinder<ContentScriptEntrypointOptions> {
         return new PluginFinder(this.config, 'content', this);
     }
 
-    public getParser(): EntrypointParser<ContentScriptEntrypointOptions> {
+    protected getParser(): EntrypointParser<ContentScriptEntrypointOptions> {
         return new ContentParser();
     }
 

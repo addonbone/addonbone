@@ -24,15 +24,15 @@ export default class extends AbstractPluginFinder<CommandEntrypointOptions> {
         return EntrypointType.Command;
     }
 
-    public getParser(): EntrypointParser<CommandEntrypointOptions> {
+    protected getParser(): EntrypointParser<CommandEntrypointOptions> {
         return new CommandParser();
     }
 
-    public getPlugin(): EntrypointFinder<CommandEntrypointOptions> {
+    protected getPlugin(): EntrypointFinder<CommandEntrypointOptions> {
         return new PluginFinder(this.config, 'command', this);
     }
 
-    public async getCommands(): Promise<Map<EntrypointFile, CommandOptions>> {
+    protected async getCommands(): Promise<Map<EntrypointFile, CommandOptions>> {
         const options = new Map<EntrypointFile, CommandOptions>();
 
         for (const [file, option] of await this.plugin().options()) {

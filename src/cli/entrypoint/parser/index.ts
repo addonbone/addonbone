@@ -2,6 +2,7 @@ import {z} from "zod";
 
 export {default as BackgroundParser} from "./BackgroundParser";
 export {default as CommandParser} from "./CommandParser";
+export {default as ContentParser} from "./ContentParser";
 
 import {OptionFile} from "./drivers";
 

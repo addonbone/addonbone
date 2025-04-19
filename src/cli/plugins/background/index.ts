@@ -87,7 +87,7 @@ export default definePlugin(() => {
                     entry: BackgroundEntry.name,
                     persistent: await background.isPersistent(),
                 } : undefined)
-                .setCommands(await command.getManifestCommands());
+                .setCommands(await command.manifest());
         }
     };
 });

@@ -6,7 +6,7 @@ import {ReadonlyConfig} from "@typing/config";
 export default abstract class<O extends EntrypointOptions> extends AbstractFinder<O> {
     protected _parser?: EntrypointParser<O>;
 
-    public abstract getParser(): EntrypointParser<O>;
+    protected abstract getParser(): EntrypointParser<O>;
 
     protected constructor(protected readonly config: ReadonlyConfig) {
         super();

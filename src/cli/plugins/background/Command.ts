@@ -15,7 +15,7 @@ export default class Command extends CommandFinder {
         return this._commands?.get(file);
     }
 
-    public async getManifestCommands(): Promise<ManifestCommands | undefined> {
+    public async manifest(): Promise<ManifestCommands | undefined> {
         if (await this.empty()) {
             return undefined;
         }

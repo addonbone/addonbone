@@ -19,10 +19,8 @@ export default class extends ContentFinder {
     public async entries(): Promise<EntrypointEntries> {
         const entries: EntrypointEntries = new Map;
 
-        const content = await this.content();
-
-        for (const [name, items] of content.entries()) {
-            entries.set(name, new Set(Array.from(items, ({file}) => file)));
+        for (const [entry, items] of await this.content()) {
+            entries.set(entry, new Set(Array.from(items, ({file}) => file)));
         }
 
         return entries;

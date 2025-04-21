@@ -15,7 +15,7 @@ export default abstract class AbstractMessage<T extends MessageMap, TOptions> im
 
     public abstract watch<K extends MessageType<T>>(type: K, handler: MessageHandler<T, K>): () => void;
 
-    public abstract watch<K extends MessageType<T>>(handlers: { [key in K]?: MessageHandler<T, K> }): () => void;
+    public abstract watch(handlers: { [K in MessageType<T>]?: MessageHandler<T, K> }): () => void;
 
     public abstract watch<K extends MessageType<T>>(handler: MessageGeneralHandler<T, K>): () => void;
 

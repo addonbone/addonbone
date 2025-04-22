@@ -4,6 +4,7 @@ export {default as BackgroundFinder} from "./BackgroundFinder";
 export {default as CommandFinder} from "./CommandFinder";
 export {default as ContentFinder} from "./ContentFinder";
 export {default as EntrypointFinder} from "./EntrypointFinder";
+export {default as LocaleFinder} from "./LocaleFinder";
 export {default as OptionsFinder} from "./OptionsFinder";
 export {default as PageFinder} from "./PageFinder";
 export {default as PluginFinder} from "./PluginFinder";

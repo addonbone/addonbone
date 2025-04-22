@@ -5,8 +5,6 @@ import OptionsFinder from "./OptionsFinder";
 
 import {getAppSourcePath, getSharedPath} from "@cli/resolvers/path";
 
-import {toPosix} from "@cli/utils/path";
-
 import {EntrypointFile, EntrypointFileExtensions, EntrypointOptions} from "@typing/entrypoint";
 
 const fileExtensions = [...EntrypointFileExtensions]
@@ -80,7 +78,7 @@ export default abstract class<O extends EntrypointOptions> extends OptionsFinder
                                 const stat = fs.statSync(indexPath);
 
                                 if (stat.isFile()) {
-                                    files.push({file: indexPath, import: this.getPathToImport(indexPath)});
+                                    files.push(this.file(indexPath));
                                 }
                             } catch (e) {
                                 if (this.config.debug) {
@@ -94,7 +92,7 @@ export default abstract class<O extends EntrypointOptions> extends OptionsFinder
                     finder(fullPath);
                 } else if (entry.isFile()) {
                     if (this.isValidFilename(entry.name)) {
-                        files.push({file: fullPath, import: this.getPathToImport(fullPath)});
+                        files.push(this.file(fullPath));
                     }
                 }
             }
@@ -122,18 +120,6 @@ export default abstract class<O extends EntrypointOptions> extends OptionsFinder
         return new Set(files);
     }
 
-    protected getPathToImport(filename: string): string {
-        let {dir, name, ext} = path.parse(filename);
-
-        if (ext.startsWith('.')) {
-            ext = ext.slice(1);
-        }
-
-        const result = name === 'index' && EntrypointFileExtensions.has(ext) ? dir : path.join(dir, name);
-
-        return toPosix(result);
-    }
-
     protected isValidFilename(filename: string): boolean {
         const name = this.type().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
@@ -141,5 +127,4 @@ export default abstract class<O extends EntrypointOptions> extends OptionsFinder
 
         return pattern.test(filename);
     }
-
 }

@@ -8,13 +8,7 @@ import {InlineNameGenerator, NameGenerator} from "../name";
 
 import {ReadonlyConfig} from "@typing/config";
 import {PageEntrypointOptions} from "@typing/page";
-import {
-    EntrypointFile,
-    EntrypointFinder,
-    EntrypointOptionsFinder,
-    EntrypointParser,
-    EntrypointType
-} from "@typing/entrypoint";
+import {EntrypointFile, EntrypointOptionsFinder, EntrypointParser, EntrypointType} from "@typing/entrypoint";
 
 export interface PageItem {
     filename: string;

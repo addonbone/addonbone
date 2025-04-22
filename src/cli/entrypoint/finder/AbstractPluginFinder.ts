@@ -24,8 +24,4 @@ export default abstract class<O extends EntrypointOptions> extends EntrypointFin
     async empty(): Promise<boolean> {
         return this.plugin().empty();
     }
-
-    async exists(): Promise<boolean> {
-        return this.plugin().exists();
-    }
 }

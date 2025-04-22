@@ -54,7 +54,7 @@ export interface PluginBundlerOptions extends PluginConfigOptions {
  *
  * - `Set<string>` — a unique set of localization files.
  */
-export type PluginLocaleResult = true | string | string[] | Set<string>;
+export type PluginLocaleResult = PluginEntrypointResult;
 
 interface PluginName {
     name: string;

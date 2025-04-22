@@ -1,4 +1,3 @@
-import path from "path";
 import _ from "lodash";
 
 import OptionsFinder from "./OptionsFinder";
@@ -31,42 +30,26 @@ export default class<O extends EntrypointOptions> extends OptionsFinder<O> {
             config: this.config,
         }));
 
-        if (pluginResult.length > 0) {
-            const pluginFiles = pluginResult.reduce((files, {name, result}) => {
-                let endpoints: Array<string | EntrypointFile> = [];
+        const files = new Set<EntrypointFile>();
 
-                if (_.isBoolean(result)) {
-                    endpoints = [this.key];
-                } else if (_.isString(result) || _.isPlainObject(result)) {
-                    endpoints = [result as string | EntrypointFile];
-                } else if (_.isArray(result)) {
-                    endpoints = result;
-                } else if (_.isSet(result)) {
-                    endpoints = Array.from(result as Set<EntrypointFile>);
-                }
+        for (const {name, result} of pluginResult) {
+            let endpoints: Array<string | EntrypointFile> = [];
 
-                const endpointFiles: EntrypointFile[] = [];
+            if (_.isBoolean(result)) {
+                endpoints = [this.key];
+            } else if (_.isString(result) || _.isPlainObject(result)) {
+                endpoints = [result as string | EntrypointFile];
+            } else if (_.isArray(result)) {
+                endpoints = result;
+            } else if (_.isSet(result)) {
+                endpoints = Array.from(result as Set<EntrypointFile>);
+            }
 
-                for (const endpoint of endpoints) {
-                    if (_.isString(endpoint)) {
-                        const resolved = path.join(name, endpoint);
-
-                        endpointFiles.push({
-                            file: require.resolve(resolved, {paths: [process.cwd()]}),
-                            import: resolved,
-                            external: name,
-                        });
-                    } else {
-                        endpointFiles.push(endpoint);
-                    }
-                }
-
-                return [...files, ...endpointFiles];
-            }, [] as EntrypointFile[]);
-
-            return new Set(pluginFiles);
+            for (const endpoint of endpoints) {
+                files.add(_.isString(endpoint) ? this.resolve(name, endpoint) : endpoint);
+            }
         }
 
-        return new Set();
+        return files;
     }
 }

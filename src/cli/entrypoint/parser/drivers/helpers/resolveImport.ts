@@ -3,8 +3,6 @@ import ts from "typescript";
 import path from "path";
 import {createMatchPath} from "tsconfig-paths";
 
-import {isValidEntrypointFilename} from "@cli/entrypoint";
-
 import {PackageName} from "@typing/app";
 import {EntrypointFileExtensions} from "@typing/entrypoint";
 
@@ -12,6 +10,12 @@ interface ResolveOptions {
     tsconfigPath?: string;
     baseDir?: string;
 }
+
+const extPattern = [...EntrypointFileExtensions]
+    .map(ext => ext.replace('.', '\\.'))
+    .join('|');
+
+const extRegex = new RegExp(`\\.(${extPattern})$`, 'i');
 
 const findFileWithExtensions = (basePath: string): string | undefined => {
     for (const ext of EntrypointFileExtensions) {
@@ -21,6 +25,10 @@ const findFileWithExtensions = (basePath: string): string | undefined => {
             return candidate;
         }
     }
+}
+
+export const isValidEntrypointFilename = (filename: string): boolean => {
+    return extRegex.test(filename);
 }
 
 export default (importPath: string, options: ResolveOptions = {}): string => {

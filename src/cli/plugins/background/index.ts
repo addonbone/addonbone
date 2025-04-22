@@ -5,7 +5,7 @@ import {Configuration as RspackConfig} from "@rspack/core";
 import {definePlugin} from "@core/define";
 import {virtualBackgroundModule, virtualCommandModule} from "@cli/virtual";
 
-import EntrypointPlugin from "@cli/bundler/plugins/EntrypointPlugin";
+import {EntrypointPlugin} from "@cli/bundler";
 
 import Background from "./Background";
 import Command from "./Command";
@@ -51,6 +51,8 @@ export default definePlugin(() => {
                 });
 
             if (config.command === AppCommand.Watch) {
+                // TODO: Implement watch for background and command entrypoints
+
                 // backgroundEntrypointPlugin.watch(async () => {
                 //     backgroundEntrypoint = await getBackgroundEntrypoint(config);
                 //

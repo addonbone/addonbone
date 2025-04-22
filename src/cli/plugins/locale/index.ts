@@ -1,5 +1,3 @@
-import fs from "fs";
-import path from "path";
 import _ from "lodash";
 import {DefinePlugin} from "@rspack/core";
 
@@ -7,40 +5,29 @@ import {definePlugin} from "@core/define";
 import {GenerateJsonPlugin} from "@cli/bundler";
 import {extractLocaleKey, modifyLocaleMessageKey} from "@locale/utils";
 
-import {getInputPath, getRootPath} from "@cli/resolvers/path";
-
 import Locale from "./Locale";
+import LocaleDeclaration from "./LocaleDeclaration";
 
-import {Command, PackageName, SystemDir} from "@typing/app";
+import {Command} from "@typing/app";
 import {Browser} from "@typing/browser";
-import {ReadonlyConfig} from "@typing/config";
-import {Language, LanguageCodes, LocaleStructure} from "@typing/locale";
+import {Language, LanguageCodes} from "@typing/locale";
 
-// TODO: Move to typescript plugin
-const generateLocaleDeclaration = (config: ReadonlyConfig, structure: LocaleStructure): void => {
-    const template = `import type {LocaleNativeStructure} from '${PackageName}/locale';
-    
-declare module '${PackageName}/locale' {
-type LocaleNativeStructure = ${JSON.stringify(structure, null, 2)};
-}`;
-
-    const systemDirPath = getRootPath(getInputPath(config, SystemDir));
-
-    fs.mkdirSync(systemDirPath, {recursive: true});
-
-    fs.writeFileSync(path.join(systemDirPath, 'locale.d.ts'), template);
-}
+export {Locale, LocaleDeclaration};
 
 export default definePlugin(() => {
     let locale: Locale;
+    let declaration: LocaleDeclaration;
 
     return {
         name: 'adnbn:locale',
         startup: ({config}) => {
             locale = new Locale(config);
+            declaration = new LocaleDeclaration(config);
         },
         locale: () => locale.files(),
         bundler: async ({config}) => {
+            declaration.structure(await locale.structure()).build();
+
             const plugin = new GenerateJsonPlugin(await locale.json());
 
             if (config.command === Command.Watch) {

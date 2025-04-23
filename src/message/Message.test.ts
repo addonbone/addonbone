@@ -47,6 +47,7 @@ beforeEach(async () => {
     listener = null
     jest.clearAllMocks();
     message = new Message<MessageMap>();
+    Message['subscriptionManager'].clearAllHandlers()
 });
 
 describe('watch method', () => {

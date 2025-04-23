@@ -241,4 +241,12 @@ describe('multiple handlers error for same message type', () => {
 
         expect(await message.send('getStringLength', 'test')).toBe(4)
     });
+
+    test('with two instances watching the same message type', async () => {
+        const secondMessage = new Message<MessageMap>()
+        message.watch('getStringLength', (data) => data.length);
+        secondMessage.watch('getStringLength', (data) => data.length);
+
+        await expect(message.send('getStringLength', 'test')).rejects.toThrow(errorMessage);
+    });
 });

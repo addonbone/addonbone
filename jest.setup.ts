@@ -1,5 +1,5 @@
 import 'jest-webextension-mock';
-import BaseStorage from './src/storage/BaseStorage'
+import AbstractStorage from './src/storage/providers/AbstractStorage'
 import {TextDecoder, TextEncoder} from 'util';
 
 const listeners: Array<
@@ -22,7 +22,7 @@ chrome.storage.onChanged.hasListener = (fn) => {
 };
 
 interface StorageChange {
-    storage: BaseStorage<any>,
+    storage: AbstractStorage<any>,
     key: string,
     oldValue: any,
     newValue: any,
@@ -49,7 +49,7 @@ global.simulateSecureStorageChange = async ({storage, key, oldValue, newValue, a
 // Needed to access a specific key in Storage
 // Native GET method does not work correctly with a specific key other than "key"
 // Pull Request with bug fix - https://github.com/RickyMarou/jest-webextension-mock/pull/19
-global.storageLocalGet = (key: string | string[], storage: BaseStorage<any>): Promise<any> => {
+global.storageLocalGet = (key: string | string[], storage: AbstractStorage<any>): Promise<any> => {
     const formatKey = (key: string) => storage ? storage['getFullKey'](key) : key;
     return new Promise(resolve => {
         chrome.storage.local.get(null, (res) => {

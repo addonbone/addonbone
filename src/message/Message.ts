@@ -19,6 +19,20 @@ const runtime = browser().runtime;
 type SendOptions = number | { tabId: number; frameId?: number }
 
 export default class Message<T extends MessageMap> extends AbstractMessage<T, SendOptions> {
+    private handlers: Array<{
+        type?: MessageType<T>,
+        handler?: MessageHandler<T, any>,
+        map?: { [key in MessageType<T>]?: MessageHandler<T, any> },
+        general?: MessageGeneralHandler<T, any>
+    }> = [];
+
+    private isListenerAttached = false;
+
+    constructor() {
+        super();
+        this.globalListener = this.globalListener.bind(this);
+    }
+
     send<K extends MessageType<T>>(type: K, data: MessageData<T, K>, options?: SendOptions): Promise<MessageResponse<T, K>> {
         const message = this.buildMessage(type, data);
 
@@ -54,60 +68,79 @@ export default class Message<T extends MessageMap> extends AbstractMessage<T, Se
         arg1: K | { [K in MessageType<T>]?: MessageHandler<T, K> } | MessageGeneralHandler<T, K>,
         arg2?: MessageHandler<T, K>
     ): () => void {
-        const listener = (
-            message: MessageBody<T, K>,
-            sender: MessageSender,
-            sendResponse: (response?: any) => void
-        ): boolean | void => {
-            if (!message || typeof message !== 'object' || !message.type || !('data' in message)) return;
+        const entry = typeof arg1 === 'function'
+            ? {general: arg1}
+            : typeof arg1 === 'object' && arg2 === undefined
+                ? {map: arg1}
+                : {type: arg1 as K, handler: arg2};
 
+        this.handlers.push(entry);
+
+
+        if (!this.isListenerAttached) {
+            runtime.onMessage.addListener(this.globalListener);
+            this.isListenerAttached = true;
+        }
+
+        return () => {
+            const entryIndex = this.handlers.indexOf(entry);
+            if (entryIndex !== -1) {
+                this.handlers.splice(entryIndex, 1);
+            }
+            if (this.handlers.length === 0) {
+                runtime.onMessage.removeListener(this.globalListener);
+                this.isListenerAttached = false;
+            }
+        };
+    }
+
+    private globalListener<K extends MessageType<T>>(
+        message: MessageBody<T, K>,
+        sender: MessageSender,
+        sendResponse: (response?: any) => void
+    ): boolean | void {
+        if (!message || typeof message !== 'object' || !message.type || !('data' in message)) return;
+
+        const {type, data} = message;
+
+        const results: Promise<any>[] = [];
+
+        for (const {type: messageType, handler, map, general} of this.handlers) {
             try {
-                if (typeof arg1 === 'function') {
-                    const result = arg1(message.type, message.data, sender);
-
-                    if (result && typeof result.then === 'function') {
-                        result.then(sendResponse);
-                    } else {
-                        sendResponse(result);
+                if (general) {
+                    const result = general(type, data, sender);
+                    if (result !== undefined) {
+                        results.push(Promise.resolve(result));
                     }
-                    return true;
+                    continue;
                 }
 
-                if (typeof arg1 === 'object') {
-                    const handler = arg1[message.type];
-
-                    if (handler) {
-                        const result = handler(message.data, sender);
-
-                        if (result && typeof result.then === 'function') {
-                            result.then(sendResponse);
-                        } else {
-                            sendResponse(result);
-                        }
-                        return true;
+                if (map && typeof map[type] === 'function') {
+                    const result = map[type]?.(data, sender);
+                    if (result !== undefined) {
+                        results.push(Promise.resolve(result));
                     }
-
+                    continue;
                 }
 
-                if (arg2 && message.type === arg1) {
-                    const result = arg2(message.data, sender);
-
-                    if (result && typeof result.then === 'function') {
-                        result.then(sendResponse);
-                    } else {
-                        sendResponse(result);
+                if (handler && messageType === type) {
+                    const result = handler(data, sender);
+                    if (result !== undefined) {
+                        results.push(Promise.resolve(result));
                     }
-                    return true;
                 }
             } catch (err) {
                 console.error('Message handler error:', err);
             }
-        };
+        }
 
-        runtime.onMessage.addListener(listener);
+        if (results.length > 1) {
+            throw new Error(`Message type "${type}" has multiple handlers returning a response. Only one response is allowed.`)
+        }
 
-        return () => {
-            runtime.onMessage.removeListener(listener);
-        };
-    }
+        if (results.length === 1) {
+            results[0].then(sendResponse);
+            return true;
+        }
+    };
 }

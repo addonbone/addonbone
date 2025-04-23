@@ -86,7 +86,9 @@
     "adnbn": "tsx ./src/cli/index.ts",
     "build": "tsup",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "test:storage": "jest --testPathPattern=Storage",
+    "test:message": "jest --testPathPattern=Message"
   },
   "devDependencies": {
     "@swc/core": "^1.11.7",

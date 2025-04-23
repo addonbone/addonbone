@@ -1,11 +1,12 @@
 import {browser} from '@browser/env'
 import {throwRuntimeError} from "@browser/runtime";
 import {
-    HandlerProvider,
     MessageData,
     MessageGeneralHandler,
     MessageHandler,
+    MessageHandlerProvider,
     MessageMap,
+    MessageMapHandlers,
     MessageResponse,
     MessageType
 } from '@typing/message';
@@ -23,7 +24,7 @@ const runtime = browser().runtime;
 type SendOptions = number | { tabId: number; frameId?: number }
 
 export default class Message<T extends MessageMap> extends AbstractMessage<T, SendOptions> {
-    private static subscriptionManager = new MessageSubscriptionManager();
+    private static manager = new MessageSubscriptionManager();
 
     send<K extends MessageType<T>>(type: K, data: MessageData<T, K>, options?: SendOptions): Promise<MessageResponse<T, K>> {
         const message = this.buildMessage(type, data);
@@ -57,11 +58,11 @@ export default class Message<T extends MessageMap> extends AbstractMessage<T, Se
     }
 
     watch<K extends MessageType<T>>(
-        arg1: K | { [K in MessageType<T>]?: MessageHandler<T, K> } | MessageGeneralHandler<T, K>,
+        arg1: K | MessageMapHandlers<T> | MessageGeneralHandler<T, K>,
         arg2?: MessageHandler<T, K>
     ): () => void {
 
-        let handler: HandlerProvider<T>
+        let handler: MessageHandlerProvider<T>
 
         if (typeof arg1 === 'function') {
             handler = new GeneralHandler<T, K>(arg1);
@@ -73,8 +74,8 @@ export default class Message<T extends MessageMap> extends AbstractMessage<T, Se
             throw new Error('Invalid arguments passed to watch()');
         }
 
-        Message.subscriptionManager.addHandler(handler);
+        Message.manager.add(handler);
 
-        return () => Message.subscriptionManager.removeHandler(handler);
+        return () => Message.manager.remove(handler);
     }
 }

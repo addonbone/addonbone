@@ -1,38 +1,36 @@
 import {browser} from '@browser/env'
-import {HandlerProvider, MessageBody, MessageMap, MessageSender, MessageType} from '@typing/message';
+import {MessageBody, MessageHandlerProvider, MessageMap, MessageSender, MessageType} from '@typing/message';
 
 const runtime = browser().runtime;
 
 export default class MessageSubscriptionManager<T extends MessageMap> {
-    private handlers: Set<HandlerProvider<T>> = new Set()
-    private isListenerAttached = false;
+    private handlers: Set<MessageHandlerProvider<T>> = new Set()
 
     constructor() {
         this.listener = this.listener.bind(this);
     }
 
-    public addHandler(handler: HandlerProvider<T>) {
+    public add(handler: MessageHandlerProvider<T>) {
         this.handlers.add(handler);
         this.updateListener();
     }
 
-    public removeHandler(handler: HandlerProvider<T>) {
+    public remove(handler: MessageHandlerProvider<T>) {
         this.handlers.delete(handler);
         this.updateListener();
     }
 
-    public clearAllHandlers() {
+    public clear() {
         this.handlers = new Set();
         this.updateListener();
     }
 
     private updateListener() {
-        if (this.handlers.size > 0 && !this.isListenerAttached) {
+        const hasListener = runtime.onMessage.hasListeners()
+        if (this.handlers.size > 0 && !hasListener) {
             runtime.onMessage.addListener(this.listener);
-            this.isListenerAttached = true;
-        } else if (this.handlers.size === 0 && this.isListenerAttached) {
+        } else if (this.handlers.size === 0 && hasListener) {
             runtime.onMessage.removeListener(this.listener);
-            this.isListenerAttached = false;
         }
     }
 

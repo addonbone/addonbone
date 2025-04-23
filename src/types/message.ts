@@ -7,6 +7,7 @@ export type MessageData<T extends MessageMap, K extends MessageType<T>> = Parame
 export type MessageResponse<T extends MessageMap, K extends MessageType<T>> = ReturnType<T[K]>;
 
 export type MessageHandler<T extends MessageMap, K extends MessageType<T>> = (data: MessageData<T, K>, sender: MessageSender) => MessageResponse<T, K>
+export type MessageMapHandlers<T extends MessageMap> = { [K in MessageType<T>]?: MessageHandler<T, K> }
 export type MessageGeneralHandler<T extends MessageMap, K extends MessageType<T>> = (type: K, data: MessageData<T, K>, sender: MessageSender) => any
 
 export interface MessageBody<T extends MessageMap, K extends MessageType<T>> {
@@ -21,11 +22,11 @@ export interface MessageProvider<T extends MessageMap, TOptions = void> {
 
     watch<K extends MessageType<T>>(type: K, handler: MessageHandler<T, K>): () => void;
 
-    watch(handlers: { [K in MessageType<T>]?: MessageHandler<T, K> }): () => void;
+    watch(map: MessageMapHandlers<T>): () => void;
 
-    watch<K extends MessageType<T>>(handler: MessageGeneralHandler<T, K>): () => void;
+    watch<K extends MessageType<T>>(general: MessageGeneralHandler<T, K>): () => void;
 }
 
-export interface HandlerProvider<T extends MessageMap> {
-    run(type: MessageType<T>, data: MessageData<T, MessageType<T>>, sender: MessageSender): any;
+export interface MessageHandlerProvider<T extends MessageMap> {
+    run(type: MessageType<T>, data: MessageData<T, MessageType<T>>, sender: MessageSender): MessageResponse<T, MessageType<T>> | undefined;
 }

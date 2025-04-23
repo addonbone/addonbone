@@ -1,5 +1,12 @@
 import AbstractHandler from "./AbstractHandler";
-import {MessageData, MessageGeneralHandler, MessageMap, MessageSender, MessageType} from "@typing/message";
+import {
+    MessageData,
+    MessageGeneralHandler,
+    MessageMap,
+    MessageResponse,
+    MessageSender,
+    MessageType
+} from "@typing/message";
 
 export default class GeneralHandler<T extends MessageMap, K extends MessageType<T>> extends AbstractHandler<T> {
 
@@ -7,7 +14,7 @@ export default class GeneralHandler<T extends MessageMap, K extends MessageType<
         super();
     }
 
-    public run(type: K, data: MessageData<T, MessageType<T>>, sender: MessageSender): any {
+    public run(type: K, data: MessageData<T, MessageType<T>>, sender: MessageSender): MessageResponse<T, MessageType<T>> | undefined {
         return this.generalHandler(type, data, sender);
     }
 }

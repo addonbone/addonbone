@@ -25,3 +25,7 @@ export interface MessageProvider<T extends MessageMap, TOptions = void> {
 
     watch<K extends MessageType<T>>(handler: MessageGeneralHandler<T, K>): () => void;
 }
+
+export interface HandlerProvider<T extends MessageMap> {
+    run(type: MessageType<T>, data: MessageData<T, MessageType<T>>, sender: MessageSender): any;
+}

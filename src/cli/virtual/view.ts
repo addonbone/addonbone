@@ -1,5 +1,5 @@
 //@ts-ignore
-import type {ViewDefinition} from "adnbn";
+import type {ViewDefinition, ViewOptions} from "adnbn";
 //@ts-ignore
 import {isViewDefinition, isValidViewDefinitionRenderValue} from "adnbn/entry/view"
 
@@ -10,7 +10,7 @@ import * as module from "virtual:view-entrypoint";
 try {
     const {default: defaultDefinition, ...otherDefinition} = module;
 
-    let definition: ViewDefinition = otherDefinition;
+    let definition: ViewDefinition<ViewOptions> = otherDefinition;
 
     if (isViewDefinition(defaultDefinition)){
         definition = {...definition, ...defaultDefinition};

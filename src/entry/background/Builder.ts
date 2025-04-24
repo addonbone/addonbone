@@ -1,10 +1,12 @@
+import Builder from "@entry/core/Builder";
+
 import {isValidBackgroundMainHandler} from "./resolvers";
 
 import {BackgroundBuilder, BackgroundDefinition} from "@typing/background";
 
-export default class implements BackgroundBuilder {
+export default class extends Builder implements BackgroundBuilder {
     constructor(private readonly definition: BackgroundDefinition) {
-
+        super();
     }
 
     public async build(): Promise<void> {

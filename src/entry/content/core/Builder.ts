@@ -1,3 +1,5 @@
+import Builder from "@entry/core/Builder";
+
 import {contentScriptMountAppendResolver} from "./resolvers/mount";
 import {contentScriptAnchorResolver} from "./resolvers/anchor";
 import {contentScriptRenderResolver} from "./resolvers/render";
@@ -30,8 +32,7 @@ import {
 
 import {Awaiter} from "@typing/helpers";
 
-
-export default abstract class implements ContentScriptBuilder {
+export default abstract class extends Builder implements ContentScriptBuilder {
     protected readonly definition: ContentScriptResolvedDefinition;
 
     protected context = new ManagedContext();
@@ -45,6 +46,8 @@ export default abstract class implements ContentScriptBuilder {
     protected abstract cleanupNode(anchor: Element): Awaiter<void>;
 
     protected constructor(definition: ContentScriptDefinition) {
+        super();
+
         this.definition = {
             ...definition,
             anchor: this.resolveAnchor(definition.anchor),

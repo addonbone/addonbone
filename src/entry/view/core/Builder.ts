@@ -1,5 +1,7 @@
 import {__t} from "@locale/native";
 
+import Builder from "@entry/core/Builder";
+
 import {viewContainerResolver} from "./resolvers/container";
 import {viewRenderResolver} from "./resolvers/render";
 
@@ -16,12 +18,13 @@ import {
     ViewResolvedDefinition
 } from "@typing/view";
 
-export default abstract class<T extends ViewConfig> implements ViewBuilder {
+
+export default abstract class<T extends ViewConfig> extends Builder implements ViewBuilder {
     protected readonly definition: ViewResolvedDefinition<T>;
 
-    public abstract destroy(): Promise<void>;
-
     protected constructor(definition: ViewDefinition<T>) {
+        super();
+
         this.definition = {
             ...definition,
             container: this.resolveContainer(definition.container),

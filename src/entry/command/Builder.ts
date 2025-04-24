@@ -3,6 +3,8 @@ import {onCommand} from "@browser/command";
 
 import {__t} from "@locale/native";
 
+import Builder from "@entry/core/Builder";
+
 import {isValidCommandExecuteFunction, isValidCommandName} from "./resolvers";
 
 import {
@@ -14,12 +16,14 @@ import {
 
 type Tab = chrome.tabs.Tab;
 
-export default class implements CommandBuilder {
+export default class extends Builder implements CommandBuilder {
     protected readonly definition: CommandResolvedDefinition;
 
     protected unsubscribe?: () => void;
 
     public constructor(definition: CommandUnresolvedDefinition) {
+        super();
+
         const {name, execute, description} = definition;
 
         if (!isValidCommandExecuteFunction(execute)) {

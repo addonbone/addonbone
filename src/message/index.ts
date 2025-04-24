@@ -1,2 +1,2 @@
 export * from '@typing/message'
-export {default as Message} from "./Message";
+export * from "./providers";

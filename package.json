@@ -42,6 +42,11 @@
       "import": "./dist/message/index.js",
       "require": "./dist/message/index.cjs"
     },
+    "./message/react": {
+      "types": "./dist/message/react.d.ts",
+      "import": "./dist/message/react.js",
+      "require": "./dist/message/react.cjs"
+    },
     "./storage": {
       "types": "./dist/storage/index.d.ts",
       "import": "./dist/storage/index.js",

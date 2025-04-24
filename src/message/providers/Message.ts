@@ -4,19 +4,17 @@ import {
     MessageData,
     MessageGeneralHandler,
     MessageHandler,
-    MessageHandlerProvider,
     MessageMap,
-    MessageMapHandlers,
+    MessageMapHandler,
     MessageResponse,
+    MessageTargetHandler,
     MessageType
 } from '@typing/message';
 
 import AbstractMessage from './AbstractMessage';
-import MessageSubscriptionManager from "./MessageSubscriptionManager";
+import MessageManager from "../MessageManager";
 
-import MapHandler from "./handlers/MapHandler";
-import SingleHandler from "./handlers/SingleHandler";
-import GeneralHandler from "./handlers/GeneralHandler";
+import {GeneralHandler, MapHandler, SingleHandler} from "../handlers";
 
 const tabs = browser().tabs;
 const runtime = browser().runtime;
@@ -24,7 +22,7 @@ const runtime = browser().runtime;
 type SendOptions = number | { tabId: number; frameId?: number }
 
 export default class Message<T extends MessageMap> extends AbstractMessage<T, SendOptions> {
-    private static manager = new MessageSubscriptionManager();
+    private static manager = new MessageManager();
 
     send<K extends MessageType<T>>(type: K, data: MessageData<T, K>, options?: SendOptions): Promise<MessageResponse<T, K>> {
         const message = this.buildMessage(type, data);
@@ -58,11 +56,11 @@ export default class Message<T extends MessageMap> extends AbstractMessage<T, Se
     }
 
     watch<K extends MessageType<T>>(
-        arg1: K | MessageMapHandlers<T> | MessageGeneralHandler<T, K>,
-        arg2?: MessageHandler<T, K>
+        arg1: K | MessageMapHandler<T> | MessageGeneralHandler<T, K>,
+        arg2?: MessageTargetHandler<T, K>
     ): () => void {
 
-        let handler: MessageHandlerProvider<T>
+        let handler: MessageHandler<T>
 
         if (typeof arg1 === 'function') {
             handler = new GeneralHandler<T, K>(arg1);

@@ -3,9 +3,9 @@ import {
     MessageBody,
     MessageData,
     MessageGeneralHandler,
-    MessageHandler,
+    MessageTargetHandler,
     MessageMap,
-    MessageMapHandlers,
+    MessageMapHandler,
     MessageProvider,
     MessageResponse,
     MessageType
@@ -14,9 +14,9 @@ import {
 export default abstract class AbstractMessage<T extends MessageMap, TOptions> implements MessageProvider<T, TOptions> {
     public abstract send<K extends MessageType<T>>(type: K, data: MessageData<T, K>, options?: TOptions): Promise<MessageResponse<T, K>>;
 
-    public abstract watch<K extends MessageType<T>>(type: K, handler: MessageHandler<T, K>): () => void;
+    public abstract watch<K extends MessageType<T>>(type: K, handler: MessageTargetHandler<T, K>): () => void;
 
-    public abstract watch(map: MessageMapHandlers<T>): () => void;
+    public abstract watch(map: MessageMapHandler<T>): () => void;
 
     public abstract watch<K extends MessageType<T>>(general: MessageGeneralHandler<T, K>): () => void;
 

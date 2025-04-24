@@ -5,6 +5,7 @@ import {
     MessageGeneralHandler,
     MessageHandler,
     MessageMap,
+    MessageMapHandlers,
     MessageProvider,
     MessageResponse,
     MessageType
@@ -15,9 +16,9 @@ export default abstract class AbstractMessage<T extends MessageMap, TOptions> im
 
     public abstract watch<K extends MessageType<T>>(type: K, handler: MessageHandler<T, K>): () => void;
 
-    public abstract watch(handlers: { [K in MessageType<T>]?: MessageHandler<T, K> }): () => void;
+    public abstract watch(map: MessageMapHandlers<T>): () => void;
 
-    public abstract watch<K extends MessageType<T>>(handler: MessageGeneralHandler<T, K>): () => void;
+    public abstract watch<K extends MessageType<T>>(general: MessageGeneralHandler<T, K>): () => void;
 
     protected buildMessage<K extends MessageType<T>>(type: K, data: MessageData<T, K>): MessageBody<T, K> {
         return {

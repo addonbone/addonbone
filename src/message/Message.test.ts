@@ -7,6 +7,7 @@ let listener: ((...args: any[]) => boolean | void) | null = null;
 
 chrome.runtime.onMessage.addListener = jest.fn((cb) => listener = cb);
 chrome.runtime.onMessage.removeListener = jest.fn((cb) => listener === cb && (listener = null));
+chrome.runtime.onMessage.hasListeners = jest.fn(() => !!listener);
 
 (chrome.runtime.sendMessage as jest.Mock).mockImplementation((msg, callback) => {
     if (!listener) return;
@@ -47,6 +48,7 @@ beforeEach(async () => {
     listener = null
     jest.clearAllMocks();
     message = new Message<MessageMap>();
+    Message['manager'].clear()
 });
 
 describe('watch method', () => {
@@ -226,6 +228,14 @@ describe('multiple handlers error for same message type', () => {
     test('with "map" and "general" handlers', async () => {
         message.watch({getStringLength: () => 1});
         message.watch(() => 2);
+
+        await expect(message.send('getStringLength', 'test')).rejects.toThrow(errorMessage);
+    });
+
+    test('with two instances watching the same message type', async () => {
+        const secondMessage = new Message<MessageMap>()
+        message.watch('getStringLength', (data) => data.length);
+        secondMessage.watch('getStringLength', (data) => data.length);
 
         await expect(message.send('getStringLength', 'test')).rejects.toThrow(errorMessage);
     });

@@ -1,21 +1,21 @@
 import {browser} from '@browser/env'
-import {MessageBody, MessageHandlerProvider, MessageMap, MessageSender, MessageType} from '@typing/message';
+import {MessageBody, MessageHandler, MessageMap, MessageSender, MessageType} from '@typing/message';
 
 const runtime = browser().runtime;
 
 export default class MessageSubscriptionManager<T extends MessageMap> {
-    private handlers: Set<MessageHandlerProvider<T>> = new Set()
+    private handlers: Set<MessageHandler<T>> = new Set()
 
     constructor() {
         this.listener = this.listener.bind(this);
     }
 
-    public add(handler: MessageHandlerProvider<T>) {
+    public add(handler: MessageHandler<T>) {
         this.handlers.add(handler);
         this.updateListener();
     }
 
-    public remove(handler: MessageHandlerProvider<T>) {
+    public remove(handler: MessageHandler<T>) {
         this.handlers.delete(handler);
         this.updateListener();
     }

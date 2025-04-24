@@ -3,10 +3,10 @@ import {throwRuntimeError} from "@browser/runtime";
 import {
     MessageData,
     MessageGeneralHandler,
+    MessageTargetHandler,
     MessageHandler,
-    MessageHandlerProvider,
     MessageMap,
-    MessageMapHandlers,
+    MessageMapHandler,
     MessageResponse,
     MessageType
 } from '@typing/message';
@@ -58,11 +58,11 @@ export default class Message<T extends MessageMap> extends AbstractMessage<T, Se
     }
 
     watch<K extends MessageType<T>>(
-        arg1: K | MessageMapHandlers<T> | MessageGeneralHandler<T, K>,
-        arg2?: MessageHandler<T, K>
+        arg1: K | MessageMapHandler<T> | MessageGeneralHandler<T, K>,
+        arg2?: MessageTargetHandler<T, K>
     ): () => void {
 
-        let handler: MessageHandlerProvider<T>
+        let handler: MessageHandler<T>
 
         if (typeof arg1 === 'function') {
             handler = new GeneralHandler<T, K>(arg1);

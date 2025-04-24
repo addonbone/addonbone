@@ -1,9 +1,9 @@
 import AbstractHandler from "./AbstractHandler";
-import {MessageData, MessageHandler, MessageMap, MessageResponse, MessageSender, MessageType} from "@typing/message";
+import {MessageData, MessageTargetHandler, MessageMap, MessageResponse, MessageSender, MessageType} from "@typing/message";
 
 export default class SingleHandler<T extends MessageMap> extends AbstractHandler<T> {
 
-    constructor(private messageType: MessageType<T>, private handler: MessageHandler<T, MessageType<T>>) {
+    constructor(private messageType: MessageType<T>, private handler: MessageTargetHandler<T, MessageType<T>>) {
         super();
     }
 

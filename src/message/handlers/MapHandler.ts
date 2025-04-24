@@ -2,7 +2,7 @@ import AbstractHandler from "./AbstractHandler";
 import {
     MessageData,
     MessageMap,
-    MessageMapHandlers,
+    MessageMapHandler,
     MessageResponse,
     MessageSender,
     MessageType
@@ -10,7 +10,7 @@ import {
 
 export default class MapHandler<T extends MessageMap> extends AbstractHandler<T> {
 
-    constructor(private map: MessageMapHandlers<T>) {
+    constructor(private map: MessageMapHandler<T>) {
         super();
     }
 

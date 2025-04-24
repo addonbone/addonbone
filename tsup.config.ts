@@ -57,6 +57,7 @@ const framework: Options = {
 
         'entry/view/index': 'src/entry/view/index.ts',
         'entry/view/vanilla': 'src/entry/view/vanilla/index.ts',
+        'entry/view/react': 'src/entry/view/react/index.ts',
     },
     format: ['esm', 'cjs'],
     outExtension({format}) {

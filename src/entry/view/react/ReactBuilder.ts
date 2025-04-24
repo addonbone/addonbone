@@ -1,12 +1,23 @@
+import {isValidElement} from "react";
+import {createRoot, Root} from "react-dom/client";
+
 import Builder from "../core/Builder";
 
-import {ViewConfig, ViewDefinition} from "@typing/view";
+import {viewReactRenderResolver} from "./resolvers/render";
+
+import {ViewConfig, ViewDefinition, ViewRenderHandler, ViewRenderValue} from "@typing/view";
 
 export default class<T extends ViewConfig> extends Builder<T> {
+    protected root?: Root;
+
     protected container?: Element;
 
     public constructor(definition: ViewDefinition<T>) {
         super(definition);
+    }
+
+    protected resolveRender(render?: ViewRenderValue<T>): ViewRenderHandler<T> {
+        return viewReactRenderResolver(render);
     }
 
     public async build(): Promise<void> {
@@ -14,9 +25,9 @@ export default class<T extends ViewConfig> extends Builder<T> {
 
         const props = this.getProps();
 
-        const content = await this.definition.render(props);
+        const element = await this.definition.render(props);
 
-        if (!content) {
+        if (!isValidElement(element)) {
             return;
         }
 
@@ -26,18 +37,17 @@ export default class<T extends ViewConfig> extends Builder<T> {
             return;
         }
 
-        if (content instanceof Element) {
-            this.container.appendChild(content);
-        } else if (typeof content === "string" || typeof content === "number") {
-            this.container.innerHTML = content.toString();
-        } else {
-            return;
-        }
-
         document.body.prepend(this.container);
+
+        this.root = createRoot(this.container);
+
+        this.root.render(element);
     }
 
     public async destroy(): Promise<void> {
+        this.root?.unmount();
+        this.root = undefined;
+
         this.container?.remove();
         this.container = undefined;
     }

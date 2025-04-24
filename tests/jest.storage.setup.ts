@@ -1,5 +1,5 @@
 import 'jest-webextension-mock';
-import AbstractStorage from './src/storage/providers/AbstractStorage'
+import AbstractStorage from '../src/storage/providers/AbstractStorage'
 import {TextDecoder, TextEncoder} from 'util';
 
 const listeners: Array<

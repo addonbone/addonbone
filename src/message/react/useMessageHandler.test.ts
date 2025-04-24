@@ -2,62 +2,73 @@ import {renderHook} from '@testing-library/react';
 import useMessageHandler from './useMessageHandler';
 import {Message} from '../providers';
 
-const mockWatch = jest.fn();
-const mockUnsubscribe = jest.fn();
+type MessageMap = {
+    getStringLength: (data: string) => number;
+    toUpperCase: (str: string) => string;
+    sayHello: (data?: string) => string;
+    fetchUser: (name: string) => Promise<{ name: string }>;
+};
 
-jest.mock('../providers', () => ({
-    Message: jest.fn().mockImplementation(() => ({
-        watch: mockWatch,
-    })),
-
-}));
+let message: Message<MessageMap>;
 
 beforeEach(() => {
-    mockWatch.mockClear();
-    mockUnsubscribe.mockClear();
+    jest.clearAllMocks();
+    message = new Message<MessageMap>();
+    Message['manager'].clear()
 });
 
-test('should call Message.watch with correct arguments', () => {
-    const handler = jest.fn();
-    mockWatch.mockReturnValue(mockUnsubscribe);
+test('registers a specific handler for a given message type', async () => {
+    expect(chrome.runtime.onMessage.hasListeners()).toBe(false);
 
-    renderHook(() => useMessageHandler('getStringLength', handler));
+    renderHook(() => useMessageHandler<'getStringLength', MessageMap>('getStringLength', (str) => str.length))
 
-    expect(Message).toHaveBeenCalledTimes(1);
-    expect(mockWatch).toHaveBeenCalledWith('getStringLength', handler);
+    expect(chrome.runtime.onMessage.hasListeners()).toBe(true);
+    expect(chrome.runtime.onMessage.addListener).toHaveBeenCalledWith(expect.any(Function));
+
+    const result = await message.send('getStringLength', 'test');
+
+    expect(result).toBe(4);
 });
 
-test('should unsubscribe on unmount', () => {
-    mockWatch.mockReturnValue(mockUnsubscribe);
+test('adds and removes the listener on mount and unmount', async () => {
+    expect(chrome.runtime.onMessage.hasListeners()).toBe(false);
 
-    const handler = jest.fn();
-    const {unmount} = renderHook(() =>
-        useMessageHandler('getStringLength', handler)
-    );
+    const {unmount} = renderHook(() => {
+        useMessageHandler<'getStringLength', MessageMap>('getStringLength', (str) => str.length)
+    })
 
-    unmount();
+    expect(chrome.runtime.onMessage.hasListeners()).toBe(true);
+    expect(chrome.runtime.onMessage.addListener).toHaveBeenCalledWith(expect.any(Function));
 
-    expect(mockUnsubscribe).toHaveBeenCalled();
+    unmount()
+
+    expect(chrome.runtime.onMessage.hasListeners()).toBe(false);
+    expect(chrome.runtime.onMessage.removeListener).toHaveBeenCalledWith(expect.any(Function));
 });
 
-test('should update subscription when type or handler changes', () => {
-    const firstHandler = jest.fn();
-    const secondHandler = jest.fn();
+test('updates subscription when type or handler changes', async () => {
+    expect(chrome.runtime.onMessage.hasListeners()).toBe(false);
 
     const {rerender} = renderHook(
         ({type, handler}) => useMessageHandler(type, handler),
         {
-            initialProps: {type: 'getStringLength', handler: firstHandler},
+            initialProps: {type: 'getStringLength', handler: (str: string) => str.length},
         }
     );
 
-    expect(mockWatch).toHaveBeenCalledWith('getStringLength', firstHandler);
+    expect(chrome.runtime.onMessage.hasListeners()).toBe(true);
 
-    mockWatch.mockClear();
-    mockUnsubscribe.mockClear();
-    mockWatch.mockReturnValue(mockUnsubscribe);
+    expect(await message.send('getStringLength', 'test')).toBe(4);
 
-    rerender({type: 'toUpperCase', handler: secondHandler});
+    rerender({type: 'getStringLength', handler: (str: string) => str.length / 2});
 
-    expect(mockWatch).toHaveBeenCalledWith('toUpperCase', secondHandler);
+    expect(chrome.runtime.onMessage.removeListener).toHaveBeenCalledWith(expect.any(Function));
+
+    expect(await message.send('getStringLength', 'test')).toBe(2);
+
+    //@ts-ignore
+    rerender({type: 'toUpperCase', handler: (str: string) => str.toUpperCase()});
+
+    expect(await message.send('toUpperCase', 'test')).toBe("TEST");
+    expect(await message.send('getStringLength', 'test')).toBe(undefined);
 });

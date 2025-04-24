@@ -12,7 +12,7 @@ import {
 } from '@typing/message';
 
 import AbstractMessage from './AbstractMessage';
-import MessageSubscriptionManager from "./MessageSubscriptionManager";
+import MessageManager from "./MessageManager";
 
 import MapHandler from "./handlers/MapHandler";
 import SingleHandler from "./handlers/SingleHandler";
@@ -24,7 +24,7 @@ const runtime = browser().runtime;
 type SendOptions = number | { tabId: number; frameId?: number }
 
 export default class Message<T extends MessageMap> extends AbstractMessage<T, SendOptions> {
-    private static manager = new MessageSubscriptionManager();
+    private static manager = new MessageManager();
 
     send<K extends MessageType<T>>(type: K, data: MessageData<T, K>, options?: SendOptions): Promise<MessageResponse<T, K>> {
         const message = this.buildMessage(type, data);

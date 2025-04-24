@@ -3,8 +3,9 @@ import {MessageBody, MessageHandler, MessageMap, MessageSender, MessageType} fro
 
 const runtime = browser().runtime;
 
-export default class MessageSubscriptionManager<T extends MessageMap> {
+export default class MessageManager<T extends MessageMap> {
     private handlers: Set<MessageHandler<T>> = new Set()
+    private isListenerAttached = false;
 
     constructor() {
         this.listener = this.listener.bind(this);
@@ -26,11 +27,12 @@ export default class MessageSubscriptionManager<T extends MessageMap> {
     }
 
     private updateListener() {
-        const hasListener = runtime.onMessage.hasListeners()
-        if (this.handlers.size > 0 && !hasListener) {
+        if (this.handlers.size > 0 && !this.isListenerAttached) {
             runtime.onMessage.addListener(this.listener);
-        } else if (this.handlers.size === 0 && hasListener) {
+            this.isListenerAttached = true;
+        } else if (this.handlers.size === 0 && this.isListenerAttached) {
             runtime.onMessage.removeListener(this.listener);
+            this.isListenerAttached = false;
         }
     }
 

@@ -3,9 +3,9 @@ import {MessageMap, MessageTargetHandler, MessageType} from "@typing/message";
 
 import {Message} from "../providers";
 
-function useMessageHandler<T extends MessageMap>(
-    type: MessageType<T>,
-    handler: MessageTargetHandler<T, MessageType<T>>
+function useMessageHandler<T extends MessageMap, K extends MessageType<T>>(
+    type: K,
+    handler: MessageTargetHandler<T, K>
 ): void {
 
     const messageRef = useRef(new Message<T>());

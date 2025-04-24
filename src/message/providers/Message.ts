@@ -3,20 +3,18 @@ import {throwRuntimeError} from "@browser/runtime";
 import {
     MessageData,
     MessageGeneralHandler,
-    MessageTargetHandler,
     MessageHandler,
     MessageMap,
     MessageMapHandler,
     MessageResponse,
+    MessageTargetHandler,
     MessageType
 } from '@typing/message';
 
 import AbstractMessage from './AbstractMessage';
-import MessageManager from "./MessageManager";
+import MessageManager from "../MessageManager";
 
-import MapHandler from "./handlers/MapHandler";
-import SingleHandler from "./handlers/SingleHandler";
-import GeneralHandler from "./handlers/GeneralHandler";
+import {GeneralHandler, MapHandler, SingleHandler} from "../handlers";
 
 const tabs = browser().tabs;
 const runtime = browser().runtime;

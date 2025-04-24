@@ -1,5 +1,5 @@
 import Message from "./Message";
-import {MessageSender} from "../types/message";
+import {MessageSender} from "../../types/message";
 
 jest.mock('nanoid', () => ({nanoid: () => 'mocked-id'}));
 

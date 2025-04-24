@@ -36,10 +36,10 @@ export default definePlugin(() => {
                 return {};
             }
 
-            const backgroundEntrypointPlugin = EntrypointPlugin.from(await background.entry().entries())
+            const backgroundPlugin = EntrypointPlugin.from(await background.entry().entries())
                 .virtual(file => virtualBackgroundModule(file));
 
-            const commandEntrypointPlugin = EntrypointPlugin.from(await command.entry().entries())
+            const commandPlugin = EntrypointPlugin.from(await command.entry().entries())
                 .virtual((file) => {
                     const name = command.get(file)?.name;
 
@@ -51,23 +51,18 @@ export default definePlugin(() => {
                 });
 
             if (config.command === AppCommand.Watch) {
-                // TODO: Implement watch for background and command entrypoints
+                backgroundPlugin.watch(() => background.clear().entry().entries());
 
-                // backgroundEntrypointPlugin.watch(async () => {
-                //     backgroundEntrypoint = await getBackgroundEntrypoint(config);
-                //
-                //     return getEntry(backgroundEntrypoint);
-                // });
+                commandPlugin.watch(async () => {
+                    // Clear the command cache
+                    await command.clear().commands();
 
-                // commandEntrypointPlugin.watch(async () => {
-                //     commandEntrypoint = await getCommandEntrypoint(config);
-                //
-                //     return getEntry(commandEntrypoint);
-                // });
+                    return command.entry().entries();
+                });
             }
 
             return {
-                plugins: [backgroundEntrypointPlugin, commandEntrypointPlugin],
+                plugins: [backgroundPlugin, commandPlugin],
                 optimization: {
                     splitChunks: {
                         chunks(chunk) {

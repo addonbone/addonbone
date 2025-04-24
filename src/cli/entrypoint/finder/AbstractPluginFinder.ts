@@ -8,11 +8,7 @@ export default abstract class<O extends EntrypointOptions> extends EntrypointFin
     protected abstract getPlugin(): EntrypointOptionsFinder<O>;
 
     public plugin(): EntrypointOptionsFinder<O> {
-        if (this._plugin) {
-            return this._plugin;
-        }
-
-        return this._plugin = this.getPlugin();
+        return this._plugin ??= this.getPlugin();
     }
 
     public clear(): this {

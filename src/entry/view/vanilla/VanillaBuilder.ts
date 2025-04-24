@@ -10,6 +10,9 @@ export default class<T extends ViewConfig> extends Builder<T> {
     }
 
     public async build(): Promise<void> {
+        await this.destroy();
+        await super.build();
+
         const props = this.getProps();
 
         this.container = await this.definition.container(props);
@@ -29,6 +32,8 @@ export default class<T extends ViewConfig> extends Builder<T> {
         } else if (typeof content === "string" || typeof content === "number") {
             this.container.innerHTML = content.toString();
         }
+
+        document.body.appendChild(this.container);
     }
 
     public async destroy(): Promise<void> {

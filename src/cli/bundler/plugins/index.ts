@@ -1,6 +1,5 @@
 export {
     default as EntrypointPlugin,
-    type EntrypointPluginEntries,
     type EntrypointPluginModules,
     type EntrypointPluginModule,
     type EntrypointPluginEntryModules,

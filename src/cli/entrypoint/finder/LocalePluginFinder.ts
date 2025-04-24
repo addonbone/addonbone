@@ -47,9 +47,9 @@ export default class extends AbstractLocaleFinder {
                         continue;
                     }
 
-                    const {name} = path.parse(file.file);
+                    const {name: filename} = path.parse(file.file);
 
-                    if (name.includes(`.${this.config.browser}`) || !name.includes('.')) {
+                    if (filename.includes(`.${this.config.browser}`) || !filename.includes('.')) {
                         files.add(file);
                     }
                 }

@@ -1,13 +1,13 @@
 import {DefinePlugin, HtmlRspackPlugin} from "@rspack/core";
 import HtmlRspackTagsPlugin from "html-rspack-tags-plugin";
 
+import Page from "./Page";
+
 import {definePlugin} from "@core/define";
-
 import {virtualViewModule} from "@cli/virtual";
-
 import {EntrypointPlugin} from "@cli/bundler";
 
-import Page from "./Page";
+import {Command} from "@typing/app";
 
 export {Page};
 
@@ -29,16 +29,12 @@ export default definePlugin(() => {
                 return {};
             }
 
-            const pageEntrypointPlugin = EntrypointPlugin.from(await page.entries())
+            const plugin = EntrypointPlugin.from(await page.entries())
                 .virtual(file => virtualViewModule(file));
 
-            // if (config.command === Command.Watch) {
-            //     pageEntrypointPlugin.watch(async () => {
-            //         const pageEntries = await getPageEntries(config);
-            //
-            //         return extractEntries(pageEntries);
-            //     });
-            // }
+            if (config.command === Command.Watch) {
+                plugin.watch(() => page.clear().entries());
+            }
 
             const htmlPlugins = (await page.html()).map(options => new HtmlRspackPlugin(options));
             const tagsPlugins = (await page.tags()).map(options => new HtmlRspackTagsPlugin(options));
@@ -48,10 +44,10 @@ export default definePlugin(() => {
                     new DefinePlugin({
                         'PAGE_ALIAS': JSON.stringify(await page.alias()),
                     }),
-                    pageEntrypointPlugin,
+                    plugin,
                     ...htmlPlugins,
                     ...tagsPlugins,
-                ]
+                ],
             };
         }
     };

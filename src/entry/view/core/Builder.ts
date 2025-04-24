@@ -1,3 +1,5 @@
+import {__t} from "@locale/native";
+
 import {viewContainerResolver} from "./resolvers/container";
 import {viewRenderResolver} from "./resolvers/render";
 
@@ -16,8 +18,6 @@ import {
 
 export default abstract class<T extends ViewConfig> implements ViewBuilder {
     protected readonly definition: ViewResolvedDefinition<T>;
-
-    public abstract build(): Promise<void>;
 
     public abstract destroy(): Promise<void>;
 
@@ -48,5 +48,13 @@ export default abstract class<T extends ViewConfig> implements ViewBuilder {
         const {render, container, ...props} = this.definition;
 
         return props as T;
+    }
+
+    public async build(): Promise<void> {
+        const {title} = this.definition;
+
+        if (title) {
+            document.title = __t(title);
+        }
     }
 }

@@ -12,13 +12,6 @@ import {EntrypointEntries} from "@typing/entrypoint";
 export default class extends PageFinder {
     public constructor(config: ReadonlyConfig) {
         super(config);
-
-        this.names.reserve(this.getFrameworkEntry());
-        this.aliases.reserve(this.getFrameworkEntry());
-    }
-
-    public getFrameworkEntry(): string {
-        return 'framework.' + this.type();
     }
 
     public async entries(): Promise<EntrypointEntries> {

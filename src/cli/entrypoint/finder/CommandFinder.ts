@@ -48,11 +48,7 @@ export default class extends AbstractPluginFinder<CommandEntrypointOptions> {
     }
 
     public async commands(): Promise<Map<EntrypointFile, CommandOptions>> {
-        if (this._commands) {
-            return this._commands;
-        }
-
-        return this._commands = await this.getCommands();
+       return this._commands ??= await this.getCommands();
     }
 
     public canMerge(): boolean {
@@ -61,6 +57,7 @@ export default class extends AbstractPluginFinder<CommandEntrypointOptions> {
 
     public clear(): this {
         this.names.reset();
+
         this._commands = undefined;
 
         return super.clear();

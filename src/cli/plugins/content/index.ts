@@ -1,4 +1,3 @@
-import path from "path";
 import {Configuration as RspackConfig} from "@rspack/core";
 
 import Content from "./Content";
@@ -6,9 +5,9 @@ import Content from "./Content";
 import {definePlugin} from "@core/define";
 import {virtualContentScriptModule} from "@cli/virtual";
 
-import {EntrypointPlugin} from "@cli/bundler";
+import {EntrypointPlugin, isEntryModuleOrIssuer} from "@cli/bundler";
 
-import {Command, PackageName} from "@typing/app";
+import {Command} from "@typing/app";
 
 export {Content};
 
@@ -22,7 +21,6 @@ export default definePlugin(() => {
         },
         content: () => content.files(),
         bundler: async ({config}) => {
-
             if (await content.empty()) {
                 if (config.debug) {
                     console.warn('Content script entries not found');
@@ -31,46 +29,21 @@ export default definePlugin(() => {
                 return {};
             }
 
-            const contentEntrypointPlugin = EntrypointPlugin.from(await content.entries())
+            const plugin = EntrypointPlugin.from(await content.entries())
                 .virtual(file => virtualContentScriptModule(file));
 
             if (config.command === Command.Watch) {
-                // contentEntrypointPlugin.watch(async () => {
-                //     contentScriptEntries = await getContentScriptEntries(config);
-                //
-                //     return contentScriptEntryForPlugin(contentScriptEntries);
-                // });
+                plugin.watch(() => content.clear().entries());
             }
 
-            const rspack: RspackConfig = {
-                plugins: [contentEntrypointPlugin],
+            return {
+                plugins: [plugin],
                 optimization: {
                     splitChunks: {
                         cacheGroups: {
                             frameworkContent: {
                                 name: content.getFrameworkEntry(),
-                                test: (module, {moduleGraph}): boolean => {
-                                    const entryDirs = [
-                                        path.join('node_modules', PackageName, 'entry', 'content'),
-                                        path.join('addonbone', 'dist', 'entry', 'content'), // TODO: Remove this for production
-                                    ];
-
-                                    if (entryDirs.some((dir) => (module.resource || '').includes(dir))) {
-                                        return true;
-                                    }
-
-                                    let issuer = moduleGraph.getIssuer(module);
-
-                                    while (issuer) {
-                                        if (entryDirs.some((dir) => (issuer?.resource || '').includes(dir))) {
-                                            return true;
-                                        }
-
-                                        issuer = moduleGraph.getIssuer(issuer);
-                                    }
-
-                                    return false;
-                                },
+                                test: isEntryModuleOrIssuer('content'),
                                 chunks: (chunk): boolean => {
                                     const {name} = chunk;
 
@@ -87,9 +60,7 @@ export default definePlugin(() => {
                         }
                     }
                 }
-            };
-
-            return rspack;
+            } satisfies RspackConfig;
         },
         manifest: async ({manifest}) => {
             manifest.setContentScripts(await content.manifest());

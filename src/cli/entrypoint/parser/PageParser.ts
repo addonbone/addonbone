@@ -17,13 +17,4 @@ export default class extends ViewParser<PageEntrypointOptions> {
             name: z.string().nonempty().optional(),
         });
     }
-
-    public options(file: EntrypointFile): PageEntrypointOptions {
-        const options = super.options(file);
-
-        return {
-            ...options,
-            title: modifyLocaleMessageKey(options.title),
-        };
-    }
 }

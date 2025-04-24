@@ -6,11 +6,9 @@ import VirtualModulesPlugin from 'rspack-plugin-virtual-module';
 
 import {EntrypointEntries, EntrypointFile} from "@typing/entrypoint";
 
-export type EntrypointPluginEntries = Record<string, EntrypointFile[]>;
-
 export type EntrypointPluginTemplate = (file: EntrypointFile) => string;
 
-export type EntrypointPluginUpdate = (files: ReadonlySet<string>) => Promise<EntrypointPluginEntries>;
+export type EntrypointPluginUpdate = (files: ReadonlySet<string>) => Promise<EntrypointEntries>;
 
 export interface EntrypointPluginModule {
     /**
@@ -72,14 +70,10 @@ export default class EntrypointPlugin {
     }
 
     public static from(entries: EntrypointEntries): EntrypointPlugin {
-        const data = entries.entries().reduce((collect, [name, files]) => {
-            return {...collect, [name]: Array.from(files)};
-        }, {} as EntrypointPluginEntries);
-
-        return new EntrypointPlugin(data);
+        return new EntrypointPlugin(entries);
     }
 
-    constructor(private readonly entries: EntrypointPluginEntries = {}) {
+    constructor(private readonly entries: EntrypointEntries = new Map) {
     }
 
     public virtual(template: EntrypointPluginTemplate): this {
@@ -188,21 +182,21 @@ export default class EntrypointPlugin {
     }
 
 
-    protected createModules(entries: EntrypointPluginEntries): EntrypointPluginEntryModules {
+    protected createModules(entries: EntrypointEntries): EntrypointPluginEntryModules {
         const entryModules: EntrypointPluginEntryModules = new Map();
 
-        _.forEach(entries, (files, name) => {
+        for (const [name, files] of entries) {
             const modules: EntrypointPluginModules = new Map();
 
-            _.forEach(files, (file) => {
+            for (const file of files) {
                 modules.set(file, {
                     name: EntrypointPlugin.filename(file),
                     module: this.template ? this.template(file) : '',
                 });
-            });
+            }
 
             entryModules.set(name, modules);
-        });
+        }
 
         return entryModules;
     }

@@ -31,7 +31,13 @@ export default definePlugin(() => {
             const plugin = new GenerateJsonPlugin(await locale.json());
 
             if (config.command === Command.Watch) {
-                plugin.watch(() => locale.clear().json());
+                plugin.watch(async () => {
+                    locale.clear();
+
+                    declaration.structure(await locale.structure()).build();
+
+                    return await locale.json();
+                });
             }
 
             return {

@@ -12,7 +12,7 @@ let message: Message<MessageMap>;
 beforeEach(async () => {
     jest.clearAllMocks();
     message = new Message<MessageMap>();
-    Message['manager'].clear()
+    message['manager'].clear()
 });
 
 describe('watch method', () => {

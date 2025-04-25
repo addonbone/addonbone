@@ -7,6 +7,15 @@ export default class MessageManager<T extends MessageMap> {
     private handlers: Set<MessageHandler<T>> = new Set()
     private isListenerAttached = false;
 
+    private static instance: MessageManager<MessageMap> | null = null;
+
+    public static getInstance<T extends MessageMap>(): MessageManager<T> {
+        if (MessageManager.instance === null) {
+            MessageManager.instance = new MessageManager<T>();
+        }
+        return MessageManager.instance;
+    }
+
     constructor() {
         this.listener = this.listener.bind(this);
     }

@@ -66,11 +66,7 @@ export default class extends AbstractPluginFinder<ContentScriptEntrypointOptions
     }
 
     public async content(): Promise<ContentItems> {
-        if (this._content) {
-            return this._content;
-        }
-
-        return this._content = await this.getContent();
+       return this._content ??= await this.getContent();
     }
 
     public likely(name: string): boolean {

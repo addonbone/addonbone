@@ -37,6 +37,16 @@
       "import": "./dist/locale/index.js",
       "require": "./dist/locale/index.cjs"
     },
+    "./message": {
+      "types": "./dist/message/index.d.ts",
+      "import": "./dist/message/index.js",
+      "require": "./dist/message/index.cjs"
+    },
+    "./message/react": {
+      "types": "./dist/message/react.d.ts",
+      "import": "./dist/message/react.js",
+      "require": "./dist/message/react.cjs"
+    },
     "./storage": {
       "types": "./dist/storage/index.d.ts",
       "import": "./dist/storage/index.js",
@@ -81,7 +91,9 @@
     "adnbn": "tsx ./src/cli/index.ts",
     "build": "tsup",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "test:storage": "jest --testPathPattern=Storage",
+    "test:message": "jest --testPathPattern=Message"
   },
   "devDependencies": {
     "@swc/core": "^1.11.7",

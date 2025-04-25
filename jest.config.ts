@@ -4,7 +4,10 @@ const config: Config = {
     verbose: true,
     preset: 'ts-jest',
     testEnvironment: 'jsdom',
-    setupFiles: ["<rootDir>/jest.setup.ts"],
+    setupFiles: [
+        "<rootDir>/tests/jest.storage.setup.ts",
+        "<rootDir>/tests/jest.message.setup.ts"
+    ],
     moduleNameMapper: {
         "^@browser/(.*)$": "<rootDir>/src/browser/$1",
         "^@cli/(.*)$": "<rootDir>/src/cli/$1",

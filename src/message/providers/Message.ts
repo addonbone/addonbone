@@ -19,12 +19,12 @@ import {GeneralHandler, MapHandler, SingleHandler} from "../handlers";
 const tabs = browser().tabs;
 const runtime = browser().runtime;
 
-type SendOptions = number | { tabId: number; frameId?: number }
+export type MessageSendOptions = number | { tabId: number; frameId?: number };
 
-export default class Message<T extends MessageMap> extends AbstractMessage<T, SendOptions> {
+export default class Message<T extends MessageMap> extends AbstractMessage<T, MessageSendOptions> {
     protected manager = MessageManager.getInstance<T>();
 
-    send<K extends MessageType<T>>(type: K, data: MessageData<T, K>, options?: SendOptions): Promise<MessageResponse<T, K>> {
+    public send<K extends MessageType<T>>(type: K, data: MessageData<T, K>, options?: MessageSendOptions): Promise<MessageResponse<T, K>> {
         const message = this.buildMessage(type, data);
 
         if (typeof options === 'number' || typeof options === 'object') {
@@ -55,7 +55,7 @@ export default class Message<T extends MessageMap> extends AbstractMessage<T, Se
         });
     }
 
-    watch<K extends MessageType<T>>(
+    public watch<K extends MessageType<T>>(
         arg1: K | MessageMapHandler<T> | MessageGeneralHandler<T, K>,
         arg2?: MessageTargetHandler<T, K>
     ): () => void {

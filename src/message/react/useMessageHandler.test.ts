@@ -14,7 +14,7 @@ let message: Message<MessageMap>;
 beforeEach(() => {
     jest.clearAllMocks();
     message = new Message<MessageMap>();
-    Message['manager'].clear()
+    message['manager'].clear()
 });
 
 test('registers a specific handler for a given message type', async () => {

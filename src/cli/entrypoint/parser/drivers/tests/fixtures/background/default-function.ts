@@ -8,6 +8,8 @@ export const persistent = true;
 
 export const excludeBrowser = [Browser.Edge];
 
+export const excludeApps = [APP_NAME];
+
 export default async () => {
     console.log('test background main');
 };

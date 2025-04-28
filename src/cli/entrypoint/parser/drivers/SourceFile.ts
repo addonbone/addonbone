@@ -216,8 +216,26 @@ export default class EntryFile {
                 return null;
             case ts.SyntaxKind.NumericLiteral:
                 return parseFloat((node as ts.NumericLiteral).text);
-            case ts.SyntaxKind.Identifier:
-                return this.variables?.get((node as ts.Identifier).text)?.value ?? (node as ts.Identifier).text;
+            case ts.SyntaxKind.Identifier: {
+                const id = node as ts.Identifier;
+                const name = id.text;
+                // local variable
+                const local = this.variables?.get(name);
+                if (local && local.value !== undefined) {
+                    return local.value;
+                }
+                // imported constant: try to resolve its value from source file
+                const importPath = this.getImports().get(name);
+                if (importPath) {
+                    // load imported file and check its variables
+                    const parser = EntryFile.make(importPath);
+                    const imported = parser.getVariables().get(name);
+                    if (imported && imported.value !== undefined) {
+                        return imported.value;
+                    }
+                }
+                return name;
+            }
             case ts.SyntaxKind.ArrayLiteralExpression:
                 return (node as ts.ArrayLiteralExpression).elements.map(element =>
                     this.parseNode(element)

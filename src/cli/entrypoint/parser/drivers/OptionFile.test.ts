@@ -22,13 +22,14 @@ test('background with default function and export properties', () => {
     const filename = path.join(fixtures, 'background', 'default-function.ts');
 
     const options = OptionFile.make(filename)
-        .setProperties(['persistent', 'excludeBrowser'])
+        .setProperties(['persistent', 'excludeBrowser', 'excludeApps'])
         .setDefinition('defineBackground')
         .getOptions();
 
     expect(options).toEqual({
         persistent: true,
         excludeBrowser: ['edge'],
+        excludeApps: ['my_test_app'],
     });
 });
 

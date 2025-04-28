@@ -43,6 +43,8 @@ const framework: Options = {
 
         'browser/index': 'src/browser/index.ts',
 
+        'service/index': 'src/service/index.ts',
+
         'storage/index': 'src/storage/index.ts',
         'storage/react': 'src/storage/react/index.ts',
 

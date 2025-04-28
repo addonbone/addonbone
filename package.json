@@ -93,14 +93,15 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:storage": "jest --testPathPattern=Storage",
-    "test:message": "jest --testPathPattern=Message"
+    "test:message": "jest --testPathPattern=Message",
+    "test:entrypoint": "jest --testPathPattern=src/cli/entrypoint"
   },
   "devDependencies": {
     "@swc/core": "^1.11.7",
-    "@types/js-yaml": "^4.0.9",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@types/jest": "^29.5.14",
+    "@types/js-yaml": "^4.0.9",
     "@types/lodash": "^4.17.14",
     "@types/node": "^22.13.1",
     "@types/pluralize": "^0.0.33",

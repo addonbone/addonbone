@@ -43,24 +43,10 @@ export default class<T extends Record<string, any>> extends SourceFile {
 
         const parse = (node: ts.Node) => {
             if (ts.isExportAssignment(node)) {
-                const expr = node.expression;
+                const expr = this.getExpressionForOptions(node.expression);
 
-                if (ts.isCallExpression(expr) && ts.isIdentifier(expr.expression)) {
-                    const functionName = expr.expression.text;
-
-                    if (this.getImports().get(functionName) !== PackageName) {
-                        console.warn(`Function ${functionName} is not imported from '${PackageName}' on file ${this.file}`);
-
-                        return;
-                    }
-
-                    if (this.definition.has(functionName) && expr.arguments.length > 0) {
-                        const arg = expr.arguments[0];
-
-                        if (ts.isObjectLiteralExpression(arg)) {
-                            options = this.parseNode(arg);
-                        }
-                    }
+                if (expr) {
+                    options = this.parseNode(expr);
                 }
             }
 
@@ -70,5 +56,29 @@ export default class<T extends Record<string, any>> extends SourceFile {
         parse(this.getSourceFile());
 
         return _.pickBy(options, (_, key) => this.properties.has(key)) as T;
+    }
+
+    protected getExpressionForOptions(expr: ts.Expression): ts.Expression | undefined {
+        if (ts.isObjectLiteralExpression(expr)) {
+            return expr;
+        } else if ((ts.isAsExpression(expr) || ts.isSatisfiesExpression(expr)) && ts.isObjectLiteralExpression(expr.expression)) {
+            return expr.expression;
+        } else if (ts.isCallExpression(expr) && ts.isIdentifier(expr.expression)) {
+            const functionName = expr.expression.text;
+
+            if (this.getImports().get(functionName) !== PackageName) {
+                console.warn(`Function ${functionName} is not imported from '${PackageName}' on file ${this.file}`);
+
+                return;
+            }
+
+            if (this.definition.has(functionName) && expr.arguments.length > 0) {
+                const arg = expr.arguments[0];
+
+                if (ts.isObjectLiteralExpression(arg)) {
+                    return arg;
+                }
+            }
+        }
     }
 }

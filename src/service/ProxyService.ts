@@ -2,14 +2,14 @@ import {isBackground} from "@browser/runtime";
 import type {DefaultService, ProxyService as TProxyService} from "@typing/service";
 
 import {Message} from "../message";
-import ServiceManager from "./ServiceManager";
+import BaseService from "./BaseService";
 
-export default class ProxyService<T extends DefaultService,  TGet = TProxyService<T>> {
-    protected readonly manager = ServiceManager.getInstance()
+export default class ProxyService<T extends DefaultService, TGet = TProxyService<T>> extends BaseService<TGet>{
     protected readonly message = new Message();
     protected readonly messageKey: string;
 
-    constructor(protected readonly name: string) {
+    constructor(name: string) {
+        super(name);
         this.messageKey = `service.${this.name}`;
     }
 
@@ -40,7 +40,6 @@ export default class ProxyService<T extends DefaultService,  TGet = TProxyServic
         if(isBackground()){
             throw new Error('ProxyService.get() cannot be called in the background');
         }
-        // @ts-expect-error — trust the subclass
-        return this.createProxy();
+        return this.createProxy() as TGet;
     }
 }

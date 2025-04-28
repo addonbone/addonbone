@@ -23,7 +23,7 @@ export default class extends AbstractPluginFinder<BackgroundEntrypointOptions> {
     }
 
     protected getParser(): EntrypointParser<BackgroundEntrypointOptions> {
-        return new BackgroundParser();
+        return new BackgroundParser(this.config);
     }
 
     protected getPlugin(): EntrypointOptionsFinder<BackgroundEntrypointOptions> {

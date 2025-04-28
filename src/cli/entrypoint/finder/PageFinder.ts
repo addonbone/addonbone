@@ -46,7 +46,7 @@ export default class extends AbstractPluginFinder<PageEntrypointOptions> {
     }
 
     protected getParser(): EntrypointParser<PageEntrypointOptions> {
-        return new PageParser();
+        return new PageParser(this.config);
     }
 
     protected getPlugin(): EntrypointOptionsFinder<PageEntrypointOptions> {

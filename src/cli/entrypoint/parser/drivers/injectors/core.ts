@@ -2,11 +2,11 @@ import {Command, Mode, PackageName} from "@typing/app";
 import {Browser} from "@typing/browser";
 import {ContentScriptAppend} from "@typing/content";
 
-import {Resolver} from "../types";
+import {Injector} from "../types";
 
 
-export default (): Resolver[] => {
-    const resolvers: Resolver[] = [];
+export default (): Injector[] => {
+    const resolvers: Injector[] = [];
 
     Object.entries(Browser).forEach(([key, value]) => {
         resolvers.push({

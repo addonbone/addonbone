@@ -1,5 +1,7 @@
 import {Browser} from "adnbn";
 
+import {APP_NAME} from "./config-for-test";
+
 console.log('test background');
 
 export const persistent = true;

@@ -25,7 +25,7 @@ export default class extends AbstractPluginFinder<CommandEntrypointOptions> {
     }
 
     protected getParser(): EntrypointParser<CommandEntrypointOptions> {
-        return new CommandParser();
+        return new CommandParser(this.config);
     }
 
     protected getPlugin(): EntrypointOptionsFinder<CommandEntrypointOptions> {

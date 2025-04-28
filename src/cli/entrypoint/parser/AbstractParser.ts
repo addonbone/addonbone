@@ -1,11 +1,15 @@
 import {z} from "zod";
+import path from "path";
 
-import {OptionFile} from "./drivers";
+import {ImportResolver, OptionFile, TsResolver} from "./drivers";
 
 import {Browser} from "@typing/browser";
+import {ReadonlyConfig} from "@typing/config";
 import {EntrypointFile, EntrypointOptions, EntrypointParser} from "@typing/entrypoint";
 
 export default abstract class AbstractParser<O extends EntrypointOptions> implements EntrypointParser<O> {
+    protected readonly ts: TsResolver;
+
     protected readonly CommonPropertiesSchema = z.object({
         includeApp: z.array(z.string()).optional(),
         excludeApp: z.array(z.string()).optional(),
@@ -17,11 +21,19 @@ export default abstract class AbstractParser<O extends EntrypointOptions> implem
 
     protected abstract definition(): string | string[];
 
+    constructor(protected readonly config: ReadonlyConfig) {
+        this.ts = TsResolver.make(path.resolve(this.config.inputDir, 'tsconfig.json'));
+    }
+
     public options(file: EntrypointFile): O {
         const schema = this.schema();
 
-        const options = OptionFile.make(file.file)
-            .setProperties(Object.keys(schema.shape))
+
+        const instance = OptionFile.make(file.file);
+
+        instance.importResolver = new ImportResolver(this.ts).setBaseDir(path.dirname(file.file));
+
+        const options = instance.setProperties(Object.keys(schema.shape))
             .setDefinition(this.definition())
             .getOptions();
 

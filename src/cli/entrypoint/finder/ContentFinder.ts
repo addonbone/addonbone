@@ -41,7 +41,7 @@ export default class extends AbstractPluginFinder<ContentScriptEntrypointOptions
     }
 
     protected getParser(): EntrypointParser<ContentScriptEntrypointOptions> {
-        return new ContentParser();
+        return new ContentParser(this.config);
     }
 
     protected async getContent(): Promise<ContentItems> {

@@ -1,9 +1,10 @@
 import ts from 'typescript';
 import fs from 'fs';
+import path from 'path';
 
-import resolveImport from "./helpers/resolveImport";
+import {ImportResolver} from "./resolvers";
 
-import resolvers from "./resolvers";
+import injectors from "./injectors";
 
 import {EnumMap, ImportMap, Variable, VariableMap} from "./types";
 
@@ -16,11 +17,14 @@ export default class EntryFile {
 
     private enums?: EnumMap;
 
+    public importResolver?: ImportResolver;
+
     static make<T extends EntryFile>(this: new (file: string) => T, file: string): T {
         return new this(file);
     }
 
     constructor(protected readonly file: string) {
+
     }
 
     public getSourceFile(): ts.SourceFile {
@@ -51,7 +55,7 @@ export default class EntryFile {
 
                 if (node.importClause && node.importClause.namedBindings && ts.isNamedImports(node.importClause.namedBindings)) {
                     node.importClause.namedBindings.elements.forEach(el => {
-                        this.imports?.set(el.name.text, resolveImport(importPath));
+                        this.imports?.set(el.name.text, this.getInputResolver().get(importPath));
                     });
                 }
             }
@@ -158,7 +162,7 @@ export default class EntryFile {
     }
 
     protected resolveValue(from: string, target: string, name: string): any {
-        return resolvers([])(from, target, name);
+        return injectors([])(from, target, name);
     }
 
     protected findPropertyAccessValue(property: ts.Node): any {
@@ -246,5 +250,9 @@ export default class EntryFile {
             default:
                 return undefined;
         }
+    }
+
+    protected getInputResolver(): ImportResolver {
+        return this.importResolver ??= new ImportResolver().setBaseDir(path.dirname(this.file));
     }
 }

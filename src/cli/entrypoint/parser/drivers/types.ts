@@ -4,7 +4,7 @@ export interface Variable {
     exported: boolean;
 }
 
-export interface Resolver<T = any> {
+export interface Injector<T = any> {
     from: string;
     target: string;
     name: string;

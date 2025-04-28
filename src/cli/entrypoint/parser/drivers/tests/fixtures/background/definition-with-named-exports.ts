@@ -6,6 +6,8 @@ export const persistent = true;
 
 export const excludeBrowser = [Browser.Edge];
 
+export const someNonExportedValue = 'some value';
+
 export default defineBackground({
     includeBrowser: [Browser.Firefox],
     main: async () => {

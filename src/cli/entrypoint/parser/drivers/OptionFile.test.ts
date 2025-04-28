@@ -1,9 +1,11 @@
 import path from "path";
 
-import OptionFile from "../OptionFile";
+import OptionFile from "./OptionFile";
+
+const fixtures = path.resolve(__dirname, 'tests', 'fixtures');
 
 test('background with definition function', () => {
-    const filename = path.resolve(__dirname, 'fixtures', 'backgroundWithDefinitionFunction.ts');
+    const filename = path.join(fixtures, 'background', 'definition-only.ts');
 
     const options = OptionFile.make(filename)
         .setProperties(['persistent', 'includeBrowser'])
@@ -16,9 +18,8 @@ test('background with definition function', () => {
     });
 });
 
-
 test('background with default function and export properties', () => {
-    const filename = path.resolve(__dirname, 'fixtures', 'backgroundWithDefaultFunction.ts');
+    const filename = path.join(fixtures, 'background', 'default-function.ts');
 
     const options = OptionFile.make(filename)
         .setProperties(['persistent', 'excludeBrowser'])
@@ -32,7 +33,7 @@ test('background with default function and export properties', () => {
 });
 
 test('background with combined definition and export properties', () => {
-    const filename = path.resolve(__dirname, 'fixtures', 'backgroundCombinedDefinition.ts');
+    const filename = path.join(fixtures, 'background', 'definition-with-named-exports.ts');
 
     const options = OptionFile.make(filename)
         .setProperties(['persistent', 'excludeBrowser', 'includeBrowser'])
@@ -47,14 +48,12 @@ test('background with combined definition and export properties', () => {
 });
 
 test('background with default object and export properties', () => {
-    const filename = path.resolve(__dirname, 'fixtures', 'backgroundWithDefaultObject.ts');
+    const filename = path.join(fixtures, 'background', 'default-object.ts');
 
     const options = OptionFile.make(filename)
         .setProperties(['persistent', 'excludeBrowser', 'includeBrowser'])
         .setDefinition('defineBackground')
         .getOptions();
-
-    console.log(options);
 
     expect(options).toEqual({
         persistent: true,
@@ -64,13 +63,12 @@ test('background with default object and export properties', () => {
 });
 
 test('background with default type name', () => {
-    const filename = path.resolve(__dirname, 'fixtures', 'backgroundWithDefaultTypeName.ts');
+    const filename = path.join(fixtures, 'background', 'default-object-assertion.ts');
 
     const options = OptionFile.make(filename)
         .setProperties(['persistent', 'excludeBrowser', 'includeBrowser'])
         .setDefinition('defineBackground')
         .getOptions();
-
 
     expect(options).toEqual({
         persistent: true,
@@ -80,7 +78,7 @@ test('background with default type name', () => {
 });
 
 test('background with default satisfies', () => {
-    const filename = path.resolve(__dirname, 'fixtures', 'backgroundWithDefaultSatisfies.ts');
+    const filename = path.join(fixtures, 'background', 'default-object-satisfies.ts');
 
     const options = OptionFile.make(filename)
         .setProperties(['persistent', 'excludeBrowser', 'includeBrowser'])

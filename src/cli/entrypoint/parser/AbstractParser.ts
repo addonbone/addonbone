@@ -28,7 +28,6 @@ export default abstract class AbstractParser<O extends EntrypointOptions> implem
     public options(file: EntrypointFile): O {
         const schema = this.schema();
 
-
         const instance = OptionFile.make(file.file);
 
         instance.importResolver = new ImportResolver(this.ts).setBaseDir(path.dirname(file.file));

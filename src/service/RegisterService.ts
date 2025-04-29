@@ -4,9 +4,9 @@ import ProxyService from "./ProxyService";
 
 import {isBackground} from "@browser/runtime";
 
-import type {DefaultService} from "@typing/service";
+import type {ServiceType} from "@typing/service";
 
-export default class RegisterService<T extends DefaultService, TArgs extends any[] = []> extends ProxyService<T, T> {
+export default class RegisterService<T extends ServiceType, TArgs extends any[] = []> extends ProxyService<T, T> {
     constructor(name: string, protected readonly init: (...args: TArgs) => T) {
         super(name)
     }

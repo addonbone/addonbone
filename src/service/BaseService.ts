@@ -15,4 +15,8 @@ export default class BaseService<T> {
 
         return this.manager.get(this.name);
     }
+
+    public destroy(): void {
+        this.manager.remove(this.name);
+    }
 }

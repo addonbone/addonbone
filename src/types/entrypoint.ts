@@ -7,6 +7,7 @@ export enum EntrypointType {
     Command = 'command',
     ContentScript = 'content',
     Page = 'page',
+    Service = 'service',
     Options = 'options',
     Popup = 'popup',
     Sidebar = 'sidebar',

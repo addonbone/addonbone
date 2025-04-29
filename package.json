@@ -94,7 +94,7 @@
   },
   "scripts": {
     "adnbn": "tsx ./src/cli/index.ts",
-    "build": "tsup",
+    "build": "node --max-old-space-size=5046 ./node_modules/.bin/tsup",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:storage": "jest --testPathPattern=Storage",

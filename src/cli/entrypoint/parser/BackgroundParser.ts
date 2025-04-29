@@ -4,8 +4,8 @@ import AbstractParser from "./AbstractParser";
 
 import {BackgroundEntrypointOptions} from "@typing/background";
 
-export default class extends AbstractParser<BackgroundEntrypointOptions> {
-    protected definition(): string {
+export default class<T extends BackgroundEntrypointOptions = BackgroundEntrypointOptions> extends AbstractParser<T> {
+    protected definition(): string | string[] {
         return 'defineBackground';
     }
 

@@ -7,5 +7,6 @@ export {default as EntrypointFinder} from "./EntrypointFinder";
 export {default as LocaleFinder} from "./LocaleFinder";
 export {default as OptionsFinder} from "./OptionsFinder";
 export {default as PageFinder} from "./PageFinder";
+export {default as ServiceFinder} from "./ServiceFinder";
 export {default as PluginFinder} from "./PluginFinder";
 export {default as ViewFinder} from "./ViewFinder";

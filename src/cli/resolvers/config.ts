@@ -112,6 +112,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         mergeStyles = true,
         mergeLocales = true,
         mergePages = true,
+        mergeServices = true,
     } = config;
 
     let resolvedConfig: Config = {
@@ -142,7 +143,8 @@ export default async (config: OptionalConfig): Promise<Config> => {
         concatContentScripts,
         mergeStyles,
         mergeLocales,
-        mergePages
+        mergePages,
+        mergeServices,
     };
 
     let vars = loadDotenv(resolvedConfig);

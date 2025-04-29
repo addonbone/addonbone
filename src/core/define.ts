@@ -6,6 +6,7 @@ import {ContentScriptAppendDefinition, ContentScriptDefinition} from "@typing/co
 import {PluginDefinition} from "@typing/plugin";
 import {CommandDefinition, CommandExecuteActionName, ExecuteActionCommandDefinition} from "@typing/command";
 import {PageDefinition} from "@typing/page";
+import {ServiceDefinition, ServiceType} from "@typing/service";
 
 export const defineConfig = (config: ConfigDefinition): ConfigDefinition => {
     return config;
@@ -43,3 +44,7 @@ export const defineContentScriptAppend = (options: ContentScriptAppendDefinition
 export const definePage = (options: PageDefinition): PageDefinition => {
     return options;
 };
+
+export const defineService = <T extends ServiceType>(options: ServiceDefinition<T>): ServiceDefinition<T> => {
+    return options;
+}

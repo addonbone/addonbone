@@ -3,9 +3,9 @@ import {Message} from "@message/providers";
 
 import BaseService from "./BaseService";
 
-import type {DefaultService, ProxyService as TProxyService} from "@typing/service";
+import type {ServiceType, ProxyService as TProxyService} from "@typing/service";
 
-export default class ProxyService<T extends DefaultService, TGet = TProxyService<T>> extends BaseService<TGet>{
+export default class ProxyService<T extends ServiceType, TGet = TProxyService<T>> extends BaseService<TGet>{
     protected readonly message = new Message();
     protected readonly messageKey: string;
 

@@ -222,6 +222,12 @@ export interface Config {
      * When `true`, page files from both directories will be combined.
      */
     mergePages: boolean;
+
+    /**
+     * Flag indicating whether to merge service files from App and Shared directories.
+     * When `true`, view files from both directories will be combined.
+     */
+    mergeServices: boolean;
 }
 
 

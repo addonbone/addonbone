@@ -21,7 +21,7 @@ export default class RegisterService<T extends DefaultService, TArgs extends any
             try {
                 const property = path == null ? service : get(service, path);
 
-                if (!property) {
+                if (property === undefined) {
                     throw new Error(`Property not found at path "${path}" in service "${this.name}"`);
                 }
 
@@ -32,7 +32,7 @@ export default class RegisterService<T extends DefaultService, TArgs extends any
                 return property
 
             } catch (error) {
-                console.error('ProxyService error:', error);
+                console.error('RegisterService', error);
                 throw error;
             }
         });

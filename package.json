@@ -57,6 +57,11 @@
       "import": "./dist/storage/*.js",
       "require": "./dist/storage/*.cjs"
     },
+    "./service": {
+      "types": "./dist/service/index.d.ts",
+      "import": "./dist/service/index.js",
+      "require": "./dist/service/index.cjs"
+    },
     "./entry/*": {
       "types": "./dist/entry/*/index.d.ts",
       "import": "./dist/entry/*/index.js",
@@ -93,14 +98,15 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:storage": "jest --testPathPattern=Storage",
-    "test:message": "jest --testPathPattern=Message"
+    "test:message": "jest --testPathPattern=Message",
+    "test:service": "jest --testPathPattern=Service"
   },
   "devDependencies": {
     "@swc/core": "^1.11.7",
-    "@types/js-yaml": "^4.0.9",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@types/jest": "^29.5.14",
+    "@types/js-yaml": "^4.0.9",
     "@types/lodash": "^4.17.14",
     "@types/node": "^22.13.1",
     "@types/pluralize": "^0.0.33",
@@ -129,6 +135,7 @@
     "css-loader": "^7.1.2",
     "debounce": "^2.2.0",
     "file-loader": "^6.2.0",
+    "get-value": "^4.0.1",
     "html-rspack-tags-plugin": "^0.0.3",
     "js-yaml": "^4.1.0",
     "json-stringify-deterministic": "^1.0.12",

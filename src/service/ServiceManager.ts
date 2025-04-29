@@ -8,10 +8,8 @@ export default class ServiceManager {
         if (ServiceManager.instance === null) {
             ServiceManager.instance = new ServiceManager();
         }
-        return ServiceManager.instance;
-    }
 
-    constructor() {
+        return ServiceManager.instance;
     }
 
     public add(name: string, instance: any) {

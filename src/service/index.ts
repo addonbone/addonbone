@@ -1,6 +1,7 @@
-import {DefaultService} from "@typing/service";
 import ProxyService from "./ProxyService";
 import BaseService from "./BaseService";
+
+import {DefaultService} from "@typing/service";
 
 export * from "@typing/service"
 export {default as ProxyService} from "./ProxyService";

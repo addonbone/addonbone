@@ -1,7 +1,10 @@
 import get from 'get-value';
-import {isBackground} from "@browser/runtime";
-import type {DefaultService} from "@typing/service";
+
 import ProxyService from "./ProxyService";
+
+import {isBackground} from "@browser/runtime";
+
+import type {DefaultService} from "@typing/service";
 
 export default class RegisterService<T extends DefaultService, TArgs extends any[] = []> extends ProxyService<T, T> {
     constructor(name: string, protected readonly init: (...args: TArgs) => T) {
@@ -32,7 +35,8 @@ export default class RegisterService<T extends DefaultService, TArgs extends any
                 return property
 
             } catch (error) {
-                console.error('RegisterService', error);
+                console.error('RegisterService.register()', error);
+
                 throw error;
             }
         });

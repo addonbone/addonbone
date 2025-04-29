@@ -20,6 +20,8 @@ const common: Options = {
             '@cli': resolve(__dirname, './src/cli'),
             '@entry': resolve(__dirname, './src/entry'),
             '@locale': resolve(__dirname, './src/locale'),
+            '@message': resolve(__dirname, './src/message'),
+            '@service': resolve(__dirname, './src/service'),
             '@core': resolve(__dirname, './src/core'),
             '@typing': resolve(__dirname, './src/types'),
         }

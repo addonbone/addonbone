@@ -34,6 +34,12 @@
       "@locale/*": [
         "locale/*"
       ],
+      "@message/*": [
+        "message/*"
+      ],
+      "@service/*": [
+        "service/*"
+      ],
       "@core/*": [
         "core/*"
       ],

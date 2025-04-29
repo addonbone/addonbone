@@ -1,8 +1,9 @@
 import {isBackground} from "@browser/runtime";
-import type {DefaultService, ProxyService as TProxyService} from "@typing/service";
+import {Message} from "@message/providers";
 
-import {Message} from "../message";
 import BaseService from "./BaseService";
+
+import type {DefaultService, ProxyService as TProxyService} from "@typing/service";
 
 export default class ProxyService<T extends DefaultService, TGet = TProxyService<T>> extends BaseService<TGet>{
     protected readonly message = new Message();

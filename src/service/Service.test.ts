@@ -1,10 +1,11 @@
 import {isBackground} from '@browser/runtime';
 
-import MessageManager from "../message/MessageManager";
+import MessageManager from "@message/MessageManager";
 
 import ProxyService from "./ProxyService";
 import RegisterService from "./RegisterService";
 import ServiceManager from "./ServiceManager";
+
 import {getRegisteredService, getService} from "./index";
 
 jest.mock('@browser/runtime', () => {

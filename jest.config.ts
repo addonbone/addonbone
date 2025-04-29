@@ -12,6 +12,9 @@ const config: Config = {
         "^@browser/(.*)$": "<rootDir>/src/browser/$1",
         "^@cli/(.*)$": "<rootDir>/src/cli/$1",
         "^@entry/(.*)$": "<rootDir>/src/entry/$1",
+        "^@locale/(.*)$": "<rootDir>/src/locale/$1",
+        "^@message/(.*)$": "<rootDir>/src/message/$1",
+        "^@service/(.*)$": "<rootDir>/src/service/$1",
         "^@core/(.*)$": "<rootDir>/src/core/$1",
         "^@typing/(.*)$": "<rootDir>/src/types/$1"
     },

@@ -32,7 +32,7 @@ const MatchService = {
     one: 1,
     obj: {
         concat: (a: string, b: string): string => a + ' ' + b,
-        ten: 10,
+        zero: 0,
     },
 }
 
@@ -114,12 +114,12 @@ describe('ProxyService', () => {
             expect.any(Function)
         );
 
-        expect(await service.obj.ten()).toBe(10)
+        expect(await service.obj.zero()).toBe(0)
         expect(chrome.runtime.sendMessage).toHaveBeenCalledWith(
             expect.objectContaining({
                 type: `service.${serviceName}`,
                 data: {
-                    path: "obj.ten",
+                    path: "obj.zero",
                     args: []
                 }
             }),

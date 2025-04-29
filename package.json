@@ -98,7 +98,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:storage": "jest --testPathPattern=Storage",
-    "test:message": "jest --testPathPattern=Message"
+    "test:message": "jest --testPathPattern=Message",
+    "test:service": "jest --testPathPattern=Service"
   },
   "devDependencies": {
     "@swc/core": "^1.11.7",

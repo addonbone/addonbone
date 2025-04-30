@@ -1,7 +1,7 @@
 import _ from "lodash";
 import {DefinePlugin} from "@rspack/core";
 
-import {definePlugin} from "@core/define";
+import {definePlugin} from "@main/plugin";
 import {GenerateJsonPlugin} from "@cli/bundler";
 import {extractLocaleKey, modifyLocaleMessageKey} from "@locale/utils";
 

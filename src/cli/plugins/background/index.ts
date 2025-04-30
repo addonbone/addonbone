@@ -2,7 +2,7 @@ import _ from "lodash";
 
 import {Configuration as RspackConfig} from "@rspack/core";
 
-import {definePlugin} from "@core/define";
+import {definePlugin} from "@main/plugin";
 import {virtualBackgroundModule, virtualCommandModule, virtualServiceModule} from "@cli/virtual";
 
 import {EntrypointPlugin} from "@cli/bundler";

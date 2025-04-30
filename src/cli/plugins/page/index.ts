@@ -3,7 +3,7 @@ import HtmlRspackTagsPlugin from "html-rspack-tags-plugin";
 
 import Page from "./Page";
 
-import {definePlugin} from "@core/define";
+import {definePlugin} from "@main/plugin";
 import {virtualViewModule} from "@cli/virtual";
 import {EntrypointPlugin} from "@cli/bundler";
 

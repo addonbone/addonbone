@@ -1,8 +1,8 @@
 import path from "path";
 
-import {definePlugin} from "@core/define";
+import {definePlugin} from "@main/plugin";
 
-import ReplacePlugin from "@cli/bundler/plugins/ReplacePlugin";
+import {ReplacePlugin} from "@cli/bundler";
 
 export default definePlugin(() => {
     return {

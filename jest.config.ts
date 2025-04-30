@@ -15,7 +15,7 @@ const config: Config = {
         "^@locale/(.*)$": "<rootDir>/src/locale/$1",
         "^@message/(.*)$": "<rootDir>/src/message/$1",
         "^@service/(.*)$": "<rootDir>/src/service/$1",
-        "^@core/(.*)$": "<rootDir>/src/core/$1",
+        "^@main/(.*)$": "<rootDir>/src/main/$1",
         "^@typing/(.*)$": "<rootDir>/src/types/$1"
     },
     transform: {

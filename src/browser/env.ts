@@ -1,5 +1,5 @@
 import {Browser} from "@typing/browser";
-import {getEnv} from "@core/env";
+import {getEnv} from "../main/env";
 
 export const browser = (): typeof chrome => {
     return chrome;

@@ -1,4 +1,4 @@
-import {definePlugin} from "@core/define";
+import {definePlugin} from "@main/plugin";
 
 import TypescriptConfig from "./TypescriptConfig";
 import VendorDeclaration from "./VendorDeclaration";

@@ -1,4 +1,4 @@
-import {definePlugin} from "@core/define";
+import {definePlugin} from "@main/plugin";
 
 export default definePlugin(() => {
     return {

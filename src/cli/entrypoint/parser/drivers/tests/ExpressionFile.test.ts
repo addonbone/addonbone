@@ -86,7 +86,7 @@ describe('export default function', () => {
         expect(type).toBeUndefined();
     });
 });
- 
+
 describe('assertions and satisfies', () => {
     test('object literal with as const assertion', () => {
         const filename = path.join(fixtures, 'expression', 'default-object-assertion.ts');
@@ -121,49 +121,49 @@ describe('definition wrapper edge cases', () => {
         expect(type).toBeUndefined();
     });
 });
-  
+
 describe('alias wrappers', () => {
     test('alias import for definition function', () => {
-      const filename = path.join(fixtures, 'expression', 'default-alias-definition.ts');
-      const type = ExpressionFile.make(filename)
-        .setDefinition('svc')
-        .getType();
-      expect(type).toBe('{ persistent: boolean; name: string; init(): any; }');
+        const filename = path.join(fixtures, 'expression', 'default-alias-definition.ts');
+        const type = ExpressionFile.make(filename)
+            .setDefinition('svc')
+            .getType();
+        expect(type).toBe('{ persistent: boolean; name: string; init(): any; }');
     });
 });
-  
+
 describe('default object property extractor', () => {
     const filename = path.join(fixtures, 'expression', 'default-literal-props.ts');
 
     test('extract string property', () => {
-      const type = ExpressionFile.make(filename)
-        .setProperty('str')
-        .getType();
-      expect(type).toBe('string');
+        const type = ExpressionFile.make(filename)
+            .setProperty('str')
+            .getType();
+        expect(type).toBe('string');
     });
 
     test('extract number property', () => {
-      const type = ExpressionFile.make(filename)
-        .setProperty('num')
-        .getType();
-      expect(type).toBe('number');
+        const type = ExpressionFile.make(filename)
+            .setProperty('num')
+            .getType();
+        expect(type).toBe('number');
     });
 
     test('extract method property', () => {
-      const type = ExpressionFile.make(filename)
-        .setProperty('greet')
-        .getType();
-      expect(type).toBe('(s: string) => string');
+        const type = ExpressionFile.make(filename)
+            .setProperty('greet')
+            .getType();
+        expect(type).toBe('(s: string) => string');
     });
 
     test('nonexistent property returns undefined', () => {
-      const type = ExpressionFile.make(filename)
-        .setProperty('other')
-        .getType();
-      expect(type).toBeUndefined();
+        const type = ExpressionFile.make(filename)
+            .setProperty('other')
+            .getType();
+        expect(type).toBeUndefined();
     });
 });
-  
+
 describe('object literal init extraction', () => {
     test('init returning class instance inside object literal', () => {
         const filename = path.join(fixtures, 'expression', 'export-object-init-instance.ts');

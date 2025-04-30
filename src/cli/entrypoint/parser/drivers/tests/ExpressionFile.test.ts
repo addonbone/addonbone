@@ -2,7 +2,7 @@ import path from "path";
 
 import ExpressionFile from "../ExpressionFile";
 
-const fixtures = path.resolve(__dirname, 'tests', 'fixtures');
+const fixtures = path.resolve(__dirname, 'fixtures');
 
 describe('default function', () => {
     test('export default function and return instance class', () => {
@@ -11,7 +11,7 @@ describe('default function', () => {
         const type = ExpressionFile.make(filename)
             .getType();
 
-        expect(type).toBe('{ getBar(): string; setBar(bar: string): void; }');
+        expect(type).toBe('{ bar: string; getBar(): string; setBar(bar: string): void; }');
     });
 
     test('export default function and return extended instance class', () => {
@@ -51,5 +51,38 @@ describe('default function', () => {
         const type = ExpressionFile.make(filename).getType();
 
         expect(type).toBe(' { getName(): string; getAge(): any; getAddress(): any; getPhone(): any; getEmail(): any; }');
+    });
+});
+
+describe('named function', () => {
+    test('export function as const', () => {
+        const filename = path.join(fixtures, 'expression', 'export-instance-as-const.ts');
+
+        const type = ExpressionFile.make(filename).setProperty('init').getType();
+
+        expect(type).toBe('{ bar: string; getBar(): string; setBar(bar: string): void; }');
+    });
+});
+
+describe('export default function', () => {
+    test('export default definition function instance', () => {
+        const filename = path.join(fixtures, 'expression', 'definition-function-instance.ts');
+
+        const type = ExpressionFile.make(filename)
+            .setDefinition('defineService')
+            .getType();
+
+        expect(type).toBe('{ persistent: boolean; name: string; init(): any; }');
+    });
+
+    test('ignore non-package wrapper for definition', () => {
+        const filename = path.join(fixtures, 'expression', 'export-nonpkg-wrapper.ts');
+
+        const type = ExpressionFile.make(filename)
+            .setProperty('init')
+            .setDefinition('fakeWrapper')
+            .getType();
+
+        expect(type).toBeUndefined();
     });
 });

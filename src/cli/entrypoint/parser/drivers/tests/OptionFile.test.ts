@@ -2,7 +2,7 @@ import path from "path";
 
 import OptionFile from "../OptionFile";
 
-const fixtures = path.resolve(__dirname, 'tests', 'fixtures');
+const fixtures = path.resolve(__dirname, 'fixtures');
 
 describe('background', () => {
     test('background with definition function', () => {

@@ -25,6 +25,10 @@ export default definePlugin(() => {
                                     }
                                 },
                                 {
+                                    resourceQuery: /base64/,
+                                    type: "asset/inline"
+                                },
+                                {
                                     type: "asset/resource"
                                 }
                             ]

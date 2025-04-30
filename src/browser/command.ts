@@ -1,14 +1,14 @@
-import {browser} from "./env";
+import {browser} from "./browser";
 import {throwRuntimeError} from "@browser/runtime";
 
 type Command = chrome.commands.Command;
 
-const commands = browser().commands;
+const commands = () => browser().commands;
 
 export const isSupportCommands = (): boolean => !!commands;
 
 export const getAllCommands = () => new Promise<Command[]>((resolve, reject) => {
-    commands.getAll((commands) => {
+    commands().getAll((commands) => {
         try {
             throwRuntimeError();
 
@@ -19,8 +19,8 @@ export const getAllCommands = () => new Promise<Command[]>((resolve, reject) => 
     });
 });
 
-export const onCommand = (callback: Parameters<typeof commands.onCommand.addListener>[0]): () => void => {
-    commands.onCommand.addListener(callback);
+export const onCommand = (callback: Parameters<typeof chrome.commands.onCommand.addListener>[0]): () => void => {
+    commands().onCommand.addListener(callback);
 
-    return () => commands.onCommand.removeListener(callback);
+    return () => commands().onCommand.removeListener(callback);
 }

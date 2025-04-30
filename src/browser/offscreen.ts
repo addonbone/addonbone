@@ -1,12 +1,12 @@
-import {browser} from "./env";
+import {browser} from "./browser";
 import {throwRuntimeError} from "./runtime";
 
 type CreateParameters = chrome.offscreen.CreateParameters;
 
-const offscreen = browser().offscreen;
+const offscreen = () => browser().offscreen;
 
 export const hasOffscreenDocument = () => new Promise<boolean>((resolve, reject) => {
-    offscreen.hasDocument((hasDocument) => {
+    offscreen().hasDocument((hasDocument) => {
         try {
             throwRuntimeError();
 
@@ -18,7 +18,7 @@ export const hasOffscreenDocument = () => new Promise<boolean>((resolve, reject)
 });
 
 export const createOffscreenDocument = (createParameters: CreateParameters): Promise<void> => new Promise<void>((resolve, reject) => {
-    offscreen.createDocument(createParameters, () => {
+    offscreen().createDocument(createParameters, () => {
         try {
             throwRuntimeError();
 
@@ -30,7 +30,7 @@ export const createOffscreenDocument = (createParameters: CreateParameters): Pro
 });
 
 export const removeOffscreenDocument = (): Promise<void> => new Promise<void>((resolve, reject) => {
-    offscreen.closeDocument(() => {
+    offscreen().closeDocument(() => {
         try {
             throwRuntimeError();
 

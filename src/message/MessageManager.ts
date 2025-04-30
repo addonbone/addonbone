@@ -1,4 +1,4 @@
-import {browser} from '@browser/env'
+import {browser} from '@browser/browser'
 import {MessageBody, MessageHandler, MessageMap, MessageSender, MessageType} from '@typing/message';
 
 const runtime = browser().runtime;

@@ -1,4 +1,4 @@
-import {browser} from "./env";
+import {browser} from "./browser";
 import {ManifestVersion} from "@typing/manifest";
 
 type Manifest = chrome.runtime.Manifest;
@@ -6,22 +6,22 @@ type PlatformInfo = chrome.runtime.PlatformInfo;
 type ContextFilter = chrome.runtime.ContextFilter;
 type ExtensionContext = chrome.runtime.ExtensionContext;
 
-const runtime = browser().runtime;
+const runtime = () => browser().runtime;
 
 const backgroundPaths = [
     '/_generated_background_page.view',
 ];
 
-export const getId = (): string => runtime.id;
+export const getId = (): string => runtime().id;
 
-export const getUrl = (path: string) => runtime.getURL(path);
+export const getUrl = (path: string) => runtime().getURL(path);
 
-export const getManifest = (): Manifest => runtime.getManifest();
+export const getManifest = (): Manifest => runtime().getManifest();
 
 export const getManifestVersion = (): ManifestVersion => getManifest().manifest_version;
 
 export const getRuntimeContexts = (filter: ContextFilter) => new Promise<ExtensionContext[]>((resolve, reject) => {
-    runtime.getContexts(filter, contexts => {
+    runtime().getContexts(filter, contexts => {
         try {
             throwRuntimeError();
 
@@ -33,7 +33,7 @@ export const getRuntimeContexts = (filter: ContextFilter) => new Promise<Extensi
 });
 
 export const getPlatformInfo = (): Promise<PlatformInfo> => new Promise<PlatformInfo>((resolve, reject) => {
-    runtime.getPlatformInfo((platformInfo) => {
+    runtime().getPlatformInfo((platformInfo) => {
         try {
             throwRuntimeError();
 
@@ -65,15 +65,15 @@ export const isBackground = (): boolean => {
 }
 
 export const throwRuntimeError = (): void => {
-    const error = runtime.lastError;
+    const error = runtime().lastError;
 
     if (error) {
         throw new Error(error.message);
     }
 }
 
-export const onRuntimeInstalled = (callback: Parameters<typeof runtime.onInstalled.addListener>[0]): () => void => {
-    runtime.onInstalled.addListener(callback);
+export const onRuntimeInstalled = (callback: Parameters<typeof chrome.runtime.onInstalled.addListener>[0]): () => void => {
+    runtime().onInstalled.addListener(callback);
 
-    return () => runtime.onInstalled.removeListener(callback);
+    return () => runtime().onInstalled.removeListener(callback);
 }

@@ -1,12 +1,11 @@
-import {isBrowser} from "@browser/env";
 import {getI18nMessage, getI18nUILanguage} from "@browser/i18n";
 
 import AbstractLocale from "./AbstractLocale";
 
 import {convertLocaleKey} from "@locale/utils";
+import {isBrowser} from "@main/env";
 
 import {Language, LanguageCodes, LocaleCustomKeyForLanguage, LocaleKeys, LocaleStructure} from "@typing/locale";
-
 import {Browser} from "@typing/browser";
 
 export type LocaleNativeStructure = LocaleStructure;

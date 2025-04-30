@@ -30,6 +30,10 @@ export const getBrowser = (): Browser => {
     return browser;
 }
 
+export const isBrowser = (browser: Browser): browser is Browser => {
+    return getBrowser() === browser;
+}
+
 export const getManifestVersion = (): ManifestVersion => {
     const manifestVersion = getEnv('MANIFEST_VERSION', '3');
 

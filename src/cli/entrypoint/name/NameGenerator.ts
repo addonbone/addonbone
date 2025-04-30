@@ -30,7 +30,7 @@ export default class {
             entryName = `${entryName}.${this.entrypoint}`;
         }
 
-        while (this.names.has(entryName)) {
+        while (this.has(entryName)) {
             entryName = name === this.entrypoint ? `${counter}.${name}` : `${name}${counter}.${this.entrypoint}`;
 
             counter++;
@@ -69,5 +69,9 @@ export default class {
 
     public likely(name: string): boolean {
         return name === this.entrypoint || name.endsWith(`.${this.entrypoint}`);
+    }
+
+    public has(name: string): boolean {
+        return this.names.has(name);
     }
 }

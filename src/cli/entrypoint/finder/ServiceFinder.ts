@@ -8,6 +8,12 @@ import {ReadonlyConfig} from "@typing/config";
 import {ServiceEntrypointOptions, ServiceOptions} from "@typing/service";
 import {EntrypointFile, EntrypointOptionsFinder, EntrypointParser, EntrypointType} from "@typing/entrypoint";
 
+export interface ServiceItem {
+    options: ServiceOptions;
+    contract: string;
+}
+
+export type ServiceItems = Map<EntrypointFile, ServiceItem>;
 
 export default class extends AbstractPluginFinder<ServiceEntrypointOptions> {
     protected _services?: Map<EntrypointFile, ServiceOptions>;
@@ -36,10 +42,26 @@ export default class extends AbstractPluginFinder<ServiceEntrypointOptions> {
         const services = new Map<EntrypointFile, ServiceOptions>();
 
         for (const [file, option] of await this.plugin().options()) {
-            const {name, ...definition} = option;
+            const {name: service, ...definition} = option;
+
+            let name: string;
+
+            if (file.external) {
+                name = file.import;
+
+                if (this.names.has(name)) {
+                    throw new Error(`Service name "${name}" is already in use.`);
+                }
+
+                name = this.names.name(name);
+            } else if (service) {
+                name = this.names.name(service);
+            } else {
+                name = this.names.file(file);
+            }
 
             services.set(file, {
-                name: name ? this.names.name(name) : this.names.file(file),
+                name,
                 ...definition,
             });
         }

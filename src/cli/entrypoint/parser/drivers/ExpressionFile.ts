@@ -160,13 +160,15 @@ export default class ExpressionFile extends SourceFile {
             retExpr = fn.body;
         }
         if (!retExpr) return undefined;
+        // unwrap assertions, parentheses, wrapper calls
+        const expr = this.unwrapExpression(retExpr);
         // object literal return
-        if (ts.isObjectLiteralExpression(retExpr)) {
-            return this.parseObject(retExpr);
+        if (ts.isObjectLiteralExpression(expr)) {
+            return this.parseObject(expr);
         }
         // class instance return: new ClassName(...) or inline class expression
-        if (ts.isNewExpression(retExpr)) {
-            const ctor = retExpr.expression;
+        if (ts.isNewExpression(expr)) {
+            const ctor = expr.expression;
             // external named class
             if (ts.isIdentifier(ctor)) {
                 return this.parseFileClass(ctor.text);

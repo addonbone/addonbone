@@ -94,7 +94,7 @@
   },
   "scripts": {
     "adnbn": "tsx ./src/cli/index.ts",
-    "build": "node --max-old-space-size=5046 ./node_modules/.bin/tsup",
+    "build": "cross-env NODE_OPTIONS=--max-old-space-size=5046 tsup",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:storage": "jest --testPathPattern=Storage",
@@ -111,6 +111,7 @@
     "@types/lodash": "^4.17.14",
     "@types/node": "^22.13.1",
     "@types/pluralize": "^0.0.33",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.4.7",
     "esbuild-plugin-raw": "^0.1.8",
     "fs-extra": "^11.3.0",

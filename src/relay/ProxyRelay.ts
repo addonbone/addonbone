@@ -1,11 +1,9 @@
 import {isAvailableScripting, scripting} from "@browser/scripting";
 import {DeepAsyncProxy} from "@typing/helpers";
-import BaseRelay from "./BaseRelay";
 
-export default class ProxyRelay<T extends object, ReturnGet = DeepAsyncProxy<T>> extends BaseRelay<T>  {
+export default class ProxyRelay<T extends object>  {
 
     constructor(protected readonly name: string) {
-        super(name);
     }
 
     private createProxy(tabId: number, frameId?: number, path?: string): DeepAsyncProxy<T> {
@@ -62,11 +60,11 @@ export default class ProxyRelay<T extends object, ReturnGet = DeepAsyncProxy<T>>
         return proxy as unknown as DeepAsyncProxy<T>;
     }
 
-    public getProxy(tabId: number, frameId?:number): ReturnGet {
+    public get(tabId: number, frameId?:number): DeepAsyncProxy<T> {
         if (!isAvailableScripting()) {
             throw new Error(`You are trying to get proxy relay ${this.name} from script content. You can get original relay instead`);
         }
 
-        return this.createProxy(tabId, frameId) as ReturnGet;
+        return this.createProxy(tabId, frameId) as DeepAsyncProxy<T>;
     }
 }

@@ -1,7 +1,7 @@
 import RelayManager from "./RelayManager";
-import ProxyRelay from "./ProxyRelay";
+import BaseRelay from "./BaseRelay";
 
-export default class RegisterRelay<T extends object, TArgs extends any[] = []> extends ProxyRelay<T> {
+export default class RegisterRelay<T extends object, TArgs extends any[] = []> extends BaseRelay<T> {
 
     constructor(name: string, protected readonly init: (...args: TArgs) => T) {
         super(name)

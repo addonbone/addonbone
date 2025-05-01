@@ -1,12 +1,12 @@
 import {isAvailableScripting} from "@browser/scripting";
 import RelayManager from "./RelayManager";
 
-export default class BaseRelay<ReturnGet> {
+export default class BaseRelay<T> {
 
     constructor(protected readonly name: string){
     }
 
-    public getOrigin(): ReturnGet {
+    public get(): T {
         if(isAvailableScripting()){
             throw new Error(`Relay "${this.name}" can be getting only from content script`);
         }

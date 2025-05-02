@@ -1,6 +1,7 @@
 import ProxyService from "@service/ProxyService";
 
-import {ServiceDefinition, ServiceInitGetter, ServiceMainHandler, ServiceType, ProxyService as ProxyServiceContract} from "@typing/service";
+import {ServiceDefinition, ServiceInitGetter, ServiceMainHandler, ServiceType} from "@typing/service";
+import {DeepAsyncProxy} from "@typing/helpers";
 
 export type {ServiceDefinition, ServiceMainHandler, ServiceInitGetter};
 
@@ -12,6 +13,6 @@ export const defineService = <T extends ServiceType>(options: ServiceDefinition<
     return options;
 }
 
-export const getService = <N extends Extract<keyof ServiceDictionary, string>>(name: N): ProxyServiceContract<ServiceDictionary[N]> => {
+export const getService = <N extends Extract<keyof ServiceDictionary, string>>(name: N): DeepAsyncProxy<ServiceDictionary[N]> => {
     return new ProxyService<ServiceDictionary[N]>(name).get();
 }

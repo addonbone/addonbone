@@ -2,16 +2,17 @@ import _ from "lodash";
 
 import {Configuration as RspackConfig} from "@rspack/core";
 
-import {definePlugin} from "@core/define";
+import {definePlugin} from "@main/plugin";
 import {virtualBackgroundModule, virtualCommandModule, virtualServiceModule} from "@cli/virtual";
 
 import {EntrypointPlugin} from "@cli/bundler";
 
 import Background from "./Background";
-import Command from "./Command";
-import Service from "./Service";
 import BackgroundEntry from "./BackgroundEntry";
 import BackgroundManifest from "./BackgroundManifest";
+import Command from "./Command";
+import Service from "./Service";
+import ServiceDeclaration from "./ServiceDeclaration";
 
 import {Command as AppCommand} from "@typing/app";
 
@@ -21,6 +22,7 @@ export default definePlugin(() => {
     let background: Background;
     let command: Command;
     let service: Service;
+    let serviceDeclaration: ServiceDeclaration;
 
     return {
         name: 'adnbn:background',
@@ -28,11 +30,14 @@ export default definePlugin(() => {
             background = new Background(config);
             command = new Command(config);
             service = new Service(config);
+            serviceDeclaration = new ServiceDeclaration(config);
         },
         background: () => background.files(),
         command: () => command.files(),
         service: () => service.files(),
         bundler: async ({config, rspack}) => {
+            serviceDeclaration.dictionary(await service.dictionary()).build();
+
             if (await background.empty() && await command.empty() && await service.empty()) {
                 if (config.debug) {
                     console.warn('Background, command or service entries not found');
@@ -40,10 +45,6 @@ export default definePlugin(() => {
 
                 return {};
             }
-
-            // Prepare the background, command and service entries
-            await command.commands();
-            await service.services();
 
             const backgroundPlugin = EntrypointPlugin.from(await background.entry().entries())
                 .virtual(file => virtualBackgroundModule(file));
@@ -61,6 +62,10 @@ export default definePlugin(() => {
 
             const servicePlugin = EntrypointPlugin.from(await service.entry().entries())
                 .virtual(file => {
+                    /**
+                     * Before creating the virtual module, it is necessary to run a command `await service.services()` that caches the services.
+                     * This command is executed during the type declaration generation stage for the service.
+                     */
                     const name = service.get(file)?.name;
 
                     if (!name) {
@@ -81,8 +86,7 @@ export default definePlugin(() => {
                 });
 
                 servicePlugin.watch(async () => {
-                    // Clear the service cache
-                    await service.clear().services();
+                    serviceDeclaration.dictionary(await service.clear().dictionary()).build();
 
                     return service.entry().entries();
                 });

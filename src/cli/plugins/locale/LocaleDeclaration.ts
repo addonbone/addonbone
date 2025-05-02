@@ -23,10 +23,10 @@ export default class extends FileBuilder {
             throw new Error("Locale structure is not set");
         }
 
-        return `import type {LocaleNativeStructure} from '${PackageName}/locale';
+        return `import '${PackageName}/locale';
     
 declare module '${PackageName}/locale' {
-type LocaleNativeStructure = ${JSON.stringify(structure, null, 2)};
+    interface LocaleNativeStructure ${JSON.stringify(structure, null, 2)}
 }`;
     }
 

@@ -128,15 +128,17 @@ export type LocaleFutures = {
     substitutions: readonly string[];
 };
 
-export type LocaleStructure = Record<string, LocaleFutures>;
+export interface LocaleStructure {
+    [key: string]: LocaleFutures;
+}
 
 export type LocaleNonPluralKeys<T extends LocaleStructure> = {
     [K in keyof T]: T[K]['plural'] extends false ? K : never;
-}[keyof T];
+}[Extract<keyof T, string>];
 
 export type LocalePluralKeys<T extends LocaleStructure> = {
     [K in keyof T]: T[K]['plural'] extends true ? K : never;
-}[keyof T];
+}[Extract<keyof T, string>];
 
 export type SubstitutionsFor<
     T extends LocaleStructure,

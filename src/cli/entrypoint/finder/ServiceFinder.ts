@@ -8,9 +8,15 @@ import {ReadonlyConfig} from "@typing/config";
 import {ServiceEntrypointOptions, ServiceOptions} from "@typing/service";
 import {EntrypointFile, EntrypointOptionsFinder, EntrypointParser, EntrypointType} from "@typing/entrypoint";
 
+export interface ServiceItem {
+    options: ServiceOptions;
+    contract: string | undefined;
+}
+
+export type ServiceItems = Map<EntrypointFile, ServiceItem>;
 
 export default class extends AbstractPluginFinder<ServiceEntrypointOptions> {
-    protected _services?: Map<EntrypointFile, ServiceOptions>;
+    protected _services?: ServiceItems;
 
     protected readonly names: InlineNameGenerator;
 
@@ -32,22 +38,43 @@ export default class extends AbstractPluginFinder<ServiceEntrypointOptions> {
         return new PluginFinder(this.config, 'service', this);
     }
 
-    protected async getServices(): Promise<Map<EntrypointFile, ServiceOptions>> {
-        const services = new Map<EntrypointFile, ServiceOptions>();
+    protected async getServices(): Promise<ServiceItems> {
+        const services: ServiceItems = new Map;
+
+        const contracts = await this.plugin().contracts();
 
         for (const [file, option] of await this.plugin().options()) {
-            const {name, ...definition} = option;
+            const {name: service, ...definition} = option;
+
+            let name: string;
+
+            if (file.external) {
+                name = file.import;
+
+                if (this.names.has(name)) {
+                    throw new Error(`Service name "${name}" is already in use.`);
+                }
+
+                name = this.names.name(name);
+            } else if (service) {
+                name = this.names.name(service);
+            } else {
+                name = this.names.file(file);
+            }
 
             services.set(file, {
-                name: name ? this.names.name(name) : this.names.file(file),
-                ...definition,
+                options: {
+                    name,
+                    ...definition,
+                },
+                contract: contracts.get(file),
             });
         }
 
         return services;
     }
 
-    public async services(): Promise<Map<EntrypointFile, ServiceOptions>> {
+    public async services(): Promise<ServiceItems> {
         return this._services ??= await this.getServices();
     }
 

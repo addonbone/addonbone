@@ -17,7 +17,7 @@ export default class EntryFile {
 
     private enums?: EnumMap;
 
-    public importResolver?: ImportResolver;
+    protected importResolver?: ImportResolver;
 
     static make<T extends EntryFile>(this: new (file: string) => T, file: string): T {
         return new this(file);
@@ -271,6 +271,14 @@ export default class EntryFile {
     }
 
     protected getInputResolver(): ImportResolver {
-        return this.importResolver ??= new ImportResolver().setBaseDir(path.dirname(this.file));
+        if (this.importResolver) {
+            return this.importResolver;
+        }
+
+        return this.setImportResolver(new ImportResolver());
+    }
+
+    public setImportResolver(resolver: ImportResolver): ImportResolver {
+        return this.importResolver = resolver.setBaseDir(path.dirname(this.file));
     }
 }

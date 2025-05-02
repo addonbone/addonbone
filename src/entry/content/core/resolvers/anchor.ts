@@ -1,6 +1,6 @@
 import kebabCase from "just-kebab-case";
 
-import {getApp} from "@core/env";
+import {getApp} from "@main/env";
 
 import {ContentScriptAnchor, ContentScriptAnchorGetter, ContentScriptAnchorResolver} from "@typing/content";
 

@@ -1,5 +1,7 @@
-import {browser, getBrowser} from "./env";
+import {browser} from "./browser";
 import {throwRuntimeError} from "./runtime";
+
+import {getBrowser} from "@main/env";
 
 import {Browser} from "@typing/browser";
 
@@ -8,13 +10,13 @@ type DownloadQuery = chrome.downloads.DownloadQuery;
 type DownloadState = chrome.downloads.DownloadState;
 type DownloadOptions = chrome.downloads.DownloadOptions;
 
-const downloads = browser().downloads;
+const downloads = () => browser().downloads;
 
 export class BlockDownloadError extends Error {
 }
 
 export const download = (options: DownloadOptions): Promise<number> => new Promise<number>((resolve, reject) => {
-    downloads.download({conflictAction: 'uniquify', ...options}, (downloadId) => {
+    downloads().download({conflictAction: 'uniquify', ...options}, (downloadId) => {
         try {
             throwRuntimeError();
 
@@ -48,7 +50,7 @@ export const download = (options: DownloadOptions): Promise<number> => new Promi
 });
 
 export const cancelDownload = (downloadId: number): Promise<void> => new Promise<void>((resolve, reject) => {
-    downloads.cancel(downloadId, () => {
+    downloads().cancel(downloadId, () => {
         try {
             throwRuntimeError();
 
@@ -60,7 +62,7 @@ export const cancelDownload = (downloadId: number): Promise<void> => new Promise
 });
 
 export const queryDownloads = (query: DownloadQuery): Promise<DownloadItem[]> => new Promise<DownloadItem[]>((resolve, reject) => {
-    downloads.search(query, (downloadItems) => {
+    downloads().search(query, (downloadItems) => {
         try {
             throwRuntimeError();
 
@@ -98,12 +100,12 @@ export const showDownload = async (downloadId: number): Promise<boolean> => {
         return false;
     }
 
-    downloads.show(downloadId);
+    downloads().show(downloadId);
 
     return true;
 }
 
-export const showDownloadFolder = (): void => downloads.showDefaultFolder();
+export const showDownloadFolder = (): void => downloads().showDefaultFolder();
 
 export const getSettingsDownloadsUrl = (): string => {
     switch (getBrowser()) {
@@ -122,14 +124,14 @@ export const getSettingsDownloadsUrl = (): string => {
     }
 }
 
-export const onDownloadsCreated = (callback: Parameters<typeof downloads.onCreated.addListener>[0]): () => void => {
-    downloads.onCreated.addListener(callback);
+export const onDownloadsCreated = (callback: Parameters<typeof chrome.downloads.onCreated.addListener>[0]): () => void => {
+    downloads().onCreated.addListener(callback);
 
-    return () => downloads.onCreated.removeListener(callback);
+    return () => downloads().onCreated.removeListener(callback);
 }
 
-export const onDownloadsChanged = (callback: Parameters<typeof downloads.onChanged.addListener>[0]): () => void => {
-    downloads.onChanged.addListener(callback);
+export const onDownloadsChanged = (callback: Parameters<typeof chrome.downloads.onChanged.addListener>[0]): () => void => {
+    downloads().onChanged.addListener(callback);
 
-    return () => downloads.onChanged.removeListener(callback);
+    return () => downloads().onChanged.removeListener(callback);
 }

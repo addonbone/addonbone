@@ -34,14 +34,14 @@
       "@locale/*": [
         "locale/*"
       ],
+      "@main/*": [
+        "main/*"
+      ],
       "@message/*": [
         "message/*"
       ],
       "@service/*": [
         "service/*"
-      ],
-      "@core/*": [
-        "core/*"
       ],
       "@typing/*": [
         "types/*"

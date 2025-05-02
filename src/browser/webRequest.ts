@@ -1,15 +1,17 @@
 import {getTabUrl} from "./tab";
-import {browser, isBrowser} from "./env";
+import {browser} from "./browser";
 import {throwRuntimeError} from "./runtime";
 
-import {Browser} from "@typing/browser";
+import {isBrowser} from "@main/env";
 
 import {hasSymbols} from "@cli/utils/string";
+
+import {Browser} from "@typing/browser";
 
 type RequestFilter = chrome.webRequest.RequestFilter;
 type ResourceRequest = chrome.webRequest.ResourceRequest;
 
-const webRequest = browser().webRequest;
+const webRequest = () => browser().webRequest;
 
 export const getWebRequestInitiatorUrl = async (request: ResourceRequest): Promise<string | undefined> => {
     const {tabId} = request;
@@ -39,7 +41,7 @@ export const getWebRequestInitiatorUrl = async (request: ResourceRequest): Promi
 }
 
 export const handlerWebRequestBehaviorChanged = () => new Promise<void>((resolve, reject) => {
-    webRequest.handlerBehaviorChanged(() => {
+    webRequest().handlerBehaviorChanged(() => {
         try {
             throwRuntimeError();
 
@@ -51,91 +53,91 @@ export const handlerWebRequestBehaviorChanged = () => new Promise<void>((resolve
 });
 
 export const onWebRequestAuthRequired = (
-    callback: Parameters<typeof webRequest.onAuthRequired.addListener>[0],
+    callback: Parameters<typeof chrome.webRequest.onAuthRequired.addListener>[0],
     filter: RequestFilter,
-    extraInfoSpec?: Parameters<typeof webRequest.onAuthRequired.addListener>[2]
+    extraInfoSpec?: Parameters<typeof chrome.webRequest.onAuthRequired.addListener>[2]
 ): () => void => {
-    webRequest.onAuthRequired.addListener(callback, filter, extraInfoSpec);
+    webRequest().onAuthRequired.addListener(callback, filter, extraInfoSpec);
 
-    return () => webRequest.onAuthRequired.removeListener(callback);
+    return () => webRequest().onAuthRequired.removeListener(callback);
 }
 
 export const onWebRequestBeforeRedirect = (
-    callback: Parameters<typeof webRequest.onBeforeRedirect.addListener>[0],
+    callback: Parameters<typeof chrome.webRequest.onBeforeRedirect.addListener>[0],
     filter: RequestFilter,
-    extraInfoSpec?: Parameters<typeof webRequest.onBeforeRedirect.addListener>[2]
+    extraInfoSpec?: Parameters<typeof chrome.webRequest.onBeforeRedirect.addListener>[2]
 ): () => void => {
-    webRequest.onBeforeRedirect.addListener(callback, filter, extraInfoSpec);
+    webRequest().onBeforeRedirect.addListener(callback, filter, extraInfoSpec);
 
-    return () => webRequest.onBeforeRedirect.removeListener(callback);
+    return () => webRequest().onBeforeRedirect.removeListener(callback);
 }
 
 export const onWebRequestBeforeRequest = (
-    callback: Parameters<typeof webRequest.onBeforeRequest.addListener>[0],
+    callback: Parameters<typeof chrome.webRequest.onBeforeRequest.addListener>[0],
     filter: RequestFilter,
-    extraInfoSpec?: Parameters<typeof webRequest.onBeforeRequest.addListener>[2]
+    extraInfoSpec?: Parameters<typeof chrome.webRequest.onBeforeRequest.addListener>[2]
 ): () => void => {
-    webRequest.onBeforeRequest.addListener(callback, filter, extraInfoSpec);
+    webRequest().onBeforeRequest.addListener(callback, filter, extraInfoSpec);
 
-    return () => webRequest.onBeforeRequest.removeListener(callback);
+    return () => webRequest().onBeforeRequest.removeListener(callback);
 }
 
 export const onWebRequestBeforeSendHeaders = (
-    callback: Parameters<typeof webRequest.onBeforeSendHeaders.addListener>[0],
+    callback: Parameters<typeof chrome.webRequest.onBeforeSendHeaders.addListener>[0],
     filter: RequestFilter,
-    extraInfoSpec?: Parameters<typeof webRequest.onBeforeSendHeaders.addListener>[2]
+    extraInfoSpec?: Parameters<typeof chrome.webRequest.onBeforeSendHeaders.addListener>[2]
 ): () => void => {
-    webRequest.onBeforeSendHeaders.addListener(callback, filter, extraInfoSpec);
+    webRequest().onBeforeSendHeaders.addListener(callback, filter, extraInfoSpec);
 
-    return () => webRequest.onBeforeSendHeaders.removeListener(callback);
+    return () => webRequest().onBeforeSendHeaders.removeListener(callback);
 }
 
 export const onWebRequestCompleted = (
-    callback: Parameters<typeof webRequest.onCompleted.addListener>[0],
+    callback: Parameters<typeof chrome.webRequest.onCompleted.addListener>[0],
     filter: RequestFilter,
-    extraInfoSpec?: Parameters<typeof webRequest.onCompleted.addListener>[2]
+    extraInfoSpec?: Parameters<typeof chrome.webRequest.onCompleted.addListener>[2]
 ): () => void => {
-    webRequest.onCompleted.addListener(callback, filter, extraInfoSpec);
+    webRequest().onCompleted.addListener(callback, filter, extraInfoSpec);
 
-    return () => webRequest.onCompleted.removeListener(callback);
+    return () => webRequest().onCompleted.removeListener(callback);
 }
 
 export const onWebRequestErrorOccurred = (
-    callback: Parameters<typeof webRequest.onErrorOccurred.addListener>[0],
+    callback: Parameters<typeof chrome.webRequest.onErrorOccurred.addListener>[0],
     filter: RequestFilter,
-    extraInfoSpec?: Parameters<typeof webRequest.onErrorOccurred.addListener>[2]
+    extraInfoSpec?: Parameters<typeof chrome.webRequest.onErrorOccurred.addListener>[2]
 ): () => void => {
-    webRequest.onErrorOccurred.addListener(callback, filter, extraInfoSpec);
+    webRequest().onErrorOccurred.addListener(callback, filter, extraInfoSpec);
 
-    return () => webRequest.onErrorOccurred.removeListener(callback);
+    return () => webRequest().onErrorOccurred.removeListener(callback);
 }
 
 export const onWebRequestHeadersReceived = (
-    callback: Parameters<typeof webRequest.onHeadersReceived.addListener>[0],
+    callback: Parameters<typeof chrome.webRequest.onHeadersReceived.addListener>[0],
     filter: RequestFilter,
-    extraInfoSpec?: Parameters<typeof webRequest.onHeadersReceived.addListener>[2]
+    extraInfoSpec?: Parameters<typeof chrome.webRequest.onHeadersReceived.addListener>[2]
 ): () => void => {
-    webRequest.onHeadersReceived.addListener(callback, filter, extraInfoSpec);
+    webRequest().onHeadersReceived.addListener(callback, filter, extraInfoSpec);
 
-    return () => webRequest.onHeadersReceived.removeListener(callback);
+    return () => webRequest().onHeadersReceived.removeListener(callback);
 }
 
 export const onWebRequestResponseStarted = (
-    callback: Parameters<typeof webRequest.onResponseStarted.addListener>[0],
+    callback: Parameters<typeof chrome.webRequest.onResponseStarted.addListener>[0],
     filter: RequestFilter,
-    extraInfoSpec?: Parameters<typeof webRequest.onResponseStarted.addListener>[2]
+    extraInfoSpec?: Parameters<typeof chrome.webRequest.onResponseStarted.addListener>[2]
 ): () => void => {
-    webRequest.onResponseStarted.addListener(callback, filter, extraInfoSpec);
+    webRequest().onResponseStarted.addListener(callback, filter, extraInfoSpec);
 
-    return () => webRequest.onResponseStarted.removeListener(callback);
+    return () => webRequest().onResponseStarted.removeListener(callback);
 }
 
 export const onWebRequestSendHeaders = (
-    callback: Parameters<typeof webRequest.onSendHeaders.addListener>[0],
+    callback: Parameters<typeof chrome.webRequest.onSendHeaders.addListener>[0],
     filter: RequestFilter,
-    extraInfoSpec?: Parameters<typeof webRequest.onSendHeaders.addListener>[2]
+    extraInfoSpec?: Parameters<typeof chrome.webRequest.onSendHeaders.addListener>[2]
 ): () => void => {
-    webRequest.onSendHeaders.addListener(callback, filter, extraInfoSpec);
+    webRequest().onSendHeaders.addListener(callback, filter, extraInfoSpec);
 
-    return () => webRequest.onSendHeaders.removeListener(callback);
+    return () => webRequest().onSendHeaders.removeListener(callback);
 }

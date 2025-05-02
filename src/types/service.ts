@@ -14,13 +14,13 @@ export type ServiceOptions = ServiceConfig & EntrypointOptions;
 
 export type ServiceEntrypointOptions = Partial<ServiceOptions>;
 
-export type ServiceInit<T extends ServiceType> = (options: ServiceOptions) => T;
+export type ServiceInitGetter<T extends ServiceType> = (options: ServiceOptions) => T;
 
-export type ServiceMain<T extends ServiceType> = (service: T, options: ServiceOptions) => Awaiter<void>;
+export type ServiceMainHandler<T extends ServiceType> = (service: T, options: ServiceOptions) => Awaiter<void>;
 
 export type ServiceDefinition<T extends ServiceType> = ServiceEntrypointOptions & {
-    init?: ServiceInit<T>;
-    main?: ServiceMain<T>;
+    init?: ServiceInitGetter<T>;
+    main?: ServiceMainHandler<T>;
 };
 
 export type ServiceUnresolvedDefinition<T extends ServiceType> = Partial<ServiceDefinition<T>>;

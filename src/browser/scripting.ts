@@ -1,4 +1,4 @@
-import {browser} from "./env";
+import {browser} from "./browser";
 import {throwRuntimeError} from "./runtime";
 
 type Awaited<T> = chrome.scripting.Awaited<T>;
@@ -8,12 +8,12 @@ type InjectionResult<T> = chrome.scripting.InjectionResult<T>;
 type ContentScriptFilter = chrome.scripting.ContentScriptFilter;
 type RegisteredContentScript = chrome.scripting.RegisteredContentScript;
 
-export const scripting = browser().scripting;
+export const scripting = () => browser().scripting;
 
 export const isAvailableScripting = (): boolean => !!scripting
 
 export const executeScript = <T = any>(injection: ScriptInjection<any, T>) => new Promise<InjectionResult<Awaited<T>>[]>((resolve, reject) => {
-    scripting.executeScript(injection, (result) => {
+    scripting().executeScript(injection, (result) => {
         try {
             throwRuntimeError();
 
@@ -25,7 +25,7 @@ export const executeScript = <T = any>(injection: ScriptInjection<any, T>) => ne
 });
 
 export const registerContentScripts = (scripts: RegisteredContentScript[]) => new Promise<void>((resolve, reject) => {
-    scripting.registerContentScripts(scripts, () => {
+    scripting().registerContentScripts(scripts, () => {
         try {
             throwRuntimeError();
 
@@ -37,7 +37,7 @@ export const registerContentScripts = (scripts: RegisteredContentScript[]) => ne
 });
 
 export const unregisterContentScripts = (filter?: ContentScriptFilter) => new Promise<void>((resolve, reject) => {
-    scripting.unregisterContentScripts(filter || {}, () => {
+    scripting().unregisterContentScripts(filter || {}, () => {
         try {
             throwRuntimeError();
 
@@ -49,7 +49,7 @@ export const unregisterContentScripts = (filter?: ContentScriptFilter) => new Pr
 });
 
 export const updateContentScripts = (scripts: RegisteredContentScript[]) => new Promise<void>((resolve, reject) => {
-    scripting.updateContentScripts(scripts, () => {
+    scripting().updateContentScripts(scripts, () => {
         try {
             throwRuntimeError();
 
@@ -61,7 +61,7 @@ export const updateContentScripts = (scripts: RegisteredContentScript[]) => new 
 });
 
 export const getRegisteredContentScripts = (filter?: ContentScriptFilter) => new Promise<RegisteredContentScript[]>((resolve, reject) => {
-    scripting.getRegisteredContentScripts(filter || {}, (scripts) => {
+    scripting().getRegisteredContentScripts(filter || {}, (scripts) => {
         try {
             throwRuntimeError();
 
@@ -73,7 +73,7 @@ export const getRegisteredContentScripts = (filter?: ContentScriptFilter) => new
 });
 
 export const insertScriptingCSS = (injection: CSSInjection) => new Promise<void>((resolve, reject) => {
-    scripting.insertCSS(injection, () => {
+    scripting().insertCSS(injection, () => {
         try {
             throwRuntimeError();
 
@@ -85,7 +85,7 @@ export const insertScriptingCSS = (injection: CSSInjection) => new Promise<void>
 });
 
 export const removeScriptingCSS = (injection: CSSInjection) => new Promise<void>((resolve, reject) => {
-    scripting.removeCSS(injection, () => {
+    scripting().removeCSS(injection, () => {
         try {
             throwRuntimeError();
 

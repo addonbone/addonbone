@@ -2,7 +2,7 @@ import {rspack, type RuleSetUse} from '@rspack/core';
 import path from "path";
 import fs from "fs";
 
-import {definePlugin} from "@core/define"
+import {definePlugin} from "@main/plugin"
 
 import {getAppSourcePath, getRootPath, getSharedPath} from "@cli/resolvers/path";
 

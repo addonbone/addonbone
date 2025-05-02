@@ -10,7 +10,7 @@ type RegisteredContentScript = chrome.scripting.RegisteredContentScript;
 
 export const scripting = () => browser().scripting;
 
-export const isAvailableScripting = (): boolean => !!scripting
+export const isAvailableScripting = (): boolean => !!scripting()
 
 export const executeScript = <T = any>(injection: ScriptInjection<any, T>) => new Promise<InjectionResult<Awaited<T>>[]>((resolve, reject) => {
     scripting().executeScript(injection, (result) => {

@@ -12,3 +12,5 @@ export type DeepAsyncProxy<T> = {
             ? DeepAsyncProxy<T[K]>
             : () => Promise<Awaited<T[K]>>;
 };
+
+export const ProxyKey = '__proxy'

@@ -3,9 +3,10 @@ import {Message} from "@message/providers";
 
 import BaseService from "./BaseService";
 
-import type {ServiceType, ProxyService as TProxyService} from "@typing/service";
+import {DeepAsyncProxy, ProxyKey} from "@typing/helpers";
+import type {ServiceType} from "@typing/service";
 
-export default class ProxyService<T extends ServiceType, TGet = TProxyService<T>> extends BaseService<TGet>{
+export default class ProxyService<T extends ServiceType, TGet = DeepAsyncProxy<T>> extends BaseService<TGet>{
     protected readonly message = new Message();
     protected readonly messageKey: string;
 
@@ -14,7 +15,7 @@ export default class ProxyService<T extends ServiceType, TGet = TProxyService<T>
         this.messageKey = `service.${this.name}`;
     }
 
-    private createProxy(path?: string): TProxyService<T> {
+    private createProxy(path?: string): DeepAsyncProxy<T> {
         const wrapped = () => {
         }
 
@@ -31,10 +32,10 @@ export default class ProxyService<T extends ServiceType, TGet = TProxyService<T>
                 return this.createProxy(newPath);
             },
         });
-        // @ts-expect-error — Adding a hidden property
-        proxy.__proxy = true;
 
-        return proxy as unknown as TProxyService<T>;
+        proxy[ProxyKey] = true;
+
+        return proxy as unknown as DeepAsyncProxy<T>;
     }
 
     public get(): TGet  {

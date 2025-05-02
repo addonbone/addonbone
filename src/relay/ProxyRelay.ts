@@ -1,6 +1,6 @@
 import {isAvailableScripting, executeScript} from "@browser/scripting";
 import {DeepAsyncProxy} from "@typing/helpers";
-import {RelayType} from "@typing/relay";
+import {RelayType, RelayWindowKey} from "@typing/relay";
 
 export default class ProxyRelay<T extends RelayType>  {
 
@@ -19,9 +19,9 @@ export default class ProxyRelay<T extends RelayType>  {
                         frameIds: frameId !== undefined ? [frameId] : undefined,
                     },
 
-                    func: async (name: string, path: string, args: any[],) => {
+                    func: async (name: string, path: string, args: any[], key: string) => {
                         try {
-                            const manager = window['__relay_manager']
+                            const manager = window[key]
                             const service = manager.get(name)
                             const property = path == null ? service : manager.getPropertyByPath(service, path)
 
@@ -40,7 +40,7 @@ export default class ProxyRelay<T extends RelayType>  {
                         }
                     },
 
-                    args: [this.name, path!, args],
+                    args: [this.name, path!, args, RelayWindowKey],
                 });
 
                 return result?.[0]?.result;

@@ -5,6 +5,7 @@ import RegisterRelay from "./RegisterRelay";
 import RelayManager from "./RelayManager";
 
 import {getRegisteredRelay, getRelay} from "./index";
+import {RelayWindowKey} from "../types/relay";
 
 const MatchRelay = {
     sum: (a: number, b: number): number => a + b,
@@ -66,7 +67,7 @@ describe('ProxyRelay', () => {
             expect.objectContaining({
                 target: {tabId: 1},
                 func:  expect.any(Function),
-                args: [relayName, "sum", [1, 2]],
+                args: [relayName, "sum", [1, 2], RelayWindowKey],
             }),
 
         );
@@ -80,7 +81,7 @@ describe('ProxyRelay', () => {
             expect.objectContaining({
                 target: {tabId: 1, frameIds: [2]},
                 func: expect.any(Function),
-                args: [relayName, "one", []],
+                args: [relayName, "one", [], RelayWindowKey],
             }),
         );
     });
@@ -93,7 +94,7 @@ describe('ProxyRelay', () => {
             expect.objectContaining({
                 target: {tabId: 1},
                 func: expect.any(Function),
-                args: [relayName, "obj.concat", ['Hello', 'world']],
+                args: [relayName, "obj.concat", ['Hello', 'world'], RelayWindowKey],
             }),
         );
 
@@ -102,7 +103,7 @@ describe('ProxyRelay', () => {
             expect.objectContaining({
                 target: {tabId: 1},
                 func: expect.any(Function),
-                args: [relayName, "obj.zero", []],
+                args: [relayName, "obj.zero", [], RelayWindowKey],
             }),
         );
     });

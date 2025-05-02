@@ -1,6 +1,6 @@
 import {DeepAsyncProxy} from "@typing/helpers";
 
-export const WindowRelayManager = '__relay_manager';
+export const RelayWindowKey = '__relay';
 
 export type RelayType = ((...args: any[]) => Promise<any>) | { [key: string]: any | RelayType };
 

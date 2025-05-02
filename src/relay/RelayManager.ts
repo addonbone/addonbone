@@ -1,14 +1,14 @@
 import get from 'get-value'
-import {WindowRelayManager} from "@typing/relay";
+import {RelayWindowKey} from "@typing/relay";
 
 export default class RelayManager {
     private instances = new Map<string, any>();
 
     public static getInstance(): RelayManager {
-        if (window[WindowRelayManager] === undefined) {
-            window[WindowRelayManager] = new RelayManager();
+        if (window[RelayWindowKey] === undefined) {
+            window[RelayWindowKey] = new RelayManager();
         }
-        return window[WindowRelayManager];
+        return window[RelayWindowKey];
     }
 
     public getPropertyByPath(obj: object, key: string | string[], options?: get.Options): any {

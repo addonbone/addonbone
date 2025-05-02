@@ -8,7 +8,8 @@ import {isBrowser} from "@main/env";
 import {Language, LanguageCodes, LocaleCustomKeyForLanguage, LocaleKeys, LocaleStructure} from "@typing/locale";
 import {Browser} from "@typing/browser";
 
-export type LocaleNativeStructure = LocaleStructure;
+export interface LocaleNativeStructure extends LocaleStructure {
+}
 
 export default class NativeLocale<S extends LocaleStructure = LocaleNativeStructure> extends AbstractLocale<S> {
     public lang(): Language {
@@ -47,8 +48,8 @@ export default class NativeLocale<S extends LocaleStructure = LocaleNativeStruct
         }
     }
 
-    protected value(key: keyof S): string | undefined {
-        const value = getI18nMessage(convertLocaleKey(key as string));
+    protected value(key: Extract<keyof S, string>): string | undefined {
+        const value = getI18nMessage(convertLocaleKey(key));
 
         if (!value || value.length === 0) {
             return undefined;

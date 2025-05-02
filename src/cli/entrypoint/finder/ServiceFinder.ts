@@ -10,13 +10,13 @@ import {EntrypointFile, EntrypointOptionsFinder, EntrypointParser, EntrypointTyp
 
 export interface ServiceItem {
     options: ServiceOptions;
-    contract: string;
+    contract: string | undefined;
 }
 
 export type ServiceItems = Map<EntrypointFile, ServiceItem>;
 
 export default class extends AbstractPluginFinder<ServiceEntrypointOptions> {
-    protected _services?: Map<EntrypointFile, ServiceOptions>;
+    protected _services?: ServiceItems;
 
     protected readonly names: InlineNameGenerator;
 
@@ -38,8 +38,10 @@ export default class extends AbstractPluginFinder<ServiceEntrypointOptions> {
         return new PluginFinder(this.config, 'service', this);
     }
 
-    protected async getServices(): Promise<Map<EntrypointFile, ServiceOptions>> {
-        const services = new Map<EntrypointFile, ServiceOptions>();
+    protected async getServices(): Promise<ServiceItems> {
+        const services: ServiceItems = new Map;
+
+        const contracts = await this.plugin().contracts();
 
         for (const [file, option] of await this.plugin().options()) {
             const {name: service, ...definition} = option;
@@ -61,15 +63,18 @@ export default class extends AbstractPluginFinder<ServiceEntrypointOptions> {
             }
 
             services.set(file, {
-                name,
-                ...definition,
+                options: {
+                    name,
+                    ...definition,
+                },
+                contract: contracts.get(file),
             });
         }
 
         return services;
     }
 
-    public async services(): Promise<Map<EntrypointFile, ServiceOptions>> {
+    public async services(): Promise<ServiceItems> {
         return this._services ??= await this.getServices();
     }
 

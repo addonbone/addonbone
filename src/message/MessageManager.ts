@@ -1,7 +1,6 @@
 import {browser} from '@browser/browser'
-import {MessageBody, MessageHandler, MessageMap, MessageSender, MessageType} from '@typing/message';
 
-const runtime = browser().runtime;
+import {MessageBody, MessageHandler, MessageMap, MessageSender, MessageType} from '@typing/message';
 
 export default class MessageManager<T extends MessageMap> {
     private handlers: Set<MessageHandler<T>> = new Set()
@@ -37,10 +36,10 @@ export default class MessageManager<T extends MessageMap> {
 
     private updateListener() {
         if (this.handlers.size > 0 && !this.isListenerAttached) {
-            runtime.onMessage.addListener(this.listener);
+            browser().runtime.onMessage.addListener(this.listener);
             this.isListenerAttached = true;
         } else if (this.handlers.size === 0 && this.isListenerAttached) {
-            runtime.onMessage.removeListener(this.listener);
+            browser().runtime.onMessage.removeListener(this.listener);
             this.isListenerAttached = false;
         }
     }

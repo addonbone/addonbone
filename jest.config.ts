@@ -6,7 +6,8 @@ const config: Config = {
     testEnvironment: 'jsdom',
     setupFiles: [
         "<rootDir>/tests/jest.storage.setup.ts",
-        "<rootDir>/tests/jest.message.setup.ts"
+        "<rootDir>/tests/jest.message.setup.ts",
+        "<rootDir>/tests/jest.relay.setup.ts",
     ],
     moduleNameMapper: {
         "^@browser/(.*)$": "<rootDir>/src/browser/$1",

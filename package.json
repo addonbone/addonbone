@@ -102,9 +102,10 @@
     "build": "cross-env NODE_OPTIONS=--max-old-space-size=5046 tsup",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:storage": "jest --testPathPattern=Storage",
     "test:message": "jest --testPathPattern=Message",
+    "test:storage": "jest --testPathPattern=Storage",
     "test:service": "jest --testPathPattern=Service",
+    "test:relay": "jest --testPathPattern=Relay",
     "test:entrypoint": "jest --testPathPattern=src/cli/entrypoint"
   },
   "devDependencies": {

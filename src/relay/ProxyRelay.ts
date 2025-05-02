@@ -1,7 +1,8 @@
 import {isAvailableScripting, executeScript} from "@browser/scripting";
 import {DeepAsyncProxy} from "@typing/helpers";
+import {RelayType} from "@typing/relay";
 
-export default class ProxyRelay<T extends object>  {
+export default class ProxyRelay<T extends RelayType>  {
 
     constructor(protected readonly name: string) {
     }

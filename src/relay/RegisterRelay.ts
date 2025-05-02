@@ -1,7 +1,8 @@
+import {RelayType} from "@typing/relay";
 import RelayManager from "./RelayManager";
 import BaseRelay from "./BaseRelay";
 
-export default class RegisterRelay<T extends object, TArgs extends any[] = []> extends BaseRelay<T> {
+export default class RegisterRelay<T extends RelayType, TArgs extends any[] = []> extends BaseRelay<T> {
 
     constructor(name: string, protected readonly init: (...args: TArgs) => T) {
         super(name)

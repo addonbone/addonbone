@@ -6,7 +6,6 @@ import RelayManager from "./RelayManager";
 
 import {getRegisteredRelay, getRelay} from "./index";
 import {RelayWindowKey} from "../types/relay";
-import {ProxyKey} from "../types/helpers";
 
 const MatchRelay = {
     sum: (a: number, b: number): number => a + b,
@@ -48,13 +47,13 @@ describe('ProxyRelay', () => {
     test('works with getRelay helper', async () => {
         const relay = getRelay(relayName, 1);
 
-        expect(relay[ProxyKey]).toBe(true);
+        expect(relay['__proxy']).toBe(true);
     });
 
     test("returns a proxy when called not in content script context", () => {
         const relay = new ProxyRelay<RelayType>(relayName).get(1);
 
-        expect(relay[ProxyKey]).toBe(true);
+        expect(relay['__proxy']).toBe(true);
     });
 
     test("invokes remote methods using chrome.scripting", async () => {
@@ -132,13 +131,13 @@ describe('RegisterRelay', () => {
     test('works with getRegisteredRelay helper', async () => {
         const relay = getRegisteredRelay(relayName);
 
-        expect(relay[ProxyKey]).toBe(undefined);
+        expect(relay['__proxy']).toBe(undefined);
     });
 
     test("returns real relay when called in content script context", () => {
         const relay = new RegisterRelay<RelayType>(relayName, () => MatchRelay).get();
 
-        expect(relay[ProxyKey]).toBe(undefined);
+        expect(relay['__proxy']).toBe(undefined);
     });
 
     test("calls method directly in content script without chrome.scripting", async () => {

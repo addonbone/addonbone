@@ -7,7 +7,6 @@ import RegisterService from "./RegisterService";
 import ServiceManager from "./ServiceManager";
 
 import {getRegisteredService, getService} from "./index";
-import {ProxyKey} from "../types/helpers";
 
 jest.mock('@browser/runtime', () => {
     const actual = jest.requireActual('@browser/runtime');
@@ -58,13 +57,13 @@ describe('ProxyService', () => {
     test('works with getService helper', async () => {
         const service = getService(serviceName);
 
-        expect(service[ProxyKey]).toBe(true);
+        expect(service['__proxy']).toBe(true);
     });
 
     test("returns a proxy when not in background context", () => {
         const service = new ProxyService<ServiceType>(serviceName).get();
 
-        expect(service[ProxyKey]).toBe(true);
+        expect(service['__proxy']).toBe(true);
     });
 
     test("invokes remote methods using Message.send", async () => {
@@ -150,13 +149,13 @@ describe('RegisterService', () => {
     test('works with getRegisteredService helper', async () => {
         const service = getRegisteredService(serviceName);
 
-        expect(service[ProxyKey]).toBe(undefined);
+        expect(service['__proxy']).toBe(undefined);
     });
 
     test("returns real service when called in background context", () => {
         const service = new RegisterService<ServiceType>(serviceName, () => MatchService).get();
 
-        expect(service[ProxyKey]).toBe(undefined);
+        expect(service['__proxy']).toBe(undefined);
     });
 
     test("invokes methods directly without using Message.send in background", async () => {

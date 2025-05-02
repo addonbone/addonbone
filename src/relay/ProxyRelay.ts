@@ -1,5 +1,5 @@
 import {isAvailableScripting, executeScript} from "@browser/scripting";
-import {DeepAsyncProxy, ProxyKey} from "@typing/helpers";
+import {DeepAsyncProxy} from "@typing/helpers";
 import {RelayType, RelayWindowKey} from "@typing/relay";
 
 export default class ProxyRelay<T extends RelayType>  {
@@ -55,7 +55,7 @@ export default class ProxyRelay<T extends RelayType>  {
             },
         });
 
-        proxy[ProxyKey] = true;
+        proxy['__proxy'] = true;
 
         return proxy as unknown as DeepAsyncProxy<T>;
     }

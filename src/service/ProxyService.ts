@@ -3,7 +3,7 @@ import {Message} from "@message/providers";
 
 import BaseService from "./BaseService";
 
-import {DeepAsyncProxy, ProxyKey} from "@typing/helpers";
+import type {DeepAsyncProxy} from "@typing/helpers";
 import type {ServiceType} from "@typing/service";
 
 export default class ProxyService<T extends ServiceType, TGet = DeepAsyncProxy<T>> extends BaseService<TGet>{
@@ -33,7 +33,7 @@ export default class ProxyService<T extends ServiceType, TGet = DeepAsyncProxy<T
             },
         });
 
-        proxy[ProxyKey] = true;
+        proxy['__proxy'] = true;
 
         return proxy as unknown as DeepAsyncProxy<T>;
     }

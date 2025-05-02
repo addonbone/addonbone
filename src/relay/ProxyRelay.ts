@@ -1,4 +1,4 @@
-import {isAvailableScripting, scripting} from "@browser/scripting";
+import {isAvailableScripting, executeScript} from "@browser/scripting";
 import {DeepAsyncProxy} from "@typing/helpers";
 
 export default class ProxyRelay<T extends object>  {
@@ -12,7 +12,7 @@ export default class ProxyRelay<T extends object>  {
 
         const proxy = new Proxy(wrapped, {
             apply: async (_target, _thisArg, args) => {
-                const result = await scripting.executeScript({
+                const result = await executeScript({
                     target: {
                         tabId,
                         frameIds: frameId !== undefined ? [frameId] : undefined,

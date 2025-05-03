@@ -2,6 +2,7 @@ import ManifestBase, {ManifestError} from "./ManifestBase";
 
 import {ManifestVersion} from "@typing/manifest";
 import {Browser} from "@typing/browser";
+import {ContentScriptMatches} from "@typing/content";
 
 type ManifestV3 = chrome.runtime.ManifestV3;
 
@@ -61,6 +62,25 @@ export default class extends ManifestBase<ManifestV3> {
     protected buildHostPermissions(): Partial<ManifestV3> | undefined {
         if (this.hostPermissions.size > 0) {
             return {host_permissions: Array.from(this.hostPermissions)};
+        }
+    }
+
+    protected buildWebAccessibleResources(): Partial<ManifestV3> | undefined {
+        const resources: Array<{ resources: string[]; matches: string[] }> = [];
+
+        for (const contentScript of this.contentScripts.values()) {
+            const assets = this.dependencies.get(contentScript.entry)?.assets;
+
+            if (assets && assets.size > 0) {
+                resources.push({
+                    resources: Array.from(assets),
+                    matches: contentScript.matches || ContentScriptMatches,
+                });
+            }
+        }
+
+        if (resources.length > 0) {
+            return {web_accessible_resources: resources};
         }
     }
 }

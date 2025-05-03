@@ -76,4 +76,21 @@ export default class extends ManifestBase<ManifestV2> {
     protected buildHostPermissions(): Partial<ManifestV2> | undefined {
         return undefined;
     }
+
+    protected buildWebAccessibleResources(): Partial<ManifestV2> | undefined {
+        const resources: string[] = [];
+
+        for (const contentScript of this.contentScripts.values()) {
+            const assets = this.dependencies.get(contentScript.entry)?.assets;
+
+            if (assets && assets.size > 0) {
+                resources.push(...assets);
+            }
+        }
+
+        if (resources.length > 0) {
+            return {web_accessible_resources: Array.from(new Set(resources))};
+        }
+    }
+
 }

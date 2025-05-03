@@ -47,6 +47,8 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
 
     protected abstract buildHostPermissions(): Partial<T> | undefined;
 
+    protected abstract buildWebAccessibleResources(): Partial<T> | undefined;
+
     protected constructor(protected readonly browser: Browser = Browser.Chrome) {
     }
 
@@ -173,6 +175,7 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
             this.buildContentScripts(),
             this.buildPermissions(),
             this.buildHostPermissions(),
+            this.buildWebAccessibleResources(),
         );
 
         return manifest as T;

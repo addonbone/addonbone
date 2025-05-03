@@ -2,7 +2,7 @@ import z from "zod";
 
 import AbstractParser from "./AbstractParser";
 
-import {ContentScriptEntrypointOptions} from "@typing/content";
+import {ContentScriptEntrypointOptions, ContentScriptMatches} from "@typing/content";
 import {EntrypointFile} from "@typing/entrypoint";
 
 export default class extends AbstractParser<ContentScriptEntrypointOptions> {
@@ -28,7 +28,7 @@ export default class extends AbstractParser<ContentScriptEntrypointOptions> {
         const options = super.options(file);
 
         return {
-            matches: ['*://*/*'],
+            matches: ContentScriptMatches,
             runAt: 'document_idle',
             ...options
         };

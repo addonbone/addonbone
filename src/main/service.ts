@@ -1,4 +1,4 @@
-import ProxyService from "@service/ProxyService";
+import {ProxyService} from "@service/providers";
 
 import {
     ServiceDefinition,

@@ -93,7 +93,7 @@ export default definePlugin(() => {
             }
 
             return {
-                plugins: [backgroundPlugin, commandPlugin, servicePlugin],
+                plugins: [servicePlugin, commandPlugin, backgroundPlugin],
                 optimization: {
                     splitChunks: {
                         chunks(chunk) {

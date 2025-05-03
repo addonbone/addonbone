@@ -1,1 +1,1 @@
-export {default as Message} from "./Message";
+export {default as Message, type MessageSendOptions} from "./Message";

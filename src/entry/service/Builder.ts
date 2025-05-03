@@ -1,5 +1,6 @@
 import Builder from "@entry/core/Builder";
-import RegisterService from "@service/RegisterService";
+
+import {RegisterService} from "@service/providers";
 
 import {isValidServiceInitFunction, isValidServiceMainFunction, isValidServiceName} from "./resolvers";
 

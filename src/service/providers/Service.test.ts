@@ -4,9 +4,9 @@ import MessageManager from "@message/MessageManager";
 
 import ProxyService from "./ProxyService";
 import RegisterService from "./RegisterService";
-import ServiceManager from "./ServiceManager";
+import ServiceManager from "../ServiceManager";
 
-import {ProxyService as DeepAsyncProxy} from "@typing/service";
+import {DeepAsyncProxy} from "@typing/helpers";
 
 jest.mock('@browser/runtime', () => {
     const actual = jest.requireActual('@browser/runtime');

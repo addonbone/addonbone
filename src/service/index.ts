@@ -1,10 +1,8 @@
-import BaseService from "./BaseService";
+import {BaseService, ProxyService, RegisterService} from "./providers";
 
 import {ServiceDictionary, ServiceName} from "@typing/service";
 
-export {default as ProxyService} from "./ProxyService";
-export {default as RegisterService} from "./RegisterService";
-export type {ServiceDictionary};
+export {type ServiceDictionary, RegisterService, ProxyService};
 
 export const getService = <N extends ServiceName>(name: N): ServiceDictionary[N] => {
     return new BaseService(name).get();

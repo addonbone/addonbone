@@ -1,15 +1,18 @@
-import {ServiceDictionary, ServiceName} from "@typing/service";
+import {
+    ServiceDictionary,
+    ServiceGlobalKey,
+    ServiceManager as ServiceManagerContract,
+    ServiceName
+} from "@typing/service";
 
-export default class ServiceManager {
+export default class ServiceManager implements ServiceManagerContract {
     private services = new Map<
         ServiceName,
         ServiceDictionary[ServiceName]
     >();
 
-    private static instance?: ServiceManager;
-
-    public static getInstance(): ServiceManager {
-        return this.instance ??= new ServiceManager();
+    public static getInstance(): ServiceManagerContract {
+        return globalThis[ServiceGlobalKey] ??= new ServiceManager();
     }
 
     public add<K extends ServiceName>(

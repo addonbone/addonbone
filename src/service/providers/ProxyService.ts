@@ -1,19 +1,25 @@
 import {isBackground} from "@browser/runtime";
-import {Message} from "@message/providers";
+import {Message, MessageSendOptions} from "@message/providers";
 
 import BaseService from "./BaseService";
 
-import type {ServiceDictionary, ServiceName} from "@typing/service";
-import type {DeepAsyncProxy} from "@typing/helpers";
+import {ServiceDictionary, ServiceName} from "@typing/service";
+import {MessageMap, MessageProvider} from "@typing/message";
+import {DeepAsyncProxy} from "@typing/helpers";
 
-export default class ProxyService<N extends ServiceName, T = DeepAsyncProxy<ServiceDictionary[N]>> extends BaseService<N, T> {
-    protected readonly message = new Message();
+export default class<N extends ServiceName, T = DeepAsyncProxy<ServiceDictionary[N]>> extends BaseService<N, T> {
+    private _message?: MessageProvider<MessageMap, MessageSendOptions>;
+
     protected readonly messageKey: string;
 
     constructor(name: N) {
         super(name);
 
         this.messageKey = `service.${this.name}`;
+    }
+
+    protected get message(): MessageProvider<MessageMap, MessageSendOptions> {
+        return this._message ??= new Message();
     }
 
     private createProxy(path?: string): T {

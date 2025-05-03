@@ -6,7 +6,7 @@ import {isBackground} from "@browser/runtime";
 
 import type {ServiceDictionary, ServiceName} from "@typing/service";
 
-export default class RegisterService<
+export default class<
     N extends ServiceName,
     T extends object = ServiceDictionary[N],
     A extends any[] = []

@@ -1,10 +1,37 @@
 import {Required} from "utility-types";
 
-import {BackgroundConfig} from "@typing/background";
 import {EntrypointBuilder, EntrypointOptions} from "@typing/entrypoint";
+import {BackgroundConfig} from "@typing/background";
 import {Awaiter} from "@typing/helpers";
 
+export const ServiceGlobalKey = 'adnbnService';
+
 export type ServiceType = ((...args: any[]) => Promise<any>) | { [key: string]: any | ServiceType };
+
+export interface ServiceDictionary {
+    [key: string]: any;
+}
+
+export type ServiceName = Extract<keyof ServiceDictionary, string>;
+
+export interface ServiceManager {
+    add<K extends ServiceName>(
+        name: K,
+        instance: ServiceDictionary[K]
+    ): this;
+
+    get<K extends ServiceName>(
+        name: K
+    ): ServiceDictionary[K] | undefined;
+
+    has(name: ServiceName): boolean;
+
+    remove<K extends ServiceName>(
+        name: K
+    ): ServiceDictionary[K] | undefined;
+
+    clear(): this;
+}
 
 export interface ServiceConfig extends BackgroundConfig {
     name: string;
@@ -22,12 +49,6 @@ export type ServiceDefinition<T extends ServiceType> = ServiceEntrypointOptions 
     init?: ServiceInitGetter<T>;
     main?: ServiceMainHandler<T>;
 };
-
-export interface ServiceDictionary {
-    [key: string]: any;
-}
-
-export type ServiceName = Extract<keyof ServiceDictionary, string>;
 
 export type ServiceUnresolvedDefinition<T extends ServiceType> = Partial<ServiceDefinition<T>>;
 

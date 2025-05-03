@@ -21,19 +21,7 @@ export default class ProxyRelay<T extends RelayType>  {
 
                     func: async (name: string, path: string, args: any[], key: string) => {
                         try {
-                            const manager = window[key]
-                            const service = manager.get(name)
-                            const property = path == null ? service : manager.getPropertyByPath(service, path)
-
-                            if (property === undefined) {
-                                throw new Error(`Property not found at path "${path}" in relay "${this.name}"`)
-                            }
-
-                            if (typeof property === 'function') {
-                                return await property.apply(service, args);
-                            }
-
-                            return property
+                            return await window[key].property({name, path, args})
                         } catch (error) {
                             console.error('ProxyRelay.createProxy()', error)
                             throw error

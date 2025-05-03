@@ -1,6 +1,13 @@
 import get from 'get-value'
 import {RelayWindowKey} from "@typing/relay";
 
+type PropertyType = {
+    name: string,
+    path?: string,
+    args?: any[],
+    options?: get.Options,
+}
+
 export default class RelayManager {
     private instances = new Map<string, any>();
 
@@ -11,8 +18,19 @@ export default class RelayManager {
         return window[RelayWindowKey];
     }
 
-    public getPropertyByPath(obj: object, key: string | string[], options?: get.Options): any {
-        return get(obj, key, options)
+    public async property({name, path, args, options}: PropertyType): Promise<any> {
+        const relay = this.get(name)
+        const property = path == null ? relay : get(relay, path, options)
+
+        if (property === undefined) {
+            throw new Error(`Property not found at path "${path}" in relay "${name}"`)
+        }
+
+        if (typeof property === 'function') {
+            return await property.apply(relay, args);
+        }
+
+        return property
     }
 
     public add(name: string, instance: any) {

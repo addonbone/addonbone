@@ -129,6 +129,14 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
         return this;
     }
 
+    public appendPermissions(permissions: ManifestPermissions): this {
+        for (const permission of permissions) {
+            this.permissions.add(permission);
+        }
+
+        return this;
+    }
+
     public addHostPermission(permission: string): this {
         this.hostPermissions.add(permission);
 

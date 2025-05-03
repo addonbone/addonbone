@@ -12,6 +12,7 @@ export default class<T extends BackgroundEntrypointOptions = BackgroundEntrypoin
     protected schema(): typeof this.CommonPropertiesSchema {
         return this.CommonPropertiesSchema.extend({
             persistent: z.boolean().optional(),
+            permissions: z.array(z.string()).optional(),
         });
     }
 }

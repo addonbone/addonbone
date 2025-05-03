@@ -1,6 +1,7 @@
 import BackgroundEntry from "./BackgroundEntry";
 
 import {BackgroundEntrypointOptions} from "@typing/background";
+import {ManifestPermissions} from "@typing/manifest";
 
 export default class {
     protected entries = new Set<BackgroundEntry<BackgroundEntrypointOptions>>;
@@ -29,5 +30,17 @@ export default class {
         }
 
         return false;
+    }
+
+    public async getPermissions(): Promise<ManifestPermissions> {
+        const permissions: ManifestPermissions = new Set;
+
+        for await (const entry of this.entries) {
+            const entryPermissions = await entry.getPermissions();
+
+            entryPermissions.forEach(permission => permissions.add(permission));
+        }
+
+        return permissions;
     }
 }

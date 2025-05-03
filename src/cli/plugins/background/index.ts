@@ -121,6 +121,12 @@ export default definePlugin(() => {
                     persistent: await mft.isPersistent(),
                 } : undefined)
                 .setCommands(await command.manifest());
+
+            const permissions = await mft.getPermissions();
+
+            if (permissions.size > 0) {
+                manifest.appendPermissions(permissions);
+            }
         }
     };
 });

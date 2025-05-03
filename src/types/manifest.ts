@@ -84,6 +84,8 @@ export interface ManifestBuilder<T extends CoreManifest = Manifest> {
 
     setPermissions(permissions: ManifestPermissions): this;
 
+    appendPermissions(permissions: ManifestPermissions): this;
+
     addHostPermission(permission: string): this;
 
     setHostPermissions(permissions: ManifestHostPermissions): this;

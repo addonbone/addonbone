@@ -1,36 +1,49 @@
+import {ServiceDictionary, ServiceName} from "@typing/service";
 
 export default class ServiceManager {
-    private services = new Map<string, any>();
+    private services = new Map<
+        ServiceName,
+        ServiceDictionary[ServiceName]
+    >();
 
-    private static instance: ServiceManager | null = null;
+    private static instance?: ServiceManager;
 
     public static getInstance(): ServiceManager {
-        if (ServiceManager.instance === null) {
-            ServiceManager.instance = new ServiceManager();
-        }
-
-        return ServiceManager.instance;
+        return this.instance ??= new ServiceManager();
     }
 
-    public add(name: string, instance: any) {
+    public add<K extends ServiceName>(
+        name: K,
+        instance: ServiceDictionary[K]
+    ): this {
         this.services.set(name, instance);
+
+        return this;
     }
 
-    public get(name: string): any | undefined {
-        return this.services.get(name);
+    public get<K extends ServiceName>(
+        name: K
+    ): ServiceDictionary[K] | undefined {
+        return this.services.get(name) as ServiceDictionary[K] | undefined;
     }
 
-    public has(name: string): boolean {
+    public has(name: ServiceName): boolean {
         return this.services.has(name);
     }
 
-    public remove(name: string): any | undefined {
-        const instance = this.get(name);
+    public remove<K extends ServiceName>(
+        name: K
+    ): ServiceDictionary[K] | undefined {
+        const service = this.get(name);
+
         this.services.delete(name);
-        return instance;
+
+        return service;
     }
 
-    public clear(): void {
+    public clear(): this {
         this.services.clear();
+
+        return this;
     }
 }

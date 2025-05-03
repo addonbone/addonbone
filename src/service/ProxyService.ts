@@ -3,18 +3,19 @@ import {Message} from "@message/providers";
 
 import BaseService from "./BaseService";
 
-import type {ServiceType, ProxyService as TProxyService} from "@typing/service";
+import type {ProxyService as TProxyService, ServiceDictionary, ServiceName} from "@typing/service";
 
-export default class ProxyService<T extends ServiceType, TGet = TProxyService<T>> extends BaseService<TGet>{
+export default class ProxyService<N extends ServiceName, T = TProxyService<ServiceDictionary[N]>> extends BaseService<N, T> {
     protected readonly message = new Message();
     protected readonly messageKey: string;
 
-    constructor(name: string) {
+    constructor(name: N) {
         super(name);
+
         this.messageKey = `service.${this.name}`;
     }
 
-    private createProxy(path?: string): TProxyService<T> {
+    private createProxy(path?: string): T {
         const wrapped = () => {
         }
 
@@ -27,20 +28,24 @@ export default class ProxyService<T extends ServiceType, TGet = TProxyService<T>
                 if (propertyName === '__proxy' || typeof propertyName !== 'string') {
                     return Reflect.get(wrapped, propertyName, receiver);
                 }
+
                 const newPath = path == null ? propertyName : `${path}.${String(propertyName)}`;
+
                 return this.createProxy(newPath);
             },
         });
+
         // @ts-expect-error — Adding a hidden property
         proxy.__proxy = true;
 
-        return proxy as unknown as TProxyService<T>;
+        return proxy as unknown as T;
     }
 
-    public get(): TGet  {
-        if(isBackground()){
+    public get(): T {
+        if (isBackground()) {
             throw new Error('ProxyService.get() cannot be called in the background');
         }
-        return this.createProxy() as TGet;
+
+        return this.createProxy();
     }
 }

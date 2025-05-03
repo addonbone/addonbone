@@ -1,11 +1,12 @@
 import {isBackground} from "@browser/runtime";
 
 import ServiceManager from "./ServiceManager";
+import {ServiceDictionary, ServiceName} from "@typing/service";
 
-export default class BaseService<T> {
+export default class BaseService<N extends ServiceName, T = ServiceDictionary[N]> {
     protected readonly manager = ServiceManager.getInstance()
 
-    constructor(protected readonly name: string) {
+    constructor(protected readonly name: N) {
     }
 
     public get(): T {

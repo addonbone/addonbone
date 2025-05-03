@@ -25,9 +25,9 @@ export default class<T extends Record<string, string> = Record<string, string>> 
             return `${key}: ${value};`;
         }).join('\n');
 
-        return `import '${PackageName}';
+        return `import '${PackageName}/service';
     
-declare module '${PackageName}' {
+declare module '${PackageName}/service' {
     interface ServiceDictionary {
         ${type}
     }

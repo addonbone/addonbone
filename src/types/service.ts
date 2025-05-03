@@ -23,6 +23,12 @@ export type ServiceDefinition<T extends ServiceType> = ServiceEntrypointOptions 
     main?: ServiceMainHandler<T>;
 };
 
+export interface ServiceDictionary {
+    [key: string]: any;
+}
+
+export type ServiceName = Extract<keyof ServiceDictionary, string>;
+
 export type ServiceUnresolvedDefinition<T extends ServiceType> = Partial<ServiceDefinition<T>>;
 
 export type ServiceResolvedDefinition<T extends ServiceType> = Required<ServiceDefinition<T>, 'name' | 'init'>;

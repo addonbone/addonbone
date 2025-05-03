@@ -5,6 +5,7 @@ import {isValidServiceInitFunction, isValidServiceMainFunction, isValidServiceNa
 
 import {
     ServiceBuilder,
+    ServiceName,
     ServiceOptions,
     ServiceResolvedDefinition,
     ServiceType,
@@ -14,7 +15,7 @@ import {
 export default class<T extends ServiceType = ServiceType> extends Builder implements ServiceBuilder {
     protected readonly definition: ServiceResolvedDefinition<T>;
 
-    protected service?: RegisterService<T, [ServiceOptions]>;
+    protected service?: RegisterService<ServiceName, T, [ServiceOptions]>;
 
     public constructor(definition: ServiceUnresolvedDefinition<T>) {
         super();

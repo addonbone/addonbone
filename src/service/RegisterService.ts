@@ -4,14 +4,18 @@ import ProxyService from "./ProxyService";
 
 import {isBackground} from "@browser/runtime";
 
-import type {ServiceType} from "@typing/service";
+import type {ServiceDictionary, ServiceName} from "@typing/service";
 
-export default class RegisterService<T extends ServiceType, TArgs extends any[] = []> extends ProxyService<T, T> {
-    constructor(name: string, protected readonly init: (...args: TArgs) => T) {
+export default class RegisterService<
+    N extends ServiceName,
+    T extends object = ServiceDictionary[N],
+    A extends any[] = []
+> extends ProxyService<N, T> {
+    constructor(name: N, protected readonly init: (...args: A) => T) {
         super(name)
     }
 
-    public register(...args: TArgs): T {
+    public register(...args: A): T {
         if (this.manager.has(this.name)) {
             throw new Error(`A service with the name "${this.name}" already exists. The service name must be unique.`);
         }
@@ -45,9 +49,10 @@ export default class RegisterService<T extends ServiceType, TArgs extends any[] 
     }
 
     public get(): T {
-        if(!isBackground()){
+        if (!isBackground()) {
             throw new Error('RegisterService.get() must be called from within the background context.');
         }
+
         return this.manager.get(this.name);
     }
 }

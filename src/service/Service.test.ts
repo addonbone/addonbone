@@ -6,7 +6,7 @@ import ProxyService from "./ProxyService";
 import RegisterService from "./RegisterService";
 import ServiceManager from "./ServiceManager";
 
-import {getRegisteredService, getService} from "./index";
+import {ProxyService as DeepAsyncProxy} from "@typing/service";
 
 jest.mock('@browser/runtime', () => {
     const actual = jest.requireActual('@browser/runtime');
@@ -22,7 +22,7 @@ beforeEach(async () => {
     ServiceManager.getInstance().clear()
     MessageManager.getInstance().clear();
 
-    new RegisterService<ServiceType>(serviceName, () => MatchService).register();
+    new RegisterService(serviceName, () => MatchService).register();
 });
 
 const MatchService = {
@@ -38,6 +38,7 @@ const MatchService = {
 }
 
 type ServiceType = typeof MatchService;
+type ServiceProxyType = DeepAsyncProxy<ServiceType>;
 
 const serviceName = 'math'
 
@@ -54,22 +55,15 @@ describe('ProxyService', () => {
         expect(() => proxy.get()).toThrow("ProxyService.get() cannot be called in the background");
     });
 
-    test('works with getService helper', async () => {
-        const service = getService(serviceName);
-
-        //@ts-ignore
-        expect(service.__proxy).toBe(true);
-    });
-
     test("returns a proxy when not in background context", () => {
-        const service = new ProxyService<ServiceType>(serviceName).get();
+        const service = new ProxyService(serviceName).get();
 
         //@ts-ignore
         expect(service.__proxy).toBe(true);
     });
 
     test("invokes remote methods using Message.send", async () => {
-        const service = new ProxyService<ServiceType>(serviceName).get()
+        const service = new ProxyService<typeof serviceName, ServiceProxyType>(serviceName).get()
 
         expect(await service.sum(1, 2)).toBe(3)
         expect(chrome.runtime.sendMessage).toHaveBeenCalledWith(
@@ -85,7 +79,7 @@ describe('ProxyService', () => {
     });
 
     test("accesses property on service object ", async () => {
-        const service = new ProxyService<ServiceType>(serviceName).get()
+        const service = new ProxyService<typeof serviceName, ServiceProxyType>(serviceName).get()
 
         expect(await service.one()).toBe(1)
         expect(chrome.runtime.sendMessage).toHaveBeenCalledWith(
@@ -101,7 +95,7 @@ describe('ProxyService', () => {
     });
 
     test("accesses nested method or property ", async () => {
-        const service = new ProxyService<ServiceType>(serviceName).get()
+        const service = new ProxyService<typeof serviceName, ServiceProxyType>(serviceName).get()
 
         expect(await service.obj.concat('Hello', 'world')).toBe('Hello world')
         expect(chrome.runtime.sendMessage).toHaveBeenCalledWith(
@@ -129,7 +123,7 @@ describe('ProxyService', () => {
     });
 
     test("handles proxied async methods that return promises", async () => {
-        const service = new ProxyService<ServiceType>(serviceName).get()
+        const service = new ProxyService<typeof serviceName, ServiceProxyType>(serviceName).get()
 
         expect(await service.asyncSum(1, 2)).toBe(3)
     });
@@ -148,29 +142,22 @@ describe('RegisterService', () => {
         expect(() => proxy.get()).toThrow("RegisterService.get() must be called from within the background context.");
     });
 
-    test('works with getRegisteredService helper', async () => {
-        const service = getRegisteredService(serviceName);
-
-        //@ts-ignore
-        expect(service.__proxy).toBe(undefined);
-    });
-
     test("returns real service when called in background context", () => {
-        const service = new RegisterService<ServiceType>(serviceName, () => MatchService).get();
+        const service = new RegisterService<typeof serviceName, ServiceType>(serviceName, () => MatchService).get();
 
         //@ts-ignore
         expect(service.__proxy).toBe(undefined);
     });
 
     test("invokes methods directly without using Message.send in background", async () => {
-        const service = new RegisterService<ServiceType>(serviceName, () => MatchService).get()
+        const service = new RegisterService<typeof serviceName, ServiceType>(serviceName, () => MatchService).get()
 
         expect(service.sum(1, 2)).toBe(3)
         expect(chrome.runtime.sendMessage).toHaveBeenCalledTimes(0);
     });
 
     test("throws an error when attempting to register the same service twice", async () => {
-        const service = new RegisterService<ServiceType>(serviceName, () => MatchService)
+        const service = new RegisterService<typeof serviceName, ServiceType>(serviceName, () => MatchService)
 
         expect(() => service.register()).toThrow(`A service with the name "${serviceName}" already exists. The service name must be unique.`);
     });

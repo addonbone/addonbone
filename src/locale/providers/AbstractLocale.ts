@@ -14,7 +14,7 @@ export default abstract class AbstractLocale<S extends LocaleStructure> implemen
 
     public abstract keys(): LocaleKeys;
 
-    protected abstract value(key: keyof S): string | undefined;
+    protected abstract value(key: Extract<keyof S, string>): string | undefined;
 
     public choice<K extends LocalePluralKeysOf<S>>(key: K, count: number, substitutions?: SubstitutionsFor<S, K>): string {
         const value = this.get(key, substitutions).split(LocaleValuesSeparator);
@@ -28,7 +28,7 @@ export default abstract class AbstractLocale<S extends LocaleStructure> implemen
         return this.get(key, substitutions);
     }
 
-    public get<K extends keyof S>(key: K, substitutions?: SubstitutionsFor<S, K>): string {
+    public get<K extends Extract<keyof S, string>>(key: K, substitutions?: SubstitutionsFor<S, K>): string {
         const value = this.value(key);
 
         if (!value) {

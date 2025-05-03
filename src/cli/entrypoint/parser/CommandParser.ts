@@ -1,13 +1,13 @@
 import {z} from "zod";
 
-import AbstractParser from "./AbstractParser";
+import BackgroundParser from "./BackgroundParser";
 
 import {modifyLocaleMessageKey} from "@locale/utils";
 
 import {CommandEntrypointOptions} from "@typing/command";
 import {EntrypointFile} from "@typing/entrypoint";
 
-export default class extends AbstractParser<CommandEntrypointOptions> {
+export default class extends BackgroundParser<CommandEntrypointOptions> {
     protected definition(): string[] {
         return ['defineCommand', 'defineExecuteActionCommand'];
     }
@@ -18,7 +18,7 @@ export default class extends AbstractParser<CommandEntrypointOptions> {
             .regex(/^(Ctrl|Command|MacCtrl|Alt|Option)(\+Shift)?\+[A-Z0-9]$/, 'Invalid shortcut key, expected format like: Ctrl+Shift+K or Command+Shift+P')
             .optional();
 
-        return this.CommonPropertiesSchema.extend({
+        return super.schema().extend({
             name: z.string().nonempty().optional(),
             description: z.string().nonempty().optional(),
             global: z.boolean().optional(),

@@ -33,22 +33,22 @@ export default class extends AbstractPluginFinder<CommandEntrypointOptions> {
     }
 
     protected async getCommands(): Promise<Map<EntrypointFile, CommandOptions>> {
-        const options = new Map<EntrypointFile, CommandOptions>();
+        const commands = new Map<EntrypointFile, CommandOptions>();
 
         for (const [file, option] of await this.plugin().options()) {
             const {name, ...definition} = option;
 
-            options.set(file, {
+            commands.set(file, {
                 name: name ? this.names.name(name) : this.names.file(file),
                 ...definition,
             });
         }
 
-        return options;
+        return commands;
     }
 
     public async commands(): Promise<Map<EntrypointFile, CommandOptions>> {
-       return this._commands ??= await this.getCommands();
+        return this._commands ??= await this.getCommands();
     }
 
     public canMerge(): boolean {

@@ -34,8 +34,14 @@
       "@locale/*": [
         "locale/*"
       ],
-      "@core/*": [
-        "core/*"
+      "@main/*": [
+        "main/*"
+      ],
+      "@message/*": [
+        "message/*"
+      ],
+      "@service/*": [
+        "service/*"
       ],
       "@typing/*": [
         "types/*"
@@ -48,12 +54,14 @@
     "declarationMap": true
   },
   "include": [
-    "./*.d.ts",
     "./src/**/*",
+    "./src/**/*.d.ts",
+    "./src/cli/virtual/virtual.d.ts",
     "node_modules/@types/node/*.d.ts"
   ],
   "exclude": [
     "**/*.test.ts",
+    "**/tests/**/*.ts",
     "dist"
   ]
 }

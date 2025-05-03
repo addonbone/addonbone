@@ -57,6 +57,16 @@
       "import": "./dist/storage/*.js",
       "require": "./dist/storage/*.cjs"
     },
+    "./service": {
+      "types": "./dist/service/index.d.ts",
+      "import": "./dist/service/index.js",
+      "require": "./dist/service/index.cjs"
+    },
+    "./relay": {
+      "types": "./dist/relay/index.d.ts",
+      "import": "./dist/relay/index.js",
+      "require": "./dist/relay/index.cjs"
+    },
     "./entry/*": {
       "types": "./dist/entry/*/index.d.ts",
       "import": "./dist/entry/*/index.js",
@@ -89,11 +99,13 @@
   },
   "scripts": {
     "adnbn": "tsx ./src/cli/index.ts",
-    "build": "tsup",
+    "build": "cross-env NODE_OPTIONS=--max-old-space-size=5046 tsup",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:storage": "jest --testPathPattern=Storage",
     "test:message": "jest --testPathPattern=Message",
+    "test:storage": "jest --testPathPattern=Storage",
+    "test:service": "jest --testPathPattern=Service",
+    "test:relay": "jest --testPathPattern=Relay",
     "test:entrypoint": "jest --testPathPattern=src/cli/entrypoint"
   },
   "devDependencies": {
@@ -105,6 +117,7 @@
     "@types/lodash": "^4.17.14",
     "@types/node": "^22.13.1",
     "@types/pluralize": "^0.0.33",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.4.7",
     "esbuild-plugin-raw": "^0.1.8",
     "fs-extra": "^11.3.0",
@@ -130,6 +143,7 @@
     "css-loader": "^7.1.2",
     "debounce": "^2.2.0",
     "file-loader": "^6.2.0",
+    "get-value": "^4.0.1",
     "html-rspack-tags-plugin": "^0.0.3",
     "js-yaml": "^4.1.0",
     "json-stringify-deterministic": "^1.0.12",

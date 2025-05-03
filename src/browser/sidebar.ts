@@ -1,4 +1,5 @@
-import {isBrowser} from "./env";
+import {isBrowser} from "@main/env";
+
 import {Browser} from "@typing/browser";
 
 type BadgeTextDetails = chrome.action.BadgeTextDetails;

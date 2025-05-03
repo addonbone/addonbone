@@ -21,7 +21,7 @@ export const _c = <K extends LocaleNonPluralKeysOf<LocaleNativeStructure>>(
     return locale.choice(key, count, substitutions);
 };
 
-export const __ = (key: keyof LocaleNativeStructure): string => {
+export const __ = (key: Extract<keyof LocaleNativeStructure, string>): string => {
     if (!locale.keys().has(key)) {
         console.warn(`Locale key "${key as string}" not found in "${locale.lang()}" language.`);
     }

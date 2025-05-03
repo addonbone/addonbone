@@ -1,13 +1,14 @@
-import {EntrypointBuilder, EntrypointOptions} from "@typing/entrypoint";
 import {Required} from "utility-types";
 
+import {EntrypointBuilder, EntrypointOptions} from "@typing/entrypoint";
+import {BackgroundConfig} from "@typing/background";
 import {Awaiter} from "@typing/helpers";
 
 type Tab = chrome.tabs.Tab;
 
 export const CommandExecuteActionName = '_execute_action';
 
-export interface CommandConfig {
+export interface CommandConfig extends BackgroundConfig {
     name: string;
     description?: string;
     global?: boolean;

@@ -2,7 +2,7 @@ import {Configuration as RspackConfig} from "@rspack/core";
 
 import Content from "./Content";
 
-import {definePlugin} from "@core/define";
+import {definePlugin} from "@main/plugin";
 import {virtualContentScriptModule} from "@cli/virtual";
 
 import {EntrypointPlugin, isEntryModuleOrIssuer} from "@cli/bundler";

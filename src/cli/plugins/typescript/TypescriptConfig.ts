@@ -61,6 +61,7 @@ export default class extends FileBuilder {
                 '../**/*',
                 './vendor.d.ts',
                 './locale.d.ts',
+                './service.d.ts',
             ],
             exclude: [
                 outputDir

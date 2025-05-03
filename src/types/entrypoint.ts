@@ -7,6 +7,7 @@ export enum EntrypointType {
     Command = 'command',
     ContentScript = 'content',
     Page = 'page',
+    Service = 'service',
     Options = 'options',
     Popup = 'popup',
     Sidebar = 'sidebar',
@@ -64,6 +65,7 @@ export type EntrypointEntries = Map<string, Set<EntrypointFile>>;
 
 export interface EntrypointParser<O extends EntrypointOptions> {
     options(file: EntrypointFile): O;
+    contract(file: EntrypointFile): string | undefined;
 }
 
 export interface EntrypointFinder {
@@ -80,6 +82,8 @@ export interface EntrypointOptionsFinder<O extends EntrypointOptions> extends En
     type(): EntrypointType;
 
     options(): Promise<Map<EntrypointFile, O>>;
+
+    contracts(): Promise<Map<EntrypointFile, string | undefined>>;
 }
 
 

@@ -1,16 +1,16 @@
 import {getManifest, isManifestVersion3, throwRuntimeError} from "./runtime";
-import {browser} from "./env";
+import {browser} from "./browser";
 
 type BadgeBackgroundColorDetails = chrome.browserAction.BadgeBackgroundColorDetails;
 type BadgeTextDetails = chrome.action.BadgeTextDetails;
 type BrowserAction = typeof chrome.action;
 
-const getAction = () => isManifestVersion3() ? browser().action : browser().browserAction;
+const action = () => isManifestVersion3() ? browser().action : browser().browserAction;
 
 export const setActionBadgeText = (tabId: number, text: string | number) => new Promise<void>((resolve, reject) => {
     const details: BadgeTextDetails = {text: text.toString(), tabId};
 
-    getAction().setBadgeText(details, () => {
+    action().setBadgeText(details, () => {
         try {
             throwRuntimeError();
 
@@ -26,7 +26,7 @@ export const clearActionBadgeText = (tabId: number): Promise<void> => setActionB
 export const setActionBadgeBgColor = (tabId: number, color: BadgeBackgroundColorDetails['color']) => new Promise<void>((resolve, reject) => {
     const details: BadgeBackgroundColorDetails = {color, tabId};
 
-    getAction().setBadgeBackgroundColor(details, () => {
+    action().setBadgeBackgroundColor(details, () => {
         try {
             throwRuntimeError();
 
@@ -45,16 +45,16 @@ export const setActionBadgeTextColor = async (
         return;
     }
 
-    const action = getAction() as BrowserAction;
+    const root = action() as BrowserAction;
 
-    await action.setBadgeTextColor({color, tabId});
+    await root.setBadgeTextColor({color, tabId});
 };
 
 export const setActionIcon = (
     tabId: number,
     icon: string | Record<string, string>
 ): Promise<void> => new Promise<void>((resolve, reject) => {
-    getAction().setIcon({tabId, path: icon}, () => {
+    action().setIcon({tabId, path: icon}, () => {
         try {
             throwRuntimeError();
 
@@ -72,7 +72,7 @@ export const getActionDefaultPopup = (): string => {
 }
 
 export const onActionClicked = (callback: Parameters<typeof chrome.action.onClicked.addListener>[0]): () => void => {
-    getAction().onClicked.addListener(callback);
+    action().onClicked.addListener(callback);
 
-    return () => getAction().onClicked.removeListener(callback);
+    return () => action().onClicked.removeListener(callback);
 }

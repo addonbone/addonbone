@@ -64,3 +64,14 @@ declare module 'virtual:view-framework' {
     const module: (definition: ViewDefinition) => void;
     export = module;
 }
+
+declare module 'virtual:service-entrypoint' {
+    type ServiceDefinition = import('@typing/service').ServiceDefinition<any>;
+
+    interface ModuleType extends ServiceDefinition {
+        default: ServiceDefinition | ServiceDefinition['init'] | undefined;
+    }
+
+    const module: ModuleType;
+    export = module;
+}

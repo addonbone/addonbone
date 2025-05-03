@@ -20,7 +20,10 @@ const common: Options = {
             '@cli': resolve(__dirname, './src/cli'),
             '@entry': resolve(__dirname, './src/entry'),
             '@locale': resolve(__dirname, './src/locale'),
-            '@core': resolve(__dirname, './src/core'),
+            '@main': resolve(__dirname, './src/main'),
+            '@message': resolve(__dirname, './src/message'),
+            '@service': resolve(__dirname, './src/service'),
+            '@relay': resolve(__dirname, './src/relay'),
             '@typing': resolve(__dirname, './src/types'),
         }
     },
@@ -43,20 +46,27 @@ const framework: Options = {
 
         'browser/index': 'src/browser/index.ts',
 
-        'storage/index': 'src/storage/index.ts',
-        'storage/react': 'src/storage/react/index.ts',
+        'locale/index': 'src/locale/index.ts',
 
         'message/index': 'src/message/index.ts',
         'message/react': 'src/message/react/index.ts',
 
-        'locale/index': 'src/locale/index.ts',
+        'storage/index': 'src/storage/index.ts',
+        'storage/react': 'src/storage/react/index.ts',
+
+        'service/index': 'src/service/index.ts',
+
+        'relay/index': 'src/relay/index.ts',
 
         'entry/background/index': 'src/entry/background/index.ts',
 
         'entry/command/index': 'src/entry/command/index.ts',
+
         'entry/content/index': 'src/entry/content/index.ts',
         'entry/content/vanilla': 'src/entry/content/vanilla/index.ts',
         'entry/content/react': 'src/entry/content/react/index.ts',
+
+        'entry/service/index': 'src/entry/service/index.ts',
 
         'entry/view/index': 'src/entry/view/index.ts',
         'entry/view/vanilla': 'src/entry/view/vanilla/index.ts',

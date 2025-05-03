@@ -1,4 +1,4 @@
-import {browser} from '@browser/env'
+import {browser} from '@browser/browser'
 import {throwRuntimeError} from '@browser/runtime'
 import {StorageProvider, StorageState, StorageWatchOptions} from '@typing/storage'
 

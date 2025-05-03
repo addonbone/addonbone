@@ -1,7 +1,7 @@
 import {DefinePlugin} from '@rspack/core';
 import {type DotenvParseOutput} from "dotenv";
 
-import {definePlugin} from "@core/define";
+import {definePlugin} from "@main/plugin";
 
 export default definePlugin((vars: DotenvParseOutput = {}) => {
     return {

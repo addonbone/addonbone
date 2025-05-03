@@ -1,0 +1,42 @@
+import {FileBuilder} from "../typescript";
+
+import {PackageName} from "@typing/app";
+import {ReadonlyConfig} from "@typing/config";
+
+export default class<T extends Record<string, string> = Record<string, string>> extends FileBuilder {
+    protected _dictionary?: T;
+
+    public constructor(config: ReadonlyConfig) {
+        super(config);
+    }
+
+    protected filename(): string {
+        return "service.d.ts";
+    }
+
+    protected content(): string {
+        const dictionary = this._dictionary;
+
+        if (!dictionary) {
+            throw new Error("Service dictionary is not set");
+        }
+
+        const type = Object.entries(dictionary).map(([key, value]) => {
+            return `${key}: ${value};`;
+        }).join('\n');
+
+        return `import '${PackageName}';
+    
+declare module '${PackageName}' {
+    interface ServiceDictionary {
+        ${type}
+    }
+}`;
+    }
+
+    public dictionary(dictionary: T): this {
+        this._dictionary = dictionary;
+
+        return this;
+    }
+}

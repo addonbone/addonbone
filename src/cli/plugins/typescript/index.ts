@@ -1,4 +1,4 @@
-import {definePlugin} from "@core/define";
+import {definePlugin} from "@main/plugin";
 
 import TypescriptConfig from "./TypescriptConfig";
 import VendorDeclaration from "./VendorDeclaration";
@@ -8,16 +8,13 @@ export {TypescriptConfig, VendorDeclaration};
 
 export default definePlugin(() => {
     let typescript: TypescriptConfig;
-    let vendor: VendorDeclaration;
 
     return {
         name: 'adnbn:typescript',
         startup: ({config}) => {
-            typescript = new TypescriptConfig(config);
-            typescript.build();
+            typescript = new TypescriptConfig(config).build();
 
-            vendor = new VendorDeclaration(config);
-            vendor.build();
+            new VendorDeclaration(config).build();
         },
         bundler: () => {
             return {

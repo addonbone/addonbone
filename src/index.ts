@@ -1,3 +1,1 @@
-export * from "./core";
-export * from "./types";
-export * from "./entry/content";
+export * from "./main";

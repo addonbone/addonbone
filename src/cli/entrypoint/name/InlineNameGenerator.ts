@@ -5,7 +5,7 @@ export default class extends NameGenerator {
         let entryName = name;
         let counter = 1;
 
-        while (this.names.has(entryName)) {
+        while (this.has(entryName)) {
             entryName = `${name}${counter}`;
             counter++;
         }

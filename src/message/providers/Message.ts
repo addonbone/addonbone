@@ -1,4 +1,4 @@
-import {browser} from '@browser/env'
+import {browser} from '@browser/browser'
 import {throwRuntimeError} from "@browser/runtime";
 import {
     MessageData,
@@ -16,9 +16,6 @@ import MessageManager from "../MessageManager";
 
 import {GeneralHandler, MapHandler, SingleHandler} from "../handlers";
 
-const tabs = browser().tabs;
-const runtime = browser().runtime;
-
 export type MessageSendOptions = number | { tabId: number; frameId?: number };
 
 export default class Message<T extends MessageMap> extends AbstractMessage<T, MessageSendOptions> {
@@ -32,7 +29,7 @@ export default class Message<T extends MessageMap> extends AbstractMessage<T, Me
             const frameId = typeof options === 'object' && options.frameId !== undefined ? options.frameId : undefined;
 
             return new Promise((resolve, reject) => {
-                tabs.sendMessage(tabId, message, {frameId}, (response) => {
+                browser().tabs.sendMessage(tabId, message, {frameId}, (response) => {
                     try {
                         throwRuntimeError()
                         resolve(response);
@@ -44,7 +41,7 @@ export default class Message<T extends MessageMap> extends AbstractMessage<T, Me
         }
 
         return new Promise((resolve, reject) => {
-            runtime.sendMessage(message, (response) => {
+            browser().runtime.sendMessage(message, (response) => {
                 try {
                     throwRuntimeError()
                     resolve(response);

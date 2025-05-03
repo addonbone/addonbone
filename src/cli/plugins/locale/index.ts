@@ -1,7 +1,7 @@
 import _ from "lodash";
 import {DefinePlugin} from "@rspack/core";
 
-import {definePlugin} from "@core/define";
+import {definePlugin} from "@main/plugin";
 import {GenerateJsonPlugin} from "@cli/bundler";
 import {extractLocaleKey, modifyLocaleMessageKey} from "@locale/utils";
 
@@ -31,7 +31,13 @@ export default definePlugin(() => {
             const plugin = new GenerateJsonPlugin(await locale.json());
 
             if (config.command === Command.Watch) {
-                plugin.watch(() => locale.clear().json());
+                plugin.watch(async () => {
+                    locale.clear();
+
+                    declaration.structure(await locale.structure()).build();
+
+                    return await locale.json();
+                });
             }
 
             return {

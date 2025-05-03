@@ -66,15 +66,14 @@ describe('ProxyRelay', () => {
         expect(chrome.scripting.executeScript).toHaveBeenCalledWith(
             expect.objectContaining({
                 target: {tabId: 1},
-                func:  expect.any(Function),
+                func: expect.any(Function),
                 args: [relayName, "sum", [1, 2], RelayWindowKey],
             }),
-
         );
     });
 
     test("accesses primitive value as method on the relay object", async () => {
-        const relay = new ProxyRelay<RelayType>(relayName).get(1, 2)
+        const relay = new ProxyRelay<RelayType>(relayName).get({tabId: 1, frameIds: [2]})
 
         expect(await relay.one()).toBe(1)
         expect(chrome.scripting.executeScript).toHaveBeenCalledWith(

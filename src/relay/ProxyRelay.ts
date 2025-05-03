@@ -1,23 +1,24 @@
-import {isAvailableScripting, executeScript} from "@browser/scripting";
+import {executeScript, isAvailableScripting} from "@browser/scripting";
 import {DeepAsyncProxy} from "@typing/helpers";
 import {RelayType, RelayWindowKey} from "@typing/relay";
 
-export default class ProxyRelay<T extends RelayType>  {
+type InjectionTarget = chrome.scripting.InjectionTarget;
+
+export default class ProxyRelay<T extends RelayType> {
 
     constructor(protected readonly name: string) {
     }
 
-    private createProxy(tabId: number, frameId?: number, path?: string): DeepAsyncProxy<T> {
+    private createProxy(options: number | InjectionTarget, path?: string): DeepAsyncProxy<T> {
         const wrapped = () => {
         }
+
+        const target = typeof options === 'number' ? {tabId: options} : options;
 
         const proxy = new Proxy(wrapped, {
             apply: async (_target, _thisArg, args) => {
                 const result = await executeScript({
-                    target: {
-                        tabId,
-                        frameIds: frameId !== undefined ? [frameId] : undefined,
-                    },
+                    target,
 
                     func: async (name: string, path: string, args: any[], key: string) => {
                         try {
@@ -39,7 +40,7 @@ export default class ProxyRelay<T extends RelayType>  {
                     return Reflect.get(wrapped, propertyName, receiver);
                 }
                 const newPath = path == null ? propertyName : `${path}.${propertyName}`;
-                return this.createProxy(tabId, frameId, newPath);
+                return this.createProxy(options, newPath);
             },
         });
 
@@ -48,11 +49,11 @@ export default class ProxyRelay<T extends RelayType>  {
         return proxy as unknown as DeepAsyncProxy<T>;
     }
 
-    public get(tabId: number, frameId?:number): DeepAsyncProxy<T> {
+    public get(options: number | InjectionTarget): DeepAsyncProxy<T> {
         if (!isAvailableScripting()) {
             throw new Error(`You are trying to get proxy relay ${this.name} from script content. You can get original relay instead`);
         }
 
-        return this.createProxy(tabId, frameId) as DeepAsyncProxy<T>;
+        return this.createProxy(options) as DeepAsyncProxy<T>;
     }
 }

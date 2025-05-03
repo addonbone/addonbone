@@ -3,9 +3,10 @@ import {Message} from "@message/providers";
 
 import BaseService from "./BaseService";
 
-import type {ProxyService as TProxyService, ServiceDictionary, ServiceName} from "@typing/service";
+import type {ServiceDictionary, ServiceName} from "@typing/service";
+import type {DeepAsyncProxy} from "@typing/helpers";
 
-export default class ProxyService<N extends ServiceName, T = TProxyService<ServiceDictionary[N]>> extends BaseService<N, T> {
+export default class ProxyService<N extends ServiceName, T = DeepAsyncProxy<ServiceDictionary[N]>> extends BaseService<N, T> {
     protected readonly message = new Message();
     protected readonly messageKey: string;
 

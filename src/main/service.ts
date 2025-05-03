@@ -1,7 +1,6 @@
 import ProxyService from "@service/ProxyService";
 
 import {
-    ProxyService as DeepAsyncProxy,
     ServiceDefinition,
     ServiceDictionary,
     ServiceInitGetter,
@@ -9,6 +8,7 @@ import {
     ServiceName,
     ServiceType
 } from "@typing/service";
+import {DeepAsyncProxy} from "@typing/helpers";
 
 export type {ServiceDefinition, ServiceMainHandler, ServiceInitGetter};
 

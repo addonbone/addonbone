@@ -23,6 +23,7 @@ const common: Options = {
             '@main': resolve(__dirname, './src/main'),
             '@message': resolve(__dirname, './src/message'),
             '@service': resolve(__dirname, './src/service'),
+            '@relay': resolve(__dirname, './src/relay'),
             '@typing': resolve(__dirname, './src/types'),
         }
     },
@@ -54,6 +55,8 @@ const framework: Options = {
         'storage/react': 'src/storage/react/index.ts',
 
         'service/index': 'src/service/index.ts',
+
+        'relay/index': 'src/relay/index.ts',
 
         'entry/background/index': 'src/entry/background/index.ts',
 

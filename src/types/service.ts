@@ -34,12 +34,3 @@ export type ServiceUnresolvedDefinition<T extends ServiceType> = Partial<Service
 export type ServiceResolvedDefinition<T extends ServiceType> = Required<ServiceDefinition<T>, 'name' | 'init'>;
 
 export type ServiceBuilder = EntrypointBuilder;
-
-export type ProxyService<T> = {
-    [K in keyof T]:
-    T[K] extends (...args: any[]) => any
-        ? (...args: Parameters<T[K]>) => Promise<Awaited<ReturnType<T[K]>>>
-        : T[K] extends object
-            ? ProxyService<T[K]>
-            : () => Promise<Awaited<T[K]>>;
-};

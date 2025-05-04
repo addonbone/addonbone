@@ -50,7 +50,7 @@ export default class<N extends ServiceName, T = DeepAsyncProxy<ServiceDictionary
 
     public get(): T {
         if (isBackground()) {
-            throw new Error('ProxyService.get() cannot be called in the background');
+            throw new Error(`You are trying to get proxy service "${this.name}" from background. You can get original service instead`);
         }
 
         return this.createProxy();

@@ -50,7 +50,7 @@ export default class<
 
     public get(): T {
         if (!isBackground()) {
-            throw new Error('RegisterService.get() must be called from within the background context.');
+            throw new Error(`Service "${this.name}" can be getting only from background context.`);
         }
 
         return this.manager.get(this.name);

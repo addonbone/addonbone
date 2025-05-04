@@ -1,15 +1,15 @@
 import {executeScript, isAvailableScripting} from "@browser/scripting";
+
 import {DeepAsyncProxy} from "@typing/helpers";
-import {RelayType, RelayGlobalKey} from "@typing/relay";
+import {RelayGlobalKey, RelayName, RelayDictionary} from "@typing/relay";
 
 type InjectionTarget = chrome.scripting.InjectionTarget;
 
-export default class ProxyRelay<T extends RelayType> {
-
-    constructor(protected readonly name: string) {
+export default class<N extends RelayName, T = DeepAsyncProxy<RelayDictionary[N]>> {
+    constructor(protected readonly name: N) {
     }
 
-    private createProxy(options: number | InjectionTarget, path?: string): DeepAsyncProxy<T> {
+    private createProxy(options: number | InjectionTarget, path?: string): T {
         const wrapped = () => {
         }
 
@@ -46,14 +46,14 @@ export default class ProxyRelay<T extends RelayType> {
 
         proxy['__proxy'] = true;
 
-        return proxy as unknown as DeepAsyncProxy<T>;
+        return proxy as unknown as T;
     }
 
-    public get(options: number | InjectionTarget): DeepAsyncProxy<T> {
+    public get(options: number | InjectionTarget): T {
         if (!isAvailableScripting()) {
-            throw new Error(`You are trying to get proxy relay ${this.name} from script content. You can get original relay instead`);
+            throw new Error(`You are trying to get proxy relay "${this.name}" from script content. You can get original relay instead`);
         }
 
-        return this.createProxy(options) as DeepAsyncProxy<T>;
+        return this.createProxy(options);
     }
 }

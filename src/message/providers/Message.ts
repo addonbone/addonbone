@@ -19,7 +19,9 @@ import {GeneralHandler, MapHandler, SingleHandler} from "../handlers";
 export type MessageSendOptions = number | { tabId: number; frameId?: number };
 
 export default class Message<T extends MessageDictionary> extends AbstractMessage<T, MessageSendOptions> {
-    protected manager = MessageManager.getInstance<T>();
+    protected get manager(): MessageManager<T> {
+        return MessageManager.getInstance<T>();
+    }
 
     public send<K extends MessageType<T>>(type: K, data: MessageData<T, K>, options?: MessageSendOptions): Promise<MessageResponse<T, K>> {
         const message = this.buildMessage(type, data);

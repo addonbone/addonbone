@@ -1,18 +1,20 @@
 import {browser} from '@browser/browser'
 
-import {MessageBody, MessageDictionary, MessageHandler, MessageSender, MessageType} from '@typing/message';
+import {
+    MessageBody,
+    MessageDictionary,
+    MessageGlobalKey,
+    MessageHandler,
+    MessageSender,
+    MessageType
+} from '@typing/message';
 
 export default class MessageManager<T extends MessageDictionary> {
     private handlers: Set<MessageHandler<T>> = new Set()
     private isListenerAttached = false;
 
-    private static instance: MessageManager<MessageDictionary> | null = null;
-
     public static getInstance<T extends MessageDictionary>(): MessageManager<T> {
-        if (MessageManager.instance === null) {
-            MessageManager.instance = new MessageManager<T>();
-        }
-        return MessageManager.instance;
+        return globalThis[MessageGlobalKey] ??= new MessageManager<T>();
     }
 
     constructor() {

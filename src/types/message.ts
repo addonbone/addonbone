@@ -1,3 +1,5 @@
+export const MessageGlobalKey = 'adnbnMessage';
+
 export type MessageSender = chrome.runtime.MessageSender;
 
 export type MessageDictionary = Record<string, (data: any) => any>;

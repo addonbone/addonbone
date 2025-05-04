@@ -1,6 +1,6 @@
 import {executeScript, isAvailableScripting} from "@browser/scripting";
 import {DeepAsyncProxy} from "@typing/helpers";
-import {RelayType, RelayWindowKey} from "@typing/relay";
+import {RelayType, RelayGlobalKey} from "@typing/relay";
 
 type InjectionTarget = chrome.scripting.InjectionTarget;
 
@@ -29,7 +29,7 @@ export default class ProxyRelay<T extends RelayType> {
                         }
                     },
 
-                    args: [this.name, path!, args, RelayWindowKey],
+                    args: [this.name, path!, args, RelayGlobalKey],
                 });
 
                 return result?.[0]?.result;

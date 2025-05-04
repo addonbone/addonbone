@@ -1,12 +1,12 @@
 import 'jest-webextension-mock';
-import { RelayWindowKey } from "../src/types/relay";
+import { RelayGlobalKey } from "../src/types/relay";
 
 chrome.scripting = {
     ...chrome.scripting,
     executeScript: jest.fn().mockImplementation(async ({ args }) => {
         const [name, path, callArgs] = args;
-        const service = (window as any)[RelayWindowKey].get(name);
-        const target = path?.split('.').reduce((acc: any, key: string) => acc?.[key], service);
+        const relay = (globalThis as any)[RelayGlobalKey].get(name);
+        const target = path?.split('.').reduce((acc: any, key: string) => acc?.[key], relay);
         const result = typeof target === 'function' ? await target(...callArgs) : target;
         return [{ result }];
     })

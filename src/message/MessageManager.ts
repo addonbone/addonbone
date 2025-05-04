@@ -1,14 +1,14 @@
 import {browser} from '@browser/browser'
 
-import {MessageBody, MessageHandler, MessageMap, MessageSender, MessageType} from '@typing/message';
+import {MessageBody, MessageDictionary, MessageHandler, MessageSender, MessageType} from '@typing/message';
 
-export default class MessageManager<T extends MessageMap> {
+export default class MessageManager<T extends MessageDictionary> {
     private handlers: Set<MessageHandler<T>> = new Set()
     private isListenerAttached = false;
 
-    private static instance: MessageManager<MessageMap> | null = null;
+    private static instance: MessageManager<MessageDictionary> | null = null;
 
-    public static getInstance<T extends MessageMap>(): MessageManager<T> {
+    public static getInstance<T extends MessageDictionary>(): MessageManager<T> {
         if (MessageManager.instance === null) {
             MessageManager.instance = new MessageManager<T>();
         }

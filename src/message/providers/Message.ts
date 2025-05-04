@@ -2,9 +2,9 @@ import {browser} from '@browser/browser'
 import {throwRuntimeError} from "@browser/runtime";
 import {
     MessageData,
+    MessageDictionary,
     MessageGeneralHandler,
     MessageHandler,
-    MessageMap,
     MessageMapHandler,
     MessageResponse,
     MessageTargetHandler,
@@ -18,7 +18,7 @@ import {GeneralHandler, MapHandler, SingleHandler} from "../handlers";
 
 export type MessageSendOptions = number | { tabId: number; frameId?: number };
 
-export default class Message<T extends MessageMap> extends AbstractMessage<T, MessageSendOptions> {
+export default class Message<T extends MessageDictionary> extends AbstractMessage<T, MessageSendOptions> {
     protected manager = MessageManager.getInstance<T>();
 
     public send<K extends MessageType<T>>(type: K, data: MessageData<T, K>, options?: MessageSendOptions): Promise<MessageResponse<T, K>> {

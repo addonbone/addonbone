@@ -1,4 +1,4 @@
-import {browser} from '@browser/browser'
+import {onMessage} from '@browser/runtime'
 
 import {
     MessageBody,
@@ -11,7 +11,7 @@ import {
 
 export default class MessageManager<T extends MessageDictionary> {
     private handlers: Set<MessageHandler<T>> = new Set()
-    private isListenerAttached = false;
+    private unsubscribe: (() => void) | null = null;
 
     public static getInstance<T extends MessageDictionary>(): MessageManager<T> {
         return globalThis[MessageGlobalKey] ??= new MessageManager<T>();
@@ -37,12 +37,11 @@ export default class MessageManager<T extends MessageDictionary> {
     }
 
     private updateListener() {
-        if (this.handlers.size > 0 && !this.isListenerAttached) {
-            browser().runtime.onMessage.addListener(this.listener);
-            this.isListenerAttached = true;
-        } else if (this.handlers.size === 0 && this.isListenerAttached) {
-            browser().runtime.onMessage.removeListener(this.listener);
-            this.isListenerAttached = false;
+        if (this.handlers.size > 0 && !this.unsubscribe) {
+            this.unsubscribe = onMessage(this.listener);
+        } else if (this.handlers.size === 0 && this.unsubscribe) {
+            this.unsubscribe();
+            this.unsubscribe = null;
         }
     }
 

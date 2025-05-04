@@ -1,5 +1,6 @@
 import {browser} from "./browser";
 import {throwRuntimeError} from "./runtime";
+import {MessageBody, MessageDictionary, MessageResponse, MessageType} from "@typing/message";
 
 type Tab = chrome.tabs.Tab;
 
@@ -17,6 +18,8 @@ type CaptureVisibleTabOptions = chrome.tabs.CaptureVisibleTabOptions;
 type MoveProperties = chrome.tabs.MoveProperties;
 type UpdateProperties = chrome.tabs.UpdateProperties;
 type CreateProperties = chrome.tabs.CreateProperties;
+
+type MessageSendOptions = chrome.tabs.MessageSendOptions;
 
 const tabs = () => browser().tabs;
 
@@ -295,6 +298,25 @@ export const executeScriptTab = (tabId: number, details: InjectDetails) => new P
             throwRuntimeError();
 
             resolve(result);
+        } catch (e) {
+            reject(e);
+        }
+    });
+});
+
+export const sendTabMessage = <
+    T extends MessageDictionary,
+    K extends MessageType<T>
+>(
+    tabId: number,
+    message: MessageBody<T, K>,
+    options: MessageSendOptions = {}
+): Promise<MessageResponse<T, K>> => new Promise<MessageResponse<T, K>>((resolve, reject) => {
+    tabs().sendMessage(tabId, message, options, (response) => {
+        try {
+            throwRuntimeError();
+
+            resolve(response);
         } catch (e) {
             reject(e);
         }

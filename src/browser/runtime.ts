@@ -1,5 +1,6 @@
 import {browser} from "./browser";
 import {ManifestVersion} from "@typing/manifest";
+import {MessageBody, MessageDictionary, MessageResponse, MessageType} from "@typing/message";
 
 type Manifest = chrome.runtime.Manifest;
 type PlatformInfo = chrome.runtime.PlatformInfo;
@@ -72,8 +73,31 @@ export const throwRuntimeError = (): void => {
     }
 }
 
+export const sendMessage = <
+    T extends MessageDictionary,
+    K extends MessageType<T>
+>(
+    message: MessageBody<T, K>
+): Promise<MessageResponse<T, K>> => new Promise<MessageResponse<T, K>>((resolve, reject) => {
+    runtime().sendMessage(message, (response) => {
+        try {
+            throwRuntimeError();
+
+            resolve(response);
+        } catch (e) {
+            reject(e);
+        }
+    });
+});
+
 export const onRuntimeInstalled = (callback: Parameters<typeof chrome.runtime.onInstalled.addListener>[0]): () => void => {
     runtime().onInstalled.addListener(callback);
 
     return () => runtime().onInstalled.removeListener(callback);
+}
+
+export const onMessage = (callback: Parameters<typeof chrome.runtime.onMessage.addListener>[0]): () => void => {
+    runtime().onMessage.addListener(callback);
+
+    return () => runtime().onMessage.removeListener(callback);
 }

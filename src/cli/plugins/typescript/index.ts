@@ -28,16 +28,15 @@ export default definePlugin(() => {
                             test: /\.tsx?$/,
                             loader: "builtin:swc-loader",
                             options: {
-                                sourceMap: true,
                                 jsc: {
                                     parser: {
                                         syntax: "typescript",
                                         tsx: true
-                                    }
-                                },
-                                target: "es2020"
+                                    },
+                                    target: "es2020"
+                                }
                             },
-                            type: 'javascript/auto',
+                            type: "javascript/auto"
                         }
                     ]
                 }

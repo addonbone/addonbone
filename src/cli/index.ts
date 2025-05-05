@@ -15,7 +15,7 @@ cli.option('--debug', 'Enable debug mode');
 cli
     .command('init', 'Initialize a new project')
     .action(() => {
-        console.log('init is good in cli');
+        consola.box('Coming soon...');
     });
 
 cli

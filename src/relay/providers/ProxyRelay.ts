@@ -22,7 +22,7 @@ export default class<N extends RelayName, T = DeepAsyncProxy<RelayDictionary[N]>
 
                     func: async (name: string, path: string, args: any[], key: string) => {
                         try {
-                            return await window[key].property({name, path, args})
+                            return await globalThis[key].property({name, path, args})
                         } catch (error) {
                             console.error('ProxyRelay.createProxy()', error)
                             throw error

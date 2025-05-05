@@ -19,6 +19,12 @@ import {GeneralHandler, MapHandler, SingleHandler} from "../handlers";
 export type MessageSendOptions = number | { tabId: number; frameId?: number; documentId?: string };
 
 export default class Message<T extends MessageDictionary> extends AbstractMessage<T, MessageSendOptions> {
+    private static instance: Message<MessageDictionary> | null = null;
+
+    public static getInstance<T extends MessageDictionary>() {
+        return this.instance ??= new Message<T>();
+    }
+
     protected get manager(): MessageManager<T> {
         return MessageManager.getInstance<T>();
     }

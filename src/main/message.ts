@@ -10,17 +10,32 @@ import {
     MessageType,
 } from "@typing/message";
 
-export const sendMessage = async <T extends MessageDictionary, K extends MessageType<T>>(
+export type MessageRegistry = MessageDictionary
+
+export function sendMessage<K extends MessageType<MessageRegistry>>(
     type: K,
-    data: MessageData<T, K>,
+    data: MessageData<MessageRegistry, K>,
     options?: MessageSendOptions
-): Promise<MessageResponse<T, K>> => {
-    return await new Message<T>().send(type, data, options);
+): Promise<MessageResponse<MessageRegistry, K>> {
+    return Message.getInstance<MessageRegistry>().send(type, data, options);
 }
 
-export const onMessage = <T extends MessageDictionary, K extends MessageType<T>>(
-    arg1: K | MessageMapHandler<T> | MessageGeneralHandler<T, K>,
-    arg2?: MessageTargetHandler<T, K>
-): () => void => {
-    return new Message<T>().watch(arg1, arg2);
+export function onMessage<K extends MessageType<MessageRegistry>>(
+    type: K,
+    handler: MessageTargetHandler<MessageRegistry, K>
+): () => void;
+
+export function onMessage<K extends MessageType<MessageRegistry>>(
+    handler: MessageGeneralHandler<MessageRegistry, K>
+): () => void;
+
+export function onMessage(
+    map: MessageMapHandler<MessageRegistry>
+): () => void;
+
+export function onMessage<K extends MessageType<MessageRegistry>>(
+    arg1: K | MessageMapHandler<MessageRegistry> | MessageGeneralHandler<MessageRegistry, K>,
+    arg2?: MessageTargetHandler<MessageRegistry, K>
+): () => void {
+    return Message.getInstance<MessageRegistry>().watch(arg1, arg2);
 }

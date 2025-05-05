@@ -1,26 +1,30 @@
 import get from 'get-value'
-import {RelayWindowKey} from "@typing/relay";
+import {
+    PropertyOptions,
+    RelayDictionary,
+    RelayGlobalKey,
+    RelayManager as RelayManagerContract,
+    RelayName
+} from "@typing/relay";
 
-type PropertyType = {
-    name: string,
-    path?: string,
-    args?: any[],
-    options?: get.Options,
-}
+export default class RelayManager implements RelayManagerContract {
+    private relays = new Map<
+        RelayName,
+        RelayDictionary[RelayName]
+    >();
 
-export default class RelayManager {
-    private instances = new Map<string, any>();
-
-    public static getInstance(): RelayManager {
-        if (window[RelayWindowKey] === undefined) {
-            window[RelayWindowKey] = new RelayManager();
-        }
-        return window[RelayWindowKey];
+    public static getInstance(): RelayManagerContract {
+        return globalThis[RelayGlobalKey] ??= new RelayManager();
     }
 
-    public async property({name, path, args, options}: PropertyType): Promise<any> {
+    public async property(
+        name: RelayName,
+        options?: PropertyOptions
+    ): Promise<any> {
+        const {path, args, getOptions} = options || {};
         const relay = this.get(name)
-        const property = path == null ? relay : get(relay, path, options)
+
+        const property = path == null ? relay : get(relay, path, getOptions)
 
         if (property === undefined) {
             throw new Error(`Property not found at path "${path}" in relay "${name}"`)
@@ -33,25 +37,38 @@ export default class RelayManager {
         return property
     }
 
-    public add(name: string, instance: any) {
-        this.instances.set(name, instance);
+    public add<K extends RelayName>(
+        name: K,
+        relay: RelayDictionary[K]
+    ): this {
+        this.relays.set(name, relay);
+
+        return this;
     }
 
-    public get(name: string): any | undefined {
-        return this.instances.get(name);
+    public get<K extends RelayName>(
+        name: K
+    ): RelayDictionary[K] | undefined {
+        return this.relays.get(name) as RelayDictionary[K] | undefined;
     }
 
-    public has(name: string): boolean {
-        return this.instances.has(name);
+    public has(name: RelayName): boolean {
+        return this.relays.has(name);
     }
 
-    public remove(name: string): any | undefined {
-        const instance = this.get(name);
-        this.instances.delete(name);
-        return instance;
+    public remove<K extends RelayName>(
+        name: K
+    ): RelayDictionary[K] | undefined {
+        const relay = this.get(name);
+
+        this.relays.delete(name);
+
+        return relay;
     }
 
-    public clear(): void {
-        this.instances.clear();
+    public clear(): this {
+        this.relays.clear();
+
+        return this;
     }
 }

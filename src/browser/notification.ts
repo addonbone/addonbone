@@ -1,4 +1,5 @@
 import {browser} from "./browser";
+import {handleListener} from "./utils";
 import {throwRuntimeError} from "./runtime";
 
 type NotificationOptions<T extends boolean = false> = chrome.notifications.NotificationOptions<T>;
@@ -88,31 +89,23 @@ export const getNotificationPermissionLevel = (): Promise<string> => new Promise
 export const onNotificationsClicked = (callback: Parameters<typeof chrome.notifications.onClicked.addListener>[0]): () => void => {
     if (!isSupportNotifications()) return () => ({});
 
-    notifications().onClicked.addListener(callback);
-
-    return () => notifications().onClicked.removeListener(callback);
+    return handleListener(notifications().onClicked, callback)
 }
 
 export const onNotificationsClosed = (callback: Parameters<typeof chrome.notifications.onClosed.addListener>[0]): () => void => {
     if (!isSupportNotifications()) return () => ({});
 
-    notifications().onClosed.addListener(callback);
-
-    return () => notifications().onClosed.removeListener(callback);
+    return handleListener(notifications().onClosed, callback)
 }
 
 export const onNotificationsButtonClicked = (callback: Parameters<typeof chrome.notifications.onButtonClicked.addListener>[0]): () => void => {
     if (!isSupportNotifications()) return () => ({});
 
-    notifications().onButtonClicked.addListener(callback);
-
-    return () => notifications().onButtonClicked.removeListener(callback);
+    return handleListener(notifications().onButtonClicked, callback)
 }
 
 export const onNotificationsPermissionLevelChanged = (callback: Parameters<typeof chrome.notifications.onPermissionLevelChanged.addListener>[0]): () => void => {
     if (!isSupportNotifications()) return () => ({});
 
-    notifications().onPermissionLevelChanged.addListener(callback);
-
-    return () => notifications().onPermissionLevelChanged.removeListener(callback);
+    return handleListener(notifications().onPermissionLevelChanged, callback)
 }

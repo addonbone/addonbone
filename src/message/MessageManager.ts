@@ -1,18 +1,20 @@
-import {browser} from '@browser/browser'
+import {onMessage} from '@browser/runtime'
 
-import {MessageBody, MessageHandler, MessageMap, MessageSender, MessageType} from '@typing/message';
+import {
+    MessageBody,
+    MessageDictionary,
+    MessageGlobalKey,
+    MessageHandler,
+    MessageSender,
+    MessageType
+} from '@typing/message';
 
-export default class MessageManager<T extends MessageMap> {
+export default class MessageManager<T extends MessageDictionary> {
     private handlers: Set<MessageHandler<T>> = new Set()
-    private isListenerAttached = false;
+    private unsubscribe: (() => void) | null = null;
 
-    private static instance: MessageManager<MessageMap> | null = null;
-
-    public static getInstance<T extends MessageMap>(): MessageManager<T> {
-        if (MessageManager.instance === null) {
-            MessageManager.instance = new MessageManager<T>();
-        }
-        return MessageManager.instance;
+    public static getInstance<T extends MessageDictionary>(): MessageManager<T> {
+        return globalThis[MessageGlobalKey] ??= new MessageManager<T>();
     }
 
     constructor() {
@@ -35,12 +37,11 @@ export default class MessageManager<T extends MessageMap> {
     }
 
     private updateListener() {
-        if (this.handlers.size > 0 && !this.isListenerAttached) {
-            browser().runtime.onMessage.addListener(this.listener);
-            this.isListenerAttached = true;
-        } else if (this.handlers.size === 0 && this.isListenerAttached) {
-            browser().runtime.onMessage.removeListener(this.listener);
-            this.isListenerAttached = false;
+        if (this.handlers.size > 0 && !this.unsubscribe) {
+            this.unsubscribe = onMessage(this.listener);
+        } else if (this.handlers.size === 0 && this.unsubscribe) {
+            this.unsubscribe();
+            this.unsubscribe = null;
         }
     }
 

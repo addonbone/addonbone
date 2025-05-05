@@ -1,14 +1,14 @@
 import AbstractHandler from "./AbstractHandler";
 import {
     MessageData,
-    MessageMap,
+    MessageDictionary,
     MessageMapHandler,
     MessageResponse,
     MessageSender,
     MessageType
 } from "@typing/message";
 
-export default class MapHandler<T extends MessageMap> extends AbstractHandler<T> {
+export default class MapHandler<T extends MessageDictionary> extends AbstractHandler<T> {
 
     constructor(private map: MessageMapHandler<T>) {
         super();

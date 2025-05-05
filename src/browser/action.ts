@@ -1,5 +1,6 @@
 import {getManifest, isManifestVersion3, throwRuntimeError} from "./runtime";
 import {browser} from "./browser";
+import {handleListener} from "./utils";
 
 type BadgeBackgroundColorDetails = chrome.browserAction.BadgeBackgroundColorDetails;
 type BadgeTextDetails = chrome.action.BadgeTextDetails;
@@ -72,7 +73,5 @@ export const getActionDefaultPopup = (): string => {
 }
 
 export const onActionClicked = (callback: Parameters<typeof chrome.action.onClicked.addListener>[0]): () => void => {
-    action().onClicked.addListener(callback);
-
-    return () => action().onClicked.removeListener(callback);
+    return handleListener(action().onClicked, callback)
 }

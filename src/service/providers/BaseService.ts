@@ -14,7 +14,7 @@ export default class<N extends ServiceName, T = ServiceDictionary[N]> {
 
     public get(): T {
         if (!isBackground()) {
-            throw new Error('BaseService.get() must be called from within the background context.');
+            throw new Error(`Service "${this.name}" can be getting only from background context.`);
         }
 
         return this.manager.get(this.name);

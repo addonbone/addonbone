@@ -1,5 +1,6 @@
 import {getTabUrl} from "./tab";
 import {browser} from "./browser";
+import {safeListener} from "./utils";
 import {throwRuntimeError} from "./runtime";
 
 import {isBrowser} from "@main/env";
@@ -57,9 +58,11 @@ export const onWebRequestAuthRequired = (
     filter: RequestFilter,
     extraInfoSpec?: Parameters<typeof chrome.webRequest.onAuthRequired.addListener>[2]
 ): () => void => {
-    webRequest().onAuthRequired.addListener(callback, filter, extraInfoSpec);
+    const listener = safeListener(callback)
 
-    return () => webRequest().onAuthRequired.removeListener(callback);
+    webRequest().onAuthRequired.addListener(listener, filter, extraInfoSpec);
+
+    return () => webRequest().onAuthRequired.removeListener(listener);
 }
 
 export const onWebRequestBeforeRedirect = (
@@ -67,9 +70,11 @@ export const onWebRequestBeforeRedirect = (
     filter: RequestFilter,
     extraInfoSpec?: Parameters<typeof chrome.webRequest.onBeforeRedirect.addListener>[2]
 ): () => void => {
-    webRequest().onBeforeRedirect.addListener(callback, filter, extraInfoSpec);
+    const listener = safeListener(callback)
 
-    return () => webRequest().onBeforeRedirect.removeListener(callback);
+    webRequest().onBeforeRedirect.addListener(listener, filter, extraInfoSpec);
+
+    return () => webRequest().onBeforeRedirect.removeListener(listener);
 }
 
 export const onWebRequestBeforeRequest = (
@@ -77,9 +82,11 @@ export const onWebRequestBeforeRequest = (
     filter: RequestFilter,
     extraInfoSpec?: Parameters<typeof chrome.webRequest.onBeforeRequest.addListener>[2]
 ): () => void => {
-    webRequest().onBeforeRequest.addListener(callback, filter, extraInfoSpec);
+    const listener = safeListener(callback)
 
-    return () => webRequest().onBeforeRequest.removeListener(callback);
+    webRequest().onBeforeRequest.addListener(listener, filter, extraInfoSpec);
+
+    return () => webRequest().onBeforeRequest.removeListener(listener);
 }
 
 export const onWebRequestBeforeSendHeaders = (
@@ -87,9 +94,11 @@ export const onWebRequestBeforeSendHeaders = (
     filter: RequestFilter,
     extraInfoSpec?: Parameters<typeof chrome.webRequest.onBeforeSendHeaders.addListener>[2]
 ): () => void => {
-    webRequest().onBeforeSendHeaders.addListener(callback, filter, extraInfoSpec);
+    const listener = safeListener(callback)
 
-    return () => webRequest().onBeforeSendHeaders.removeListener(callback);
+    webRequest().onBeforeSendHeaders.addListener(listener, filter, extraInfoSpec);
+
+    return () => webRequest().onBeforeSendHeaders.removeListener(listener);
 }
 
 export const onWebRequestCompleted = (
@@ -97,9 +106,11 @@ export const onWebRequestCompleted = (
     filter: RequestFilter,
     extraInfoSpec?: Parameters<typeof chrome.webRequest.onCompleted.addListener>[2]
 ): () => void => {
-    webRequest().onCompleted.addListener(callback, filter, extraInfoSpec);
+    const listener = safeListener(callback)
 
-    return () => webRequest().onCompleted.removeListener(callback);
+    webRequest().onCompleted.addListener(listener, filter, extraInfoSpec);
+
+    return () => webRequest().onCompleted.removeListener(listener);
 }
 
 export const onWebRequestErrorOccurred = (
@@ -107,9 +118,11 @@ export const onWebRequestErrorOccurred = (
     filter: RequestFilter,
     extraInfoSpec?: Parameters<typeof chrome.webRequest.onErrorOccurred.addListener>[2]
 ): () => void => {
-    webRequest().onErrorOccurred.addListener(callback, filter, extraInfoSpec);
+    const listener = safeListener(callback)
 
-    return () => webRequest().onErrorOccurred.removeListener(callback);
+    webRequest().onErrorOccurred.addListener(listener, filter, extraInfoSpec);
+
+    return () => webRequest().onErrorOccurred.removeListener(listener);
 }
 
 export const onWebRequestHeadersReceived = (
@@ -117,9 +130,11 @@ export const onWebRequestHeadersReceived = (
     filter: RequestFilter,
     extraInfoSpec?: Parameters<typeof chrome.webRequest.onHeadersReceived.addListener>[2]
 ): () => void => {
-    webRequest().onHeadersReceived.addListener(callback, filter, extraInfoSpec);
+    const listener = safeListener(callback)
 
-    return () => webRequest().onHeadersReceived.removeListener(callback);
+    webRequest().onHeadersReceived.addListener(listener, filter, extraInfoSpec);
+
+    return () => webRequest().onHeadersReceived.removeListener(listener);
 }
 
 export const onWebRequestResponseStarted = (
@@ -127,9 +142,11 @@ export const onWebRequestResponseStarted = (
     filter: RequestFilter,
     extraInfoSpec?: Parameters<typeof chrome.webRequest.onResponseStarted.addListener>[2]
 ): () => void => {
-    webRequest().onResponseStarted.addListener(callback, filter, extraInfoSpec);
+    const listener = safeListener(callback)
 
-    return () => webRequest().onResponseStarted.removeListener(callback);
+    webRequest().onResponseStarted.addListener(listener, filter, extraInfoSpec);
+
+    return () => webRequest().onResponseStarted.removeListener(listener);
 }
 
 export const onWebRequestSendHeaders = (
@@ -137,7 +154,9 @@ export const onWebRequestSendHeaders = (
     filter: RequestFilter,
     extraInfoSpec?: Parameters<typeof chrome.webRequest.onSendHeaders.addListener>[2]
 ): () => void => {
-    webRequest().onSendHeaders.addListener(callback, filter, extraInfoSpec);
+    const listener = safeListener(callback)
 
-    return () => webRequest().onSendHeaders.removeListener(callback);
+    webRequest().onSendHeaders.addListener(listener, filter, extraInfoSpec);
+
+    return () => webRequest().onSendHeaders.removeListener(listener);
 }

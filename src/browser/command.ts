@@ -1,4 +1,5 @@
 import {browser} from "./browser";
+import {handleListener} from "./utils";
 import {throwRuntimeError} from "@browser/runtime";
 
 type Command = chrome.commands.Command;
@@ -20,7 +21,5 @@ export const getAllCommands = () => new Promise<Command[]>((resolve, reject) => 
 });
 
 export const onCommand = (callback: Parameters<typeof chrome.commands.onCommand.addListener>[0]): () => void => {
-    commands().onCommand.addListener(callback);
-
-    return () => commands().onCommand.removeListener(callback);
+    return handleListener(commands().onCommand, callback)
 }

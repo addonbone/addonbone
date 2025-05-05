@@ -1,4 +1,5 @@
 import {browser} from "./browser";
+import {handleListener} from "./utils";
 import {throwRuntimeError} from "./runtime";
 
 import {getBrowser} from "@main/env";
@@ -125,13 +126,9 @@ export const getSettingsDownloadsUrl = (): string => {
 }
 
 export const onDownloadsCreated = (callback: Parameters<typeof chrome.downloads.onCreated.addListener>[0]): () => void => {
-    downloads().onCreated.addListener(callback);
-
-    return () => downloads().onCreated.removeListener(callback);
+    return handleListener(downloads().onCreated, callback)
 }
 
 export const onDownloadsChanged = (callback: Parameters<typeof chrome.downloads.onChanged.addListener>[0]): () => void => {
-    downloads().onChanged.addListener(callback);
-
-    return () => downloads().onChanged.removeListener(callback);
+    return handleListener(downloads().onChanged, callback)
 }

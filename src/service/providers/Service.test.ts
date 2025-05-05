@@ -52,7 +52,7 @@ describe('ProxyService', () => {
 
         const proxy = new ProxyService(serviceName);
 
-        expect(() => proxy.get()).toThrow("ProxyService.get() cannot be called in the background");
+        expect(() => proxy.get()).toThrow(`You are trying to get proxy service "${serviceName}" from background. You can get original service instead`);
     });
 
     test("returns a proxy when not in background context", () => {
@@ -139,7 +139,7 @@ describe('RegisterService', () => {
 
         const proxy = new RegisterService(serviceName, () => MatchService);
 
-        expect(() => proxy.get()).toThrow("RegisterService.get() must be called from within the background context.");
+        expect(() => proxy.get()).toThrow(`Service "${serviceName}" can be getting only from background context.`);
     });
 
     test("returns real service when called in background context", () => {

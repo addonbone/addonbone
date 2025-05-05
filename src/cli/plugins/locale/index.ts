@@ -6,13 +6,14 @@ import {GenerateJsonPlugin} from "@cli/bundler";
 import {extractLocaleKey, modifyLocaleMessageKey} from "@locale/utils";
 
 import Locale from "./Locale";
-import LocaleDeclaration from "./LocaleDeclaration";
+
+import {LocaleDeclaration} from "./declaration";
 
 import {Command} from "@typing/app";
 import {Browser} from "@typing/browser";
 import {Language, LanguageCodes} from "@typing/locale";
 
-export {Locale, LocaleDeclaration};
+export {Locale};
 
 export default definePlugin(() => {
     let locale: Locale;

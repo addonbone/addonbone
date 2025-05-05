@@ -1,9 +1,10 @@
+import template from "./locale.d.ts?raw";
+
 import {FileBuilder} from "@cli/plugins/typescript";
 
 import {PackageName} from "@typing/app";
 import {ReadonlyConfig} from "@typing/config";
 import {LocaleStructure} from "@typing/locale";
-
 
 export default class extends FileBuilder {
     protected _structure?: LocaleStructure;
@@ -23,11 +24,11 @@ export default class extends FileBuilder {
             throw new Error("Locale structure is not set");
         }
 
-        return `import '${PackageName}/locale';
-    
-declare module '${PackageName}/locale' {
-    interface LocaleNativeStructure ${JSON.stringify(structure, null, 2)}
-}`;
+        const type = JSON.stringify(structure, null, 4);
+
+        return template
+            .replaceAll(':package', PackageName)
+            .replace('interface LocaleNativeStructure {}', `interface LocaleNativeStructure ${type}`);
     }
 
     public structure(structure: LocaleStructure): this {

@@ -1,55 +1,69 @@
 import {
     Language,
-    LocaleKeys,
-    LocaleNonPluralKeysOf,
-    LocalePluralKeysOf,
+    LocaleNonPluralKeys,
+    LocalePluralKeys,
     LocaleProvider,
     LocaleStructure,
-    LocaleValuesSeparator,
-    LocaleSubstitutionsFor
+    LocaleSubstitutionsFor,
+    LocaleValuesSeparator
 } from "@typing/locale";
 
-export default abstract class AbstractLocale<S extends LocaleStructure> implements LocaleProvider<S> {
+export default abstract class AbstractLocale<S extends LocaleStructure>
+    implements LocaleProvider<S> {
+
     public abstract lang(): Language;
 
-    public abstract keys(): LocaleKeys;
+    public abstract keys(): Set<keyof S>;
 
-    protected abstract value(key: Extract<keyof S, string>): string | undefined;
+    protected abstract value(key: keyof S & string): string | undefined;
 
-    public choice<K extends LocalePluralKeysOf<S>>(key: K, count: number, substitutions?: LocaleSubstitutionsFor<S, K>): string {
-        const value = this.get(key, substitutions).split(LocaleValuesSeparator);
-
-        const index = this.getPluralIndex(count);
-
-        return value[index] || value[0] || (key as string);
-    }
-
-    public trans<K extends LocaleNonPluralKeysOf<S>>(key: K, substitutions?: LocaleSubstitutionsFor<S, K>): string {
+    /**
+     * Non-plural перевод
+     */
+    public trans<K extends LocaleNonPluralKeys<S>>(
+        key: K,
+        substitutions?: LocaleSubstitutionsFor<S, K>
+    ): string {
         return this.get(key, substitutions);
     }
 
-    public get<K extends Extract<keyof S, string>>(key: K, substitutions?: LocaleSubstitutionsFor<S, K>): string {
-        const value = this.value(key);
+    /**
+     * Plural-перевод
+     */
+    public choice<K extends LocalePluralKeys<S>>(
+        key: K,
+        count: number,
+        substitutions?: LocaleSubstitutionsFor<S, K>
+    ): string {
+        const parts = this.get(key, substitutions).split(LocaleValuesSeparator);
+        const idx = this.getPluralIndex(count);
+        return parts[idx] ?? parts[0] ?? (key as string);
+    }
 
-        if (!value) {
-            console.warn(`Locale key "${key as string}" not found in "${this.lang()}" language.`);
+    public get<K extends keyof S & string>(
+        key: K,
+        substitutions?: LocaleSubstitutionsFor<S, K>
+    ): string {
+        const template = this.value(key);
 
+        if (template === undefined) {
+            console.warn(`Locale key "${key}" not found in "${this.lang()}" language.`);
             return key as string;
         }
 
         if (substitutions) {
-            return value.replace(/{{(.*?)}}/g, (_, substitution) => {
-                if (substitution in substitutions) {
-                    return substitutions[substitution].toString();
+            return template.replace(/{{(.*?)}}/g, (_, placeholder: string) => {
+                if (placeholder in substitutions) {
+                    return substitutions[placeholder]!.toString();
                 }
-
-                console.warn(`Locale substitution "${substitution}" not found for key "${key as string}" in "${this.lang()}" language.`);
-
-                return substitution;
+                console.warn(
+                    `Locale substitution "${placeholder}" not found for key "${key}" in "${this.lang()}" language.`
+                );
+                return placeholder;
             });
         }
 
-        return value;
+        return template;
     }
 
     private getPluralIndex(count: number): number {
@@ -135,6 +149,5 @@ export default abstract class AbstractLocale<S extends LocaleStructure> implemen
                 return 0;
         }
     }
-
 }
 

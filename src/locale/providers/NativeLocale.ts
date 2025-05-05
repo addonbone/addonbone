@@ -5,14 +5,7 @@ import AbstractLocale from "./AbstractLocale";
 import {convertLocaleKey} from "@locale/utils";
 import {isBrowser} from "@main/env";
 
-import {
-    Language,
-    LanguageCodes,
-    LocaleCustomKeyForLanguage,
-    LocaleKeys,
-    LocaleProvider,
-    LocaleStructure
-} from "@typing/locale";
+import {Language, LanguageCodes, LocaleCustomKeyForLanguage, LocaleProvider, LocaleStructure} from "@typing/locale";
 import {Browser} from "@typing/browser";
 
 export interface LocaleNativeStructure extends LocaleStructure {
@@ -50,7 +43,8 @@ export default class NativeLocale extends AbstractLocale<LocaleNativeStructure> 
         return lang;
     }
 
-    public keys(): LocaleKeys {
+
+    public keys(): Set<keyof LocaleNativeStructure> {
         try {
             // @ts-expect-error
             return new Set<string>(LOCALE_KEYS);

@@ -6,7 +6,8 @@ export {
     LocaleDir,
     type LocaleStructure,
     type LocaleProvider,
-    type LocaleNonPluralKeysOf,
-    type LocalePluralKeysOf,
-    type LocaleKeys
+    type LocaleKeys,
+    type LocaleSubstitutionsFor,
+    type LocaleNonPluralKeys,
+    type LocalePluralKeys,
 } from "@typing/locale";

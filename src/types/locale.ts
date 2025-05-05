@@ -132,35 +132,32 @@ export interface LocaleStructure {
     [key: string]: LocaleFutures;
 }
 
-export type LocaleNonPluralKeys<T extends LocaleStructure> = {
-    [K in keyof T]: T[K]['plural'] extends false ? K : never;
-}[Extract<keyof T, string>];
+export type LocaleNonPluralKeys<T extends LocaleStructure> =
+    { [K in keyof T]: T[K] extends { plural: false } ? K : never }[keyof T] & string
 
-export type LocalePluralKeys<T extends LocaleStructure> = {
-    [K in keyof T]: T[K]['plural'] extends true ? K : never;
-}[Extract<keyof T, string>];
+export type LocalePluralKeys<T extends LocaleStructure> =
+    { [K in keyof T]: T[K] extends { plural: true } ? K : never }[keyof T] & string
 
 export type LocaleSubstitutionsFor<
     T extends LocaleStructure,
     K extends keyof T
-> = {
-    [P in T[K]['substitutions'][number]]?: string | number;
-};
-
-export type LocaleNonPluralKeysOf<S extends LocaleStructure> = Extract<keyof S, LocaleNonPluralKeys<S>>;
-export type LocalePluralKeysOf<S extends LocaleStructure> = Extract<keyof S, LocalePluralKeys<S>>;
+> = T[K] extends { substitutions: readonly (infer U)[] }
+    ? Partial<Record<U & string, string | number>>
+    : never
 
 export interface LocaleProvider<S extends LocaleStructure> {
     lang(): Language;
 
-    keys(): LocaleKeys;
+    keys(): ReadonlySet<keyof S>;
 
-    trans<K extends LocaleNonPluralKeysOf<S>>(
+    // non-plural keys
+    trans<K extends LocaleNonPluralKeys<S>>(
         key: K,
         substitutions?: LocaleSubstitutionsFor<S, K>
     ): string;
 
-    choice<K extends LocalePluralKeysOf<S>>(
+    // plural keys
+    choice<K extends LocalePluralKeys<S>>(
         key: K,
         count: number,
         substitutions?: LocaleSubstitutionsFor<S, K>

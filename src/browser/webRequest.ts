@@ -1,5 +1,6 @@
 import {getTabUrl} from "./tab";
 import {browser} from "./browser";
+import {handleListener} from "./utils";
 import {throwRuntimeError} from "./runtime";
 
 import {isBrowser} from "@main/env";
@@ -57,9 +58,7 @@ export const onWebRequestAuthRequired = (
     filter: RequestFilter,
     extraInfoSpec?: Parameters<typeof chrome.webRequest.onAuthRequired.addListener>[2]
 ): () => void => {
-    webRequest().onAuthRequired.addListener(callback, filter, extraInfoSpec);
-
-    return () => webRequest().onAuthRequired.removeListener(callback);
+    return handleListener(webRequest().onAuthRequired, callback, filter, extraInfoSpec)
 }
 
 export const onWebRequestBeforeRedirect = (
@@ -67,9 +66,7 @@ export const onWebRequestBeforeRedirect = (
     filter: RequestFilter,
     extraInfoSpec?: Parameters<typeof chrome.webRequest.onBeforeRedirect.addListener>[2]
 ): () => void => {
-    webRequest().onBeforeRedirect.addListener(callback, filter, extraInfoSpec);
-
-    return () => webRequest().onBeforeRedirect.removeListener(callback);
+    return handleListener(webRequest().onBeforeRedirect, callback, filter, extraInfoSpec)
 }
 
 export const onWebRequestBeforeRequest = (
@@ -77,9 +74,7 @@ export const onWebRequestBeforeRequest = (
     filter: RequestFilter,
     extraInfoSpec?: Parameters<typeof chrome.webRequest.onBeforeRequest.addListener>[2]
 ): () => void => {
-    webRequest().onBeforeRequest.addListener(callback, filter, extraInfoSpec);
-
-    return () => webRequest().onBeforeRequest.removeListener(callback);
+    return handleListener(webRequest().onBeforeRequest, callback, filter, extraInfoSpec)
 }
 
 export const onWebRequestBeforeSendHeaders = (
@@ -87,9 +82,7 @@ export const onWebRequestBeforeSendHeaders = (
     filter: RequestFilter,
     extraInfoSpec?: Parameters<typeof chrome.webRequest.onBeforeSendHeaders.addListener>[2]
 ): () => void => {
-    webRequest().onBeforeSendHeaders.addListener(callback, filter, extraInfoSpec);
-
-    return () => webRequest().onBeforeSendHeaders.removeListener(callback);
+    return handleListener(webRequest().onBeforeSendHeaders, callback, filter, extraInfoSpec)
 }
 
 export const onWebRequestCompleted = (
@@ -97,9 +90,7 @@ export const onWebRequestCompleted = (
     filter: RequestFilter,
     extraInfoSpec?: Parameters<typeof chrome.webRequest.onCompleted.addListener>[2]
 ): () => void => {
-    webRequest().onCompleted.addListener(callback, filter, extraInfoSpec);
-
-    return () => webRequest().onCompleted.removeListener(callback);
+    return handleListener(webRequest().onCompleted, callback, filter, extraInfoSpec)
 }
 
 export const onWebRequestErrorOccurred = (
@@ -107,9 +98,7 @@ export const onWebRequestErrorOccurred = (
     filter: RequestFilter,
     extraInfoSpec?: Parameters<typeof chrome.webRequest.onErrorOccurred.addListener>[2]
 ): () => void => {
-    webRequest().onErrorOccurred.addListener(callback, filter, extraInfoSpec);
-
-    return () => webRequest().onErrorOccurred.removeListener(callback);
+    return handleListener(webRequest().onErrorOccurred, callback, filter, extraInfoSpec)
 }
 
 export const onWebRequestHeadersReceived = (
@@ -117,9 +106,7 @@ export const onWebRequestHeadersReceived = (
     filter: RequestFilter,
     extraInfoSpec?: Parameters<typeof chrome.webRequest.onHeadersReceived.addListener>[2]
 ): () => void => {
-    webRequest().onHeadersReceived.addListener(callback, filter, extraInfoSpec);
-
-    return () => webRequest().onHeadersReceived.removeListener(callback);
+    return handleListener(webRequest().onHeadersReceived, callback, filter, extraInfoSpec)
 }
 
 export const onWebRequestResponseStarted = (
@@ -127,9 +114,7 @@ export const onWebRequestResponseStarted = (
     filter: RequestFilter,
     extraInfoSpec?: Parameters<typeof chrome.webRequest.onResponseStarted.addListener>[2]
 ): () => void => {
-    webRequest().onResponseStarted.addListener(callback, filter, extraInfoSpec);
-
-    return () => webRequest().onResponseStarted.removeListener(callback);
+    return handleListener(webRequest().onResponseStarted, callback, filter, extraInfoSpec)
 }
 
 export const onWebRequestSendHeaders = (
@@ -137,7 +122,5 @@ export const onWebRequestSendHeaders = (
     filter: RequestFilter,
     extraInfoSpec?: Parameters<typeof chrome.webRequest.onSendHeaders.addListener>[2]
 ): () => void => {
-    webRequest().onSendHeaders.addListener(callback, filter, extraInfoSpec);
-
-    return () => webRequest().onSendHeaders.removeListener(callback);
+    return handleListener(webRequest().onSendHeaders, callback, filter, extraInfoSpec)
 }

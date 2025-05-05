@@ -1,4 +1,6 @@
 import {browser} from "./browser";
+import {handleListener} from "./utils";
+
 import {ManifestVersion} from "@typing/manifest";
 import {MessageBody, MessageDictionary, MessageResponse, MessageType} from "@typing/message";
 
@@ -91,13 +93,9 @@ export const sendMessage = <
 });
 
 export const onRuntimeInstalled = (callback: Parameters<typeof chrome.runtime.onInstalled.addListener>[0]): () => void => {
-    runtime().onInstalled.addListener(callback);
-
-    return () => runtime().onInstalled.removeListener(callback);
+    return handleListener(runtime().onInstalled, callback)
 }
 
 export const onMessage = (callback: Parameters<typeof chrome.runtime.onMessage.addListener>[0]): () => void => {
-    runtime().onMessage.addListener(callback);
-
-    return () => runtime().onMessage.removeListener(callback);
+    return handleListener(runtime().onMessage, callback)
 }

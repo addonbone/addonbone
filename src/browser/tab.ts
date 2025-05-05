@@ -1,4 +1,5 @@
 import {browser} from "./browser";
+import {handleListener} from "./utils";
 import {throwRuntimeError} from "./runtime";
 import {MessageBody, MessageDictionary, MessageResponse, MessageType} from "@typing/message";
 
@@ -388,61 +389,41 @@ export const openOrCreateTab = async (tab: Tab): Promise<void> => {
 // ============ EVENTS =============
 // =================================
 export const onTabActivated = (callback: Parameters<typeof chrome.tabs.onActivated.addListener>[0]): () => void => {
-    tabs().onActivated.addListener(callback);
-
-    return () => tabs().onActivated.removeListener(callback);
+    return handleListener(tabs().onActivated, callback)
 }
 
 export const onTabAttached = (callback: Parameters<typeof chrome.tabs.onAttached.addListener>[0]): () => void => {
-    tabs().onAttached.addListener(callback);
-
-    return () => tabs().onAttached.removeListener(callback);
+    return handleListener(tabs().onAttached, callback)
 }
 
 export const onTabCreated = (callback: Parameters<typeof chrome.tabs.onCreated.addListener>[0]): () => void => {
-    tabs().onCreated.addListener(callback);
-
-    return () => tabs().onCreated.removeListener(callback);
+    return handleListener(tabs().onCreated, callback)
 }
 
 export const onTabDetached = (callback: Parameters<typeof chrome.tabs.onDetached.addListener>[0]): () => void => {
-    tabs().onDetached.addListener(callback);
-
-    return () => tabs().onDetached.removeListener(callback);
+    return handleListener(tabs().onDetached, callback)
 }
 
 export const onTabHighlighted = (callback: Parameters<typeof chrome.tabs.onHighlighted.addListener>[0]): () => void => {
-    tabs().onHighlighted.addListener(callback);
-
-    return () => tabs().onHighlighted.removeListener(callback);
+    return handleListener(tabs().onHighlighted, callback)
 };
 
 export const onTabMoved = (callback: Parameters<typeof chrome.tabs.onMoved.addListener>[0]): () => void => {
-    tabs().onMoved.addListener(callback);
-
-    return () => tabs().onMoved.removeListener(callback);
+    return handleListener(tabs().onMoved, callback)
 }
 
 export const onTabRemoved = (callback: Parameters<typeof chrome.tabs.onRemoved.addListener>[0]): () => void => {
-    tabs().onRemoved.addListener(callback);
-
-    return () => tabs().onRemoved.removeListener(callback);
+    return handleListener(tabs().onRemoved, callback)
 };
 
 export const onTabReplaced = (callback: Parameters<typeof chrome.tabs.onReplaced.addListener>[0]): () => void => {
-    tabs().onReplaced.addListener(callback);
-
-    return () => tabs().onReplaced.removeListener(callback);
+    return handleListener(tabs().onReplaced, callback)
 };
 
 export const onTabUpdated = (callback: Parameters<typeof chrome.tabs.onUpdated.addListener>[0]): () => void => {
-    tabs().onUpdated.addListener(callback);
-
-    return () => tabs().onUpdated.removeListener(callback);
+    return handleListener(tabs().onUpdated, callback)
 }
 
 export const onTabZoomChange = (callback: Parameters<typeof chrome.tabs.onZoomChange.addListener>[0]): () => void => {
-    tabs().onZoomChange.addListener(callback);
-
-    return () => tabs().onZoomChange.removeListener(callback);
+    return handleListener(tabs().onZoomChange, callback)
 }

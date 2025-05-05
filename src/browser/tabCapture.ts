@@ -1,4 +1,5 @@
 import {browser} from "./browser";
+import {handleListener} from "./utils";
 import {throwRuntimeError} from "./runtime";
 
 type CaptureInfo = chrome.tabCapture.CaptureInfo;
@@ -44,7 +45,5 @@ export const getCaptureMediaStreamId = (options: GetMediaStreamOptions) => new P
 });
 
 export const onCaptureStatusChanged = (callback: Parameters<typeof chrome.tabCapture.onStatusChanged.addListener>[0]): () => void => {
-    tabCapture().onStatusChanged.addListener(callback);
-
-    return () => tabCapture().onStatusChanged.removeListener(callback);
+    return handleListener(tabCapture().onStatusChanged, callback)
 }

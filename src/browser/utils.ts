@@ -1,3 +1,5 @@
+type Event<T extends Function> = chrome.events.Event<T>
+
 export function safeListener<T extends (...args: any[]) => any>(listener: T): T {
     return ((...args: Parameters<T>): ReturnType<T> | void => {
         try {
@@ -16,20 +18,13 @@ export function safeListener<T extends (...args: any[]) => any>(listener: T): T 
     }) as T;
 }
 
-export function handleListener<
-    T extends (...args: any[]) => void,
-    A extends unknown[]
->(
-    target: {
-        addListener: (callback: T, ...args: A) => void;
-        removeListener: (callback: T) => void;
-    },
+export function handleListener<T extends (...args: any[]) => void>(
+    target: Event<T>,
     callback: T,
-    ...args: A
 ): () => void {
     const listener = safeListener(callback);
 
-    target.addListener(listener, ...args);
+    target.addListener(listener);
 
     return () => target.removeListener(listener);
 }

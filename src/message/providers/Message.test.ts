@@ -152,48 +152,72 @@ describe('send method', () => {
 })
 
 describe('multiple handlers error for same message type', () => {
+    const errorPrefix = 'Listener sync error:'
     const errorMessage = 'Message type "getStringLength" has multiple handlers returning a response. Only one response is allowed.'
+    const error = {message: errorMessage}
+
+    let mockConsoleError: jest.SpyInstance;
+
+    beforeEach(() => {
+        mockConsoleError = jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    });
+
+    afterEach(() => {
+        mockConsoleError.mockRestore();
+    });
 
     test('with two "type" handlers', async () => {
         message.watch('getStringLength', () => 1);
         message.watch('getStringLength', () => 2);
 
-        await expect(message.send('getStringLength', 'test')).rejects.toThrow(errorMessage);
+        await message.send('getStringLength', 'test')
+
+        expect(mockConsoleError).toHaveBeenCalledWith(errorPrefix, expect.objectContaining(error));
     });
 
     test('with two "map" handlers', async () => {
         message.watch({getStringLength: () => 1});
         message.watch({getStringLength: () => 2});
 
-        await expect(message.send('getStringLength', 'test')).rejects.toThrow(errorMessage);
+        await message.send('getStringLength', 'test')
+
+        expect(mockConsoleError).toHaveBeenCalledWith(errorPrefix, expect.objectContaining(error));
     });
 
     test('with two "general" handlers', async () => {
         message.watch(() => 1);
         message.watch(() => 2);
 
-        await expect(message.send('getStringLength', 'test')).rejects.toThrow(errorMessage);
+        await message.send('getStringLength', 'test')
+
+        expect(mockConsoleError).toHaveBeenCalledWith(errorPrefix, expect.objectContaining(error));
     });
 
     test('with "type" and "map" handlers', async () => {
         message.watch('getStringLength', () => 1);
         message.watch({getStringLength: () => 1});
 
-        await expect(message.send('getStringLength', 'test')).rejects.toThrow(errorMessage);
+        await message.send('getStringLength', 'test')
+
+        expect(mockConsoleError).toHaveBeenCalledWith(errorPrefix, expect.objectContaining(error));
     });
 
     test('with "type" and "general" handlers', async () => {
         message.watch('getStringLength', () => 1);
         message.watch(() => 2);
 
-        await expect(message.send('getStringLength', 'test')).rejects.toThrow(errorMessage);
+        await message.send('getStringLength', 'test')
+
+        expect(mockConsoleError).toHaveBeenCalledWith(errorPrefix, expect.objectContaining(error));
     });
 
     test('with "map" and "general" handlers', async () => {
         message.watch({getStringLength: () => 1});
         message.watch(() => 2);
 
-        await expect(message.send('getStringLength', 'test')).rejects.toThrow(errorMessage);
+        await message.send('getStringLength', 'test')
+
+        expect(mockConsoleError).toHaveBeenCalledWith(errorPrefix, expect.objectContaining(error));
     });
 
     test('with two instances watching the same message type', async () => {
@@ -201,7 +225,9 @@ describe('multiple handlers error for same message type', () => {
         message.watch('getStringLength', (data) => data.length);
         secondMessage.watch('getStringLength', (data) => data.length);
 
-        await expect(message.send('getStringLength', 'test')).rejects.toThrow(errorMessage);
+        await message.send('getStringLength', 'test')
+
+        expect(mockConsoleError).toHaveBeenCalledWith(errorPrefix, expect.objectContaining(error));
     });
 
     test('allows multiple handlers if one of them don\'t return value', async () => {

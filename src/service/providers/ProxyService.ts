@@ -4,11 +4,11 @@ import {Message, MessageSendOptions} from "@message/providers";
 import BaseService from "./BaseService";
 
 import {ServiceDictionary, ServiceName} from "@typing/service";
-import {MessageMap, MessageProvider} from "@typing/message";
+import {MessageDictionary, MessageProvider} from "@typing/message";
 import {DeepAsyncProxy} from "@typing/helpers";
 
 export default class<N extends ServiceName, T = DeepAsyncProxy<ServiceDictionary[N]>> extends BaseService<N, T> {
-    private _message?: MessageProvider<MessageMap, MessageSendOptions>;
+    private _message?: MessageProvider<MessageDictionary, MessageSendOptions>;
 
     protected readonly messageKey: string;
 
@@ -18,7 +18,7 @@ export default class<N extends ServiceName, T = DeepAsyncProxy<ServiceDictionary
         this.messageKey = `service.${this.name}`;
     }
 
-    protected get message(): MessageProvider<MessageMap, MessageSendOptions> {
+    protected get message(): MessageProvider<MessageDictionary, MessageSendOptions> {
         return this._message ??= new Message();
     }
 
@@ -50,7 +50,7 @@ export default class<N extends ServiceName, T = DeepAsyncProxy<ServiceDictionary
 
     public get(): T {
         if (isBackground()) {
-            throw new Error('ProxyService.get() cannot be called in the background');
+            throw new Error(`You are trying to get proxy service "${this.name}" from background. You can get original service instead`);
         }
 
         return this.createProxy();

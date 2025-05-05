@@ -1,4 +1,12 @@
 export * from "./providers";
-export * from "./native";
 
-export {Language, LanguageCodes, LocaleDir} from "@typing/locale";
+export {
+    Language,
+    LanguageCodes,
+    LocaleDir,
+    type LocaleStructure,
+    type LocaleProvider,
+    type LocaleNonPluralKeysOf,
+    type LocalePluralKeysOf,
+    type LocaleKeys
+} from "@typing/locale";

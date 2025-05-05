@@ -140,7 +140,7 @@ export type LocalePluralKeys<T extends LocaleStructure> = {
     [K in keyof T]: T[K]['plural'] extends true ? K : never;
 }[Extract<keyof T, string>];
 
-export type SubstitutionsFor<
+export type LocaleSubstitutionsFor<
     T extends LocaleStructure,
     K extends keyof T
 > = {
@@ -157,12 +157,12 @@ export interface LocaleProvider<S extends LocaleStructure> {
 
     trans<K extends LocaleNonPluralKeysOf<S>>(
         key: K,
-        substitutions?: SubstitutionsFor<S, K>
+        substitutions?: LocaleSubstitutionsFor<S, K>
     ): string;
 
     choice<K extends LocalePluralKeysOf<S>>(
         key: K,
         count: number,
-        substitutions?: SubstitutionsFor<S, K>
+        substitutions?: LocaleSubstitutionsFor<S, K>
     ): string;
 }

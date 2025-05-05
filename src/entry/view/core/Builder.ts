@@ -1,4 +1,4 @@
-import {__t} from "@locale/native";
+import {__t} from "@main/locale";
 
 import Builder from "@entry/core/Builder";
 

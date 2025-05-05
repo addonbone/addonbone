@@ -5,13 +5,26 @@ import AbstractLocale from "./AbstractLocale";
 import {convertLocaleKey} from "@locale/utils";
 import {isBrowser} from "@main/env";
 
-import {Language, LanguageCodes, LocaleCustomKeyForLanguage, LocaleKeys, LocaleStructure} from "@typing/locale";
+import {
+    Language,
+    LanguageCodes,
+    LocaleCustomKeyForLanguage,
+    LocaleKeys,
+    LocaleProvider,
+    LocaleStructure
+} from "@typing/locale";
 import {Browser} from "@typing/browser";
 
 export interface LocaleNativeStructure extends LocaleStructure {
 }
 
-export default class NativeLocale<S extends LocaleStructure = LocaleNativeStructure> extends AbstractLocale<S> {
+export default class NativeLocale extends AbstractLocale<LocaleNativeStructure> {
+    private static instance?: LocaleProvider<LocaleNativeStructure>;
+
+    public static getInstance<S extends LocaleStructure = LocaleNativeStructure>(): LocaleProvider<S> {
+        return NativeLocale.instance ??= new NativeLocale();
+    }
+
     public lang(): Language {
         let lang: Language | undefined;
 
@@ -48,7 +61,7 @@ export default class NativeLocale<S extends LocaleStructure = LocaleNativeStruct
         }
     }
 
-    protected value(key: Extract<keyof S, string>): string | undefined {
+    protected value(key: Extract<keyof LocaleNativeStructure, string>): string | undefined {
         const value = getI18nMessage(convertLocaleKey(key));
 
         if (!value || value.length === 0) {

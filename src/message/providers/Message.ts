@@ -1,10 +1,10 @@
-import {browser} from '@browser/browser'
-import {throwRuntimeError} from "@browser/runtime";
+import {sendMessage} from "@browser/runtime";
+import {sendTabMessage} from "@browser/tab";
 import {
     MessageData,
+    MessageDictionary,
     MessageGeneralHandler,
     MessageHandler,
-    MessageMap,
     MessageMapHandler,
     MessageResponse,
     MessageTargetHandler,
@@ -16,40 +16,34 @@ import MessageManager from "../MessageManager";
 
 import {GeneralHandler, MapHandler, SingleHandler} from "../handlers";
 
-export type MessageSendOptions = number | { tabId: number; frameId?: number };
+export type MessageSendOptions = number | { tabId: number; frameId?: number; documentId?: string };
 
-export default class Message<T extends MessageMap> extends AbstractMessage<T, MessageSendOptions> {
-    protected manager = MessageManager.getInstance<T>();
+export default class Message<T extends MessageDictionary> extends AbstractMessage<T, MessageSendOptions> {
+    private static instance: Message<MessageDictionary> | null = null;
+
+    public static getInstance<T extends MessageDictionary>() {
+        return this.instance ??= new Message<T>();
+    }
+
+    protected get manager(): MessageManager<T> {
+        return MessageManager.getInstance<T>();
+    }
 
     public send<K extends MessageType<T>>(type: K, data: MessageData<T, K>, options?: MessageSendOptions): Promise<MessageResponse<T, K>> {
         const message = this.buildMessage(type, data);
 
-        if (typeof options === 'number' || typeof options === 'object') {
-            const tabId = typeof options === 'number' ? options : options.tabId;
-            const frameId = typeof options === 'object' && options.frameId !== undefined ? options.frameId : undefined;
+        if (options) {
+            if (typeof options === 'number') {
+                return sendTabMessage(options, message)
+            }
 
-            return new Promise((resolve, reject) => {
-                browser().tabs.sendMessage(tabId, message, {frameId}, (response) => {
-                    try {
-                        throwRuntimeError()
-                        resolve(response);
-                    } catch (e) {
-                        reject(e)
-                    }
-                });
-            });
+            const {tabId, ...other} = options;
+
+            return sendTabMessage(tabId, message, other);
+
         }
 
-        return new Promise((resolve, reject) => {
-            browser().runtime.sendMessage(message, (response) => {
-                try {
-                    throwRuntimeError()
-                    resolve(response);
-                } catch (e) {
-                    reject(e)
-                }
-            });
-        });
+        return sendMessage(message)
     }
 
     public watch<K extends MessageType<T>>(

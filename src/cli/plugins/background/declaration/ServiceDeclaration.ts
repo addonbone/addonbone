@@ -1,4 +1,6 @@
-import {FileBuilder} from "../typescript";
+import {FileBuilder} from "../../typescript";
+
+import template from "./service.d.ts?raw";
 
 import {PackageName} from "@typing/app";
 import {ReadonlyConfig} from "@typing/config";
@@ -22,16 +24,12 @@ export default class<T extends Record<string, string> = Record<string, string>> 
         }
 
         const type = Object.entries(dictionary).map(([key, value]) => {
-            return `${key}: ${value};`;
-        }).join('\n');
+            return `'${key}': ${value};`;
+        }).join('\n\t\t');
 
-        return `import '${PackageName}/service';
-    
-declare module '${PackageName}/service' {
-    interface ServiceDictionary {
-        ${type}
-    }
-}`;
+        return template
+            .replaceAll(':package', PackageName)
+            .replace('interface ServiceRegistry {}', `interface ServiceRegistry {\n\t\t${type}\n\t}`);
     }
 
     public dictionary(dictionary: T): this {

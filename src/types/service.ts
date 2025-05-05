@@ -2,7 +2,7 @@ import {Required} from "utility-types";
 
 import {EntrypointBuilder, EntrypointOptions} from "@typing/entrypoint";
 import {BackgroundConfig} from "@typing/background";
-import {Awaiter} from "@typing/helpers";
+import {Awaiter, DeepAsyncProxy} from "@typing/helpers";
 
 export const ServiceGlobalKey = 'adnbnService';
 
@@ -13,6 +13,10 @@ export interface ServiceDictionary {
 }
 
 export type ServiceName = Extract<keyof ServiceDictionary, string>;
+
+export type ServiceTarget<T extends ServiceDictionary, K extends keyof T> = T[K];
+
+export type ServiceProxyTarget<T extends ServiceDictionary, K extends keyof T> = DeepAsyncProxy<T[K]>;
 
 export interface ServiceManager {
     add<K extends ServiceName>(

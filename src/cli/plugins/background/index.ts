@@ -12,7 +12,8 @@ import BackgroundEntry from "./BackgroundEntry";
 import BackgroundManifest from "./BackgroundManifest";
 import Command from "./Command";
 import Service from "./Service";
-import ServiceDeclaration from "./ServiceDeclaration";
+
+import {ServiceDeclaration} from "./declaration";
 
 import {Command as AppCommand} from "@typing/app";
 

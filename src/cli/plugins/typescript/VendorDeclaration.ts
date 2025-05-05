@@ -13,7 +13,7 @@ export default class extends FileBuilder {
     }
 
     protected content(): string {
-        const types = [`${PackageName}/entry-types`].map((value) => `/// <reference types="${value}" />`);
+        const types = [`${PackageName}/client-types`].map((value) => `/// <reference types="${value}" />`);
 
         return types.join('\n')
     }

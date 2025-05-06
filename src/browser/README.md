@@ -13,7 +13,7 @@
 - [ ] [extension](https://developer.chrome.com/docs/extensions/reference/api/extension)
 - [ ] [fileBrowserHandler](https://developer.chrome.com/docs/extensions/reference/api/fileBrowserHandler)
 - [ ] [history](https://developer.chrome.com/docs/extensions/reference/api/history)
-- [ ] [i18n](https://developer.chrome.com/docs/extensions/reference/api/i18n)
+- [x] [i18n](https://developer.chrome.com/docs/extensions/reference/api/i18n)
 - [ ] [idle](https://developer.chrome.com/docs/extensions/reference/api/idle)
 - [ ] [management](https://developer.chrome.com/docs/extensions/reference/api/management)
 - [ ] [notifications](https://developer.chrome.com/docs/extensions/reference/api/notifications)

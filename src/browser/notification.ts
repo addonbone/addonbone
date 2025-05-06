@@ -4,9 +4,20 @@ import {throwRuntimeError} from "./runtime";
 
 type NotificationOptions<T extends boolean = false> = chrome.notifications.NotificationOptions<T>;
 
-const notifications = () => browser().notifications;
+const notifications = () => browser().notifications as typeof chrome.notifications;
 
-export const isSupportNotifications = () => !!notifications;
+// Methods
+export const clearNotification = (notificationId: string): Promise<boolean> => new Promise<boolean>((resolve, reject) => {
+    notifications().clear(notificationId, (wasCleared) => {
+        try {
+            throwRuntimeError();
+
+            resolve(wasCleared);
+        } catch (e) {
+            reject(e);
+        }
+    });
+});
 
 export const createNotification = (options: NotificationOptions, notificationId?: string) => new Promise<string>((resolve, reject) => {
     const defaultOptions: NotificationOptions<true> = {
@@ -32,30 +43,6 @@ export const createNotification = (options: NotificationOptions, notificationId?
     });
 });
 
-export const updateNotification = (options: NotificationOptions, notificationId: string) => new Promise<boolean>((resolve, reject) => {
-    notifications().update(notificationId, options, (wasUpdated) => {
-        try {
-            throwRuntimeError();
-
-            resolve(wasUpdated);
-        } catch (e) {
-            reject(e);
-        }
-    });
-});
-
-export const clearNotification = (notificationId: string): Promise<boolean> => new Promise<boolean>((resolve, reject) => {
-    notifications().clear(notificationId, (wasCleared) => {
-        try {
-            throwRuntimeError();
-
-            resolve(wasCleared);
-        } catch (e) {
-            reject(e);
-        }
-    });
-});
-
 export const getAllNotification = (): Promise<object> => new Promise<object>((resolve, reject) => {
     notifications().getAll((notifications) => {
         try {
@@ -67,12 +54,6 @@ export const getAllNotification = (): Promise<object> => new Promise<object>((re
         }
     });
 });
-
-export const clearAllNotification = async (): Promise<void> => {
-    const allNotificationIds = Object.keys((await getAllNotification()));
-
-    allNotificationIds.forEach((id: string) => clearNotification(id));
-}
 
 export const getNotificationPermissionLevel = (): Promise<string> => new Promise<string>((resolve, reject) => {
     notifications().getPermissionLevel((level) => {
@@ -86,6 +67,36 @@ export const getNotificationPermissionLevel = (): Promise<string> => new Promise
     });
 });
 
+export const updateNotification = (options: NotificationOptions, notificationId: string) => new Promise<boolean>((resolve, reject) => {
+    notifications().update(notificationId, options, (wasUpdated) => {
+        try {
+            throwRuntimeError();
+
+            resolve(wasUpdated);
+        } catch (e) {
+            reject(e);
+        }
+    });
+});
+
+
+// Custom Methods
+export const isSupportNotifications = () => !!notifications();
+
+export const clearAllNotification = async (): Promise<void> => {
+    const allNotificationIds = Object.keys((await getAllNotification()));
+
+    allNotificationIds.forEach((id: string) => clearNotification(id));
+}
+
+
+// Events
+export const onNotificationsButtonClicked = (callback: Parameters<typeof chrome.notifications.onButtonClicked.addListener>[0]): () => void => {
+    if (!isSupportNotifications()) return () => ({});
+
+    return handleListener(notifications().onButtonClicked, callback)
+}
+
 export const onNotificationsClicked = (callback: Parameters<typeof chrome.notifications.onClicked.addListener>[0]): () => void => {
     if (!isSupportNotifications()) return () => ({});
 
@@ -96,12 +107,6 @@ export const onNotificationsClosed = (callback: Parameters<typeof chrome.notific
     if (!isSupportNotifications()) return () => ({});
 
     return handleListener(notifications().onClosed, callback)
-}
-
-export const onNotificationsButtonClicked = (callback: Parameters<typeof chrome.notifications.onButtonClicked.addListener>[0]): () => void => {
-    if (!isSupportNotifications()) return () => ({});
-
-    return handleListener(notifications().onButtonClicked, callback)
 }
 
 export const onNotificationsPermissionLevelChanged = (callback: Parameters<typeof chrome.notifications.onPermissionLevelChanged.addListener>[0]): () => void => {

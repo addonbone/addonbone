@@ -4,13 +4,14 @@ import {throwRuntimeError} from "./runtime";
 import {MessageBody, MessageDictionary, MessageResponse, MessageType} from "@typing/message";
 
 type Tab = chrome.tabs.Tab;
-
+type Port = chrome.runtime.Port;
 type Window = chrome.windows.Window;
 
 type ZoomSettings = chrome.tabs.ZoomSettings;
 type InjectDetails = chrome.tabs.InjectDetails;
 
 type QueryInfo = chrome.tabs.QueryInfo;
+type ConnectInfo = chrome.tabs.ConnectInfo;
 type HighlightInfo = chrome.tabs.HighlightInfo;
 
 type GroupOptions = chrome.tabs.GroupOptions;
@@ -22,11 +23,9 @@ type CreateProperties = chrome.tabs.CreateProperties;
 
 type MessageSendOptions = chrome.tabs.MessageSendOptions;
 
-const tabs = () => browser().tabs;
+const tabs = () => browser().tabs as typeof chrome.tabs;
 
-// =================================
-// ============ METHODS ============
-// =================================
+// Methods
 export const captureVisibleTab = (windowId: number, options: CaptureVisibleTabOptions) => new Promise<string>((resolve, reject) => {
     tabs().captureVisibleTab(windowId, options, (dataUrl) => {
         try {
@@ -38,6 +37,8 @@ export const captureVisibleTab = (windowId: number, options: CaptureVisibleTabOp
         }
     });
 });
+
+export const connectTab = (tabId: number, connectInfo?: ConnectInfo): Port => tabs().connect(tabId, connectInfo);
 
 export const createTab = (properties: CreateProperties): Promise<Tab> => new Promise<Tab>((resolve, reject) => {
     tabs().create(properties, (tab) => {
@@ -245,6 +246,22 @@ export const removeTab = (tabId: number): Promise<void> => new Promise<void>((re
     });
 });
 
+export const sendTabMessage = <T extends MessageDictionary, K extends MessageType<T>>(
+    tabId: number,
+    message: MessageBody<T, K>,
+    options: MessageSendOptions = {}
+): Promise<MessageResponse<T, K>> => new Promise<MessageResponse<T, K>>((resolve, reject) => {
+    tabs().sendMessage(tabId, message, options, (response) => {
+        try {
+            throwRuntimeError();
+
+            resolve(response);
+        } catch (e) {
+            reject(e);
+        }
+    });
+});
+
 export const setTabZoom = (tabId: number, zoomFactor: number) => new Promise<void>((resolve, reject) => {
     tabs().setZoom(tabId, zoomFactor, () => {
         try {
@@ -305,28 +322,8 @@ export const executeScriptTab = (tabId: number, details: InjectDetails) => new P
     });
 });
 
-export const sendTabMessage = <
-    T extends MessageDictionary,
-    K extends MessageType<T>
->(
-    tabId: number,
-    message: MessageBody<T, K>,
-    options: MessageSendOptions = {}
-): Promise<MessageResponse<T, K>> => new Promise<MessageResponse<T, K>>((resolve, reject) => {
-    tabs().sendMessage(tabId, message, options, (response) => {
-        try {
-            throwRuntimeError();
 
-            resolve(response);
-        } catch (e) {
-            reject(e);
-        }
-    });
-});
-
-// =================================
-// ======== CUSTOM METHODS =========
-// =================================
+// Custom Methods
 export const getTabUrl = async (tabId: number): Promise<string> => {
     const tab = await findTabById(tabId);
 
@@ -385,9 +382,8 @@ export const openOrCreateTab = async (tab: Tab): Promise<void> => {
     await createTab({url});
 }
 
-// =================================
-// ============ EVENTS =============
-// =================================
+
+// Events
 export const onTabActivated = (callback: Parameters<typeof chrome.tabs.onActivated.addListener>[0]): () => void => {
     return handleListener(tabs().onActivated, callback)
 }

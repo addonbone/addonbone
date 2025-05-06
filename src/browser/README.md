@@ -22,7 +22,7 @@
 - [ ] [runtime](https://developer.chrome.com/docs/extensions/reference/api/runtime)
 - [x] [scripting](https://developer.chrome.com/docs/extensions/reference/api/scripting)
 - [ ] [sidePanel](https://developer.chrome.com/docs/extensions/reference/api/sidePanel )
-- [ ] [tabCapture](https://developer.chrome.com/docs/extensions/reference/api/tabCapture)
+- [x] [tabCapture](https://developer.chrome.com/docs/extensions/reference/api/tabCapture)
 - [ ] [tabs](https://developer.chrome.com/docs/extensions/reference/api/tabs)
 - [ ] [userScripts](https://developer.chrome.com/docs/extensions/reference/api/userScripts )
 - [ ] [webNavigation](https://developer.chrome.com/docs/extensions/reference/api/webNavigation)

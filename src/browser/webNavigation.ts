@@ -8,7 +8,23 @@ type GetFrameResultDetails = chrome.webNavigation.GetFrameResultDetails;
 type GetAllFrameResultDetails = chrome.webNavigation.GetAllFrameResultDetails;
 type WebNavigationEventFilter = chrome.webNavigation.WebNavigationEventFilter;
 
-const webNavigation = () => browser().webNavigation;
+const webNavigation = () => browser().webNavigation as typeof chrome.webNavigation;
+
+// Methods
+export const getWebNavigationAllFrames = (details: GetAllFrameDetails): Promise<GetAllFrameResultDetails[]> => new Promise((resolve, reject) => {
+    webNavigation().getAllFrames(details, (frames) => {
+        try {
+            throwRuntimeError();
+
+            if (!frames) {
+                throw new Error("No frames found for the specified tabId");
+            }
+            resolve(frames);
+        } catch (e) {
+            reject(e);
+        }
+    });
+});
 
 export const getWebNavigationFrame = (details: GetFrameDetails): Promise<GetFrameResultDetails> => new Promise((resolve, reject) => {
     webNavigation().getFrame(details, (frame) => {
@@ -25,21 +41,8 @@ export const getWebNavigationFrame = (details: GetFrameDetails): Promise<GetFram
     });
 });
 
-export const getWebNavigationAllFrames = (details: GetAllFrameDetails): Promise<GetAllFrameResultDetails[]> => new Promise((resolve, reject) => {
-    webNavigation().getAllFrames(details, (frames) => {
-        try {
-            throwRuntimeError();
 
-            if (!frames) {
-                throw new Error("No frames found for the specified tabId");
-            }
-            resolve(frames);
-        } catch (e) {
-            reject(e);
-        }
-    });
-});
-
+// Events
 export const onWebNavigationBeforeNavigate = (
     callback: Parameters<typeof chrome.webNavigation.onBeforeNavigate.addListener>[0],
     filters?: WebNavigationEventFilter,
@@ -128,7 +131,9 @@ export const onWebNavigationReferenceFragmentUpdated = (
     return () =>  webNavigation().onReferenceFragmentUpdated.removeListener(listener);
 }
 
-export const onWebNavigationTabReplaced = (callback: Parameters<typeof chrome.webNavigation.onTabReplaced.addListener>[0]): () => void => {
+export const onWebNavigationTabReplaced = (
+    callback: Parameters<typeof chrome.webNavigation.onTabReplaced.addListener>[0]
+): () => void => {
     const listener = safeListener(callback)
 
     webNavigation().onTabReplaced.addListener(listener);

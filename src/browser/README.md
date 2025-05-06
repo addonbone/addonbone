@@ -25,5 +25,5 @@
 - [x] [tabCapture](https://developer.chrome.com/docs/extensions/reference/api/tabCapture)
 - [x] [tabs](https://developer.chrome.com/docs/extensions/reference/api/tabs)
 - [ ] [userScripts](https://developer.chrome.com/docs/extensions/reference/api/userScripts )
-- [ ] [webNavigation](https://developer.chrome.com/docs/extensions/reference/api/webNavigation)
+- [x] [webNavigation](https://developer.chrome.com/docs/extensions/reference/api/webNavigation)
 - [ ] [webRequest](https://developer.chrome.com/docs/extensions/reference/api/webRequest)

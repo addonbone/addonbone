@@ -20,7 +20,7 @@
 - [x] [offscreen](https://developer.chrome.com/docs/extensions/reference/api/offscreen)
 - [ ] [permissions](https://developer.chrome.com/docs/extensions/reference/api/permissions)
 - [ ] [runtime](https://developer.chrome.com/docs/extensions/reference/api/runtime)
-- [ ] [scripting](https://developer.chrome.com/docs/extensions/reference/api/scripting)
+- [x] [scripting](https://developer.chrome.com/docs/extensions/reference/api/scripting)
 - [ ] [sidePanel](https://developer.chrome.com/docs/extensions/reference/api/sidePanel )
 - [ ] [tabCapture](https://developer.chrome.com/docs/extensions/reference/api/tabCapture)
 - [ ] [tabs](https://developer.chrome.com/docs/extensions/reference/api/tabs)

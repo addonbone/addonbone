@@ -17,6 +17,10 @@ export default class extends FileBuilder {
         return 'tsconfig.json';
     }
 
+    protected withBanner(): boolean {
+        return false;
+    }
+
     protected content(): string {
         return JSON.stringify(this.json(), null, 2);
     }

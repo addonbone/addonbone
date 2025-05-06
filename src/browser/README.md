@@ -5,7 +5,7 @@
 - [ ] [alarms](https://developer.chrome.com/docs/extensions/reference/api/alarms)
 - [ ] [audio](https://developer.chrome.com/docs/extensions/reference/api/audio)
 - [ ] [browsingData](https://developer.chrome.com/docs/extensions/reference/api/browsingData)
-- [ ] [commands](https://developer.chrome.com/docs/extensions/reference/api/commands)
+- [x] [commands](https://developer.chrome.com/docs/extensions/reference/api/commands)
 - [ ] [contextMenus](https://developer.chrome.com/docs/extensions/reference/api/contextMenus)
 - [ ] [cookies](https://developer.chrome.com/docs/extensions/reference/api/cookies)
 - [ ] [documentScan](https://developer.chrome.com/docs/extensions/reference/api/documentScan)

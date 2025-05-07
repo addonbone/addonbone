@@ -63,6 +63,9 @@ export default async (config: ReadonlyConfig): Promise<RspackConfig> => {
             uniqueName: config.app
         },
         optimization: {
+            usedExports: true,
+            providedExports: true,
+            sideEffects: true,
             splitChunks: {
                 minSize: 10,
                 cacheGroups: {

@@ -200,7 +200,7 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
                         chromeos: command?.chromeosKey,
                         linux: command?.linuxKey,
                     },
-                    description: command?.description || command.name,
+                    description: command?.description || (command.name === CommandExecuteActionName ? undefined : command.name),
                     global: command?.global,
                 };
 

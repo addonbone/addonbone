@@ -1,6 +1,5 @@
 //@ts-ignore
 import type {CommandUnresolvedDefinition} from "adnbn";
-//@ts-ignore
 import command, {isValidCommandDefinition, isValidCommandExecuteFunction} from "adnbn/entry/command";
 
 import * as module from "virtual:command-entrypoint";

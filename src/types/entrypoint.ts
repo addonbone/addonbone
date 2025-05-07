@@ -92,5 +92,8 @@ export interface EntrypointBuilder {
 
     destroy(): Promise<void>;
 }
+export type EntrypointConstructorParameter<T> = T extends new (arg: infer P) => any ? P : never;
 
-export type EntrypointBuilderClass<T> = T extends new (arg: infer P, ...args: any[]) => any ? P : never;
+export type EntrypointBuilderClass<T> = T extends new (...args: any[]) => any
+    ? EntrypointConstructorParameter<T>
+    : never;

@@ -6,7 +6,9 @@ import SourceFile from "./SourceFile";
 import {PackageName} from "@typing/app";
 
 export default class<T extends Record<string, any>> extends SourceFile {
-    protected definition = new Set<string>();
+    protected definitions = new Set<string>();
+
+    protected definition: string | null | undefined = undefined;
 
     protected properties = new Set<string>();
 
@@ -15,7 +17,7 @@ export default class<T extends Record<string, any>> extends SourceFile {
             definition = [definition];
         }
 
-        definition.forEach(definition => this.definition.add(definition));
+        definition.forEach(definition => this.definitions.add(definition));
 
         return this;
     }
@@ -28,6 +30,18 @@ export default class<T extends Record<string, any>> extends SourceFile {
 
     public getOptions(): T {
         return {...this.getOptionsFromVariables(), ...this.getOptionsFromDefinition()};
+    }
+
+    public getDefinition(): string | undefined {
+        if (this.definition === undefined) {
+            this.getOptionsFromDefinition();
+        }
+
+        if (this.definition === null) {
+            return;
+        }
+
+        return this.definition;
     }
 
     protected getOptionsFromVariables(): T {
@@ -59,6 +73,8 @@ export default class<T extends Record<string, any>> extends SourceFile {
     }
 
     protected getExpressionForOptions(expr: ts.Expression): ts.Expression | undefined {
+        this.definition = null;
+
         if (ts.isObjectLiteralExpression(expr)) {
             return expr;
         } else if ((ts.isAsExpression(expr) || ts.isSatisfiesExpression(expr)) && ts.isObjectLiteralExpression(expr.expression)) {
@@ -72,10 +88,12 @@ export default class<T extends Record<string, any>> extends SourceFile {
                 return;
             }
 
-            if (this.definition.has(functionName) && expr.arguments.length > 0) {
+            if (this.definitions.has(functionName) && expr.arguments.length > 0) {
                 const arg = expr.arguments[0];
 
                 if (ts.isObjectLiteralExpression(arg)) {
+                    this.definition = functionName;
+
                     return arg;
                 }
             }

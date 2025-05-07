@@ -25,18 +25,28 @@ export default abstract class AbstractParser<O extends EntrypointOptions> implem
         this.ir = new ImportResolver(TsResolver.make(path.resolve(this.config.inputDir, 'tsconfig.json')));
     }
 
-    public options(file: EntrypointFile): O {
-        const schema = this.schema();
-
+    protected optionFile(file: EntrypointFile): OptionFile<Record<string, any>> {
         const instance = OptionFile.make(file.file);
 
         instance.setImportResolver(this.ir);
 
-        const options = instance.setProperties(Object.keys(schema.shape))
-            .setDefinition(this.definition())
-            .getOptions();
+        return instance
+            .setProperties(Object.keys(this.schema().shape))
+            .setDefinition(this.definition());
+    }
 
-        const {success, error, data} = schema.safeParse(options);
+    protected getOptions(file: EntrypointFile): Record<string, any> {
+        const instance = this.optionFile(file);
+
+        return instance.getOptions();
+    }
+
+    protected agreement(): string | undefined {
+        return undefined;
+    }
+
+    public options(file: EntrypointFile): O {
+        const {success, error, data} = this.schema().safeParse(this.getOptions(file));
 
         if (!success) {
             const e = error?.errors[0];
@@ -66,9 +76,5 @@ export default abstract class AbstractParser<O extends EntrypointOptions> implem
             .setDefinition(this.definition())
             .setProperty(agreement)
             .getType();
-    }
-
-    protected agreement(): string | undefined {
-        return undefined;
     }
 }

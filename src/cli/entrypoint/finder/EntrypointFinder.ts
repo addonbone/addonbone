@@ -18,6 +18,10 @@ export default abstract class<O extends EntrypointOptions> extends OptionsFinder
         return false;
     }
 
+    public deepFind(): boolean {
+        return false;
+    }
+
     protected async getFiles(): Promise<Set<EntrypointFile>> {
         const entrypoint = this.type();
 
@@ -89,7 +93,9 @@ export default abstract class<O extends EntrypointOptions> extends OptionsFinder
                         }
                     }
 
-                    finder(fullPath);
+                    if (this.deepFind()) {
+                        finder(fullPath);
+                    }
                 } else if (entry.isFile()) {
                     if (this.isValidFilename(entry.name)) {
                         files.push(this.file(fullPath));

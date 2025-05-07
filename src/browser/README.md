@@ -15,7 +15,7 @@
 - [ ] [history](https://developer.chrome.com/docs/extensions/reference/api/history)
 - [x] [i18n](https://developer.chrome.com/docs/extensions/reference/api/i18n)
 - [ ] [idle](https://developer.chrome.com/docs/extensions/reference/api/idle)
-- [ ] [management](https://developer.chrome.com/docs/extensions/reference/api/management)
+- [x] [management](https://developer.chrome.com/docs/extensions/reference/api/management)
 - [x] [notifications](https://developer.chrome.com/docs/extensions/reference/api/notifications)
 - [x] [offscreen](https://developer.chrome.com/docs/extensions/reference/api/offscreen)
 - [ ] [permissions](https://developer.chrome.com/docs/extensions/reference/api/permissions)

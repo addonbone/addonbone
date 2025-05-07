@@ -26,7 +26,7 @@ type MessageSendOptions = chrome.tabs.MessageSendOptions;
 const tabs = () => browser().tabs as typeof chrome.tabs;
 
 // Methods
-export const captureVisibleTab = (windowId: number, options: CaptureVisibleTabOptions) => new Promise<string>((resolve, reject) => {
+export const captureVisibleTab = (windowId: number, options: CaptureVisibleTabOptions): Promise<string> => new Promise<string>((resolve, reject) => {
     tabs().captureVisibleTab(windowId, options, (dataUrl) => {
         try {
             throwRuntimeError();
@@ -52,7 +52,7 @@ export const createTab = (properties: CreateProperties): Promise<Tab> => new Pro
     });
 });
 
-export const detectTabLanguage = (tabId: number) => new Promise<string>((resolve, reject) => {
+export const detectTabLanguage = (tabId: number): Promise<string> => new Promise<string>((resolve, reject) => {
     // For an unknown/undefined language, und is returned.
     tabs().detectLanguage(tabId, (language) => {
         try {
@@ -65,7 +65,7 @@ export const detectTabLanguage = (tabId: number) => new Promise<string>((resolve
     });
 });
 
-export const discardTab = (tabId: number) => new Promise<Tab>((resolve, reject) => {
+export const discardTab = (tabId: number): Promise<Tab> => new Promise<Tab>((resolve, reject) => {
     tabs().discard(tabId, (tab) => {
         try {
             throwRuntimeError();
@@ -77,7 +77,7 @@ export const discardTab = (tabId: number) => new Promise<Tab>((resolve, reject) 
     });
 });
 
-export const duplicateTab = (tabId: number) => new Promise<Tab | undefined>((resolve, reject) => {
+export const duplicateTab = (tabId: number): Promise<Tab | undefined> => new Promise<Tab | undefined>((resolve, reject) => {
     tabs().duplicate(tabId, (tab) => {
         try {
             throwRuntimeError();
@@ -89,7 +89,7 @@ export const duplicateTab = (tabId: number) => new Promise<Tab | undefined>((res
     });
 });
 
-export const getTab = (tabId: number) => new Promise<Tab>((resolve, reject) => {
+export const getTab = (tabId: number): Promise<Tab> => new Promise<Tab>((resolve, reject) => {
     tabs().get(tabId, (tab) => {
         try {
             throwRuntimeError();
@@ -101,7 +101,7 @@ export const getTab = (tabId: number) => new Promise<Tab>((resolve, reject) => {
     });
 });
 
-export const getCurrentTab = () => new Promise<Tab | undefined>((resolve, reject) => {
+export const getCurrentTab = (): Promise<Tab | undefined> => new Promise<Tab | undefined>((resolve, reject) => {
     // Returns undefined if called from a non-tab context (for example, a background view or popup view)
     tabs().getCurrent((tab) => {
         try {
@@ -114,7 +114,7 @@ export const getCurrentTab = () => new Promise<Tab | undefined>((resolve, reject
     });
 });
 
-export const getTabZoom = (tabId: number) => new Promise<number>((resolve, reject) => {
+export const getTabZoom = (tabId: number): Promise<number> => new Promise<number>((resolve, reject) => {
     tabs().getZoom(tabId, (zoomFactor) => {
         try {
             throwRuntimeError();
@@ -126,7 +126,7 @@ export const getTabZoom = (tabId: number) => new Promise<number>((resolve, rejec
     });
 });
 
-export const getTabZoomSettings = (tabId: number) => new Promise<ZoomSettings>((resolve, reject) => {
+export const getTabZoomSettings = (tabId: number): Promise<ZoomSettings> => new Promise<ZoomSettings>((resolve, reject) => {
     tabs().getZoomSettings(tabId, (zoomSettings) => {
         try {
             throwRuntimeError();
@@ -138,7 +138,7 @@ export const getTabZoomSettings = (tabId: number) => new Promise<ZoomSettings>((
     });
 });
 
-export const goTabBack = (tabId: number) => new Promise<void>((resolve, reject) => {
+export const goTabBack = (tabId: number): Promise<void> => new Promise<void>((resolve, reject) => {
     tabs().goBack(tabId, () => {
         try {
             throwRuntimeError();
@@ -150,7 +150,7 @@ export const goTabBack = (tabId: number) => new Promise<void>((resolve, reject) 
     });
 });
 
-export const goTabForward = (tabId: number) => new Promise<void>((resolve, reject) => {
+export const goTabForward = (tabId: number): Promise<void> => new Promise<void>((resolve, reject) => {
     tabs().goForward(tabId, () => {
         try {
             throwRuntimeError();
@@ -162,7 +162,7 @@ export const goTabForward = (tabId: number) => new Promise<void>((resolve, rejec
     });
 });
 
-export const groupTabs = (options: GroupOptions) => new Promise<number>((resolve, reject) => {
+export const groupTabs = (options: GroupOptions): Promise<number> => new Promise<number>((resolve, reject) => {
     tabs().group(options, (tabs) => {
         try {
             throwRuntimeError();
@@ -174,7 +174,7 @@ export const groupTabs = (options: GroupOptions) => new Promise<number>((resolve
     });
 });
 
-export const highlightTab = (highlightInfo: HighlightInfo) => new Promise<Window>((resolve, reject) => {
+export const highlightTab = (highlightInfo: HighlightInfo): Promise<Window> => new Promise<Window>((resolve, reject) => {
     tabs().highlight(highlightInfo, (window) => {
         try {
             throwRuntimeError();
@@ -186,7 +186,7 @@ export const highlightTab = (highlightInfo: HighlightInfo) => new Promise<Window
     });
 });
 
-export const moveTab = (tabId: number, moveProperties: MoveProperties) => new Promise<Tab>((resolve, reject) => {
+export const moveTab = (tabId: number, moveProperties: MoveProperties): Promise<Tab> => new Promise<Tab>((resolve, reject) => {
     tabs().move(tabId, moveProperties, (tab) => {
         try {
             throwRuntimeError();
@@ -198,7 +198,7 @@ export const moveTab = (tabId: number, moveProperties: MoveProperties) => new Pr
     });
 });
 
-export const moveTabs = (tabIds: number[], moveProperties: MoveProperties) => new Promise<Tab[]>((resolve, reject) => {
+export const moveTabs = (tabIds: number[], moveProperties: MoveProperties): Promise<Tab[]> => new Promise<Tab[]>((resolve, reject) => {
     tabs().move(tabIds, moveProperties, (tabs) => {
         try {
             throwRuntimeError();
@@ -210,7 +210,7 @@ export const moveTabs = (tabIds: number[], moveProperties: MoveProperties) => ne
     });
 });
 
-export const queryTabs = (queryInfo?: QueryInfo) => new Promise<Tab[]>((resolve, reject) => {
+export const queryTabs = (queryInfo?: QueryInfo): Promise<Tab[]> => new Promise<Tab[]>((resolve, reject) => {
     tabs().query(queryInfo || {}, (tabs) => {
         try {
             throwRuntimeError();
@@ -222,7 +222,7 @@ export const queryTabs = (queryInfo?: QueryInfo) => new Promise<Tab[]>((resolve,
     });
 });
 
-export const reloadTab = (tabId: number, bypassCache?: boolean | undefined) => new Promise<void>((resolve, reject) => {
+export const reloadTab = (tabId: number, bypassCache?: boolean | undefined): Promise<void> => new Promise<void>((resolve, reject) => {
     tabs().reload(tabId, {bypassCache}, () => {
         try {
             throwRuntimeError();
@@ -262,7 +262,7 @@ export const sendTabMessage = <T extends MessageDictionary, K extends MessageTyp
     });
 });
 
-export const setTabZoom = (tabId: number, zoomFactor: number) => new Promise<void>((resolve, reject) => {
+export const setTabZoom = (tabId: number, zoomFactor: number): Promise<void> => new Promise<void>((resolve, reject) => {
     tabs().setZoom(tabId, zoomFactor, () => {
         try {
             throwRuntimeError();
@@ -274,7 +274,7 @@ export const setTabZoom = (tabId: number, zoomFactor: number) => new Promise<voi
     });
 });
 
-export const setTabZoomSettings = (tabId: number, zoomSettings: ZoomSettings) => new Promise<void>((resolve, reject) => {
+export const setTabZoomSettings = (tabId: number, zoomSettings: ZoomSettings): Promise<void> => new Promise<void>((resolve, reject) => {
     tabs().setZoomSettings(tabId, zoomSettings, () => {
         try {
             throwRuntimeError();
@@ -286,7 +286,7 @@ export const setTabZoomSettings = (tabId: number, zoomSettings: ZoomSettings) =>
     });
 });
 
-export const ungroupTab = (tabIds: number | number[]) => new Promise<void>((resolve, reject) => {
+export const ungroupTab = (tabIds: number | number[]): Promise<void> => new Promise<void>((resolve, reject) => {
     tabs().ungroup(tabIds, () => {
         try {
             throwRuntimeError();
@@ -298,7 +298,7 @@ export const ungroupTab = (tabIds: number | number[]) => new Promise<void>((reso
     });
 });
 
-export const updateTab = (tabId: number, updateProperties: UpdateProperties) => new Promise<Tab | undefined>((resolve, reject) => {
+export const updateTab = (tabId: number, updateProperties: UpdateProperties): Promise<Tab | undefined> => new Promise<Tab | undefined>((resolve, reject) => {
     tabs().update(tabId, updateProperties, (tab) => {
         try {
             throwRuntimeError();
@@ -310,7 +310,7 @@ export const updateTab = (tabId: number, updateProperties: UpdateProperties) => 
     });
 });
 
-export const executeScriptTab = (tabId: number, details: InjectDetails) => new Promise<any[]>((resolve, reject) => {
+export const executeScriptTab = (tabId: number, details: InjectDetails): Promise<any[]> => new Promise<any[]>((resolve, reject) => {
     tabs().executeScript(tabId, details, (result) => {
         try {
             throwRuntimeError();
@@ -362,9 +362,9 @@ export const findTab = (queryInfo?: QueryInfo): Promise<Tab | undefined> => quer
 
 export const findTabById = (tabId: number): Promise<Tab | undefined> => getTab(tabId).then(tab => tab).catch(() => undefined);
 
-export const updateTabAsSelected = (tabId: number) => updateTab(tabId, {highlighted: true});
+export const updateTabAsSelected = (tabId: number): Promise<Tab | undefined> => updateTab(tabId, {highlighted: true});
 
-export const updateTabAsActive = (tabId: number) => updateTab(tabId, {active: true});
+export const updateTabAsActive = (tabId: number): Promise<Tab | undefined> => updateTab(tabId, {active: true});
 
 export const openOrCreateTab = async (tab: Tab): Promise<void> => {
     const {id, url} = tab;

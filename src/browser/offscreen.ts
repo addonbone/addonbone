@@ -30,7 +30,7 @@ export const createOffscreenDocument = (parameters: CreateParameters): Promise<v
     });
 });
 
-export const hasOffscreenDocument = () => new Promise<boolean>((resolve, reject) => {
+export const hasOffscreenDocument = (): Promise<boolean> => new Promise<boolean>((resolve, reject) => {
     offscreen().hasDocument((hasDocument) => {
         try {
             throwRuntimeError();

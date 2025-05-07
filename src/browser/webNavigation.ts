@@ -11,7 +11,7 @@ type WebNavigationEventFilter = chrome.webNavigation.WebNavigationEventFilter;
 const webNavigation = () => browser().webNavigation as typeof chrome.webNavigation;
 
 // Methods
-export const getWebNavigationAllFrames = (details: GetAllFrameDetails): Promise<GetAllFrameResultDetails[]> => new Promise((resolve, reject) => {
+export const getWebNavigationAllFrames = (details: GetAllFrameDetails): Promise<GetAllFrameResultDetails[] | null> => new Promise<GetAllFrameResultDetails[] | null>((resolve, reject) => {
     webNavigation().getAllFrames(details, (frames) => {
         try {
             throwRuntimeError();
@@ -26,7 +26,7 @@ export const getWebNavigationAllFrames = (details: GetAllFrameDetails): Promise<
     });
 });
 
-export const getWebNavigationFrame = (details: GetFrameDetails): Promise<GetFrameResultDetails> => new Promise((resolve, reject) => {
+export const getWebNavigationFrame = (details: GetFrameDetails): Promise<GetFrameResultDetails | null> => new Promise<GetFrameResultDetails | null>((resolve, reject) => {
     webNavigation().getFrame(details, (frame) => {
         try {
             throwRuntimeError();
@@ -51,7 +51,7 @@ export const onWebNavigationBeforeNavigate = (
 
     webNavigation().onBeforeNavigate.addListener(listener, filters);
 
-    return () =>  webNavigation().onBeforeNavigate.removeListener(listener);
+    return () => webNavigation().onBeforeNavigate.removeListener(listener);
 }
 
 export const onWebNavigationCommitted = (
@@ -62,7 +62,7 @@ export const onWebNavigationCommitted = (
 
     webNavigation().onCommitted.addListener(listener, filters);
 
-    return () =>  webNavigation().onCommitted.removeListener(listener);
+    return () => webNavigation().onCommitted.removeListener(listener);
 }
 
 export const onWebNavigationCompleted = (
@@ -73,7 +73,7 @@ export const onWebNavigationCompleted = (
 
     webNavigation().onCompleted.addListener(listener, filters);
 
-    return () =>  webNavigation().onCompleted.removeListener(listener);
+    return () => webNavigation().onCompleted.removeListener(listener);
 }
 
 export const onWebNavigationCreatedNavigationTarget = (
@@ -84,7 +84,7 @@ export const onWebNavigationCreatedNavigationTarget = (
 
     webNavigation().onCreatedNavigationTarget.addListener(listener, filters);
 
-    return () =>  webNavigation().onCreatedNavigationTarget.removeListener(listener);
+    return () => webNavigation().onCreatedNavigationTarget.removeListener(listener);
 }
 
 export const onWebNavigationDOMContentLoaded = (
@@ -95,7 +95,7 @@ export const onWebNavigationDOMContentLoaded = (
 
     webNavigation().onDOMContentLoaded.addListener(listener, filters);
 
-    return () =>  webNavigation().onDOMContentLoaded.removeListener(listener);
+    return () => webNavigation().onDOMContentLoaded.removeListener(listener);
 }
 
 export const onWebNavigationErrorOccurred = (
@@ -106,7 +106,7 @@ export const onWebNavigationErrorOccurred = (
 
     webNavigation().onErrorOccurred.addListener(listener, filters);
 
-    return () =>  webNavigation().onErrorOccurred.removeListener(listener);
+    return () => webNavigation().onErrorOccurred.removeListener(listener);
 }
 
 export const onWebNavigationHistoryStateUpdated = (
@@ -117,7 +117,7 @@ export const onWebNavigationHistoryStateUpdated = (
 
     webNavigation().onHistoryStateUpdated.addListener(listener, filters);
 
-    return () =>  webNavigation().onHistoryStateUpdated.removeListener(listener);
+    return () => webNavigation().onHistoryStateUpdated.removeListener(listener);
 }
 
 export const onWebNavigationReferenceFragmentUpdated = (
@@ -128,7 +128,7 @@ export const onWebNavigationReferenceFragmentUpdated = (
 
     webNavigation().onReferenceFragmentUpdated.addListener(listener, filters);
 
-    return () =>  webNavigation().onReferenceFragmentUpdated.removeListener(listener);
+    return () => webNavigation().onReferenceFragmentUpdated.removeListener(listener);
 }
 
 export const onWebNavigationTabReplaced = (
@@ -138,5 +138,5 @@ export const onWebNavigationTabReplaced = (
 
     webNavigation().onTabReplaced.addListener(listener);
 
-    return () =>  webNavigation().onTabReplaced.removeListener(listener);
+    return () => webNavigation().onTabReplaced.removeListener(listener);
 }

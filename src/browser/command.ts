@@ -7,7 +7,7 @@ type Command = chrome.commands.Command;
 const commands = () => browser().commands as typeof chrome.commands;
 
 // Methods
-export const getAllCommands = () => new Promise<Command[]>((resolve, reject) => {
+export const getAllCommands = (): Promise<Command[]> => new Promise<Command[]>((resolve, reject) => {
     commands().getAll((commands) => {
         try {
             throwRuntimeError();

@@ -9,7 +9,7 @@ type GetMediaStreamOptions = chrome.tabCapture.GetMediaStreamOptions;
 const tabCapture = () => browser().tabCapture as typeof chrome.tabCapture;
 
 // Methods
-export const createTabCapture = (options: CaptureOptions) => new Promise<MediaStream | null>((resolve, reject) => {
+export const createTabCapture = (options: CaptureOptions): Promise<MediaStream | null> => new Promise<MediaStream | null>((resolve, reject) => {
     tabCapture().capture(options, stream => {
         try {
             throwRuntimeError();
@@ -21,7 +21,7 @@ export const createTabCapture = (options: CaptureOptions) => new Promise<MediaSt
     });
 });
 
-export const getCapturedTabs = () => new Promise<CaptureInfo[]>((resolve, reject) => {
+export const getCapturedTabs = (): Promise<CaptureInfo[]> => new Promise<CaptureInfo[]>((resolve, reject) => {
     tabCapture().getCapturedTabs(result => {
         try {
             throwRuntimeError();
@@ -33,7 +33,7 @@ export const getCapturedTabs = () => new Promise<CaptureInfo[]>((resolve, reject
     });
 });
 
-export const getCaptureMediaStreamId = (options: GetMediaStreamOptions) => new Promise<string>((resolve, reject) => {
+export const getCaptureMediaStreamId = (options: GetMediaStreamOptions): Promise<string> => new Promise<string>((resolve, reject) => {
     tabCapture().getMediaStreamId(options, streamId => {
         try {
             throwRuntimeError();

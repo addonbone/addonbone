@@ -9,7 +9,7 @@
 - [ ] [contextMenus](https://developer.chrome.com/docs/extensions/reference/api/contextMenus)
 - [ ] [cookies](https://developer.chrome.com/docs/extensions/reference/api/cookies)
 - [ ] [documentScan](https://developer.chrome.com/docs/extensions/reference/api/documentScan)
-- [ ] [downloads](https://developer.chrome.com/docs/extensions/reference/api/downloads)
+- [x] [downloads](https://developer.chrome.com/docs/extensions/reference/api/downloads)
 - [ ] [extension](https://developer.chrome.com/docs/extensions/reference/api/extension)
 - [ ] [fileBrowserHandler](https://developer.chrome.com/docs/extensions/reference/api/fileBrowserHandler)
 - [ ] [history](https://developer.chrome.com/docs/extensions/reference/api/history)

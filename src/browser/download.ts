@@ -10,11 +10,37 @@ type DownloadItem = chrome.downloads.DownloadItem;
 type DownloadQuery = chrome.downloads.DownloadQuery;
 type DownloadState = chrome.downloads.DownloadState;
 type DownloadOptions = chrome.downloads.DownloadOptions;
+type GetFileIconOptions = chrome.downloads.GetFileIconOptions;
 
-const downloads = () => browser().downloads;
+const downloads = () => browser().downloads as typeof chrome.downloads;
 
 export class BlockDownloadError extends Error {
 }
+
+// Methods
+export const acceptDownloadDanger = (downloadId: number): Promise<void> => new Promise<void>((resolve, reject) => {
+    downloads().acceptDanger(downloadId, () => {
+        try {
+            throwRuntimeError();
+
+            resolve();
+        } catch (e) {
+            reject(e);
+        }
+    });
+});
+
+export const cancelDownload = (downloadId: number): Promise<void> => new Promise<void>((resolve, reject) => {
+    downloads().cancel(downloadId, () => {
+        try {
+            throwRuntimeError();
+
+            resolve();
+        } catch (e) {
+            reject(e);
+        }
+    });
+});
 
 export const download = (options: DownloadOptions): Promise<number> => new Promise<number>((resolve, reject) => {
     downloads().download({conflictAction: 'uniquify', ...options}, (downloadId) => {
@@ -50,8 +76,34 @@ export const download = (options: DownloadOptions): Promise<number> => new Promi
     });
 });
 
-export const cancelDownload = (downloadId: number): Promise<void> => new Promise<void>((resolve, reject) => {
-    downloads().cancel(downloadId, () => {
+export const eraseDownload = (query: DownloadQuery): Promise<number[]> => new Promise<number[]>((resolve, reject) => {
+    downloads().erase(query, (erasedIds) => {
+        try {
+            throwRuntimeError();
+
+            resolve(erasedIds);
+        } catch (e) {
+            reject(e);
+        }
+    });
+});
+
+export const getDownloadFileIcon = (downloadId: number, options: GetFileIconOptions): Promise<string> => new Promise<string>((resolve, reject) => {
+    downloads().getFileIcon(downloadId, options, (iconURL) => {
+        try {
+            throwRuntimeError();
+
+            resolve(iconURL);
+        } catch (e) {
+            reject(e);
+        }
+    });
+});
+
+export const openDownload = (downloadId: number): void => downloads().open(downloadId)
+
+export const pauseDownload = (downloadId: number): Promise<void> => new Promise<void>((resolve, reject) => {
+    downloads().pause(downloadId, () => {
         try {
             throwRuntimeError();
 
@@ -62,7 +114,31 @@ export const cancelDownload = (downloadId: number): Promise<void> => new Promise
     });
 });
 
-export const queryDownloads = (query: DownloadQuery): Promise<DownloadItem[]> => new Promise<DownloadItem[]>((resolve, reject) => {
+export const removeDownloadFile = (downloadId: number): Promise<void> => new Promise<void>((resolve, reject) => {
+    downloads().removeFile(downloadId, () => {
+        try {
+            throwRuntimeError();
+
+            resolve();
+        } catch (e) {
+            reject(e);
+        }
+    });
+});
+
+export const resumeDownload = (downloadId: number): Promise<void> => new Promise<void>((resolve, reject) => {
+    downloads().resume(downloadId, () => {
+        try {
+            throwRuntimeError();
+
+            resolve();
+        } catch (e) {
+            reject(e);
+        }
+    });
+});
+
+export const searchDownloads = (query: DownloadQuery): Promise<DownloadItem[]> => new Promise<DownloadItem[]>((resolve, reject) => {
     downloads().search(query, (downloadItems) => {
         try {
             throwRuntimeError();
@@ -74,8 +150,34 @@ export const queryDownloads = (query: DownloadQuery): Promise<DownloadItem[]> =>
     });
 });
 
+export const setDownloadsUiOptions = (enabled: boolean): Promise<void> => new Promise<void>((resolve, reject) => {
+    downloads().setUiOptions({enabled}, () => {
+        try {
+            throwRuntimeError();
+
+            resolve();
+        } catch (e) {
+            reject(e);
+        }
+    });
+});
+
+export const showDownloadFolder = (): void => downloads().showDefaultFolder();
+
+export const showDownload = async (downloadId: number): Promise<boolean> => {
+    if (!await isDownloadExists(downloadId)) {
+        return false;
+    }
+
+    downloads().show(downloadId);
+
+    return true;
+}
+
+
+// Custom Methods
 export const findDownload = async (downloadId: number): Promise<DownloadItem | undefined> => {
-    const items = await queryDownloads({id: downloadId});
+    const items = await searchDownloads({id: downloadId});
 
     return items[0];
 }
@@ -96,18 +198,6 @@ export const getDownloadState = async (downloadId?: number): Promise<DownloadSta
     return item?.state;
 }
 
-export const showDownload = async (downloadId: number): Promise<boolean> => {
-    if (!await isDownloadExists(downloadId)) {
-        return false;
-    }
-
-    downloads().show(downloadId);
-
-    return true;
-}
-
-export const showDownloadFolder = (): void => downloads().showDefaultFolder();
-
 export const getSettingsDownloadsUrl = (): string => {
     switch (getBrowser()) {
         case Browser.Firefox:
@@ -125,10 +215,16 @@ export const getSettingsDownloadsUrl = (): string => {
     }
 }
 
+
+// Events
+export const onDownloadsChanged = (callback: Parameters<typeof chrome.downloads.onChanged.addListener>[0]): () => void => {
+    return handleListener(downloads().onChanged, callback)
+}
+
 export const onDownloadsCreated = (callback: Parameters<typeof chrome.downloads.onCreated.addListener>[0]): () => void => {
     return handleListener(downloads().onCreated, callback)
 }
 
-export const onDownloadsChanged = (callback: Parameters<typeof chrome.downloads.onChanged.addListener>[0]): () => void => {
-    return handleListener(downloads().onChanged, callback)
+export const onDownloadsDeterminingFilename = (callback: Parameters<typeof chrome.downloads.onDeterminingFilename.addListener>[0]): () => void => {
+    return handleListener(downloads().onDeterminingFilename, callback)
 }

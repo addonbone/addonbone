@@ -17,13 +17,13 @@ const backgroundPaths = [
 
 export const getId = (): string => runtime().id;
 
-export const getUrl = (path: string) => runtime().getURL(path);
+export const getUrl = (path: string): string => runtime().getURL(path);
 
 export const getManifest = (): Manifest => runtime().getManifest();
 
 export const getManifestVersion = (): ManifestVersion => getManifest().manifest_version;
 
-export const getRuntimeContexts = (filter: ContextFilter) => new Promise<ExtensionContext[]>((resolve, reject) => {
+export const getRuntimeContexts = (filter: ContextFilter):Promise<ExtensionContext[]> => new Promise<ExtensionContext[]>((resolve, reject) => {
     runtime().getContexts(filter, contexts => {
         try {
             throwRuntimeError();

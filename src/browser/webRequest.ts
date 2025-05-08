@@ -15,7 +15,7 @@ type ResourceRequest = chrome.webRequest.ResourceRequest;
 const webRequest = () => browser().webRequest as typeof chrome.webRequest;
 
 // Methods
-export const handlerWebRequestBehaviorChanged = () => new Promise<void>((resolve, reject) => {
+export const handlerWebRequestBehaviorChanged = (): Promise<void> => new Promise<void>((resolve, reject) => {
     webRequest().handlerBehaviorChanged(() => {
         try {
             throwRuntimeError();

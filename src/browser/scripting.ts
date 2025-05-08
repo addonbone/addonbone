@@ -11,7 +11,7 @@ type ScriptInjection<Args extends any[], Result> = chrome.scripting.ScriptInject
 export const scripting = () => browser().scripting as typeof chrome.scripting;
 
 // Methods
-export const executeScript = <T = any>(injection: ScriptInjection<any, T>) => new Promise<InjectionResult<Awaited<T>>[]>((resolve, reject) => {
+export const executeScript = <T = any>(injection: ScriptInjection<any, T>): Promise<InjectionResult<Awaited<T>>[]> => new Promise<InjectionResult<Awaited<T>>[]>((resolve, reject) => {
     scripting().executeScript(injection, (result) => {
         try {
             throwRuntimeError();
@@ -23,7 +23,7 @@ export const executeScript = <T = any>(injection: ScriptInjection<any, T>) => ne
     });
 });
 
-export const getRegisteredContentScripts = (filter?: ContentScriptFilter) => new Promise<RegisteredContentScript[]>((resolve, reject) => {
+export const getRegisteredContentScripts = (filter?: ContentScriptFilter): Promise<RegisteredContentScript[]> => new Promise<RegisteredContentScript[]>((resolve, reject) => {
     scripting().getRegisteredContentScripts(filter || {}, (scripts) => {
         try {
             throwRuntimeError();
@@ -35,7 +35,7 @@ export const getRegisteredContentScripts = (filter?: ContentScriptFilter) => new
     });
 });
 
-export const insertScriptingCSS = (injection: CSSInjection) => new Promise<void>((resolve, reject) => {
+export const insertScriptingCSS = (injection: CSSInjection): Promise<void> => new Promise<void>((resolve, reject) => {
     scripting().insertCSS(injection, () => {
         try {
             throwRuntimeError();
@@ -47,7 +47,7 @@ export const insertScriptingCSS = (injection: CSSInjection) => new Promise<void>
     });
 });
 
-export const registerContentScripts = (scripts: RegisteredContentScript[]) => new Promise<void>((resolve, reject) => {
+export const registerContentScripts = (scripts: RegisteredContentScript[]): Promise<void> => new Promise<void>((resolve, reject) => {
     scripting().registerContentScripts(scripts, () => {
         try {
             throwRuntimeError();
@@ -59,7 +59,7 @@ export const registerContentScripts = (scripts: RegisteredContentScript[]) => ne
     });
 });
 
-export const removeScriptingCSS = (injection: CSSInjection) => new Promise<void>((resolve, reject) => {
+export const removeScriptingCSS = (injection: CSSInjection): Promise<void> => new Promise<void>((resolve, reject) => {
     scripting().removeCSS(injection, () => {
         try {
             throwRuntimeError();
@@ -71,7 +71,7 @@ export const removeScriptingCSS = (injection: CSSInjection) => new Promise<void>
     });
 });
 
-export const unregisterContentScripts = (filter?: ContentScriptFilter) => new Promise<void>((resolve, reject) => {
+export const unregisterContentScripts = (filter?: ContentScriptFilter): Promise<void> => new Promise<void>((resolve, reject) => {
     scripting().unregisterContentScripts(filter || {}, () => {
         try {
             throwRuntimeError();
@@ -83,7 +83,7 @@ export const unregisterContentScripts = (filter?: ContentScriptFilter) => new Pr
     });
 });
 
-export const updateContentScripts = (scripts: RegisteredContentScript[]) => new Promise<void>((resolve, reject) => {
+export const updateContentScripts = (scripts: RegisteredContentScript[]): Promise<void> => new Promise<void>((resolve, reject) => {
     scripting().updateContentScripts(scripts, () => {
         try {
             throwRuntimeError();

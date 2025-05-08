@@ -282,3 +282,13 @@ declare module '*?url&inline' {
     const src: string
     export default src
 }
+
+declare module '*?chrome' {
+    const src: string
+    export default src
+}
+
+declare module '*?base64' {
+    const src: string
+    export default src
+}

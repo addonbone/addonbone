@@ -11,7 +11,7 @@ export default class BackgroundEntry<O extends BackgroundEntrypointOptions> {
     }
 
     public async entries(): Promise<EntrypointEntries> {
-        const options = await this.finder.options();
+        const options = await this.finder.plugin().options();
 
         return new Map([
             [BackgroundEntry.name, new Set(options.keys())]

@@ -1,5 +1,6 @@
 import {browser} from "./browser";
 import {handleListener} from "./utils";
+import {setSidebarBadgeBgColor, setSidebarBadgeText} from "./sidebar";
 import {getManifest, isManifestVersion3, throwRuntimeError} from "./runtime";
 
 type Action = typeof chrome.action;
@@ -128,6 +129,8 @@ export const setActionBadgeBgColor = (color: Color, tabId?: number, ): Promise<v
         try {
             throwRuntimeError();
 
+            setSidebarBadgeBgColor({color, tabId})
+
             resolve();
         } catch (e) {
             reject(e);
@@ -139,6 +142,8 @@ export const setActionBadgeText = (text: string | number, tabId?: number): Promi
     action().setBadgeText({tabId, text: text.toString()}, () => {
         try {
             throwRuntimeError();
+
+            setSidebarBadgeText({tabId, text: text.toString()})
 
             resolve();
         } catch (e) {

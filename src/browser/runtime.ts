@@ -76,7 +76,7 @@ export const openOptionsPage = (): Promise<void> => new Promise<void>((resolve, 
     });
 });
 
-export const reload = (path: string): void => runtime().reload();
+export const reload = (): void => runtime().reload();
 
 export const requestUpdateCheck = (): Promise<RequestUpdateCheck> => new Promise<RequestUpdateCheck>((resolve, reject) => {
     runtime().requestUpdateCheck((status, details) => {
@@ -90,7 +90,7 @@ export const requestUpdateCheck = (): Promise<RequestUpdateCheck> => new Promise
     });
 });
 
-export const restart = (path: string): void => runtime().restart();
+export const restart = (): void => runtime().restart();
 
 export const restartAfterDelay = (seconds: number): Promise<void> => new Promise<void>((resolve, reject) => {
     runtime().restartAfterDelay(seconds, () => {

@@ -1,7 +1,7 @@
 # Chrome API Checklist
 
 ## API
-- [ ] [action](https://developer.chrome.com/docs/extensions/reference/api/action)
+- [x] [action](https://developer.chrome.com/docs/extensions/reference/api/action)
 - [ ] [alarms](https://developer.chrome.com/docs/extensions/reference/api/alarms)
 - [ ] [audio](https://developer.chrome.com/docs/extensions/reference/api/audio)
 - [ ] [browsingData](https://developer.chrome.com/docs/extensions/reference/api/browsingData)

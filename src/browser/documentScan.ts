@@ -18,7 +18,7 @@ type StartScanResponse<T> = chrome.documentScan.StartScanResponse<T>;
 const documentScan = () => browser().documentScan as typeof chrome.documentScan;
 
 // Methods
-export const cancelScan = (job: string): Promise<CancelScanResponse<string>> => new Promise<CancelScanResponse<string>>((resolve, reject) => {
+export const cancelDocScanning = (job: string): Promise<CancelScanResponse<string>> => new Promise<CancelScanResponse<string>>((resolve, reject) => {
     documentScan().cancelScan(job, (response) => {
         try {
             throwRuntimeError();
@@ -30,7 +30,7 @@ export const cancelScan = (job: string): Promise<CancelScanResponse<string>> => 
     });
 });
 
-export const closeScanner = (scannerHandle: string): Promise<CloseScannerResponse<string>> => new Promise<CloseScannerResponse<string>>((resolve, reject) => {
+export const closeDocScanner = (scannerHandle: string): Promise<CloseScannerResponse<string>> => new Promise<CloseScannerResponse<string>>((resolve, reject) => {
     documentScan().closeScanner(scannerHandle, (response) => {
         try {
             throwRuntimeError();
@@ -42,7 +42,7 @@ export const closeScanner = (scannerHandle: string): Promise<CloseScannerRespons
     });
 });
 
-export const getScanOptionGroups = (scannerHandle: string): Promise<GetOptionGroupsResponse<string>> => new Promise<GetOptionGroupsResponse<string>>((resolve, reject) => {
+export const getDocScannerOptionGroups = (scannerHandle: string): Promise<GetOptionGroupsResponse<string>> => new Promise<GetOptionGroupsResponse<string>>((resolve, reject) => {
     documentScan().getOptionGroups(scannerHandle, (response) => {
         try {
             throwRuntimeError();
@@ -54,7 +54,7 @@ export const getScanOptionGroups = (scannerHandle: string): Promise<GetOptionGro
     });
 });
 
-export const getScannerList = (filter: DeviceFilter): Promise<GetScannerListResponse> => new Promise<GetScannerListResponse>((resolve, reject) => {
+export const getDocScannerList = (filter: DeviceFilter): Promise<GetScannerListResponse> => new Promise<GetScannerListResponse>((resolve, reject) => {
     documentScan().getScannerList(filter, (response) => {
         try {
             throwRuntimeError();
@@ -66,7 +66,7 @@ export const getScannerList = (filter: DeviceFilter): Promise<GetScannerListResp
     });
 });
 
-export const openScanner = (scannerId: string): Promise<OpenScannerResponse<string>> => new Promise<OpenScannerResponse<string>>((resolve, reject) => {
+export const openDocScanner = (scannerId: string): Promise<OpenScannerResponse<string>> => new Promise<OpenScannerResponse<string>>((resolve, reject) => {
     documentScan().openScanner(scannerId, (response) => {
         try {
             throwRuntimeError();
@@ -78,7 +78,7 @@ export const openScanner = (scannerId: string): Promise<OpenScannerResponse<stri
     });
 });
 
-export const readScanData = (job: string): Promise<ReadScanDataResponse<string>> => new Promise<ReadScanDataResponse<string>>((resolve, reject) => {
+export const readDocScanningData = (job: string): Promise<ReadScanDataResponse<string>> => new Promise<ReadScanDataResponse<string>>((resolve, reject) => {
     documentScan().readScanData(job, (response) => {
         try {
             throwRuntimeError();
@@ -90,7 +90,7 @@ export const readScanData = (job: string): Promise<ReadScanDataResponse<string>>
     });
 });
 
-export const scan = (options: ScanOptions): Promise<ScanResults> => new Promise<ScanResults>((resolve, reject) => {
+export const docScanning = (options: ScanOptions): Promise<ScanResults> => new Promise<ScanResults>((resolve, reject) => {
     documentScan().scan(options, (result) => {
         try {
             throwRuntimeError();
@@ -102,7 +102,7 @@ export const scan = (options: ScanOptions): Promise<ScanResults> => new Promise<
     });
 });
 
-export const setScanOptions = (scannerHandle: string, options: OptionSetting[]): Promise<SetOptionsResponse<string>> => new Promise<SetOptionsResponse<string>>((resolve, reject) => {
+export const setDocScannerOptions = (scannerHandle: string, options: OptionSetting[]): Promise<SetOptionsResponse<string>> => new Promise<SetOptionsResponse<string>>((resolve, reject) => {
     documentScan().setOptions(scannerHandle, options, (response) => {
         try {
             throwRuntimeError();
@@ -114,7 +114,7 @@ export const setScanOptions = (scannerHandle: string, options: OptionSetting[]):
     });
 });
 
-export const startScan = (scannerHandle: string, options: StartScanOptions): Promise<StartScanResponse<string>> => new Promise<StartScanResponse<string>>((resolve, reject) => {
+export const startDocScanning = (scannerHandle: string, options: StartScanOptions): Promise<StartScanResponse<string>> => new Promise<StartScanResponse<string>>((resolve, reject) => {
     documentScan().startScan(scannerHandle, options, (response) => {
         try {
             throwRuntimeError();

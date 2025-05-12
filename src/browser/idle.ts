@@ -7,7 +7,7 @@ type IdleState = chrome.idle.IdleState
 const idle = () => browser().idle as typeof chrome.idle;
 
 // Methods
-export const getAutoLockDelay = (): Promise<number> => new Promise<number>((resolve, reject) => {
+export const getIdleAutoLockDelay = (): Promise<number> => new Promise<number>((resolve, reject) => {
     idle().getAutoLockDelay((delay) => {
         try {
             throwRuntimeError();
@@ -31,10 +31,10 @@ export const queryIdleState = (detectionIntervalInSeconds: number): Promise<Idle
     });
 });
 
-export const setDetectionInterval = (intervalInSeconds: number): void => idle().setDetectionInterval(intervalInSeconds);
+export const setIdleDetectionInterval = (intervalInSeconds: number): void => idle().setDetectionInterval(intervalInSeconds);
 
 
 // Events
-export const onStateChanged = (callback: Parameters<typeof chrome.idle.onStateChanged.addListener>[0]): () => void => {
+export const onIdleStateChanged = (callback: Parameters<typeof chrome.idle.onStateChanged.addListener>[0]): () => void => {
     return handleListener(idle().onStateChanged, callback)
 }

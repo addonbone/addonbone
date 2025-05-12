@@ -7,7 +7,7 @@ type RegisteredUserScript = chrome.userScripts.RegisteredUserScript
 const userScripts = () => browser().userScripts as typeof chrome.userScripts;
 
 // Methods
-export const configureWorld = (properties?: WorldProperties): Promise<void> => new Promise<void>((resolve, reject) => {
+export const configureUserScriptsWorld = (properties?: WorldProperties): Promise<void> => new Promise<void>((resolve, reject) => {
     userScripts().configureWorld(properties || {}, () => {
         try {
             throwRuntimeError();
@@ -31,7 +31,7 @@ export const getUserScripts = (ids?: string[]): Promise<RegisteredUserScript[]> 
     });
 });
 
-export const getWorldConfigurations = (): Promise<WorldProperties[]> => new Promise<WorldProperties[]>((resolve, reject) => {
+export const getUserScriptsWorldConfigs = (): Promise<WorldProperties[]> => new Promise<WorldProperties[]>((resolve, reject) => {
     userScripts().getWorldConfigurations((worlds) => {
         try {
             throwRuntimeError();
@@ -55,7 +55,7 @@ export const registerUserScripts = (scripts: RegisteredUserScript[]): Promise<vo
     });
 });
 
-export const resetWorldConfiguration = (worldId: string): Promise<void> => new Promise<void>((resolve, reject) => {
+export const resetUserScriptsWorldConfigs = (worldId: string): Promise<void> => new Promise<void>((resolve, reject) => {
     userScripts().resetWorldConfiguration(worldId, () => {
         try {
             throwRuntimeError();

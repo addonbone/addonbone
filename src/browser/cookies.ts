@@ -49,7 +49,7 @@ export const getAllCookieStores = (): Promise<CookieStore[]> => new Promise<Cook
     });
 });
 
-export const getPartitionKey = (details: FrameDetails): Promise<CookiePartitionKey> => new Promise<CookiePartitionKey>((resolve, reject) => {
+export const getCookiePartitionKey = (details: FrameDetails): Promise<CookiePartitionKey> => new Promise<CookiePartitionKey>((resolve, reject) => {
     cookies().getPartitionKey(details, (details) => {
         try {
             throwRuntimeError();

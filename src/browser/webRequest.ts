@@ -58,7 +58,7 @@ export const getWebRequestInitiatorUrl = async (request: ResourceRequest): Promi
 
 
 // Events
-export const onAuthRequired = (
+export const onWebRequestAuthRequired = (
     callback: Parameters<typeof chrome.webRequest.onAuthRequired.addListener>[0],
     filter: RequestFilter,
     extraInfoSpec?: Parameters<typeof chrome.webRequest.onAuthRequired.addListener>[2]
@@ -70,7 +70,7 @@ export const onAuthRequired = (
     return () => webRequest().onAuthRequired.removeListener(listener);
 }
 
-export const onBeforeRedirect = (
+export const onWebRequestBeforeRedirect = (
     callback: Parameters<typeof chrome.webRequest.onBeforeRedirect.addListener>[0],
     filter: RequestFilter,
     extraInfoSpec?: Parameters<typeof chrome.webRequest.onBeforeRedirect.addListener>[2]
@@ -82,7 +82,7 @@ export const onBeforeRedirect = (
     return () => webRequest().onBeforeRedirect.removeListener(listener);
 }
 
-export const onBeforeRequest = (
+export const onWebRequestBeforeRequest = (
     callback: Parameters<typeof chrome.webRequest.onBeforeRequest.addListener>[0],
     filter: RequestFilter,
     extraInfoSpec?: Parameters<typeof chrome.webRequest.onBeforeRequest.addListener>[2]
@@ -94,7 +94,7 @@ export const onBeforeRequest = (
     return () => webRequest().onBeforeRequest.removeListener(listener);
 }
 
-export const onBeforeSendHeaders = (
+export const onWebRequestBeforeSendHeaders = (
     callback: Parameters<typeof chrome.webRequest.onBeforeSendHeaders.addListener>[0],
     filter: RequestFilter,
     extraInfoSpec?: Parameters<typeof chrome.webRequest.onBeforeSendHeaders.addListener>[2]
@@ -106,7 +106,7 @@ export const onBeforeSendHeaders = (
     return () => webRequest().onBeforeSendHeaders.removeListener(listener);
 }
 
-export const onCompletedWebRequest = (
+export const onWebRequestCompleted = (
     callback: Parameters<typeof chrome.webRequest.onCompleted.addListener>[0],
     filter: RequestFilter,
     extraInfoSpec?: Parameters<typeof chrome.webRequest.onCompleted.addListener>[2]
@@ -118,7 +118,7 @@ export const onCompletedWebRequest = (
     return () => webRequest().onCompleted.removeListener(listener);
 }
 
-export const onErrorOccurredWebRequest = (
+export const onWebRequestErrorOccurred = (
     callback: Parameters<typeof chrome.webRequest.onErrorOccurred.addListener>[0],
     filter: RequestFilter,
     extraInfoSpec?: Parameters<typeof chrome.webRequest.onErrorOccurred.addListener>[2]
@@ -130,7 +130,7 @@ export const onErrorOccurredWebRequest = (
     return () => webRequest().onErrorOccurred.removeListener(listener);
 }
 
-export const onHeadersReceived = (
+export const onWebRequestHeadersReceived = (
     callback: Parameters<typeof chrome.webRequest.onHeadersReceived.addListener>[0],
     filter: RequestFilter,
     extraInfoSpec?: Parameters<typeof chrome.webRequest.onHeadersReceived.addListener>[2]
@@ -142,7 +142,7 @@ export const onHeadersReceived = (
     return () => webRequest().onHeadersReceived.removeListener(listener);
 }
 
-export const onResponseStarted = (
+export const onWebRequestResponseStarted = (
     callback: Parameters<typeof chrome.webRequest.onResponseStarted.addListener>[0],
     filter: RequestFilter,
     extraInfoSpec?: Parameters<typeof chrome.webRequest.onResponseStarted.addListener>[2]
@@ -154,7 +154,7 @@ export const onResponseStarted = (
     return () => webRequest().onResponseStarted.removeListener(listener);
 }
 
-export const onSendHeaders = (
+export const onWebRequestSendHeaders = (
     callback: Parameters<typeof chrome.webRequest.onSendHeaders.addListener>[0],
     filter: RequestFilter,
     extraInfoSpec?: Parameters<typeof chrome.webRequest.onSendHeaders.addListener>[2]

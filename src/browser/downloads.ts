@@ -42,7 +42,7 @@ export const cancelDownload = (downloadId: number): Promise<void> => new Promise
     });
 });
 
-export const downloads = (options: DownloadOptions): Promise<number> => new Promise<number>((resolve, reject) => {
+export const download = (options: DownloadOptions): Promise<number> => new Promise<number>((resolve, reject) => {
     downloads().download({conflictAction: 'uniquify', ...options}, (downloadId) => {
         try {
             throwRuntimeError();

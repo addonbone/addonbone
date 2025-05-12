@@ -2,12 +2,12 @@ import {browser} from "./browser";
 import {handleListener} from "./utils";
 import {throwRuntimeError} from "./runtime";
 
-type Commands = chrome.commands.Command;
+type Command = chrome.commands.Command;
 
 const commands = () => browser().commands as typeof chrome.commands;
 
 // Methods
-export const getAllCommands = (): Promise<Commands[]> => new Promise<Commands[]>((resolve, reject) => {
+export const getAllCommands = (): Promise<Command[]> => new Promise<Command[]>((resolve, reject) => {
     commands().getAll((commands) => {
         try {
             throwRuntimeError();

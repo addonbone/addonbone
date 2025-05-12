@@ -12,7 +12,7 @@ import stylePlugin from "../plugins/style";
 import typescriptPlugin from "../plugins/typescript";
 import pagePlugin from "../plugins/page";
 
-import {getAppSourcePath, getConfigFile, getInputPath} from "../resolvers/path";
+import {getAppPath, getAppSourcePath, getConfigFile, getInputPath} from "../resolvers/path";
 
 import {Config, OptionalConfig, ReadonlyConfig, UserConfig} from "@typing/config";
 import {Command, Mode} from "@typing/app";
@@ -72,10 +72,11 @@ const loadDotenv = (config: ReadonlyConfig): DotenvParseOutput => {
         `.env`,
     ];
 
-    const appPaths = preset.map((file) => getAppSourcePath(config, file));
+    const appSourcePaths = preset.map((file) => getAppSourcePath(config, file));
+    const appPaths = preset.map((file) => getAppPath(config, file));
     const rootPaths = preset.map((file) => getInputPath(config, file));
 
-    const paths = [...appPaths, ...rootPaths];
+    const paths = [...appSourcePaths, ...appPaths, ...rootPaths];
 
     const {parsed: fileVars = {}} = dotenv.config({path: paths});
 

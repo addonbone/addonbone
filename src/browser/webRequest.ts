@@ -1,4 +1,4 @@
-import {getTabUrl} from "./tab";
+import {getTabUrl} from "./tabs";
 import {browser} from "./browser";
 import {safeListener} from "./utils";
 import {throwRuntimeError} from "./runtime";

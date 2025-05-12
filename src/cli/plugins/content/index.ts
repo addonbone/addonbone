@@ -42,6 +42,7 @@ export default definePlugin(() => {
                     splitChunks: {
                         cacheGroups: {
                             frameworkContent: {
+                                minChunks: 2,
                                 name: content.getFrameworkEntry(),
                                 test: isEntryModuleOrIssuer('content'),
                                 chunks: (chunk): boolean => {
@@ -53,7 +54,7 @@ export default definePlugin(() => {
 
                                     return content.likely(name);
                                 },
-                                enforce: true,
+                                enforce: false,
                                 reuseExistingChunk: true,
                                 priority: -10
                             }

@@ -10,7 +10,7 @@ type WebNavigationEventFilter = chrome.webNavigation.WebNavigationEventFilter;
 const webNavigation = () => browser().webNavigation as typeof chrome.webNavigation;
 
 // Methods
-export const getWebNavigationAllFrames = (tabId: number): Promise<GetAllFrameResultDetails[] | null> => new Promise<GetAllFrameResultDetails[] | null>((resolve, reject) => {
+export const getAllFrames = (tabId: number): Promise<GetAllFrameResultDetails[] | null> => new Promise<GetAllFrameResultDetails[] | null>((resolve, reject) => {
     webNavigation().getAllFrames({tabId}, (frames) => {
         try {
             throwRuntimeError();
@@ -25,7 +25,7 @@ export const getWebNavigationAllFrames = (tabId: number): Promise<GetAllFrameRes
     });
 });
 
-export const getWebNavigationFrame = (details: GetFrameDetails): Promise<GetFrameResultDetails | null> => new Promise<GetFrameResultDetails | null>((resolve, reject) => {
+export const getFrame = (details: GetFrameDetails): Promise<GetFrameResultDetails | null> => new Promise<GetFrameResultDetails | null>((resolve, reject) => {
     webNavigation().getFrame(details, (frame) => {
         try {
             throwRuntimeError();
@@ -42,7 +42,7 @@ export const getWebNavigationFrame = (details: GetFrameDetails): Promise<GetFram
 
 
 // Events
-export const onWebNavigationBeforeNavigate = (
+export const onBeforeNavigate = (
     callback: Parameters<typeof chrome.webNavigation.onBeforeNavigate.addListener>[0],
     filters?: WebNavigationEventFilter,
 ): () => void => {
@@ -53,7 +53,7 @@ export const onWebNavigationBeforeNavigate = (
     return () => webNavigation().onBeforeNavigate.removeListener(listener);
 }
 
-export const onWebNavigationCommitted = (
+export const onCommitted = (
     callback: Parameters<typeof chrome.webNavigation.onCommitted.addListener>[0],
     filters?: WebNavigationEventFilter,
 ): () => void => {
@@ -64,7 +64,7 @@ export const onWebNavigationCommitted = (
     return () => webNavigation().onCommitted.removeListener(listener);
 }
 
-export const onWebNavigationCompleted = (
+export const onCompletedWebNavigation = (
     callback: Parameters<typeof chrome.webNavigation.onCompleted.addListener>[0],
     filters?: WebNavigationEventFilter,
 ): () => void => {
@@ -75,7 +75,7 @@ export const onWebNavigationCompleted = (
     return () => webNavigation().onCompleted.removeListener(listener);
 }
 
-export const onWebNavigationCreatedNavigationTarget = (
+export const onCreatedNavigationTarget = (
     callback: Parameters<typeof chrome.webNavigation.onCreatedNavigationTarget.addListener>[0],
     filters?: WebNavigationEventFilter,
 ): () => void => {
@@ -86,7 +86,7 @@ export const onWebNavigationCreatedNavigationTarget = (
     return () => webNavigation().onCreatedNavigationTarget.removeListener(listener);
 }
 
-export const onWebNavigationDOMContentLoaded = (
+export const onDOMContentLoaded = (
     callback: Parameters<typeof chrome.webNavigation.onDOMContentLoaded.addListener>[0],
     filters?: WebNavigationEventFilter,
 ): () => void => {
@@ -97,7 +97,7 @@ export const onWebNavigationDOMContentLoaded = (
     return () => webNavigation().onDOMContentLoaded.removeListener(listener);
 }
 
-export const onWebNavigationErrorOccurred = (
+export const onErrorOccurredWebNavigation = (
     callback: Parameters<typeof chrome.webNavigation.onErrorOccurred.addListener>[0],
     filters?: WebNavigationEventFilter,
 ): () => void => {
@@ -108,7 +108,7 @@ export const onWebNavigationErrorOccurred = (
     return () => webNavigation().onErrorOccurred.removeListener(listener);
 }
 
-export const onWebNavigationHistoryStateUpdated = (
+export const onHistoryStateUpdated = (
     callback: Parameters<typeof chrome.webNavigation.onHistoryStateUpdated.addListener>[0],
     filters?: WebNavigationEventFilter,
 ): () => void => {
@@ -119,7 +119,7 @@ export const onWebNavigationHistoryStateUpdated = (
     return () => webNavigation().onHistoryStateUpdated.removeListener(listener);
 }
 
-export const onWebNavigationReferenceFragmentUpdated = (
+export const onReferenceFragmentUpdated = (
     callback: Parameters<typeof chrome.webNavigation.onReferenceFragmentUpdated.addListener>[0],
     filters?: WebNavigationEventFilter,
 ): () => void => {
@@ -130,7 +130,7 @@ export const onWebNavigationReferenceFragmentUpdated = (
     return () => webNavigation().onReferenceFragmentUpdated.removeListener(listener);
 }
 
-export const onWebNavigationTabReplaced = (
+export const onTabReplaced = (
     callback: Parameters<typeof chrome.webNavigation.onTabReplaced.addListener>[0]
 ): () => void => {
     const listener = safeListener(callback)

@@ -6,7 +6,7 @@ type CreateParameters = chrome.offscreen.CreateParameters;
 const offscreen = () => browser().offscreen as typeof chrome.offscreen;
 
 // Methods
-export const closeOffscreenDocument = (): Promise<void> => new Promise<void>((resolve, reject) => {
+export const closeOffscreen = (): Promise<void> => new Promise<void>((resolve, reject) => {
     offscreen().closeDocument(() => {
         try {
             throwRuntimeError();
@@ -18,7 +18,7 @@ export const closeOffscreenDocument = (): Promise<void> => new Promise<void>((re
     });
 });
 
-export const createOffscreenDocument = (parameters: CreateParameters): Promise<void> => new Promise<void>((resolve, reject) => {
+export const createOffscreen = (parameters: CreateParameters): Promise<void> => new Promise<void>((resolve, reject) => {
     offscreen().createDocument(parameters, () => {
         try {
             throwRuntimeError();
@@ -30,7 +30,7 @@ export const createOffscreenDocument = (parameters: CreateParameters): Promise<v
     });
 });
 
-export const hasOffscreenDocument = (): Promise<boolean> => new Promise<boolean>((resolve, reject) => {
+export const hasOffscreen = (): Promise<boolean> => new Promise<boolean>((resolve, reject) => {
     offscreen().hasDocument((hasDocument) => {
         try {
             throwRuntimeError();

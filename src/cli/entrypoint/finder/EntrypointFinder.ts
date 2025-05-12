@@ -1,24 +1,30 @@
 import fs, {Dirent} from "fs";
 import path from "path";
+import pluralize from "pluralize";
 
 import OptionsFinder from "./OptionsFinder";
 
 import {getAppSourcePath, getSharedPath} from "@cli/resolvers/path";
 
 import {EntrypointFile, EntrypointFileExtensions, EntrypointOptions} from "@typing/entrypoint";
-
-const fileExtensions = [...EntrypointFileExtensions]
-    .map(ext => ext.replace('.', '\\.'))
-    .join('|');
-
-const possibleIndexFiles = new Set([...EntrypointFileExtensions].map((ext) => `index.${ext}`));
+import {ReadonlyConfig} from "@typing/config";
 
 export default abstract class<O extends EntrypointOptions> extends OptionsFinder<O> {
-    public canMerge(): boolean {
-        return false;
+    protected fileExtensionsPattern: string;
+
+    protected possibleIndexFiles: Set<string>;
+
+    protected constructor(config: ReadonlyConfig) {
+        super(config);
+
+        this.fileExtensionsPattern = [...EntrypointFileExtensions]
+            .map(ext => ext.replace('.', '\\.'))
+            .join('|');
+
+        this.possibleIndexFiles = new Set([...EntrypointFileExtensions].map((ext) => `index.${ext}`));
     }
 
-    public deepFind(): boolean {
+    public canMerge(): boolean {
         return false;
     }
 
@@ -54,6 +60,7 @@ export default abstract class<O extends EntrypointOptions> extends OptionsFinder
 
     protected findFiles(directory: string): Set<EntrypointFile> {
         const entrypoint = this.type();
+        const entrypointPluralize = pluralize(entrypoint);
 
         const files: EntrypointFile[] = [];
 
@@ -74,8 +81,8 @@ export default abstract class<O extends EntrypointOptions> extends OptionsFinder
                 const fullPath = path.join(dir, entry.name);
 
                 if (entry.isDirectory()) {
-                    if (entry.name === entrypoint || entry.name.endsWith(`.${entrypoint}`)) {
-                        for (const indexFile of possibleIndexFiles) {
+                    if (this.isValidDirname(entry.name)) {
+                        for (const indexFile of this.possibleIndexFiles) {
                             const indexPath = path.join(fullPath, indexFile);
 
                             try {
@@ -91,15 +98,11 @@ export default abstract class<O extends EntrypointOptions> extends OptionsFinder
 
                             }
                         }
-                    }
-
-                    if (this.deepFind()) {
+                    } else if (entry.name === entrypointPluralize) {
                         finder(fullPath);
                     }
-                } else if (entry.isFile()) {
-                    if (this.isValidFilename(entry.name)) {
-                        files.push(this.file(fullPath));
-                    }
+                } else if (entry.isFile() && this.isValidFilename(entry.name)) {
+                    files.push(this.file(fullPath));
                 }
             }
         };
@@ -119,7 +122,6 @@ export default abstract class<O extends EntrypointOptions> extends OptionsFinder
                 if (this.config.debug) {
                     console.log('Error reading entrypoint directory:', directory);
                 }
-
             }
         }
 
@@ -129,8 +131,14 @@ export default abstract class<O extends EntrypointOptions> extends OptionsFinder
     protected isValidFilename(filename: string): boolean {
         const name = this.type().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-        const pattern = new RegExp(`^(?:.*\\.)?${name}\\.(${fileExtensions})$`);
+        const pattern = new RegExp(`^(?:.*\\.)?${name}\\.(${this.fileExtensionsPattern})$`);
 
         return pattern.test(filename);
+    }
+
+    protected isValidDirname(dirname: string): boolean {
+        const entrypoint = this.type();
+
+        return dirname === entrypoint || dirname.endsWith(`.${entrypoint}`)
     }
 }

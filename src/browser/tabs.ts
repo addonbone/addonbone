@@ -3,7 +3,7 @@ import {handleListener} from "./utils";
 import {throwRuntimeError} from "./runtime";
 import {MessageBody, MessageDictionary, MessageResponse, MessageType} from "@typing/message";
 
-type Tab = chrome.tabs.Tab;
+type Tabs = chrome.tabs.Tab;
 type Port = chrome.runtime.Port;
 type Window = chrome.windows.Window;
 
@@ -40,7 +40,7 @@ export const captureVisibleTab = (windowId: number, options: CaptureVisibleTabOp
 
 export const connectTab = (tabId: number, connectInfo?: ConnectInfo): Port => tabs().connect(tabId, connectInfo);
 
-export const createTab = (properties: CreateProperties): Promise<Tab> => new Promise<Tab>((resolve, reject) => {
+export const createTab = (properties: CreateProperties): Promise<Tabs> => new Promise<Tabs>((resolve, reject) => {
     tabs().create(properties, (tab) => {
         try {
             throwRuntimeError();
@@ -65,7 +65,7 @@ export const detectTabLanguage = (tabId: number): Promise<string> => new Promise
     });
 });
 
-export const discardTab = (tabId: number): Promise<Tab> => new Promise<Tab>((resolve, reject) => {
+export const discardTab = (tabId: number): Promise<Tabs> => new Promise<Tabs>((resolve, reject) => {
     tabs().discard(tabId, (tab) => {
         try {
             throwRuntimeError();
@@ -77,7 +77,7 @@ export const discardTab = (tabId: number): Promise<Tab> => new Promise<Tab>((res
     });
 });
 
-export const duplicateTab = (tabId: number): Promise<Tab | undefined> => new Promise<Tab | undefined>((resolve, reject) => {
+export const duplicateTab = (tabId: number): Promise<Tabs | undefined> => new Promise<Tabs | undefined>((resolve, reject) => {
     tabs().duplicate(tabId, (tab) => {
         try {
             throwRuntimeError();
@@ -89,7 +89,7 @@ export const duplicateTab = (tabId: number): Promise<Tab | undefined> => new Pro
     });
 });
 
-export const getTab = (tabId: number): Promise<Tab> => new Promise<Tab>((resolve, reject) => {
+export const getTab = (tabId: number): Promise<Tabs> => new Promise<Tabs>((resolve, reject) => {
     tabs().get(tabId, (tab) => {
         try {
             throwRuntimeError();
@@ -101,7 +101,7 @@ export const getTab = (tabId: number): Promise<Tab> => new Promise<Tab>((resolve
     });
 });
 
-export const getCurrentTab = (): Promise<Tab | undefined> => new Promise<Tab | undefined>((resolve, reject) => {
+export const getCurrentTab = (): Promise<Tabs | undefined> => new Promise<Tabs | undefined>((resolve, reject) => {
     // Returns undefined if called from a non-tab context (for example, a background view or popup view)
     tabs().getCurrent((tab) => {
         try {
@@ -186,7 +186,7 @@ export const highlightTab = (highlightInfo: HighlightInfo): Promise<Window> => n
     });
 });
 
-export const moveTab = (tabId: number, moveProperties: MoveProperties): Promise<Tab> => new Promise<Tab>((resolve, reject) => {
+export const moveTab = (tabId: number, moveProperties: MoveProperties): Promise<Tabs> => new Promise<Tabs>((resolve, reject) => {
     tabs().move(tabId, moveProperties, (tab) => {
         try {
             throwRuntimeError();
@@ -198,7 +198,7 @@ export const moveTab = (tabId: number, moveProperties: MoveProperties): Promise<
     });
 });
 
-export const moveTabs = (tabIds: number[], moveProperties: MoveProperties): Promise<Tab[]> => new Promise<Tab[]>((resolve, reject) => {
+export const moveTabs = (tabIds: number[], moveProperties: MoveProperties): Promise<Tabs[]> => new Promise<Tabs[]>((resolve, reject) => {
     tabs().move(tabIds, moveProperties, (tabs) => {
         try {
             throwRuntimeError();
@@ -210,7 +210,7 @@ export const moveTabs = (tabIds: number[], moveProperties: MoveProperties): Prom
     });
 });
 
-export const queryTabs = (queryInfo?: QueryInfo): Promise<Tab[]> => new Promise<Tab[]>((resolve, reject) => {
+export const queryTabs = (queryInfo?: QueryInfo): Promise<Tabs[]> => new Promise<Tabs[]>((resolve, reject) => {
     tabs().query(queryInfo || {}, (tabs) => {
         try {
             throwRuntimeError();
@@ -298,7 +298,7 @@ export const ungroupTab = (tabIds: number | number[]): Promise<void> => new Prom
     });
 });
 
-export const updateTab = (tabId: number, updateProperties: UpdateProperties): Promise<Tab | undefined> => new Promise<Tab | undefined>((resolve, reject) => {
+export const updateTab = (tabId: number, updateProperties: UpdateProperties): Promise<Tabs | undefined> => new Promise<Tabs | undefined>((resolve, reject) => {
     tabs().update(tabId, updateProperties, (tab) => {
         try {
             throwRuntimeError();
@@ -340,7 +340,7 @@ export const getTabUrl = async (tabId: number): Promise<string> => {
     return url;
 }
 
-export const getActiveTab = async (): Promise<Tab> => {
+export const getActiveTab = async (): Promise<Tabs> => {
     const tabs = await queryTabs({active: true, currentWindow: true})
 
     if (!tabs || !tabs[0]) {
@@ -358,15 +358,15 @@ export const queryTabIds = async (queryInfo?: QueryInfo): Promise<number[]> => (
     return ids;
 }, [] as number[]);
 
-export const findTab = (queryInfo?: QueryInfo): Promise<Tab | undefined> => queryTabs(queryInfo).then(tabs => tabs.length ? tabs[0] : undefined);
+export const findTab = (queryInfo?: QueryInfo): Promise<Tabs | undefined> => queryTabs(queryInfo).then(tabs => tabs.length ? tabs[0] : undefined);
 
-export const findTabById = (tabId: number): Promise<Tab | undefined> => getTab(tabId).then(tab => tab).catch(() => undefined);
+export const findTabById = (tabId: number): Promise<Tabs | undefined> => getTab(tabId).then(tab => tab).catch(() => undefined);
 
-export const updateTabAsSelected = (tabId: number): Promise<Tab | undefined> => updateTab(tabId, {highlighted: true});
+export const updateTabAsSelected = (tabId: number): Promise<Tabs | undefined> => updateTab(tabId, {highlighted: true});
 
-export const updateTabAsActive = (tabId: number): Promise<Tab | undefined> => updateTab(tabId, {active: true});
+export const updateTabAsActive = (tabId: number): Promise<Tabs | undefined> => updateTab(tabId, {active: true});
 
-export const openOrCreateTab = async (tab: Tab): Promise<void> => {
+export const openOrCreateTab = async (tab: Tabs): Promise<void> => {
     const {id, url} = tab;
 
     if (id && url) {

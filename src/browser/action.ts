@@ -38,7 +38,7 @@ export const enableAction = (tabId: number): Promise<void> => new Promise<void>(
     });
 });
 
-export const getActionBadgeBgColor = (tabId?: number): Promise<ColorArray> => new Promise<ColorArray>((resolve, reject) => {
+export const getBadgeBgColor = (tabId?: number): Promise<ColorArray> => new Promise<ColorArray>((resolve, reject) => {
     action().getBadgeBackgroundColor({tabId}, (result) => {
         try {
             throwRuntimeError();
@@ -50,7 +50,7 @@ export const getActionBadgeBgColor = (tabId?: number): Promise<ColorArray> => ne
     });
 });
 
-export const getActionBadgeText = (tabId?: number): Promise<string> => new Promise<string>((resolve, reject) => {
+export const getBadgeText = (tabId?: number): Promise<string> => new Promise<string>((resolve, reject) => {
     action().getBadgeText({tabId}, (result) => {
         try {
             throwRuntimeError();
@@ -62,7 +62,7 @@ export const getActionBadgeText = (tabId?: number): Promise<string> => new Promi
     });
 });
 
-export const getActionBadgeTextColor = (tabId?: number): Promise<ColorArray> => new Promise<ColorArray>((resolve, reject) => {
+export const getBadgeTextColor = (tabId?: number): Promise<ColorArray> => new Promise<ColorArray>((resolve, reject) => {
     action<Action>().getBadgeTextColor({tabId}, (result: ColorArray) => {
         try {
             throwRuntimeError();
@@ -124,7 +124,7 @@ export const isActionEnabled = (tabId: number): Promise<boolean> => new Promise<
 
 export const openActionPopup = (windowId?: number): Promise<void> => action<Action>().openPopup({windowId})
 
-export const setActionBadgeBgColor = (color: Color, tabId?: number, ): Promise<void> => new Promise<void>((resolve, reject) => {
+export const setBadgeBgColor = (color: Color, tabId?: number,): Promise<void> => new Promise<void>((resolve, reject) => {
     action().setBadgeBackgroundColor({color, tabId}, () => {
         try {
             throwRuntimeError();
@@ -138,7 +138,7 @@ export const setActionBadgeBgColor = (color: Color, tabId?: number, ): Promise<v
     });
 });
 
-export const setActionBadgeText = (text: string | number, tabId?: number): Promise<void> => new Promise<void>((resolve, reject) => {
+export const setBadgeText = (text: string | number, tabId?: number): Promise<void> => new Promise<void>((resolve, reject) => {
     action().setBadgeText({tabId, text: text.toString()}, () => {
         try {
             throwRuntimeError();
@@ -152,12 +152,12 @@ export const setActionBadgeText = (text: string | number, tabId?: number): Promi
     });
 });
 
-export const setActionBadgeTextColor = async (color: Color, tabId?: number): Promise<void> => {
+export const setBadgeTextColor = async (color: Color, tabId?: number): Promise<void> => {
     if (!isManifestVersion3()) {
         return;
     }
 
-    return  action<Action>().setBadgeTextColor({color, tabId});
+    return action<Action>().setBadgeTextColor({color, tabId});
 };
 
 export const setActionIcon = (details: TabIconDetails): Promise<void> => new Promise<void>((resolve, reject) => {
@@ -198,13 +198,13 @@ export const setActionTitle = (title: string, tabId?: number): Promise<void> => 
 
 
 // Custom Methods
-export const getActionDefaultPopup = (): string => {
+export const getDefaultPopup = (): string => {
     const manifest = getManifest();
 
     return isManifestVersion3() ? manifest.action.default_popup : manifest.browser_action.default_popup;
 }
 
-export const clearActionBadgeText = (tabId?: number): Promise<void> => setActionBadgeText('', tabId);
+export const clearBadgeText = (tabId?: number): Promise<void> => setBadgeText('', tabId);
 
 
 // Events

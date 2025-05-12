@@ -10,7 +10,7 @@ type WebNavigationEventFilter = chrome.webNavigation.WebNavigationEventFilter;
 const webNavigation = () => browser().webNavigation as typeof chrome.webNavigation;
 
 // Methods
-export const getWebNavigationAllFrames = (tabId: number): Promise<GetAllFrameResultDetails[] | null> => new Promise<GetAllFrameResultDetails[] | null>((resolve, reject) => {
+export const getAllFrames = (tabId: number): Promise<GetAllFrameResultDetails[] | null> => new Promise<GetAllFrameResultDetails[] | null>((resolve, reject) => {
     webNavigation().getAllFrames({tabId}, (frames) => {
         try {
             throwRuntimeError();
@@ -25,7 +25,7 @@ export const getWebNavigationAllFrames = (tabId: number): Promise<GetAllFrameRes
     });
 });
 
-export const getWebNavigationFrame = (details: GetFrameDetails): Promise<GetFrameResultDetails | null> => new Promise<GetFrameResultDetails | null>((resolve, reject) => {
+export const getFrame = (details: GetFrameDetails): Promise<GetFrameResultDetails | null> => new Promise<GetFrameResultDetails | null>((resolve, reject) => {
     webNavigation().getFrame(details, (frame) => {
         try {
             throwRuntimeError();

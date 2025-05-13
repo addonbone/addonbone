@@ -62,7 +62,6 @@ export default class {
             throw new Error(`File not found at path "${resolvedLocal}" or with available extensions`);
         }
 
-
         let aliased = this.ts.matchPath(importPath);
 
         if (aliased) {
@@ -78,7 +77,7 @@ export default class {
         }
 
         try {
-            if (importPath === PackageName) {
+            if (importPath === PackageName || importPath.startsWith(`${PackageName}/`)) {
                 return importPath;
             }
 

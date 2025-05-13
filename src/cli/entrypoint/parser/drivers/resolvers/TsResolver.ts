@@ -1,7 +1,10 @@
 import path from "path";
 import fs from "fs";
 import ts from "typescript";
-import {createMatchPath, MatchPath} from "tsconfig-paths";
+import {createMatchPath} from "tsconfig-paths";
+
+import {EntrypointFileExtensions} from "@typing/entrypoint";
+import {SystemDir} from "@typing/app";
 
 export default class TsResolver {
     protected static readonly instances: Map<string, TsResolver> = new Map();
@@ -10,13 +13,16 @@ export default class TsResolver {
 
     protected config?: ts.ParsedCommandLine;
 
-    public get matchPath(): MatchPath {
+    public get matchPath(): { (path: string): string | undefined } {
         const config = this.getConfig();
 
-        return createMatchPath(
-            config.options.baseUrl || ".",
-            config.options.paths || {}
-        );
+        const absoluteBaseUrl = path.resolve(path.dirname(this.filename), config.options.baseUrl || '.', SystemDir);
+
+        const match = createMatchPath(absoluteBaseUrl, config.options.paths || {});
+
+        const extensions = [...EntrypointFileExtensions].map(ext => '.' + ext);
+
+        return (path: string): string | undefined => match(path, undefined, fs.existsSync, extensions);
     }
 
     public static make(filename: string = 'tsconfig.json'): TsResolver {

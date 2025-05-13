@@ -3,17 +3,20 @@ import {throwRuntimeError} from "./runtime";
 
 type LanguageDetectionResult = chrome.i18n.LanguageDetectionResult
 
-const i18n = () => browser().i18n;
+const i18n = () => browser().i18n as typeof chrome.i18n;
 
-export const canUseNativeI18nMessage = (): boolean => typeof (i18n().getMessage) !== "undefined";
+// Methods
+export const detectI18Language = (text: string): Promise<LanguageDetectionResult> => new Promise<LanguageDetectionResult>((resolve, reject) => {
+    i18n().detectLanguage(text, result => {
+        try {
+            throwRuntimeError();
 
-export const getI18nMessage = (key: string): string | undefined => {
-    if (!canUseNativeI18nMessage()) {
-        return;
-    }
-
-    return i18n().getMessage(key);
-}
+            resolve(result);
+        } catch (e) {
+            reject(e);
+        }
+    });
+});
 
 export const getI18nAcceptLanguages = (): Promise<string[]> => new Promise<string[]>((resolve, reject) => {
     i18n().getAcceptLanguages(locales => {
@@ -27,6 +30,18 @@ export const getI18nAcceptLanguages = (): Promise<string[]> => new Promise<strin
     });
 });
 
+export const getI18nMessage = (key: string): string | undefined => {
+    if (!canUseNativeI18nMessage()) {
+        return;
+    }
+
+    return i18n().getMessage(key);
+}
+
+
+// Custom Methods
+export const canUseNativeI18nMessage = (): boolean => typeof (i18n().getMessage) !== "undefined";
+
 export const getI18nUILanguage = (): string | undefined => {
     const i18n = browser().i18n;
 
@@ -36,15 +51,3 @@ export const getI18nUILanguage = (): string | undefined => {
 
     return i18n.getUILanguage();
 }
-
-export const detectI18Language = (text: string): Promise<LanguageDetectionResult> => new Promise<LanguageDetectionResult>((resolve, reject) => {
-    i18n().detectLanguage(text, result => {
-        try {
-            throwRuntimeError();
-
-            resolve(result);
-        } catch (e) {
-            reject(e);
-        }
-    });
-});

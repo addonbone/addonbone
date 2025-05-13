@@ -1,4 +1,4 @@
-import {getTabUrl} from "./tab";
+import {getTabUrl} from "./tabs";
 import {browser} from "./browser";
 import {safeListener} from "./utils";
 import {throwRuntimeError} from "./runtime";
@@ -12,8 +12,23 @@ import {Browser} from "@typing/browser";
 type RequestFilter = chrome.webRequest.RequestFilter;
 type ResourceRequest = chrome.webRequest.ResourceRequest;
 
-const webRequest = () => browser().webRequest;
+const webRequest = () => browser().webRequest as typeof chrome.webRequest;
 
+// Methods
+export const handlerWebRequestBehaviorChanged = (): Promise<void> => new Promise<void>((resolve, reject) => {
+    webRequest().handlerBehaviorChanged(() => {
+        try {
+            throwRuntimeError();
+
+            resolve();
+        } catch (e) {
+            reject(e);
+        }
+    });
+});
+
+
+// Custom Methods
 export const getWebRequestInitiatorUrl = async (request: ResourceRequest): Promise<string | undefined> => {
     const {tabId} = request;
 
@@ -41,18 +56,8 @@ export const getWebRequestInitiatorUrl = async (request: ResourceRequest): Promi
     return initiatorUrl;
 }
 
-export const handlerWebRequestBehaviorChanged = () => new Promise<void>((resolve, reject) => {
-    webRequest().handlerBehaviorChanged(() => {
-        try {
-            throwRuntimeError();
 
-            resolve();
-        } catch (e) {
-            reject(e);
-        }
-    });
-});
-
+// Events
 export const onWebRequestAuthRequired = (
     callback: Parameters<typeof chrome.webRequest.onAuthRequired.addListener>[0],
     filter: RequestFilter,

@@ -5,7 +5,6 @@ import TsResolver from "./TsResolver";
 
 import {PackageName} from "@typing/app";
 import {EntrypointFileExtensions} from "@typing/entrypoint";
-import {toPosix} from "@cli/utils/path";
 
 const extPattern = [...EntrypointFileExtensions]
     .map(ext => ext.replace('.', '\\.'))
@@ -41,7 +40,7 @@ export default class {
     }
 
     public setBaseDir(baseDir: string): this {
-        this.baseDir = toPosix(baseDir);
+        this.baseDir = baseDir;
 
         return this;
     }

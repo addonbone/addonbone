@@ -97,6 +97,8 @@ export type PluginHandlerKeys = keyof Omit<Plugin, 'name'>;
 
 export type PluginEntrypointKeys = keyof Pick<Plugin, 'background' | 'command' | 'content' | 'page' | 'service'>;
 
+export type PluginAssetKeys = keyof Pick<Plugin, 'icon' | 'locale'>;
+
 export type PluginHandlerType<T extends Plugin[PluginHandlerKeys]> =
     T extends PluginHandlerCallback<infer O, infer R> ? { options: O; result: R } : never;
 

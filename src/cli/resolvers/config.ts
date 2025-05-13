@@ -19,8 +19,6 @@ import {Command, Mode} from "@typing/app";
 import {Browser} from "@typing/browser";
 import {Plugin} from "@typing/plugin";
 import {ManifestVersion} from "@typing/manifest";
-import {LocaleDirectoryName} from "@typing/locale";
-
 
 const getUserConfig = async (config: ReadonlyConfig): Promise<UserConfig> => {
     const configFilePath = getConfigFile(config);

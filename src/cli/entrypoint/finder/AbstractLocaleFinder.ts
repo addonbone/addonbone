@@ -1,35 +1,22 @@
-import path from "path";
+import AbstractAssetFinder from "./AbstractAssetFinder";
 
-import AbstractFinder from "./AbstractFinder";
+import {LanguageCodes, LocaleDirectoryName, LocaleFileExtensions} from "@typing/locale";
 
-import {Language, LanguageCodes, LocaleFileExtensions} from "@typing/locale";
+export default abstract class extends AbstractAssetFinder {
 
-export default abstract class extends AbstractFinder {
-    protected isValidFilename(filename: string): boolean {
-        let {name, ext} = path.parse(filename);
-
-        if (ext.startsWith('.')) {
-            ext = ext.slice(1);
-        }
-
-        if (name.includes('.')) {
-            name = name.split('.').slice(0, -1).join('.');
-        }
-
-        return LocaleFileExtensions.has(ext) && LanguageCodes.has(name);
+    public isValidExtension(extension: string): boolean {
+        return LocaleFileExtensions.has(extension);
     }
 
-    protected getLanguageFromFilename(filename: string): Language {
-        let {name} = path.parse(filename);
+    public getDirectory(): string {
+        return LocaleDirectoryName;
+    }
 
-        if (name.includes('.')) {
-            name = name.split('.').slice(0, -1).join('.');
-        }
+    public getNames(): ReadonlySet<string> {
+        return LanguageCodes;
+    }
 
-        if (LanguageCodes.has(name)) {
-            return name as Language;
-        }
-
-        throw new Error(`Invalid locale filename: ${filename}`);
+    public canMerge(): boolean {
+        return this.config.mergeLocales;
     }
 }

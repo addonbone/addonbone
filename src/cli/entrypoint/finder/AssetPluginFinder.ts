@@ -1,16 +1,26 @@
-import path from "path";
 import _ from "lodash";
-
-import AbstractLocaleFinder from "./AbstractLocaleFinder";
+import path from "path";
 
 import {processPluginHandler} from "@cli/resolvers/plugin";
 
-import {EntrypointFile} from "@typing/entrypoint";
-import {LanguageCodes, LocaleDirectoryName} from "@typing/locale";
+import AbstractFinder from "./AbstractFinder";
+import AbstractAssetFinder from "./AbstractAssetFinder";
 
-export default class extends AbstractLocaleFinder {
+import {EntrypointFile} from "@typing/entrypoint";
+import {ReadonlyConfig} from "@typing/config";
+import {PluginAssetKeys} from "@typing/plugin";
+
+export default class extends AbstractFinder {
+    constructor(
+        config: ReadonlyConfig,
+        protected readonly key: PluginAssetKeys,
+        protected readonly finder: AbstractAssetFinder,
+    ) {
+        super(config);
+    }
+
     protected async getFiles(): Promise<Set<EntrypointFile>> {
-        const pluginResult = await Array.fromAsync(processPluginHandler(this.config.plugins, 'locale', {
+        const pluginResult = await Array.fromAsync(processPluginHandler(this.config.plugins, this.key, {
             config: this.config,
         }));
 
@@ -18,7 +28,7 @@ export default class extends AbstractLocaleFinder {
 
         for await (let {name, result} of pluginResult) {
             if (_.isBoolean(result)) {
-                result = LocaleDirectoryName;
+                result = this.finder.getDirectory();
             }
 
             if (_.isString(result)) {
@@ -33,12 +43,12 @@ export default class extends AbstractLocaleFinder {
 
                     let file: EntrypointFile;
 
-                    if (_.isString(item) && this.isValidFilename(item)) {
+                    if (_.isString(item) && this.finder.isValidFilename(item)) {
                         file = this.file(item);
                     } else if (_.isPlainObject(item)) {
                         const {file: filename} = item as EntrypointFile;
 
-                        if (filename && this.isValidFilename(filename)) {
+                        if (filename && this.finder.isValidFilename(filename)) {
                             file = item as EntrypointFile;
                         } else {
                             continue;
@@ -63,10 +73,10 @@ export default class extends AbstractLocaleFinder {
         const files = new Set<EntrypointFile>();
         const resolve = (file: string) => this.resolveSafely(name, path.posix.join(directory, file));
 
-        for (const code of LanguageCodes) {
+        for (const name of this.finder.getNames()) {
             for (const file of [
-                resolve(code),
-                resolve(`${code}.${this.config.browser}`)
+                resolve(name),
+                resolve(`${name}.${this.config.browser}`)
             ]) {
                 if (file) {
                     files.add(file);

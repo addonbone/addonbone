@@ -4,95 +4,44 @@ import fs from "fs";
 import yaml from "js-yaml";
 
 import AbstractLocaleFinder from "./AbstractLocaleFinder";
-import LocalePluginFinder from "./LocalePluginFinder";
+import AssetPluginFinder from "./AssetPluginFinder";
+import AssetPriorityFinder from "./AssetPriorityFinder";
 
 import localeFactory from "@cli/builders/locale";
-
-import {getAppPath, getAppSourcePath, getRootPath, getSharedPath, getSourcePath} from "@cli/resolvers/path";
 import {isFileExtension} from "@cli/utils/path";
 
 import {ReadonlyConfig} from "@typing/config";
 import {EntrypointFile} from "@typing/entrypoint";
-import {Language, LocaleBuilder, LocaleData, LocaleDirectoryName, LocaleKeys, LocaleStructure} from "@typing/locale";
+import {Language, LanguageCodes, LocaleBuilder, LocaleData, LocaleKeys, LocaleStructure} from "@typing/locale";
+
 
 export type LocaleBuilders = Map<Language, LocaleBuilder>;
 
 export default class extends AbstractLocaleFinder {
-    protected _plugin?: AbstractLocaleFinder;
+    protected _plugin?: AssetPluginFinder;
     protected _builders?: LocaleBuilders;
 
-    protected readonly priorityDirectories: string[];
+    protected readonly priority: AssetPriorityFinder;
 
     public constructor(config: ReadonlyConfig) {
         super(config);
 
-        this.priorityDirectories = [
-            'node_modules',
-            getSourcePath(config),
-            getSharedPath(config),
-            getAppPath(config),
-            getAppSourcePath(config),
-        ];
+        this.priority = new AssetPriorityFinder(config, this);
     }
 
-    protected async getFiles(): Promise<Set<EntrypointFile>> {
-        const {mergeLocales, locale} = this.config;
-        const {dir: localeDir = LocaleDirectoryName} = locale;
-
-        const files = new Set<EntrypointFile>;
-
-        const parser = async (directory: string): Promise<void> => {
-            if (files.size === 0 || mergeLocales) {
-                const localeFiles = await this.findFiles(getRootPath(directory));
-
-                for (const file of localeFiles) {
-                    files.add(file);
-                }
-            }
-        };
-
-        await Promise.all([
-            parser(getAppSourcePath(this.config, localeDir)),
-            parser(getAppPath(this.config, localeDir)),
-            parser(getSharedPath(this.config, localeDir)),
-            parser(getSourcePath(this.config, localeDir)),
-        ]);
-
-        return files;
+    protected getFiles(): Promise<Set<EntrypointFile>> {
+        return this.priority.files();
     }
 
-    protected async findFiles(directory: string): Promise<Set<EntrypointFile>> {
-        const files = new Set<EntrypointFile>;
-
-        try {
-            const entries = fs.readdirSync(directory);
-
-            for (const entry of entries) {
-                const fullPath = path.join(directory, entry);
-                const stats = fs.statSync(fullPath);
-
-                if (stats.isFile() && this.isValidFilename(fullPath)) {
-                    files.add(this.file(fullPath));
-                }
-            }
-        } catch {
-        }
-
-        return files;
+    protected getPlugin(): AssetPluginFinder {
+        return new AssetPluginFinder(this.config, 'locale', this);
     }
 
-    protected getPlugin(): AbstractLocaleFinder {
-        return new LocalePluginFinder(this.config);
-    }
-
-    public plugin(): AbstractLocaleFinder {
+    public plugin(): AssetPluginFinder {
         return this._plugin ??= this.getPlugin();
     }
 
     protected async getBuilders(): Promise<LocaleBuilders> {
-        const priority = (file: EntrypointFile): number => {
-            return _.findIndex(this.priorityDirectories, dir => file.file.includes(dir));
-        }
 
         return _.chain(Array.from(await this.plugin().files()))
             .groupBy(file => this.getLanguageFromFilename(file.file))
@@ -100,8 +49,8 @@ export default class extends AbstractLocaleFinder {
                 const locale = localeFactory(lang as Language, this.config);
 
                 files.sort((a, b) => {
-                    const priorityA = priority(a);
-                    const priorityB = priority(b);
+                    const priorityA = this.priority.priority(a);
+                    const priorityB = this.priority.priority(b);
 
                     if (priorityA !== priorityB) {
                         return priorityA - priorityB;
@@ -122,6 +71,20 @@ export default class extends AbstractLocaleFinder {
 
                 return map;
             }, new Map as LocaleBuilders).value();
+    }
+
+    protected getLanguageFromFilename(filename: string): Language {
+        let {name} = path.parse(filename);
+
+        if (name.includes('.')) {
+            name = name.split('.').slice(0, -1).join('.');
+        }
+
+        if (LanguageCodes.has(name)) {
+            return name as Language;
+        }
+
+        throw new Error(`Invalid locale filename: ${filename}`);
     }
 
     public async builders(): Promise<LocaleBuilders> {
@@ -152,6 +115,7 @@ export default class extends AbstractLocaleFinder {
 
     public clear(): this {
         this.plugin().clear();
+        this.priority.clear();
 
         this._builders = undefined;
 

@@ -1,7 +1,6 @@
-import path, {resolve} from 'path';
+import {resolve} from 'path';
 import {defineConfig, Options} from 'tsup';
 import rawPlugin from 'esbuild-plugin-raw';
-import fs from 'fs';
 
 const common: Options = {
     dts: true,
@@ -40,30 +39,12 @@ const cli: Options = {
     outExtension: () => ({js: '.cjs'}),
 }
 
-const browserDir = path.resolve(__dirname, 'src/browser');
-
-const excludeFileNames = ['index', 'utils'];
-
-const browserApiEntries = fs
-    .readdirSync(browserDir)
-    .reduce((entries, file) => {
-        const fullPath = path.join(browserDir, file);
-        const stat = fs.statSync(fullPath);
-        if (stat.isFile() && file.endsWith('.ts')) {
-            const name = file.replace(/\.ts$/, '');
-            if (!excludeFileNames.includes(name)) {
-                entries[`browser/${name}`] = `src/browser/${file}`;
-            }
-        }
-        return entries
-    }, {} as Record<string, string>)
-
 const framework: Options = {
     ...common,
     entry: {
         'index': 'src/index.ts',
 
-        ...browserApiEntries,
+        'browser/index': 'src/browser/index.ts',
 
         'locale/index': 'src/locale/index.ts',
 

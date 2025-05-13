@@ -13,7 +13,7 @@ import {isFileExtension} from "@cli/utils/path";
 
 import {ReadonlyConfig} from "@typing/config";
 import {EntrypointFile} from "@typing/entrypoint";
-import {Language, LocaleBuilder, LocaleData, LocaleKeys, LocaleStructure} from "@typing/locale";
+import {Language, LocaleBuilder, LocaleData, LocaleDirectoryName, LocaleKeys, LocaleStructure} from "@typing/locale";
 
 export type LocaleBuilders = Map<Language, LocaleBuilder>;
 
@@ -36,7 +36,8 @@ export default class extends AbstractLocaleFinder {
     }
 
     protected async getFiles(): Promise<Set<EntrypointFile>> {
-        const {mergeLocales, localeDir} = this.config;
+        const {mergeLocales, locale} = this.config;
+        const {dir: localeDir = LocaleDirectoryName} = locale;
 
         const files = new Set<EntrypointFile>;
 

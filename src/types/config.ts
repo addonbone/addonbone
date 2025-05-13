@@ -120,23 +120,49 @@ export interface Config {
     htmlDir: string;
 
     /**
-     * Directory for localizations. Can be located in the Shared directory,
-     * in the project root, or in a folder for a specific App.
-     *
-     * @example "locales"
-     *
-     * @path Full paths can be:
-     *
-     * - `{{inputDir}}/{{srcDir}}/{{localeDir}}`
-     * - `{{inputDir}}/{{sharedDir}}/{{localeDir}}`
-     * - `{{inputDir}}/{{appsDir}}/{{appDir}}/{{localeDir}}`
+     * Icon configuration for the extension.
      */
-    localeDir: string;
+    icon: {
+        /**
+         * Directory for icons and logos. Can be located in the Shared directory,
+         * in the project root, or in a folder for a specific App.
+         *
+         * @example "icons"
+         *
+         * @path Full paths can be:
+         *
+         * - `{{inputDir}}/{{srcDir}}/{{icon.sourceDir}}`
+         * - `{{inputDir}}/{{sharedDir}}/{{icon.sourceDir}}`
+         * - `{{inputDir}}/{{appsDir}}/{{appDir}}/{{icon.sourceDir}}`
+         */
+        sourceDir?: string;
+
+        /**
+         * Directory for image files in outputDir.
+         * @example "icons"
+         * @path Full path: `{{inputDir}}/{{outputDir}}/{{appDir}}/{{icon.outputDir}}`
+         */
+        outputDir?: string;
+    },
 
     /**
      * Locale configuration for the extension.
      */
     locale: {
+        /**
+         * Directory for localizations. Can be located in the Shared directory,
+         * in the project root, or in a folder for a specific App.
+         *
+         * @example "locales"
+         *
+         * @path Full paths can be:
+         *
+         * - `{{inputDir}}/{{srcDir}}/{{localeDir}}`
+         * - `{{inputDir}}/{{sharedDir}}/{{localeDir}}`
+         * - `{{inputDir}}/{{appsDir}}/{{appDir}}/{{localeDir}}`
+         */
+        dir?: string;
+
         /**
          * Default locale for the extension.
          * @example "en"
@@ -150,7 +176,7 @@ export interface Config {
         name?: string;
 
         /**
-         * Default locale key for short name from translation files or a string.
+         * Default locale key for a short name from translation files or a string.
          * @example "#app.short_name" or "Awesome"
          */
         shortName?: string;
@@ -170,7 +196,7 @@ export interface Config {
 
     /**
      * Flag to enable dependency analyzer.
-     * When activated, opens  RSDoctor during build, which shows
+     * When activated, open RSDoctor during the build, which shows
      * project dependencies and their sizes.
      */
     analyze: boolean;
@@ -210,6 +236,12 @@ export interface Config {
      * When `true`, styles from both directories will be combined.
      */
     mergeStyles: boolean;
+
+    /**
+     * Flag indicating whether to merge icon files from App and Shared directories.
+     * When `true`, icon files from both directories will be combined.
+     */
+    mergeIcons: boolean;
 
     /**
      * Flag indicating whether to merge localizations from App and Shared directories.

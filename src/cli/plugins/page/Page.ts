@@ -28,10 +28,11 @@ export default class extends PageFinder {
         const html: HtmlRspackPluginOptions[] = [];
 
         for (const [name, {file, filename, options}] of await this.pages()) {
-            const {template} = options;
+            const {template, title} = options;
 
             html.push({
                 filename,
+                title: title || _.startCase(this.config.app),
                 template: template ? path.resolve(path.dirname(file.file), template) : undefined,
                 chunks: [name],
                 inject: 'body',

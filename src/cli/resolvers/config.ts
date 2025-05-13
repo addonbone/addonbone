@@ -100,7 +100,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         cssDir = 'css',
         assetsDir = 'assets',
         htmlDir = '.',
-        localeDir = LocaleDirectoryName,
+        icon = {},
         locale = {},
         manifestVersion = (new Set<Browser>([Browser.Firefox, Browser.Safari]).has(browser) ? 2 : 3) as ManifestVersion,
         mode = Mode.Development,
@@ -111,9 +111,10 @@ export default async (config: OptionalConfig): Promise<Config> => {
         mergeContentScripts = false,
         concatContentScripts = true,
         mergeStyles = true,
+        mergeIcons = false,
         mergeLocales = true,
-        mergePages = true,
-        mergeServices = true,
+        mergePages = false,
+        mergeServices = false,
     } = config;
 
     let resolvedConfig: Config = {
@@ -133,7 +134,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         cssDir,
         assetsDir,
         htmlDir,
-        localeDir,
+        icon,
         locale,
         plugins,
         analyze,
@@ -143,6 +144,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         mergeContentScripts,
         concatContentScripts,
         mergeStyles,
+        mergeIcons,
         mergeLocales,
         mergePages,
         mergeServices,

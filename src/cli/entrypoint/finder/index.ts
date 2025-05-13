@@ -9,4 +9,3 @@ export {default as OptionsFinder} from "./OptionsFinder";
 export {default as PageFinder} from "./PageFinder";
 export {default as ServiceFinder, type ServiceItem, type ServiceItems} from "./ServiceFinder";
 export {default as PluginFinder} from "./PluginFinder";
-export {default as ViewFinder} from "./ViewFinder";

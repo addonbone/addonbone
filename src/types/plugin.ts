@@ -56,6 +56,22 @@ export interface PluginBundlerOptions extends PluginConfigOptions {
  */
 export type PluginLocaleResult = PluginEntrypointResult;
 
+/**
+ * The result of executing the `icons` function in a plugin.
+ *
+ * Can be one of the following values:
+ *
+ * - `true` — the system will look for a directory named `icons` and treat all files inside
+ *   it as image files.
+ *
+ * - `string` — a path to a specific **directory**, and all files inside will be treated as image files.
+ *
+ * - `string[]` — an array of paths to **files** will be treated as image files.
+ *
+ * - `Set<string>` — a unique set of image files.
+ */
+export type PluginIconResult = PluginEntrypointResult;
+
 interface PluginName {
     name: string;
 }
@@ -68,6 +84,7 @@ export interface Plugin extends PluginName {
     page?: PluginHandler<PluginConfigOptions, PluginEntrypointResult>;
     service?: PluginHandler<PluginConfigOptions, PluginEntrypointResult>;
     locale?: PluginHandler<PluginConfigOptions, PluginLocaleResult>;
+    icon?: PluginHandler<PluginConfigOptions, PluginIconResult>;
     manifest?: PluginHandlerCallback<PluginManifestOptions>;
     startup?: PluginHandlerCallback<PluginConfigOptions>;
 }

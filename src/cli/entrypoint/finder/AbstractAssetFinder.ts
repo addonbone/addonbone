@@ -27,10 +27,6 @@ export default abstract class extends AbstractFinder {
             ext = ext.slice(1);
         }
 
-        if (name.includes('.')) {
-            name = name.split('.').slice(0, -1).join('.');
-        }
-
         return this.isValidName(name) && this.isValidExtension(ext);
     }
 }

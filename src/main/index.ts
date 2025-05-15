@@ -5,6 +5,7 @@ export * from "./command";
 export * from "./config";
 export * from "./content";
 export * from "./env";
+export * from "./icon";
 export * from "./locale";
 export * from "./manifest";
 export * from "./page";

@@ -5,7 +5,6 @@ import {Language} from "@typing/locale";
 
 type ManifestCommon = chrome.runtime.Manifest;
 type ManifestBase = chrome.runtime.ManifestBase;
-type ManifestIcons = chrome.runtime.ManifestIcons;
 type ManifestPermission = chrome.runtime.ManifestPermissions;
 
 
@@ -70,6 +69,10 @@ export interface ManifestBuilder<T extends CoreManifest = Manifest> {
 
     setDescription(description?: string): this;
 
+    setIcons(icons?: ManifestIcons): this;
+
+    setIcon(icon?: string): this; // name of an icon set for manifest.icons
+
     setBackground(background?: ManifestBackground): this;
 
     setCommands(commands?: ManifestCommands): this;
@@ -108,7 +111,7 @@ export type ManifestCommand = CommandConfig;
 export type ManifestCommands = Set<ManifestCommand>;
 
 export interface ManifestAction {
-    icon?: ManifestIcons;
+    icon?: string; // name of an icon set
     title?: string;
     popup?: string;
 }
@@ -118,6 +121,10 @@ export interface ManifestDependency {
     css: Set<string>;
     assets: Set<string>;
 }
+
+export type ManifestIcon = Map<number, string>;
+
+export type ManifestIcons = Map<string, ManifestIcon>;
 
 export type ManifestDependencies = Map<Entry, ManifestDependency>;
 

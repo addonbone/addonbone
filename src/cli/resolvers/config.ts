@@ -2,15 +2,18 @@ import {existsSync} from "fs";
 import dotenv, {type DotenvParseOutput} from 'dotenv';
 import {loadConfig} from "c12";
 
-import assetPlugin from "../plugins/asset";
-import backgroundPlugin from "../plugins/background";
-import contentPlugin from "../plugins/content";
-import dotenvPlugin from "../plugins/dotenv";
-import localePlugin from "../plugins/locale";
-import reactPlugin from "../plugins/react";
-import stylePlugin from "../plugins/style";
-import typescriptPlugin from "../plugins/typescript";
-import pagePlugin from "../plugins/page";
+import {
+    assetPlugin,
+    backgroundPlugin,
+    contentPlugin,
+    dotenvPlugin,
+    iconPlugin,
+    localePlugin,
+    reactPlugin,
+    stylePlugin,
+    typescriptPlugin,
+    pagePlugin
+} from "../plugins";
 
 import {getAppPath, getAppSourcePath, getConfigFile, getInputPath} from "../resolvers/path";
 
@@ -160,6 +163,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         dotenvPlugin(vars),
         typescriptPlugin(),
         reactPlugin(),
+        iconPlugin(),
         assetPlugin(),
         stylePlugin(),
         localePlugin(),

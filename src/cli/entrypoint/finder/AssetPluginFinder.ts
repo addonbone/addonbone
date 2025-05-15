@@ -1,5 +1,6 @@
 import _ from "lodash";
 import path from "path";
+import pluralize from "pluralize";
 
 import {processPluginHandler} from "@cli/resolvers/plugin";
 
@@ -28,7 +29,7 @@ export default class extends AbstractFinder {
 
         for await (let {name, result} of pluginResult) {
             if (_.isBoolean(result)) {
-                result = this.finder.getDirectory();
+                result = pluralize(this.key);
             }
 
             if (_.isString(result)) {
@@ -59,7 +60,7 @@ export default class extends AbstractFinder {
 
                     const {name: filename} = path.parse(file.file);
 
-                    if (filename.includes(`.${this.config.browser}`) || !filename.includes('.')) {
+                    if (filename.endsWith(`.${this.config.browser}`) || !filename.includes('.')) {
                         files.add(file);
                     }
                 }

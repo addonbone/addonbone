@@ -143,6 +143,12 @@ export interface Config {
          * @path Full path: `{{inputDir}}/{{outputDir}}/{{appDir}}/{{icon.outputDir}}`
          */
         outputDir?: string;
+
+        /**
+         * Default icon group name. If not specified, the default icons set will be used.
+         * @example "default"
+         */
+        name?: string;
     },
 
     /**

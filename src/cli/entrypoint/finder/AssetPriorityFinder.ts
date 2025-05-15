@@ -41,12 +41,10 @@ export default class extends AbstractFinder {
 
         const dir = this.finder.getDirectory();
 
-        await Promise.all([
-            parser(getAppSourcePath(this.config, dir)),
-            parser(getAppPath(this.config, dir)),
-            parser(getSharedPath(this.config, dir)),
-            parser(getSourcePath(this.config, dir)),
-        ]);
+        await parser(getAppSourcePath(this.config, dir));
+        await parser(getAppPath(this.config, dir));
+        await parser(getSharedPath(this.config, dir));
+        await parser(getSourcePath(this.config, dir));
 
         return files;
     }

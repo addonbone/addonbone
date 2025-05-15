@@ -3,7 +3,7 @@ import path from "path";
 import fs from "fs";
 import yaml from "js-yaml";
 
-import AbstractLocaleFinder from "./AbstractLocaleFinder";
+import AbstractAssetFinder from "./AbstractAssetFinder";
 import AssetPluginFinder from "./AssetPluginFinder";
 import AssetPriorityFinder from "./AssetPriorityFinder";
 
@@ -12,12 +12,20 @@ import {isFileExtension} from "@cli/utils/path";
 
 import {ReadonlyConfig} from "@typing/config";
 import {EntrypointFile} from "@typing/entrypoint";
-import {Language, LanguageCodes, LocaleBuilder, LocaleData, LocaleKeys, LocaleStructure} from "@typing/locale";
+import {
+    Language,
+    LanguageCodes,
+    LocaleBuilder,
+    LocaleData,
+    LocaleFileExtensions,
+    LocaleKeys,
+    LocaleStructure
+} from "@typing/locale";
 
 
 export type LocaleBuilders = Map<Language, LocaleBuilder>;
 
-export default class extends AbstractLocaleFinder {
+export default class extends AbstractAssetFinder {
     protected _plugin?: AssetPluginFinder;
     protected _builders?: LocaleBuilders;
 
@@ -27,6 +35,30 @@ export default class extends AbstractLocaleFinder {
         super(config);
 
         this.priority = new AssetPriorityFinder(config, this);
+    }
+
+    public isValidName(name: string): boolean {
+        if (name.includes('.')) {
+            name = name.split('.').slice(0, -1).join('.');
+        }
+
+        return super.isValidName(name);
+    }
+
+    public isValidExtension(extension: string): boolean {
+        return LocaleFileExtensions.has(extension);
+    }
+
+    public getDirectory(): string {
+        return this.config.locale.dir || 'locales';
+    }
+
+    public getNames(): ReadonlySet<string> {
+        return LanguageCodes;
+    }
+
+    public canMerge(): boolean {
+        return this.config.mergeLocales;
     }
 
     protected getFiles(): Promise<Set<EntrypointFile>> {
@@ -42,7 +74,6 @@ export default class extends AbstractLocaleFinder {
     }
 
     protected async getBuilders(): Promise<LocaleBuilders> {
-
         return _.chain(Array.from(await this.plugin().files()))
             .groupBy(file => this.getLanguageFromFilename(file.file))
             .reduce((map, files, lang) => {

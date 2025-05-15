@@ -8,12 +8,14 @@ import {
     ManifestContentScripts,
     ManifestDependencies,
     ManifestHostPermissions,
+    ManifestIcons,
     ManifestPermissions,
     ManifestVersion
 } from "@typing/manifest";
 import {Browser} from "@typing/browser";
 import {CommandExecuteActionName} from "@typing/command";
 import {Language} from "@typing/locale";
+import {DefaultIconGroupName} from "@typing/icon";
 
 
 type ManifestV3 = chrome.runtime.ManifestV3;
@@ -30,7 +32,9 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
     protected shortName?: string;
     protected description?: string;
     protected version: string = "0.0.0";
+    protected icon?: string;
     protected locale?: Language;
+    protected icons: ManifestIcons = new Map();
     protected background?: ManifestBackground;
     protected action?: ManifestAction;
     protected commands: ManifestCommands = new Set();
@@ -82,6 +86,17 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
         return this;
     }
 
+    public setIcons(icons?: ManifestIcons): this {
+        this.icons = icons || new Map();
+
+        return this;
+    }
+
+    public setIcon(icon?: string): this {
+        this.icon = icon;
+
+        return this;
+    }
 
     public setBackground(background?: ManifestBackground): this {
         this.background = background;
@@ -177,6 +192,7 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
         manifest = this.marge<Manifest>(
             manifest,
             this.buildLocale(),
+            this.buildIcons(),
             this.buildBackground(),
             this.buildCommands(),
             this.buildAction(),
@@ -187,6 +203,18 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
         );
 
         return manifest as T;
+    }
+
+    protected buildIcons(): Partial<CoreManifest> | undefined {
+        if (this.icon && this.icons.size > 0) {
+            const icons = this.icons.get(this.icon) || this.icons.get(DefaultIconGroupName) || this.icons.values().next().value;
+
+            if (!icons) {
+                return;
+            }
+
+            return {icons: Object.fromEntries(icons)};
+        }
     }
 
     protected buildCommands(): Partial<CoreManifest> | undefined {

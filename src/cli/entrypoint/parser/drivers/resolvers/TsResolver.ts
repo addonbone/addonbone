@@ -5,6 +5,7 @@ import {createMatchPath} from "tsconfig-paths";
 
 import {EntrypointFileExtensions} from "@typing/entrypoint";
 import {SystemDir} from "@typing/app";
+import {toPosix} from "@cli/utils/path"
 
 export default class TsResolver {
     protected static readonly instances: Map<string, TsResolver> = new Map();
@@ -16,7 +17,11 @@ export default class TsResolver {
     public get matchPath(): { (path: string): string | undefined } {
         const config = this.getConfig();
 
-        const absoluteBaseUrl = path.resolve(path.dirname(this.filename), config.options.baseUrl || '.', SystemDir);
+        let absoluteBaseUrl = toPosix(path.resolve(path.dirname(this.filename), config.options.baseUrl || '.', SystemDir));
+
+        if (!absoluteBaseUrl.startsWith('/')) {
+            absoluteBaseUrl = '/' + absoluteBaseUrl;
+        }
 
         const match = createMatchPath(absoluteBaseUrl, config.options.paths || {});
 

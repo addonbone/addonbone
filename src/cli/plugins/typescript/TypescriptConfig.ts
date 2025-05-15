@@ -67,6 +67,7 @@ export default class extends FileBuilder {
                 './locale.d.ts',
                 './service.d.ts',
                 './icon.d.ts',
+                './page.d.ts',
             ],
             exclude: [
                 outputDir

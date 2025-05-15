@@ -92,6 +92,18 @@ export default class extends AbstractPluginFinder<PageEntrypointOptions> {
         }, {} as Map<string, string>);
     }
 
+    public async aliasKeys(): Promise<Set<string>> {
+        const aliases = new Set<string>();
+
+        const pages = await this.pages()
+
+        for (const item of pages.values()) {
+            aliases.add(item.alias);
+        }
+
+        return aliases;
+    }
+
     public canMerge(): boolean {
         return this.config.mergePages;
     }

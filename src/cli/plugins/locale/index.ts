@@ -45,7 +45,7 @@ export default definePlugin(() => {
                 plugins: [
                     plugin,
                     new DefinePlugin({
-                        'LOCALE_KEYS': JSON.stringify([...(await locale.keys())]),
+                        __ADNBN_LOCALE_KEYS__: JSON.stringify([...(await locale.keys())]),
                     })
                 ]
             };

@@ -3,8 +3,8 @@ import _ from "lodash";
 
 import AbstractAssetFinder from "./AbstractAssetFinder";
 import AssetPriorityFinder from "./AssetPriorityFinder";
-
 import AssetPluginFinder from "./AssetPluginFinder";
+
 import {EntrypointFile} from "@typing/entrypoint";
 import {ReadonlyConfig} from "@typing/config";
 import {DefaultIconGroupName} from "@typing/icon";

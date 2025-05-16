@@ -32,7 +32,7 @@ const getConfigFromPlugins = async (rspack: RspackConfig, config: ReadonlyConfig
 const getConfigForManifest = async (config: ReadonlyConfig): Promise<RspackConfig> => {
     const manifest = manifestFactory(config);
 
-    const update = async () => await Array.fromAsync(processPluginHandler(config.plugins, 'manifest', {manifest, config}))
+    const update = () => Array.fromAsync(processPluginHandler(config.plugins, 'manifest', {manifest, config}))
 
     await update();
 
@@ -65,7 +65,6 @@ export default async (config: ReadonlyConfig): Promise<RspackConfig> => {
         optimization: {
             usedExports: true,
             providedExports: true,
-            sideEffects: true,
             splitChunks: {
                 minSize: 10,
                 cacheGroups: {

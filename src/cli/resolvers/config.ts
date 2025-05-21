@@ -9,11 +9,12 @@ import {
     dotenvPlugin,
     iconPlugin,
     localePlugin,
+    pagePlugin,
+    popupPlugin,
     reactPlugin,
     stylePlugin,
     typescriptPlugin,
-    pagePlugin,
-    popupPlugin,
+    viewPlugin,
 } from "../plugins";
 
 import {getAppPath, getAppSourcePath, getConfigFile, getInputPath} from "../resolvers/path";
@@ -176,6 +177,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         backgroundPlugin(),
         popupPlugin(),
         pagePlugin(),
+        viewPlugin(),
     ];
 
     return {

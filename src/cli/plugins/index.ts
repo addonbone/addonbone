@@ -9,3 +9,4 @@ export {default as popupPlugin} from "./popup";
 export {default as typescriptPlugin, TypescriptConfig, FileBuilder, VendorDeclaration} from "./typescript";
 export {default as reactPlugin} from "./react";
 export {default as stylePlugin} from "./style";
+export {default as viewPlugin} from "./view";

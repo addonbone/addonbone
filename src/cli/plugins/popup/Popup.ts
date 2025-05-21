@@ -35,6 +35,15 @@ export default class extends PopupFinder {
         }
     }
 
+    public async getAliasToIcon(): Promise<Map<string, string>> {
+        return Array.from(await this.views()).reduce((aliases, [_, item]) => {
+            return {
+                ...aliases,
+                [item.alias]: item.options.icon,
+            };
+        }, {} as Map<string, string>);
+    }
+
     public clear(): this {
         this._view = undefined;
 

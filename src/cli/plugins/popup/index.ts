@@ -51,7 +51,8 @@ export default definePlugin(() => {
             return {
                 plugins: [
                     new DefinePlugin({
-                        '__ADNBN_POPUP_ALIAS__': JSON.stringify(await popup.getAliasToFilename()),
+                        __ADNBN_POPUP_ALIAS__: JSON.stringify(await popup.getAliasToFilename()),
+                        __ADNBN_POPUP_ICONS__: JSON.stringify(await popup.getAliasToIcon()),
                     }),
                     plugin,
                     ...htmlPlugins,

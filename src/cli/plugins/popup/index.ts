@@ -1,4 +1,4 @@
-import {DefinePlugin, HtmlRspackPlugin} from "@rspack/core";
+import {DefinePlugin, HtmlRspackPlugin, Configuration as RspackConfig} from "@rspack/core";
 import HtmlRspackTagsPlugin from "html-rspack-tags-plugin";
 
 import {definePlugin} from "@main/plugin";
@@ -57,7 +57,7 @@ export default definePlugin(() => {
                     ...htmlPlugins,
                     ...tagsPlugins,
                 ],
-            };
+            } as RspackConfig;
         },
         manifest: async ({manifest}) => {
             manifest.setPopup(await popup.manifest());

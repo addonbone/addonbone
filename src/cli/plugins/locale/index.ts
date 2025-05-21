@@ -1,5 +1,5 @@
 import _ from "lodash";
-import {DefinePlugin} from "@rspack/core";
+import {DefinePlugin, Configuration as RspackConfig} from "@rspack/core";
 
 import {definePlugin} from "@main/plugin";
 import {GenerateJsonPlugin} from "@cli/bundler";
@@ -48,7 +48,7 @@ export default definePlugin(() => {
                         __ADNBN_LOCALE_KEYS__: JSON.stringify([...(await locale.keys())]),
                     })
                 ]
-            };
+            } satisfies RspackConfig;
         },
         manifest: async ({config, manifest}) => {
             const {locale: localeFromConfig, browser} = config;

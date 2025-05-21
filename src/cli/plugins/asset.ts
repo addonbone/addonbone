@@ -1,3 +1,5 @@
+import {Configuration as RspackConfig} from "@rspack/core";
+
 import path from "path";
 
 import {definePlugin} from "@main/plugin";
@@ -43,7 +45,7 @@ export default definePlugin(() => {
                         }
                     })
                 ]
-            };
+            } as RspackConfig;
         },
     };
 });

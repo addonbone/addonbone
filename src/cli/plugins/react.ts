@@ -1,3 +1,5 @@
+import {Configuration as RspackConfig} from "@rspack/core";
+
 import {definePlugin} from "@main/plugin";
 
 export default definePlugin(() => {
@@ -21,7 +23,7 @@ export default definePlugin(() => {
                         },
                     },
                 },
-            }
+            } as RspackConfig;
         },
     };
 });

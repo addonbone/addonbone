@@ -1,3 +1,5 @@
+import {Configuration as RspackConfig} from "@rspack/core";
+
 import {definePlugin} from "@main/plugin";
 
 import TypescriptConfig from "./TypescriptConfig";
@@ -40,7 +42,7 @@ export default definePlugin(() => {
                         }
                     ]
                 }
-            };
+            } satisfies RspackConfig;
         },
     };
 });

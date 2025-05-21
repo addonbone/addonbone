@@ -1,4 +1,4 @@
-import {DefinePlugin, HtmlRspackPlugin} from "@rspack/core";
+import {DefinePlugin, HtmlRspackPlugin, Configuration as RspackConfig} from "@rspack/core";
 import HtmlRspackTagsPlugin from "html-rspack-tags-plugin";
 
 import Page from "./Page";
@@ -58,7 +58,7 @@ export default definePlugin(() => {
                     ...htmlPlugins,
                     ...tagsPlugins,
                 ],
-            };
+            } satisfies RspackConfig;
         }
     };
 });

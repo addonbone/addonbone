@@ -1,4 +1,4 @@
-import {rspack, type RuleSetUse} from '@rspack/core';
+import {rspack, RuleSetUse, Configuration as RspackConfig} from '@rspack/core';
 import path from "path";
 import fs from "fs";
 
@@ -82,7 +82,7 @@ export default definePlugin(() => {
                         }
                     ]
                 },
-            };
+            } satisfies RspackConfig;
         }
     };
 });

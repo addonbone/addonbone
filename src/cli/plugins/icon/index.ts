@@ -1,4 +1,4 @@
-import {Configuration as Rspack, CopyRspackPlugin, DefinePlugin} from "@rspack/core";
+import {Configuration as RspackConfig, CopyRspackPlugin, DefinePlugin} from "@rspack/core";
 
 import {definePlugin} from "@main/plugin";
 
@@ -31,7 +31,7 @@ export default definePlugin(() => {
                         __ADNBN_ICONS__: JSON.stringify(await icon.define()),
                     }),
                 ]
-            } satisfies Rspack;
+            } satisfies RspackConfig;
         },
         manifest: async ({manifest, config}) => {
             manifest

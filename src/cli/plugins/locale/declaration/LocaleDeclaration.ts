@@ -2,7 +2,6 @@ import template from "./locale.d.ts?raw";
 
 import {FileBuilder} from "@cli/plugins/typescript";
 
-import {PackageName} from "@typing/app";
 import {ReadonlyConfig} from "@typing/config";
 import {LocaleStructure} from "@typing/locale";
 
@@ -17,7 +16,7 @@ export default class extends FileBuilder {
         return "locale.d.ts";
     }
 
-    protected content(): string {
+    protected template(): string {
         const structure = this._structure;
 
         if (!structure) {
@@ -26,9 +25,7 @@ export default class extends FileBuilder {
 
         const type = JSON.stringify(structure, null, 4);
 
-        return template
-            .replaceAll(':package', PackageName)
-            .replace('interface LocaleNativeStructure {}', `interface LocaleNativeStructure ${type}`);
+        return template.replace('interface LocaleNativeStructure {}', `interface LocaleNativeStructure ${type}`);
     }
 
     public structure(structure: LocaleStructure): this {

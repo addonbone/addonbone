@@ -1,7 +1,6 @@
 import {
     CoreManifest,
     Manifest,
-    ManifestAction,
     ManifestBackground,
     ManifestBuilder,
     ManifestCommands,
@@ -10,16 +9,18 @@ import {
     ManifestHostPermissions,
     ManifestIcons,
     ManifestPermissions,
+    ManifestPopup,
     ManifestVersion
 } from "@typing/manifest";
 import {Browser} from "@typing/browser";
-import {CommandExecuteActionName} from "@typing/command";
 import {Language} from "@typing/locale";
+import {CommandExecuteActionName} from "@typing/command";
 import {DefaultIconGroupName} from "@typing/icon";
 
 
 type ManifestV3 = chrome.runtime.ManifestV3;
 type ManifestPermission = chrome.runtime.ManifestPermissions;
+type CoreManifestIcons = chrome.runtime.ManifestIcons;
 
 export class ManifestError extends Error {
     public constructor(message: string) {
@@ -36,7 +37,7 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
     protected locale?: Language;
     protected icons: ManifestIcons = new Map();
     protected background?: ManifestBackground;
-    protected action?: ManifestAction;
+    protected popup?: ManifestPopup;
     protected commands: ManifestCommands = new Set();
     protected contentScripts: ManifestContentScripts = new Set();
     protected dependencies: ManifestDependencies = new Map();
@@ -116,12 +117,8 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
         return this;
     }
 
-    public setAction(action?: ManifestAction | true): this {
-        if (action === true) {
-            action = {title: this.name};
-        }
-
-        this.action = action;
+    public setPopup(action?: ManifestPopup): this {
+        this.popup = action;
 
         return this;
     }
@@ -206,14 +203,8 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
     }
 
     protected buildIcons(): Partial<CoreManifest> | undefined {
-        if (this.icon && this.icons.size > 0) {
-            const icons = this.icons.get(this.icon) || this.icons.get(DefaultIconGroupName) || this.icons.values().next().value;
-
-            if (!icons) {
-                return;
-            }
-
-            return {icons: Object.fromEntries(icons)};
+        if (this.icon) {
+            return {icons: this.getIconsByName(this.icon)};
         }
     }
 
@@ -291,6 +282,24 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
     protected hasExecuteActionCommand(): boolean {
         return this.commands.size > 0 && Array.from(this.commands)
             .some(({name}) => name === CommandExecuteActionName);
+    }
+
+    protected getIconsByName(name?: string): CoreManifestIcons | undefined {
+        if (this.icons.size === 0) {
+            return;
+        }
+
+        if (!name) {
+            name = DefaultIconGroupName;
+        }
+
+        const icons = this.icons.get(name) ||
+            this.icons.get(DefaultIconGroupName) ||
+            this.icons.values().next().value;
+
+        if (icons) {
+            return Object.fromEntries(icons);
+        }
     }
 
     public get(): T {

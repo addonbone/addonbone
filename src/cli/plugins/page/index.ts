@@ -15,17 +15,17 @@ export {Page};
 
 export default definePlugin(() => {
     let page: Page;
-    let pageDeclaration: PageDeclaration;
+    let declaration: PageDeclaration;
 
     return {
         name: 'adnbn:page',
         startup: ({config}) => {
             page = new Page(config);
-            pageDeclaration = new PageDeclaration(config);
+            declaration = new PageDeclaration(config);
         },
         page: () => page.files(),
         bundler: async ({config}) => {
-            pageDeclaration.setAlias(await page.aliasKeys()).build();
+            declaration.setAlias(await page.getAlias()).build();
 
             if (await page.empty()) {
                 if (config.debug) {
@@ -35,24 +35,24 @@ export default definePlugin(() => {
                 return {};
             }
 
-            const plugin = EntrypointPlugin.from(await page.entries())
+            const plugin = EntrypointPlugin.from(await page.view().entries())
                 .virtual(file => virtualViewModule(file));
 
             if (config.command === Command.Watch) {
                 plugin.watch(async () => {
-                    pageDeclaration.setAlias(await page.clear().aliasKeys()).build();
+                    declaration.setAlias(await page.clear().getAlias()).build();
 
-                    return page.entries();
+                    return page.view().entries();
                 });
             }
 
-            const htmlPlugins = (await page.html()).map(options => new HtmlRspackPlugin(options));
-            const tagsPlugins = (await page.tags()).map(options => new HtmlRspackTagsPlugin(options));
+            const htmlPlugins = (await page.view().html()).map(options => new HtmlRspackPlugin(options));
+            const tagsPlugins = (await page.view().tags()).map(options => new HtmlRspackTagsPlugin(options));
 
             return {
                 plugins: [
                     new DefinePlugin({
-                        '__ADNBN_PAGE_ALIAS__': JSON.stringify(await page.alias()),
+                        '__ADNBN_PAGE_ALIAS__': JSON.stringify(await page.getAliasToFilename()),
                     }),
                     plugin,
                     ...htmlPlugins,

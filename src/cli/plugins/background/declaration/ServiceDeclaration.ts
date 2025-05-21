@@ -1,8 +1,6 @@
 import {FileBuilder} from "../../typescript";
 
 import template from "./service.d.ts?raw";
-
-import {PackageName} from "@typing/app";
 import {ReadonlyConfig} from "@typing/config";
 
 export default class<T extends Record<string, string> = Record<string, string>> extends FileBuilder {
@@ -16,7 +14,7 @@ export default class<T extends Record<string, string> = Record<string, string>> 
         return "service.d.ts";
     }
 
-    protected content(): string {
+    protected template(): string {
         const dictionary = this._dictionary;
 
         if (!dictionary) {
@@ -27,9 +25,7 @@ export default class<T extends Record<string, string> = Record<string, string>> 
             return `'${key}': ${value};`;
         }).join('\n\t\t');
 
-        return template
-            .replaceAll(':package', PackageName)
-            .replace('interface ServiceRegistry {}', `interface ServiceRegistry {\n\t\t${type}\n\t}`);
+        return template.replace('interface ServiceRegistry {}', `interface ServiceRegistry {\n\t\t${type}\n\t}`);
     }
 
     public dictionary(dictionary: T): this {

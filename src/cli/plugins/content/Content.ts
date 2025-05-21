@@ -13,7 +13,7 @@ export default class extends ContentFinder {
     }
 
     public getFrameworkEntry(): string {
-        return 'framework.' + this.type();
+        return 'common.' + this.type();
     }
 
     public async entries(): Promise<EntrypointEntries> {

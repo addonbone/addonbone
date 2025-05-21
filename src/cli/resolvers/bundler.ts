@@ -56,7 +56,7 @@ export default async (config: ReadonlyConfig): Promise<RspackConfig> => {
         cache: false,
         output: {
             path: getRootPath(getOutputPath(config)),
-            filename: path.join(config.jsDir, '[name].js'),
+            filename: path.posix.join(config.jsDir, '[name].js'),
             hotUpdateGlobal: _.snakeCase(config.app) + 'HotUpdate',
             chunkLoadingGlobal: _.snakeCase(config.app) + 'ChunkLoading',
             devtoolNamespace: config.app,

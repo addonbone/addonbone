@@ -1,8 +1,8 @@
 import path from "path";
 
-import {EntrypointFile, EntrypointType} from "@typing/entrypoint";
+import {EntrypointFile, EntrypointNameGenerator, EntrypointType} from "@typing/entrypoint";
 
-export default class {
+export default class implements EntrypointNameGenerator {
     protected names = new Set<string>;
 
     protected reservedNames = new Set<string>();
@@ -57,14 +57,16 @@ export default class {
         return this.name(name);
     }
 
-    public reset(): void {
+    public reset(): this {
         if (this.reservedNames.size === 0) {
             this.names.clear();
 
-            return;
+            return this;
         }
 
         this.names = new Set(this.reservedNames);
+
+        return this;
     }
 
     public likely(name: string): boolean {

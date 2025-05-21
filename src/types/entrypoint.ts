@@ -65,6 +65,7 @@ export type EntrypointEntries = Map<string, Set<EntrypointFile>>;
 
 export interface EntrypointParser<O extends EntrypointOptions> {
     options(file: EntrypointFile): O;
+
     contract(file: EntrypointFile): string | undefined;
 }
 
@@ -86,12 +87,26 @@ export interface EntrypointOptionsFinder<O extends EntrypointOptions> extends En
     contracts(): Promise<Map<EntrypointFile, string | undefined>>;
 }
 
+export interface EntrypointNameGenerator {
+    reserve(name: string): this;
+
+    name(name: string): string;
+
+    file(file: EntrypointFile): string;
+
+    likely(name: string): boolean;
+
+    has(name: string): boolean;
+
+    reset(): this;
+}
 
 export interface EntrypointBuilder {
     build(): Promise<void>;
 
     destroy(): Promise<void>;
 }
+
 export type EntrypointConstructorParameter<T> = T extends new (arg: infer P) => any ? P : never;
 
 export type EntrypointBuilderClass<T> = T extends new (...args: any[]) => any

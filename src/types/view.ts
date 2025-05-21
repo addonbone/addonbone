@@ -6,6 +6,7 @@ import {Awaiter, PickNonFunctionProperties} from "@typing/helpers";
 import {EntrypointBuilder, EntrypointOptions} from "@typing/entrypoint";
 
 export interface ViewConfig {
+    name?: string;
     title?: string;
     template?: string;
 }

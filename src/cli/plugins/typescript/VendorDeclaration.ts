@@ -1,6 +1,5 @@
 import FileBuilder from "./FileBuilder";
 
-import {PackageName} from "@typing/app";
 import {ReadonlyConfig} from "@typing/config";
 
 export default class extends FileBuilder {
@@ -12,9 +11,9 @@ export default class extends FileBuilder {
         return "vendor.d.ts";
     }
 
-    protected content(): string {
-        const types = [`${PackageName}/client-types`].map((value) => `/// <reference types="${value}" />`);
+    protected template(): string {
+        const types = [`:package/client-types`].map((value) => `/// <reference types="${value}" />`);
 
-        return types.join('\n')
+        return types.join('\n');
     }
 }

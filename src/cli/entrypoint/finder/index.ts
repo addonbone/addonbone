@@ -1,5 +1,6 @@
 export {default as AbstractFinder} from "./AbstractFinder";
 export {default as AbstractPluginFinder} from "./AbstractPluginFinder";
+export {default as AbstractViewFinder, type ViewItem, type ViewItems} from "./AbstractViewFinder";
 export {default as BackgroundFinder} from "./BackgroundFinder";
 export {default as CommandFinder} from "./CommandFinder";
 export {default as ContentFinder, type ContentItem, type ContentItems} from "./ContentFinder";
@@ -8,5 +9,6 @@ export {default as IconFinder, type IconName, type IconGroups, type IconItem, ty
 export {default as LocaleFinder} from "./LocaleFinder";
 export {default as OptionsFinder} from "./OptionsFinder";
 export {default as PageFinder} from "./PageFinder";
+export {default as PopupFinder} from "./PopupFinder";
 export {default as ServiceFinder, type ServiceItem, type ServiceItems} from "./ServiceFinder";
 export {default as PluginFinder} from "./PluginFinder";

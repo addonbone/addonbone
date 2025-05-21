@@ -1,17 +1,28 @@
 import path from "path";
+import _ from "lodash";
 
 import {toPosix} from "@cli/utils/path";
+import {getAppPath, getAppSourcePath, getSharedPath, getSourcePath} from "@cli/resolvers/path";
 
 import {ReadonlyConfig} from "@typing/config";
 import {EntrypointFile, EntrypointFinder} from "@typing/entrypoint";
 
+
 export default abstract class implements EntrypointFinder {
     protected _files?: Set<EntrypointFile>;
+
+    protected readonly priorityDirectories: string[];
 
     protected abstract getFiles(): Promise<Set<EntrypointFile>>;
 
     protected constructor(protected readonly config: ReadonlyConfig) {
-
+        this.priorityDirectories = [
+            'node_modules',
+            getSourcePath(config),
+            getSharedPath(config),
+            getAppPath(config),
+            getAppSourcePath(config),
+        ];
     }
 
     public clear(): this {
@@ -21,7 +32,22 @@ export default abstract class implements EntrypointFinder {
     }
 
     public async files(): Promise<Set<EntrypointFile>> {
-        return this._files ??= await this.getFiles();
+        if (this._files) {
+            return this._files;
+        }
+
+        const files = Array.from(await this.getFiles()).sort((a, b) => {
+            const priorityA = this.priority(a);
+            const priorityB = this.priority(b);
+
+            if (priorityA !== priorityB) {
+                return priorityA - priorityB;
+            }
+
+            return a.file.length - b.file.length;
+        });
+
+        return this._files = new Set(files);
     }
 
     public async empty(): Promise<boolean> {
@@ -56,5 +82,9 @@ export default abstract class implements EntrypointFinder {
         } catch {
             return undefined;
         }
+    }
+
+    protected priority(file: EntrypointFile): number {
+        return _.findIndex(this.priorityDirectories, dir => file.file.includes(dir));
     }
 }

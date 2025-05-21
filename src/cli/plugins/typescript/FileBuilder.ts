@@ -3,19 +3,23 @@ import path from "path";
 
 import {getInputPath, getRootPath} from "@cli/resolvers/path";
 
-import {SystemDir} from "@typing/app";
+import {PackageName, SystemDir} from "@typing/app";
 import {ReadonlyConfig} from "@typing/config";
 
 export default abstract class {
     protected abstract filename(): string;
 
-    protected abstract content(): string;
+    protected abstract template(): string;
 
     protected withBanner(): boolean {
         return true;
     }
 
     protected constructor(protected readonly config: ReadonlyConfig) {
+    }
+
+    protected content(): string {
+        return this.template().replaceAll(':package', PackageName);
     }
 
     public build(): this {

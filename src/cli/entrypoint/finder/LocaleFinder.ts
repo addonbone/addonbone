@@ -5,13 +5,11 @@ import yaml from "js-yaml";
 
 import AbstractAssetFinder from "./AbstractAssetFinder";
 import AssetPluginFinder from "./AssetPluginFinder";
-import AssetPriorityFinder from "./AssetPriorityFinder";
 
 import localeFactory from "@cli/builders/locale";
 import {isFileExtension} from "@cli/utils/path";
 
 import {ReadonlyConfig} from "@typing/config";
-import {EntrypointFile} from "@typing/entrypoint";
 import {
     Language,
     LanguageCodes,
@@ -29,12 +27,8 @@ export default class extends AbstractAssetFinder {
     protected _plugin?: AssetPluginFinder;
     protected _builders?: LocaleBuilders;
 
-    protected readonly priority: AssetPriorityFinder;
-
     public constructor(config: ReadonlyConfig) {
         super(config);
-
-        this.priority = new AssetPriorityFinder(config, this);
     }
 
     public isValidName(name: string): boolean {
@@ -61,10 +55,6 @@ export default class extends AbstractAssetFinder {
         return this.config.mergeLocales;
     }
 
-    protected getFiles(): Promise<Set<EntrypointFile>> {
-        return this.priority.files();
-    }
-
     protected getPlugin(): AssetPluginFinder {
         return new AssetPluginFinder(this.config, 'locale', this);
     }
@@ -79,16 +69,7 @@ export default class extends AbstractAssetFinder {
             .reduce((map, files, lang) => {
                 const locale = localeFactory(lang as Language, this.config);
 
-                files.sort((a, b) => {
-                    const priorityA = this.priority.priority(a);
-                    const priorityB = this.priority.priority(b);
-
-                    if (priorityA !== priorityB) {
-                        return priorityA - priorityB;
-                    }
-
-                    return a.file.length - b.file.length;
-                }).forEach(({file}) => {
+                for (const {file} of files) {
                     const content = fs.readFileSync(file, 'utf8');
 
                     if (isFileExtension(file, ['yaml', 'yml'])) {
@@ -96,7 +77,7 @@ export default class extends AbstractAssetFinder {
                     } else if (isFileExtension(file, 'json')) {
                         locale.merge(JSON.parse(content));
                     }
-                });
+                }
 
                 map.set(locale.lang(), locale);
 
@@ -146,7 +127,6 @@ export default class extends AbstractAssetFinder {
 
     public clear(): this {
         this.plugin().clear();
-        this.priority.clear();
 
         this._builders = undefined;
 

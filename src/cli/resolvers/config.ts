@@ -12,7 +12,8 @@ import {
     reactPlugin,
     stylePlugin,
     typescriptPlugin,
-    pagePlugin
+    pagePlugin,
+    popupPlugin,
 } from "../plugins";
 
 import {getAppPath, getAppSourcePath, getConfigFile, getInputPath} from "../resolvers/path";
@@ -115,6 +116,8 @@ export default async (config: OptionalConfig): Promise<Config> => {
         mergeIcons = false,
         mergeLocales = true,
         mergePages = false,
+        mergePopup = false,
+        multiplePopup = false,
         mergeServices = false,
     } = config;
 
@@ -148,6 +151,8 @@ export default async (config: OptionalConfig): Promise<Config> => {
         mergeIcons,
         mergeLocales,
         mergePages,
+        mergePopup,
+        multiplePopup,
         mergeServices,
     };
 
@@ -169,6 +174,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         localePlugin(),
         contentPlugin(),
         backgroundPlugin(),
+        popupPlugin(),
         pagePlugin(),
     ];
 

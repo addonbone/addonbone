@@ -4,6 +4,10 @@ import {ManifestVersion} from "@typing/manifest";
 import {Plugin} from "@typing/plugin";
 import {Language} from "@typing/locale";
 
+/**
+ * Interface representing the configuration settings for building an extension.
+ * Provides various options to customize the build process, specify application structure, and manage resources.
+ */
 export interface Config {
     /**
      * Enables debug mode during extension building.
@@ -260,6 +264,24 @@ export interface Config {
      * When `true`, page files from both directories will be combined.
      */
     mergePages: boolean;
+
+    /**
+     * Flag indicating whether to merge popup files from App and Shared directories.
+     * When `true`, popup files from both directories will be combined.
+     * This is useful for sharing popup components across different parts of the application.
+     *
+     * @default false
+     */
+    mergePopup: boolean;
+
+    /**
+     * Flag indicating whether multiple popup files are supported in the extension.
+     * When `true`, the build process will handle and include multiple popup files in the extension.
+     * This allows the extension to have different popup interfaces for different contexts or states.
+     *
+     * @default false
+     */
+    multiplePopup: boolean;
 
     /**
      * Flag indicating whether to merge service files from App and Shared directories.

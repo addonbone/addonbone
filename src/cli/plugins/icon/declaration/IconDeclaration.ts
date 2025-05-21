@@ -3,7 +3,6 @@ import template from "./icon.d.ts?raw";
 import {FileBuilder} from "@cli/plugins/typescript";
 
 import {ReadonlyConfig} from "@typing/config";
-import {PackageName} from "@typing/app";
 
 
 export default class extends FileBuilder {
@@ -17,8 +16,8 @@ export default class extends FileBuilder {
         return "icon.d.ts";
     }
 
-    protected content(): string {
-        let content = template.replaceAll(':package', PackageName);
+    protected template(): string {
+        let content = template;
 
         if (this.names.size > 0) {
             const type = '"' + Array.from(this.names).join('" | "') + '"';

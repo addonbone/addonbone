@@ -10,4 +10,5 @@ export * from "./locale";
 export * from "./manifest";
 export * from "./page";
 export * from "./plugin";
+export * from "./popup";
 export * from "./service";

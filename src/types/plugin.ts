@@ -82,6 +82,7 @@ export interface Plugin extends PluginName {
     command?: PluginHandler<PluginConfigOptions, PluginEntrypointResult>;
     content?: PluginHandler<PluginConfigOptions, PluginEntrypointResult>;
     page?: PluginHandler<PluginConfigOptions, PluginEntrypointResult>;
+    popup?: PluginHandler<PluginConfigOptions, PluginEntrypointResult>;
     service?: PluginHandler<PluginConfigOptions, PluginEntrypointResult>;
     locale?: PluginHandler<PluginConfigOptions, PluginLocaleResult>;
     icon?: PluginHandler<PluginConfigOptions, PluginIconResult>;
@@ -95,9 +96,11 @@ export type PluginHandlerCallback<O, T = void> = { (options: O): Awaiter<T> }
 
 export type PluginHandlerKeys = keyof Omit<Plugin, 'name'>;
 
-export type PluginEntrypointKeys = keyof Pick<Plugin, 'background' | 'command' | 'content' | 'page' | 'service'>;
+export type PluginEntrypointKeys = keyof Pick<Plugin, 'background' | 'command' | 'content' | 'page' | 'popup' | 'service'>;
 
 export type PluginAssetKeys = keyof Pick<Plugin, 'icon' | 'locale'>;
+
+export type PluginViewKeys = keyof Pick<Plugin, 'page' | 'popup'>;
 
 export type PluginHandlerType<T extends Plugin[PluginHandlerKeys]> =
     T extends PluginHandlerCallback<infer O, infer R> ? { options: O; result: R } : never;

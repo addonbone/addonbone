@@ -79,7 +79,7 @@ export interface ManifestBuilder<T extends CoreManifest = Manifest> {
 
     setContentScripts(contentScripts?: ManifestContentScripts): this;
 
-    setAction(action?: ManifestAction | true): this;
+    setPopup(popup?: ManifestPopup): this;
 
     setDependencies(dependencies: ManifestDependencies): this;
 
@@ -110,10 +110,21 @@ export type ManifestContentScripts = Set<ManifestContentScript>;
 export type ManifestCommand = CommandConfig;
 export type ManifestCommands = Set<ManifestCommand>;
 
-export interface ManifestAction {
-    icon?: string; // name of an icon set
+export interface ManifestPopup {
+    /**
+     * Represents the group name of an icon that can be used in UI elements.
+     * This property is optional and, if defined, should typically refer to a string
+     * that matches the name of an icon resource available in the application or icon library.
+     */
+    icon?: string;
+    /**
+     * Represents an optional title or name or locale key that can be assigned to an entity.
+     */
     title?: string;
-    popup?: string;
+    /**
+     * Represents an optional HTML path.
+     */
+    path?: string;
 }
 
 export interface ManifestDependency {

@@ -2,7 +2,6 @@ import path from "path";
 import _ from "lodash";
 
 import AbstractAssetFinder from "./AbstractAssetFinder";
-import AssetPriorityFinder from "./AssetPriorityFinder";
 import AssetPluginFinder from "./AssetPluginFinder";
 
 import {EntrypointFile} from "@typing/entrypoint";
@@ -37,16 +36,8 @@ export default class extends AbstractAssetFinder {
         512,
     ]);
 
-    protected readonly priority: AssetPriorityFinder;
-
     public constructor(config: ReadonlyConfig) {
         super(config);
-
-        this.priority = new AssetPriorityFinder(config, this);
-    }
-
-    protected getFiles(): Promise<Set<EntrypointFile>> {
-        return this.priority.files();
     }
 
     protected getPlugin(): AssetPluginFinder {
@@ -121,23 +112,10 @@ export default class extends AbstractAssetFinder {
         const groups = _.chain([...files])
             .map((file) => ({file, name: this.getName(file)}))
             .groupBy(({name}) => name.group)
-            .mapValues((files) => {
-                const items: IconItems = new Map();
-
-                files.sort(({file: a}, {file: b}) => {
-                    const priorityA = this.priority.priority(a);
-                    const priorityB = this.priority.priority(b);
-
-                    if (priorityA !== priorityB) {
-                        return priorityA - priorityB;
-                    }
-
-                    return a.file.length - b.file.length;
-                }).forEach((item) => {
-                    items.set(item.name.size, item);
-                });
-
-                return items;
+            .mapValues((items) => {
+                return new Map(
+                    items.map(item => [item.name.size, item])
+                );
             }).value();
 
         return new Map(Object.entries(groups));
@@ -149,7 +127,6 @@ export default class extends AbstractAssetFinder {
 
     public clear(): this {
         this.plugin().clear();
-        this.priority.clear();
 
         this._icons = undefined;
 

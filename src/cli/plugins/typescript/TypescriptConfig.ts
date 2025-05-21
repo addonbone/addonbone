@@ -4,9 +4,9 @@ import {TsConfigJson} from "type-fest";
 
 import FileBuilder from "./FileBuilder";
 
-import {ReadonlyConfig} from "@typing/config";
 import {getRootPath} from "@cli/resolvers/path";
 
+import {ReadonlyConfig} from "@typing/config";
 
 export default class extends FileBuilder {
     public constructor(config: ReadonlyConfig) {
@@ -19,6 +19,10 @@ export default class extends FileBuilder {
 
     protected withBanner(): boolean {
         return false;
+    }
+
+    protected template(): string {
+        return ""; // Not need is this place
     }
 
     protected content(): string {
@@ -68,6 +72,7 @@ export default class extends FileBuilder {
                 './service.d.ts',
                 './icon.d.ts',
                 './page.d.ts',
+                './popup.d.ts',
             ],
             exclude: [
                 outputDir

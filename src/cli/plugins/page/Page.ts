@@ -1,73 +1,23 @@
-import path from "path";
-import _ from "lodash";
-
-import type {HtmlRspackPluginOptions} from "@rspack/core";
-import type {Options as HtmlRspackTagsPluginOptions} from "html-rspack-tags-plugin";
+import {View} from "../view";
 
 import {PageFinder} from "@cli/entrypoint";
 import {ReadonlyConfig} from "@typing/config";
-import {EntrypointEntries} from "@typing/entrypoint";
-
+import {PageEntrypointOptions} from "@typing/page";
 
 export default class extends PageFinder {
+    protected _view?: View<PageEntrypointOptions>;
+
     public constructor(config: ReadonlyConfig) {
         super(config);
     }
 
-    public async entries(): Promise<EntrypointEntries> {
-        const entries: EntrypointEntries = new Map;
-
-        for (const [name, page] of await this.pages()) {
-            entries.set(name, new Set([page.file]));
-        }
-
-        return entries;
+    public view(): View<PageEntrypointOptions> {
+        return this._view ??= new View(this.config, this);
     }
 
-    public async html(): Promise<HtmlRspackPluginOptions[]> {
-        const html: HtmlRspackPluginOptions[] = [];
+    public clear(): this {
+        this._view = undefined;
 
-        for (const [name, {file, filename, options}] of await this.pages()) {
-            const {template, title} = options;
-
-            html.push({
-                filename,
-                title: title || _.startCase(this.config.app),
-                template: template ? path.resolve(path.dirname(file.file), template) : undefined,
-                chunks: [name],
-                inject: 'body',
-                minify: true,
-            });
-        }
-
-        return html;
-    }
-
-    public async tags(): Promise<HtmlRspackTagsPluginOptions[]> {
-        const tags: HtmlRspackTagsPluginOptions[] = [];
-
-        const pages = await this.pages();
-
-        for (const {filename, options} of pages.values()) {
-            const {
-                name,
-                title,
-                template,
-                excludeApp,
-                includeApp,
-                excludeBrowser,
-                includeBrowser,
-                ...tagOptions
-            } = options;
-
-            if (!_.isEmpty(tagOptions)) {
-                tags.push({
-                    ...tagOptions,
-                    files: [filename],
-                });
-            }
-        }
-
-        return tags;
+        return super.clear();
     }
 }

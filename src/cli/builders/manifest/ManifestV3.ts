@@ -40,14 +40,14 @@ export default class extends ManifestBase<ManifestV3> {
     }
 
     protected buildAction(): Partial<ManifestV3> | undefined {
-        if (this.action) {
-            const {popup, icon, title} = this.action;
+        if (this.popup) {
+            const {path, icon, title} = this.popup;
 
             return {
                 action: {
-                    default_popup: popup,
-                    default_icon: icon,
-                    default_title: title
+                    default_title: title || this.name,
+                    default_popup: path,
+                    default_icon: this.getIconsByName(icon),
                 }
             };
         } else if (this.hasExecuteActionCommand()) {

@@ -1,4 +1,4 @@
-import template from "./page.d.ts?raw";
+import template from "./popup.d.ts?raw";
 
 import {FileBuilder} from "@cli/plugins/typescript";
 
@@ -12,7 +12,7 @@ export default class extends FileBuilder {
     }
 
     protected filename(): string {
-        return "page.d.ts";
+        return "popup.d.ts";
     }
 
     protected template(): string {
@@ -21,7 +21,7 @@ export default class extends FileBuilder {
         if (this.alias.size > 0) {
             const type = '"' + Array.from(this.alias).join('" | "') + '"';
 
-            content = content.replace('type PageAlias = string', `type PageAlias = ${type}`);
+            content = content.replace('type PopupAlias = string', `type PopupAlias = ${type}`);
         }
 
         return content;

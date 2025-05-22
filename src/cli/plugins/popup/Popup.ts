@@ -35,13 +35,20 @@ export default class extends PopupFinder {
         }
     }
 
-    public async getAliasToIcon(): Promise<Map<string, string>> {
+    public async manifestByAlias(): Promise<Map<string, ManifestPopup>> {
         return Array.from(await this.views()).reduce((aliases, [_, item]) => {
+            const {options, filename} = item;
+            const {title, icon} = options;
+
             return {
                 ...aliases,
-                [item.alias]: item.options.icon,
+                [item.alias]: {
+                    path: filename,
+                    title,
+                    icon,
+                }
             };
-        }, {} as Map<string, string>);
+        }, {} as Map<string, ManifestPopup>);
     }
 
     public clear(): this {

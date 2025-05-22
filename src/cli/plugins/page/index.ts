@@ -52,7 +52,7 @@ export default definePlugin(() => {
             return {
                 plugins: [
                     new DefinePlugin({
-                        '__ADNBN_PAGE_ALIAS__': JSON.stringify(await page.getAliasToFilename()),
+                        __ADNBN_PAGE_ALIAS__: JSON.stringify(await page.getAliasToFilename()),
                     }),
                     plugin,
                     ...htmlPlugins,

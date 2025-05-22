@@ -49,10 +49,10 @@ const framework: Options = {
         'locale/index': 'src/locale/index.ts',
 
         'message/index': 'src/message/index.ts',
-        'message/react': 'src/message/react/index.ts',
+        'message/react/index': 'src/message/react/index.ts',
 
         'storage/index': 'src/storage/index.ts',
-        'storage/react': 'src/storage/react/index.ts',
+        'storage/react/index': 'src/storage/react/index.ts',
 
         'service/index': 'src/service/index.ts',
 
@@ -63,14 +63,14 @@ const framework: Options = {
         'entry/command/index': 'src/entry/command/index.ts',
 
         'entry/content/index': 'src/entry/content/index.ts',
-        'entry/content/vanilla': 'src/entry/content/vanilla/index.ts',
-        'entry/content/react': 'src/entry/content/react/index.ts',
+        'entry/content/vanilla/index': 'src/entry/content/vanilla/index.ts',
+        'entry/content/react/index': 'src/entry/content/react/index.ts',
 
         'entry/service/index': 'src/entry/service/index.ts',
 
         'entry/view/index': 'src/entry/view/index.ts',
-        'entry/view/vanilla': 'src/entry/view/vanilla/index.ts',
-        'entry/view/react': 'src/entry/view/react/index.ts',
+        'entry/view/vanilla/index': 'src/entry/view/vanilla/index.ts',
+        'entry/view/react/index': 'src/entry/view/react/index.ts',
     },
     format: ['esm', 'cjs'],
     outExtension({format}) {

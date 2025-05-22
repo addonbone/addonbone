@@ -14,9 +14,9 @@ export default definePlugin(() => {
     return {
         name: 'adnbn:typescript',
         startup: ({config}) => {
-            typescript = new TypescriptConfig(config).build();
+            typescript = TypescriptConfig.make(config);
 
-            new VendorDeclaration(config).build();
+            VendorDeclaration.make(config);
         },
         bundler: () => {
             return {

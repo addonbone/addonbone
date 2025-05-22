@@ -6,13 +6,13 @@ import {getInputPath, getRootPath} from "@cli/resolvers/path";
 import {PackageName, SystemDir} from "@typing/app";
 import {ReadonlyConfig} from "@typing/config";
 
-export default abstract class {
+export default abstract class FileBuilder {
     protected abstract filename(): string;
 
     protected abstract template(): string;
 
-    protected withBanner(): boolean {
-        return true;
+    public static make<T extends FileBuilder>(this: new (config: ReadonlyConfig) => T, config: ReadonlyConfig): T {
+        return new this(config).build();
     }
 
     protected constructor(protected readonly config: ReadonlyConfig) {
@@ -20,6 +20,10 @@ export default abstract class {
 
     protected content(): string {
         return this.template().replaceAll(':package', PackageName);
+    }
+
+    protected withBanner(): boolean {
+        return true;
     }
 
     public build(): this {

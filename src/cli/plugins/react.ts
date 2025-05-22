@@ -23,6 +23,22 @@ export default definePlugin(() => {
                         },
                     },
                 },
+                module: {
+                    rules: [
+                        {
+                            test: /\.svg$/i,
+                            issuer: /\.[jt]sx?$/,
+                            resourceQuery: /react/,
+                            use: [{
+                                loader: '@svgr/webpack',
+                                options: {
+                                    expandProps: 'start',
+                                    typescript: true,
+                                },
+                            }],
+                        },
+                    ],
+                },
             } as RspackConfig;
         },
     };

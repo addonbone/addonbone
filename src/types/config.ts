@@ -1,3 +1,5 @@
+import type {Options as HtmlOptions} from "html-rspack-tags-plugin";
+
 import {Command, Mode} from "@typing/app";
 import {Browser} from "@typing/browser";
 import {ManifestVersion} from "@typing/manifest";
@@ -5,8 +7,10 @@ import {Plugin} from "@typing/plugin";
 import {Language} from "@typing/locale";
 
 /**
- * Interface representing the configuration settings for building an extension.
- * Provides various options to customize the build process, specify application structure, and manage resources.
+ * Interface representing the configuration options for building an extension.
+ * This configuration includes settings for directories, output locations,
+ * behavior flags, and various merge configurations to define how the build
+ * process handles individual components or resources.
  */
 export interface Config {
     /**
@@ -122,6 +126,17 @@ export interface Config {
      * @path Full path: `{{inputDir}}/{{outputDir}}/{{appDir}}/{{htmlDir}}`
      */
     htmlDir: string;
+
+    /**
+     * Represents an HTML configuration, which can either be a single HtmlOptions object,
+     * an array of HtmlOptions objects, or a function returning one of these formats.
+     *
+     * - HtmlOptions: A single HTML configuration object.
+     * - HtmlOptions[]: An array containing multiple HTML configuration objects.
+     * - { (): HtmlOptions | HtmlOptions[] }: A function that dynamically generates and
+     *   returns either an HtmlOptions object or an array of HtmlOptions objects.
+     */
+    html: HtmlOptions | HtmlOptions[] | { (): HtmlOptions | HtmlOptions[] };
 
     /**
      * Icon configuration for the extension.

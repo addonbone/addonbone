@@ -2,6 +2,7 @@ export {default as assetPlugin} from "./asset";
 export {default as backgroundPlugin, Background, Command, Service} from "./background";
 export {default as contentPlugin, Content} from "./content";
 export {default as dotenvPlugin} from "./dotenv";
+export {default as htmlPlugin} from "./html";
 export {default as iconPlugin} from "./icon";
 export {default as localePlugin, Locale} from "./locale";
 export {default as pagePlugin, Page} from "./page";

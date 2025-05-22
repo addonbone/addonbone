@@ -2,7 +2,7 @@ import type {FC, ReactNode} from "react";
 import type {Optional} from "utility-types";
 import type {Options as HtmlOptions} from "html-rspack-tags-plugin";
 
-import {Awaiter, PickNonFunctionProperties} from "@typing/helpers";
+import {Awaiter, ExcludeFunctionsFromProperties, PickNonFunctionProperties} from "@typing/helpers";
 import {EntrypointBuilder, EntrypointOptions} from "@typing/entrypoint";
 
 export interface ViewConfig {
@@ -11,7 +11,7 @@ export interface ViewConfig {
     template?: string;
 }
 
-export type ViewOptions = ViewConfig & HtmlOptions & EntrypointOptions;
+export type ViewOptions = ViewConfig & EntrypointOptions & ExcludeFunctionsFromProperties<HtmlOptions>;
 
 export type ViewEntrypointOptions = ViewOptions;
 

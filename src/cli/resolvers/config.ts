@@ -7,6 +7,7 @@ import {
     backgroundPlugin,
     contentPlugin,
     dotenvPlugin,
+    htmlPlugin,
     iconPlugin,
     localePlugin,
     pagePlugin,
@@ -103,6 +104,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         cssDir = 'css',
         assetsDir = 'assets',
         htmlDir = '.',
+        html = [],
         icon = {},
         locale = {},
         manifestVersion = (new Set<Browser>([Browser.Firefox, Browser.Safari]).has(browser) ? 2 : 3) as ManifestVersion,
@@ -139,6 +141,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         cssDir,
         assetsDir,
         htmlDir,
+        html,
         icon,
         locale,
         plugins,
@@ -178,6 +181,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         popupPlugin(),
         pagePlugin(),
         viewPlugin(),
+        htmlPlugin(),
     ];
 
     return {

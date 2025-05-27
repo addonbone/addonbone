@@ -4,19 +4,14 @@ import {RegisterService} from "@service/providers";
 
 import {isValidServiceInitFunction, isValidServiceMainFunction, isValidServiceName} from "./resolvers";
 
-import {
-    ServiceBuilder,
-    ServiceName,
-    ServiceOptions,
-    ServiceResolvedDefinition,
-    ServiceType,
-    ServiceUnresolvedDefinition
-} from "@typing/service";
+import {ServiceBuilder, ServiceOptions, ServiceResolvedDefinition, ServiceUnresolvedDefinition} from "@typing/service";
 
-export default class<T extends ServiceType = ServiceType> extends Builder implements ServiceBuilder {
+import {TransportName, TransportType} from "@typing/transport";
+
+export default class<T extends TransportType = TransportType> extends Builder implements ServiceBuilder {
     protected readonly definition: ServiceResolvedDefinition<T>;
 
-    protected service?: RegisterService<ServiceName, T, [ServiceOptions]>;
+    protected service?: RegisterService<TransportName, T, [ServiceOptions]>;
 
     public constructor(definition: ServiceUnresolvedDefinition<T>) {
         super();

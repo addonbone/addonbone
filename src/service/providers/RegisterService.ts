@@ -1,30 +1,32 @@
 import get from 'get-value';
 
-import ProxyService from "./ProxyService";
+import ServiceMessage from "../ServiceMessage";
+import Service from "./Service";
 
-import {isBackground} from "@browser/runtime";
-
-import type {ServiceDictionary, ServiceName} from "@typing/service";
+import type {TransportDictionary, TransportMessage, TransportName} from "@typing/transport";
 
 export default class<
-    N extends ServiceName,
-    T extends object = ServiceDictionary[N],
+    N extends TransportName,
+    T extends object = TransportDictionary[N],
     A extends any[] = []
-> extends ProxyService<N, T> {
+> extends Service<N, T> {
+    protected message: TransportMessage
+
     constructor(name: N, protected readonly init: (...args: A) => T) {
         super(name)
+        this.message = new ServiceMessage(name);
     }
 
     public register(...args: A): T {
-        if (this.manager.has(this.name)) {
+        if (this.manager().has(this.name)) {
             throw new Error(`A service with the name "${this.name}" already exists. The service name must be unique.`);
         }
 
         const service = this.init(...args);
 
-        this.manager.add(this.name, service);
+        this.manager().add(this.name, service);
 
-        this.message.watch(this.messageKey, async ({path, args}) => {
+        this.message.watch(async ({path, args}) => {
             try {
                 const property = path == null ? service : get(service, path);
 
@@ -46,13 +48,5 @@ export default class<
         });
 
         return service;
-    }
-
-    public get(): T {
-        if (!isBackground()) {
-            throw new Error(`Service "${this.name}" can be getting only from background context.`);
-        }
-
-        return this.manager.get(this.name);
     }
 }

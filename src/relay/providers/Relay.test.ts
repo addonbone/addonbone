@@ -40,19 +40,19 @@ describe('ProxyRelay', () => {
     test('throws an error when get() is called in content script context', async () => {
         (isAvailableScripting as jest.Mock).mockReturnValue(false);
 
-        const proxy = new ProxyRelay(relayName);
+        const proxy = new ProxyRelay(relayName, 1);
 
-        expect(() => proxy.get(1)).toThrow(`You are trying to get proxy relay "${relayName}" from script content. You can get original relay instead`);
+        expect(() => proxy.get()).toThrow(`You are trying to get proxy relay "${relayName}" from script content. You can get original relay instead`);
     });
 
     test("returns a proxy when called not in content script context", () => {
-        const relay = new ProxyRelay(relayName).get(1);
+        const relay = new ProxyRelay(relayName, 1).get();
 
         expect(relay['__proxy']).toBe(true);
     });
 
     test("invokes remote methods using chrome.scripting", async () => {
-        const relay = new ProxyRelay<typeof relayName, RelayProxyType>(relayName).get(1)
+        const relay = new ProxyRelay<typeof relayName, RelayProxyType>(relayName, 1).get( )
 
         expect(await relay.sum(1, 2)).toBe(3)
 
@@ -68,7 +68,7 @@ describe('ProxyRelay', () => {
     });
 
     test("accesses primitive value as method on the relay object", async () => {
-        const relay = new ProxyRelay<typeof relayName, RelayProxyType>(relayName).get({tabId: 1, frameIds: [2]})
+        const relay = new ProxyRelay<typeof relayName, RelayProxyType>(relayName, {tabId: 1, frameIds: [2]}).get()
 
         expect(await relay.one()).toBe(1)
         expect(chrome.scripting.executeScript).toHaveBeenCalledWith(
@@ -81,7 +81,7 @@ describe('ProxyRelay', () => {
     });
 
     test("accesses nested method or property ", async () => {
-        const relay = new ProxyRelay<typeof relayName, RelayProxyType>(relayName).get(1)
+        const relay = new ProxyRelay<typeof relayName, RelayProxyType>(relayName, 1).get( )
 
         expect(await relay.obj.concat('Hello', 'world')).toBe('Hello world')
         expect(chrome.scripting.executeScript).toHaveBeenCalledWith(
@@ -103,7 +103,7 @@ describe('ProxyRelay', () => {
     });
 
     test("calls async method on proxy and returns resolved value", async () => {
-        const relay = new ProxyRelay<typeof relayName, RelayProxyType>(relayName).get(1)
+        const relay = new ProxyRelay<typeof relayName, RelayProxyType>(relayName, 1).get( )
 
         expect(await relay.asyncSum(1, 2)).toBe(3)
     });

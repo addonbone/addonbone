@@ -1,9 +1,21 @@
-import {BaseRelay, ProxyRelay, RegisterRelay} from "./providers";
+// import {BaseRelay, ProxyRelay, RegisterRelay} from "./providers";
+import {ProxyRelay, RegisterRelay, Relay} from "./providers";
 
-import type {RelayDictionary, RelayName} from "@typing/relay";
+import type {
+    TransportDictionary,
+    TransportName,
+    TransportProxyTarget as RelayProxyTarget,
+    TransportTarget as RelayTarget
+} from "@typing/transport";
 
-export {type RelayDictionary, RegisterRelay, ProxyRelay}
+export {
+    type RelayTarget,
+    type RelayProxyTarget,
 
-export const getRelay = <N extends RelayName>(name: N): RelayDictionary[N] => {
-    return new BaseRelay<N>(name).get();
+    ProxyRelay,
+    RegisterRelay
+}
+
+export const getRelay = <N extends TransportName>(name: N): TransportDictionary[N] => {
+    return new Relay<N>(name).get();
 }

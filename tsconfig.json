@@ -43,6 +43,9 @@
       "@offscreen/*": [
         "offscreen/*"
       ],
+      "@relay/*": [
+        "relay/*"
+      ],
       "@service/*": [
         "service/*"
       ],

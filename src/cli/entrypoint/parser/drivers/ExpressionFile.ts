@@ -358,8 +358,8 @@ export default class ExpressionFile extends SourceFile {
             const parser = (this.constructor as typeof ExpressionFile).make(importPath);
             const sf = parser.getSourceFile();
 
+            // Try named class export
             let found: ts.ClassDeclaration | undefined;
-
             const find = (node: ts.Node) => {
                 if (ts.isClassDeclaration(node) && node.name?.text === name) {
                     found = node;
@@ -372,6 +372,25 @@ export default class ExpressionFile extends SourceFile {
 
             if (found) {
                 return parser.parseClass(found);
+            }
+
+            // Try default exported anonymous class
+            let defaultClass: ts.ClassDeclaration | undefined;
+
+            const findDefault = (node: ts.Node) => {
+                if (ts.isClassDeclaration(node)
+                    && node.modifiers
+                    && node.modifiers.some(m => m.kind === ts.SyntaxKind.DefaultKeyword)) {
+                    defaultClass = node;
+                } else {
+                    ts.forEachChild(node, findDefault);
+                }
+            };
+
+            ts.forEachChild(sf, findDefault);
+
+            if (defaultClass) {
+                return parser.parseClass(defaultClass);
             }
         }
 

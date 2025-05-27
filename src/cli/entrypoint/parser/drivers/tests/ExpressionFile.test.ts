@@ -21,6 +21,14 @@ describe('default function', () => {
 
         expect(type).toBe(' { name: string; version: number; getUsersMap(): Record<string, {name: string}>; getServiceInfo(): {name: string, version: number}; fetchData<T>(endpoint: string): Promise<T>; isInitialized(): boolean; getUserRoute(): string; fetchUserData<T>(endpoint: string): Promise<T>; }');
     });
+    
+    test('export default function and return default extended instance class', () => {
+        const filename = path.join(fixtures, 'expression', 'export-default-extended-instance.ts');
+
+        const type = ExpressionFile.make(filename).getType();
+
+        expect(type).toBe(' { name: string; age: number; getInfo(): string; updateAge(newAge: number): void; id(): number; getUserName(): string; }');
+    });
 
     test('export default function and return inline class instance', () => {
         const filename = path.join(fixtures, 'expression', 'export-instance-inside.ts');

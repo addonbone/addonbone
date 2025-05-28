@@ -489,16 +489,19 @@ export default class ExpressionFile extends SourceFile {
             // handle intersection type alias by flattening members
             if (ts.isIntersectionTypeNode(typeNode)) {
                 const parts: string[] = [];
+                const seen = new Set<string>();
                 for (const t of typeNode.types) {
                     // inline object literal types
                     if (ts.isTypeLiteralNode(t)) {
                         for (const m of t.members) {
+                            let keyName: string;
+                            let entry: string;
                             if (ts.isPropertySignature(m) && m.type) {
-                                const key = this.getName(m.name!);
+                                keyName = this.getName(m.name!);
                                 const typeText = this.resolveTypeNode(m.type);
-                                parts.push(`${key}: ${typeText}`);
+                                entry = `${keyName}: ${typeText}`;
                             } else if (ts.isMethodSignature(m) && m.name) {
-                                const mkey = this.getName(m.name);
+                                keyName = this.getName(m.name);
                                 const typeParams = m.typeParameters ? m.typeParameters.map(tp => tp.getText()) : [];
                                 const tpText = typeParams.length ? `<${typeParams.join(',')}>` : '';
                                 const paramsText = m.parameters.map(p => {
@@ -507,7 +510,13 @@ export default class ExpressionFile extends SourceFile {
                                     return `${pname}: ${ptype}`;
                                 }).join(',');
                                 const returnType = m.type ? this.resolveTypeNode(m.type) : 'any';
-                                parts.push(`${mkey}${tpText}(${paramsText}): ${returnType}`);
+                                entry = `${keyName}${tpText}(${paramsText}): ${returnType}`;
+                            } else {
+                                continue;
+                            }
+                            if (!seen.has(keyName)) {
+                                seen.add(keyName);
+                                parts.push(entry);
                             }
                         }
                     }
@@ -518,7 +527,30 @@ export default class ExpressionFile extends SourceFile {
                         if (sub) {
                             const inner = sub.slice(1, -1).trim();
                             if (inner) {
-                                parts.push(...inner.split(/;\s*/).map(s => s.trim()).filter(Boolean));
+                                // split on top-level semicolons (ignore semicolons within braces)
+                                const segments: string[] = [];
+                                let depth = 0;
+                                let buf = '';
+                                for (const ch of inner) {
+                                    if (ch === '{') { depth++; buf += ch; }
+                                    else if (ch === '}') { depth--; buf += ch; }
+                                    else if (ch === ';' && depth === 0) {
+                                        const seg = buf.trim();
+                                        if (seg) segments.push(seg);
+                                        buf = '';
+                                    } else {
+                                        buf += ch;
+                                    }
+                                }
+                                const last = buf.trim();
+                                if (last) segments.push(last);
+                                for (const s of segments) {
+                                    const keyName = s.split(/[:(]/)[0];
+                                    if (!seen.has(keyName)) {
+                                        seen.add(keyName);
+                                        parts.push(s);
+                                    }
+                                }
                             }
                         }
                     }
@@ -586,7 +618,8 @@ export default class ExpressionFile extends SourceFile {
             const aliasDecl = parser.findTypeAliasDeclaration(name);
 
             if (aliasDecl) {
-                return parser.resolveTypeNode(aliasDecl.type);
+                // inline imported type alias (including intersections)
+                return parser.inlineAliasType(name);
             }
 
             // imported interface

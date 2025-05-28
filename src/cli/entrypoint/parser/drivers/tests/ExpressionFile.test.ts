@@ -74,7 +74,7 @@ describe('default function', () => {
 
         const type = ExpressionFile.make(filename).getType();
 
-        expect(type).toBe('{ getUserInfo(): {id: number; name: string;}; }');
+        expect(type).toBe('{ getUserInfo(): {id: number; name: string;}; getUserDetails(): {id: number; name: string; address?: string; age?: number; data?: {reg: number; log: number;};}; getUserAndDetails(): {id: number; name: string; address?: string; age?: number; data?: {reg: number; log: number;};}; }');
     });
 });
 

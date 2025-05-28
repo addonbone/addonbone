@@ -1,51 +1,27 @@
 import {isBackground} from "@browser/runtime";
-import {Message, MessageSendOptions} from "@message/providers";
 
-import BaseService from "./BaseService";
+import {ProxyTransport} from "@transport";
 
-import {ServiceDictionary, ServiceName} from "@typing/service";
-import {MessageDictionary, MessageProvider} from "@typing/message";
-import {DeepAsyncProxy} from "@typing/helpers";
+import ServiceManager from "../ServiceManager";
+import ServiceMessage from "../ServiceMessage";
 
-export default class<N extends ServiceName, T = DeepAsyncProxy<ServiceDictionary[N]>> extends BaseService<N, T> {
-    private _message?: MessageProvider<MessageDictionary, MessageSendOptions>;
+import type {DeepAsyncProxy} from "@typing/helpers";
+import type {TransportDictionary, TransportManager, TransportMessage, TransportName} from "@typing/transport";
 
-    protected readonly messageKey: string;
+export default class<N extends TransportName, T = DeepAsyncProxy<TransportDictionary[N]>> extends ProxyTransport<N, T> {
+    protected message: TransportMessage
 
     constructor(name: N) {
         super(name);
-
-        this.messageKey = `service.${this.name}`;
+        this.message = new ServiceMessage(name);
     }
 
-    protected get message(): MessageProvider<MessageDictionary, MessageSendOptions> {
-        return this._message ??= new Message();
+    protected manager(): TransportManager {
+        return ServiceManager.getInstance();
     }
 
-    private createProxy(path?: string): T {
-        const wrapped = () => {
-        }
-
-        const proxy = new Proxy(wrapped, {
-            apply: async (_target, _thisArg, args) => {
-                return this.message.send(this.messageKey, {path, args});
-            },
-
-            get: (_target, propertyName, receiver) => {
-                if (propertyName === '__proxy' || typeof propertyName !== 'string') {
-                    return Reflect.get(wrapped, propertyName, receiver);
-                }
-
-                const newPath = path == null ? propertyName : `${path}.${String(propertyName)}`;
-
-                return this.createProxy(newPath);
-            },
-        });
-
-        // @ts-expect-error — Adding a hidden property
-        proxy.__proxy = true;
-
-        return proxy as unknown as T;
+    protected async apply(args: any[], path?: string): Promise<any> {
+        return this.message.send({path, args});
     }
 
     public get(): T {
@@ -53,6 +29,6 @@ export default class<N extends ServiceName, T = DeepAsyncProxy<ServiceDictionary
             throw new Error(`You are trying to get proxy service "${this.name}" from background. You can get original service instead`);
         }
 
-        return this.createProxy();
+        return super.get()
     }
 }

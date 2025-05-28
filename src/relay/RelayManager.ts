@@ -1,24 +1,17 @@
 import get from 'get-value'
-import {
-    PropertyOptions,
-    RelayDictionary,
-    RelayGlobalKey,
-    RelayManager as RelayManagerContract,
-    RelayName
-} from "@typing/relay";
 
-export default class RelayManager implements RelayManagerContract {
-    private relays = new Map<
-        RelayName,
-        RelayDictionary[RelayName]
-    >();
+import {TransportManager} from '@transport'
 
+import {TransportName} from "@typing/transport";
+import {PropertyOptions, RelayGlobalKey, RelayManager as RelayManagerContract} from "@typing/relay";
+
+export default class RelayManager extends TransportManager implements RelayManagerContract {
     public static getInstance(): RelayManagerContract {
         return globalThis[RelayGlobalKey] ??= new RelayManager();
     }
 
     public async property(
-        name: RelayName,
+        name: TransportName,
         options?: PropertyOptions
     ): Promise<any> {
         const {path, args, getOptions} = options || {};
@@ -35,40 +28,5 @@ export default class RelayManager implements RelayManagerContract {
         }
 
         return property
-    }
-
-    public add<K extends RelayName>(
-        name: K,
-        relay: RelayDictionary[K]
-    ): this {
-        this.relays.set(name, relay);
-
-        return this;
-    }
-
-    public get<K extends RelayName>(
-        name: K
-    ): RelayDictionary[K] | undefined {
-        return this.relays.get(name) as RelayDictionary[K] | undefined;
-    }
-
-    public has(name: RelayName): boolean {
-        return this.relays.has(name);
-    }
-
-    public remove<K extends RelayName>(
-        name: K
-    ): RelayDictionary[K] | undefined {
-        const relay = this.get(name);
-
-        this.relays.delete(name);
-
-        return relay;
-    }
-
-    public clear(): this {
-        this.relays.clear();
-
-        return this;
     }
 }

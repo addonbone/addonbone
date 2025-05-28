@@ -1,7 +1,7 @@
 import get from 'get-value';
 
-import ServiceMessage from "../ServiceMessage";
-import Service from "./Service";
+import OffscreenMessage from "../OffscreenMessage";
+import Offscreen from "./Offscreen";
 
 import type {TransportDictionary, TransportMessage, TransportName} from "@typing/transport";
 
@@ -9,17 +9,17 @@ export default class<
     N extends TransportName,
     T extends object = TransportDictionary[N],
     A extends any[] = []
-> extends Service<N, T> {
+> extends Offscreen<N, T> {
     protected message: TransportMessage
 
     constructor(name: N, protected readonly init: (...args: A) => T) {
         super(name)
-        this.message = new ServiceMessage(name);
+        this.message = new OffscreenMessage(name);
     }
 
     public register(...args: A): T {
         if (this.manager().has(this.name)) {
-            throw new Error(`A service with the name "${this.name}" already exists. The service name must be unique.`);
+            throw new Error(`A offscreen service with the name "${this.name}" already exists. The offscreen service name must be unique.`);
         }
 
         const service = this.init(...args);
@@ -31,7 +31,7 @@ export default class<
                 const property = path == null ? service : get(service, path);
 
                 if (property === undefined) {
-                    throw new Error(`Property not found at path "${path}" in service "${this.name}"`);
+                    throw new Error(`Property not found at path "${path}" in offscreen service "${this.name}"`);
                 }
 
                 if (typeof property === 'function') {
@@ -41,7 +41,7 @@ export default class<
                 return property
 
             } catch (error) {
-                console.error('RegisterService.register()', error);
+                console.error('RegisterOffscreen.register()', error);
 
                 throw error;
             }

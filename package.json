@@ -48,6 +48,11 @@
       "import": "./dist/message/*/index.js",
       "require": "./dist/message/*/index.cjs"
     },
+    "./offscreen": {
+      "types": "./dist/offscreen/index.d.ts",
+      "import": "./dist/offscreen/index.js",
+      "require": "./dist/offscreen/index.cjs"
+    },
     "./storage": {
       "types": "./dist/storage/index.d.ts",
       "import": "./dist/storage/index.js",

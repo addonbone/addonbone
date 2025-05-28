@@ -52,11 +52,17 @@ export default class EntryFile {
         const parse = (node: ts.Node) => {
             if (ts.isImportDeclaration(node) && node.moduleSpecifier) {
                 const importPath = (node.moduleSpecifier as ts.StringLiteral).text;
-
-                if (node.importClause && node.importClause.namedBindings && ts.isNamedImports(node.importClause.namedBindings)) {
-                    node.importClause.namedBindings.elements.forEach(el => {
-                        this.imports?.set(el.name.text, this.getInputResolver().get(importPath));
-                    });
+                if (node.importClause) {
+                    // default import: import X from '...'
+                    if (node.importClause.name) {
+                        this.imports?.set(node.importClause.name.text, this.getInputResolver().get(importPath));
+                    }
+                    // named imports: import { A, B } from '...'
+                    if (node.importClause.namedBindings && ts.isNamedImports(node.importClause.namedBindings)) {
+                        node.importClause.namedBindings.elements.forEach(el => {
+                            this.imports?.set(el.name.text, this.getInputResolver().get(importPath));
+                        });
+                    }
                 }
             }
 

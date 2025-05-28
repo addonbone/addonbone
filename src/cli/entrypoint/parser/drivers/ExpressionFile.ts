@@ -119,7 +119,6 @@ export default class ExpressionFile extends SourceFile {
 
         // Default: parse full default export into interface-like string
         let members: Record<string, MemberSignature> | undefined;
-
         const sf = this.getSourceFile();
 
         const collect = (node: ts.Node) => {
@@ -133,9 +132,7 @@ export default class ExpressionFile extends SourceFile {
         };
 
         collect(sf);
-
         if (!members) return undefined;
-
         return this.formatMembers(members);
     }
 
@@ -438,6 +435,26 @@ export default class ExpressionFile extends SourceFile {
 
         return found;
     }
+    
+    /**
+     * Searches the AST of this file for an interface declaration by name.
+     */
+    private findInterfaceDeclaration(name: string): ts.InterfaceDeclaration | undefined {
+        const sf = this.getSourceFile();
+
+        let found: ts.InterfaceDeclaration | undefined;
+        const visit = (node: ts.Node) => {
+            if (ts.isInterfaceDeclaration(node) && node.name.text === name) {
+                found = node;
+            } else {
+                ts.forEachChild(node, visit);
+            }
+        };
+
+        ts.forEachChild(sf, visit);
+
+        return found;
+    }
 
     /**
      * Searches the AST of this file for a variable declaration by name.
@@ -464,22 +481,123 @@ export default class ExpressionFile extends SourceFile {
      * Attempts to inline a type alias by name, resolving imported or local aliases.
      */
     private inlineAliasType(name: string): string | undefined {
-        // local alias
+        // local type alias
         const local = this.findTypeAliasDeclaration(name);
 
         if (local) {
-            return this.resolveTypeNode(local.type);
+            const typeNode = local.type;
+            // handle intersection type alias by flattening members
+            if (ts.isIntersectionTypeNode(typeNode)) {
+                const parts: string[] = [];
+                for (const t of typeNode.types) {
+                    // inline object literal types
+                    if (ts.isTypeLiteralNode(t)) {
+                        for (const m of t.members) {
+                            if (ts.isPropertySignature(m) && m.type) {
+                                const key = this.getName(m.name!);
+                                const typeText = this.resolveTypeNode(m.type);
+                                parts.push(`${key}: ${typeText}`);
+                            } else if (ts.isMethodSignature(m) && m.name) {
+                                const mkey = this.getName(m.name);
+                                const typeParams = m.typeParameters ? m.typeParameters.map(tp => tp.getText()) : [];
+                                const tpText = typeParams.length ? `<${typeParams.join(',')}>` : '';
+                                const paramsText = m.parameters.map(p => {
+                                    const pname = ts.isIdentifier(p.name) ? p.name.text : p.name.getText();
+                                    const ptype = p.type ? this.resolveTypeNode(p.type) : 'any';
+                                    return `${pname}: ${ptype}`;
+                                }).join(',');
+                                const returnType = m.type ? this.resolveTypeNode(m.type) : 'any';
+                                parts.push(`${mkey}${tpText}(${paramsText}): ${returnType}`);
+                            }
+                        }
+                    }
+                    // inline referenced aliases or interfaces
+                    else if (ts.isTypeReferenceNode(t) && ts.isIdentifier(t.typeName)) {
+                        const refName = t.typeName.text;
+                        const sub = this.inlineAliasType(refName);
+                        if (sub) {
+                            const inner = sub.slice(1, -1).trim();
+                            if (inner) {
+                                parts.push(...inner.split(/;\s*/).map(s => s.trim()).filter(Boolean));
+                            }
+                        }
+                    }
+                }
+                return `{${parts.join('; ')}}`;
+            }
+            return this.resolveTypeNode(typeNode);
         }
-        // imported alias
+
+        // local interface
+        const localInterface = this.findInterfaceDeclaration(name);
+
+        if (localInterface) {
+            const props: string[] = [];
+            for (const member of localInterface.members) {
+                if (ts.isPropertySignature(member) && member.type) {
+                    const key = this.getName(member.name!);
+                    const typeText = this.resolveTypeNode(member.type);
+
+                    props.push(`${key}: ${typeText}`);
+                } else if (ts.isMethodSignature(member) && member.name) {
+                    const key = this.getName(member.name);
+                    const typeParams = member.typeParameters ? member.typeParameters.map(tp => tp.getText()) : [];
+                    const tpText = typeParams.length ? `<${typeParams.join(',')}>` : '';
+
+                    const params = member.parameters.map(p => {
+                        const pname = ts.isIdentifier(p.name) ? p.name.text : p.name.getText();
+                        const ptype = p.type ? this.resolveTypeNode(p.type) : 'any';
+                        return `${pname}: ${ptype}`;
+                    }).join(', ');
+
+                    const returnType = member.type ? this.resolveTypeNode(member.type) : 'any';
+
+                    props.push(`${key}${tpText}(${params}): ${returnType}`);
+                }
+            }
+            return `{${props.join(', ')}}`;
+        }
 
         const importPath = this.getImports().get(name);
 
         if (importPath) {
             const parser = (this.constructor as typeof ExpressionFile).make(importPath);
+
+            // imported type alias
             const aliasDecl = parser.findTypeAliasDeclaration(name);
 
             if (aliasDecl) {
                 return parser.resolveTypeNode(aliasDecl.type);
+            }
+
+            // imported interface
+            const interfaceDecl = parser.findInterfaceDeclaration(name);
+
+            if (interfaceDecl) {
+                const props: string[] = [];
+                for (const member of interfaceDecl.members) {
+                    if (ts.isPropertySignature(member) && member.type) {
+                        const key = parser.getName(member.name!);
+                        const typeText = parser.resolveTypeNode(member.type);
+
+                        props.push(`${key}: ${typeText}`);
+                    } else if (ts.isMethodSignature(member) && member.name) {
+                        const key = parser.getName(member.name);
+                        const typeParams = member.typeParameters ? member.typeParameters.map(tp => tp.getText()) : [];
+                        const tpText = typeParams.length ? `<${typeParams.join(',')}>` : '';
+
+                    const params = member.parameters.map(p => {
+                            const pname = ts.isIdentifier(p.name) ? p.name.text : p.name.getText();
+                            const ptype = p.type ? parser.resolveTypeNode(p.type) : 'any';
+                            return `${pname}: ${ptype}`;
+                    }).join(', ');
+
+                        const returnType = member.type ? parser.resolveTypeNode(member.type) : 'any';
+
+                        props.push(`${key}${tpText}(${params}): ${returnType}`);
+                    }
+                }
+                return `{${props.join(', ')}}`;
             }
         }
 
@@ -628,13 +746,9 @@ export default class ExpressionFile extends SourceFile {
                 const params = sig.parameters.map(p => `${p.name}: ${p.type}`).join(', ');
                 return `${key}${tp}(${params}): ${sig.returnType};`;
             }
-
             return `${key}: ${sig.type};`;
         });
-
-        const prefix = parts.length > 3 ? ' ' : '';
-
-        return `${prefix}{ ${parts.join(' ')} }`;
+        return `{ ${parts.join(' ')} }`;
     }
 
     /**

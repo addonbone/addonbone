@@ -19,7 +19,7 @@ describe('default function', () => {
 
         const type = ExpressionFile.make(filename).getType();
 
-        expect(type).toBe(' { name: string; version: number; getUsersMap(): Record<string, {name: string}>; getServiceInfo(): {name: string, version: number}; fetchData<T>(endpoint: string): Promise<T>; isInitialized(): boolean; getUserRoute(): string; fetchUserData<T>(endpoint: string): Promise<T>; }');
+        expect(type).toBe('{ name: string; version: number; getUsersMap(): Record<string, {name: string}>; getServiceInfo(): {name: string, version: number}; fetchData<T>(endpoint: string): Promise<T>; isInitialized(): boolean; getUserRoute(): string; fetchUserData<T>(endpoint: string): Promise<T>; }');
     });
     
     test('export default function and return default extended instance class', () => {
@@ -27,7 +27,7 @@ describe('default function', () => {
 
         const type = ExpressionFile.make(filename).getType();
 
-        expect(type).toBe(' { name: string; age: number; getInfo(): string; updateAge(newAge: number): void; id(): number; getUserName(): string; }');
+        expect(type).toBe('{ name: string; age: number; getInfo(): string; updateAge(newAge: number): void; id(): number; getUserName(): string; }');
     });
 
     test('export default function and return inline class instance', () => {
@@ -58,7 +58,15 @@ describe('default function', () => {
 
         const type = ExpressionFile.make(filename).getType();
 
-        expect(type).toBe(' { getName(): string; getAge(): any; getAddress(): any; getPhone(): any; getEmail(): any; }');
+        expect(type).toBe('{ getName(): string; getAge(): any; getAddress(): any; getPhone(): any; getEmail(): any; }');
+    });
+
+    test('export default function and return instance when type separated', () => {
+        const filename = path.join(fixtures, 'expression', 'export-instance-with-separate-types.ts');
+
+        const type = ExpressionFile.make(filename).getType();
+
+        expect(type).toBe('{ getBar(): {bar: string}; getBarWithFoo(): {bar: string; foo: string}; }');
     });
 });
 

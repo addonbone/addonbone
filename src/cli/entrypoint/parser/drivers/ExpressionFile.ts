@@ -523,7 +523,7 @@ export default class ExpressionFile extends SourceFile {
                         }
                     }
                 }
-                return `{${parts.join('; ')}}`;
+                return `{${parts.join('; ')};}`;
             }
             return this.resolveTypeNode(typeNode);
         }
@@ -555,7 +555,7 @@ export default class ExpressionFile extends SourceFile {
                     props.push(`${key}${tpText}(${params}): ${returnType}`);
                 }
             }
-            return `{${props.join(', ')}}`;
+            return `{${props.join('; ')};}`;
         }
 
         const importPath = this.getImports().get(name);
@@ -597,7 +597,7 @@ export default class ExpressionFile extends SourceFile {
                         props.push(`${key}${tpText}(${params}): ${returnType}`);
                     }
                 }
-                return `{${props.join(', ')}}`;
+                return `{${props.join('; ')};}`;
             }
         }
 

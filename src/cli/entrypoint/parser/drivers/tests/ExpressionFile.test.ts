@@ -66,7 +66,15 @@ describe('default function', () => {
 
         const type = ExpressionFile.make(filename).getType();
 
-        expect(type).toBe('{ getBar(): {bar: string}; getBarWithFoo(): {bar: string; foo: string}; }');
+        expect(type).toBe('{ getBar(): {bar: string;}; getBarWithFoo(): {bar: string; foo: string;}; }');
+    });
+
+    test('export default function and return instance when type is external', () => {
+        const filename = path.join(fixtures, 'expression', 'export-instance-with-external-types.ts');
+
+        const type = ExpressionFile.make(filename).getType();
+
+        expect(type).toBe('{ getUserInfo(): {id: number; name: string;}; }');
     });
 });
 

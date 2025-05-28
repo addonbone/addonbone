@@ -533,12 +533,31 @@ export default class ExpressionFile extends SourceFile {
 
         if (localInterface) {
             const props: string[] = [];
+            // include inherited members from extended interfaces
+            if (localInterface.heritageClauses) {
+                for (const clause of localInterface.heritageClauses) {
+                    if (clause.token === ts.SyntaxKind.ExtendsKeyword) {
+                        for (const typeNode of clause.types) {
+                            const expr = typeNode.expression;
+                            if (ts.isIdentifier(expr)) {
+                                const parent = this.inlineAliasType(expr.text);
+                                if (parent) {
+                                    const inner = parent.slice(1, -1).trim();
+                                    if (inner) {
+                                        props.push(...inner.split(/;\s*/).map(s => s.trim()).filter(Boolean));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
             for (const member of localInterface.members) {
                 if (ts.isPropertySignature(member) && member.type) {
                     const key = this.getName(member.name!);
+                    const optional = member.questionToken ? '?' : '';
                     const typeText = this.resolveTypeNode(member.type);
-
-                    props.push(`${key}: ${typeText}`);
+                    props.push(`${key}${optional}: ${typeText}`);
                 } else if (ts.isMethodSignature(member) && member.name) {
                     const key = this.getName(member.name);
                     const typeParams = member.typeParameters ? member.typeParameters.map(tp => tp.getText()) : [];
@@ -575,12 +594,31 @@ export default class ExpressionFile extends SourceFile {
 
             if (interfaceDecl) {
                 const props: string[] = [];
+                // include inherited members from extended interfaces
+                if (interfaceDecl.heritageClauses) {
+                    for (const clause of interfaceDecl.heritageClauses) {
+                        if (clause.token === ts.SyntaxKind.ExtendsKeyword) {
+                            for (const typeNode of clause.types) {
+                                const expr = typeNode.expression;
+                                if (ts.isIdentifier(expr)) {
+                                    const parent = parser.inlineAliasType(expr.text);
+                                    if (parent) {
+                                        const inner = parent.slice(1, -1).trim();
+                                        if (inner) {
+                                            props.push(...inner.split(/;\s*/).map(s => s.trim()).filter(Boolean));
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
                 for (const member of interfaceDecl.members) {
                     if (ts.isPropertySignature(member) && member.type) {
                         const key = parser.getName(member.name!);
+                        const optional = member.questionToken ? '?' : '';
                         const typeText = parser.resolveTypeNode(member.type);
-
-                        props.push(`${key}: ${typeText}`);
+                        props.push(`${key}${optional}: ${typeText}`);
                     } else if (ts.isMethodSignature(member) && member.name) {
                         const key = parser.getName(member.name);
                         const typeParams = member.typeParameters ? member.typeParameters.map(tp => tp.getText()) : [];

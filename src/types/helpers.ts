@@ -15,6 +15,8 @@ export type DeepAsyncProxy<T> = {
     T[K] extends (...args: any[]) => any
         ? (...args: Parameters<T[K]>) => Promise<Awaited<ReturnType<T[K]>>>
         : T[K] extends object
-            ? DeepAsyncProxy<T[K]>
+            ? DeepAsyncProxyObject<T[K]>
             : () => Promise<Awaited<T[K]>>;
 };
+
+export type DeepAsyncProxyObject<T> = (() => Promise<DeepAsyncProxy<T>>) & DeepAsyncProxy<T>;

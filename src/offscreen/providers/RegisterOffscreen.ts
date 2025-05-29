@@ -1,3 +1,4 @@
+import {isOffscreen} from "@offscreen/utils";
 import {RegisterTransport} from "@transport"
 
 import OffscreenMessage from "../OffscreenMessage";
@@ -20,5 +21,13 @@ export default class<
 
     protected manager() {
         return OffscreenManager.getInstance();
+    }
+
+    public get(): T {
+        if (!isOffscreen()) {
+            throw new Error(`Offscreen service "${this.name}" can be getting only from offscreen context.`);
+        }
+
+        return super.get()
     }
 }

@@ -1,3 +1,4 @@
+import {isBackground} from "@browser/runtime";
 import {RegisterTransport} from "@transport"
 
 import ServiceMessage from "../ServiceMessage";
@@ -20,5 +21,13 @@ export default class<
 
     protected manager() {
         return ServiceManager.getInstance();
+    }
+
+    public get(): T {
+        if (!isBackground()) {
+            throw new Error(`Service "${this.name}" can be getting only from background context.`);
+        }
+
+        return super.get()
     }
 }

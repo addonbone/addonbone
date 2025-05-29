@@ -159,6 +159,6 @@ describe('RegisterService', () => {
     test("throws an error when attempting to register the same service twice", async () => {
         const service = new RegisterService<typeof serviceName, ServiceType>(serviceName, () => MatchService)
 
-        expect(() => service.register()).toThrow(`A service with the name "${serviceName}" already exists. The service name must be unique.`);
+        expect(() => service.register()).toThrow(`A instance with name "${serviceName}" already exists. The name must be unique.`);
     });
 })

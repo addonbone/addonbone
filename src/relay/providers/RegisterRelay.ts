@@ -16,10 +16,6 @@ export default class<
             throw new Error(`A relay with the name "${this.name}" already exists. The relay name must be unique.`);
         }
 
-        const relay = this.init(...args)
-
-        this.manager().add(this.name, relay)
-
-        return relay;
+        return this.initAndSave(this.init, args);
     }
 }

@@ -22,23 +22,11 @@ export default class<
             throw new Error(`A service with the name "${this.name}" already exists. The service name must be unique.`);
         }
 
-        const service = this.init(...args);
-
-        this.manager().add(this.name, service);
+        const service = this.initAndSave(this.init, args);
 
         this.message.watch(async ({path, args}) => {
             try {
-                const property = path == null ? service : get(service, path);
-
-                if (property === undefined) {
-                    throw new Error(`Property not found at path "${path}" in service "${this.name}"`);
-                }
-
-                if (typeof property === 'function') {
-                    return await property.apply(service, args);
-                }
-
-                return property
+                return await this.getProperty(args, service, path);
 
             } catch (error) {
                 console.error('RegisterService.register()', error);

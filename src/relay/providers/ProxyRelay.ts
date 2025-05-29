@@ -26,7 +26,7 @@ export default class ProxyRelay<N extends TransportName, T = DeepAsyncProxy<Tran
 
             func: async (name: string, path: string, args: any[], key: string) => {
                 try {
-                    const awaiter = async (key: string, maxAttempts = 10, delay = 300): Promise<any> => {
+                    const awaitManager = async (maxAttempts = 10, delay = 300): Promise<RelayManagerContract> => {
                         for (let count = 0; count < maxAttempts; count++) {
                             const manager = globalThis[key];
 
@@ -38,7 +38,7 @@ export default class ProxyRelay<N extends TransportName, T = DeepAsyncProxy<Tran
                         throw new Error(`Relay manager not found after ${maxAttempts} attempts.`);
                     }
 
-                    const manager: RelayManagerContract = await awaiter(key);
+                    const manager: RelayManagerContract = await awaitManager();
 
                     return await manager.property(name, {path, args});
                 } catch (error) {

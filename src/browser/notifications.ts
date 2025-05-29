@@ -2,7 +2,8 @@ import {browser} from "./browser";
 import {handleListener} from "./utils";
 import {throwRuntimeError} from "./runtime";
 
-type NotificationOptions<T extends boolean = false> = chrome.notifications.NotificationOptions<T>;
+type NotificationOptions = chrome.notifications.NotificationOptions;
+type NotificationCreateOptions = chrome.notifications.NotificationCreateOptions;
 
 const notifications = () => browser().notifications as typeof chrome.notifications;
 
@@ -20,9 +21,8 @@ export const clearNotification = (notificationId: string): Promise<boolean> => n
 });
 
 export const createNotification = (options: NotificationOptions, notificationId?: string): Promise<string> => new Promise<string>((resolve, reject) => {
-    const defaultOptions: NotificationOptions<true> = {
+    const defaultOptions: NotificationCreateOptions = {
         type: 'basic',
-        priority: 1,
         title: '',
         message: '',
         iconUrl: '',
@@ -32,7 +32,7 @@ export const createNotification = (options: NotificationOptions, notificationId?
         notificationId = Date.now().toString();
     }
 
-    notifications().create(notificationId, {...defaultOptions, ...options}, (notificationId) => {
+    notifications().create(notificationId, {...defaultOptions, ...options,}, (notificationId) => {
         try {
             throwRuntimeError();
 

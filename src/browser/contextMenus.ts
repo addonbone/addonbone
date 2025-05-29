@@ -3,7 +3,6 @@ import {handleListener} from "./utils";
 import {throwRuntimeError} from "./runtime";
 
 type CreateProperties = chrome.contextMenus.CreateProperties;
-type UpdateProperties = chrome.contextMenus.UpdateProperties;
 
 const contextMenus = () => browser().contextMenus as typeof chrome.contextMenus;
 
@@ -44,7 +43,7 @@ export const removeAllContextMenu = (): Promise<void> => new Promise<void>((reso
     });
 });
 
-export const updateContextMenu = (id: string | number, updateProperties?: UpdateProperties): Promise<void> => new Promise<void>((resolve, reject) => {
+export const updateContextMenu = (id: string | number, updateProperties?: Omit<CreateProperties, 'id'>): Promise<void> => new Promise<void>((resolve, reject) => {
     contextMenus().update(id, updateProperties || {}, () => {
         try {
             throwRuntimeError();

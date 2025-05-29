@@ -19,21 +19,33 @@ export default class ProxyRelay<N extends TransportName, T = DeepAsyncProxy<Tran
     }
 
     protected async apply(args: any[], path?: string): Promise<any> {
-        const target = typeof this.options === 'number' ? {tabId: this.options} : this.options;
-
         const result = await executeScript({
-            target,
+            target: typeof this.options === 'number' ? {tabId: this.options} : this.options,
+
+            args: [this.name, path!, args, RelayGlobalKey],
 
             func: async (name: string, path: string, args: any[], key: string) => {
                 try {
-                    return await globalThis[key].property(name, {path, args})
+                    const awaitManager = async (maxAttempts = 10, delay = 300): Promise<RelayManagerContract> => {
+                        for (let count = 0; count < maxAttempts; count++) {
+                            const manager = globalThis[key];
+
+                            if (manager) return manager;
+
+                            await new Promise((resolve) => setTimeout(resolve, delay));
+                        }
+
+                        throw new Error(`Relay manager not found after ${maxAttempts} attempts.`);
+                    }
+
+                    const manager: RelayManagerContract = await awaitManager();
+
+                    return await manager.property(name, {path, args});
                 } catch (error) {
                     console.error('ProxyRelay.createProxy()', error)
                     throw error
                 }
             },
-
-            args: [this.name, path!, args, RelayGlobalKey],
         });
 
         return result?.[0]?.result;

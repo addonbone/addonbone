@@ -142,7 +142,7 @@
     "@rspack/cli": "^1.3.8",
     "@rspack/core": "^1.3.8",
     "@svgr/webpack": "^8.1.0",
-    "@types/chrome": "^0.0.307",
+    "@types/chrome": "^0.0.323",
     "c12": "^3.0.3",
     "cac": "^6.7.14",
     "clean-webpack-plugin": "^4.0.0",

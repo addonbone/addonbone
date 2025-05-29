@@ -32,7 +32,7 @@ export const createNotification = (options: NotificationOptions, notificationId?
         notificationId = Date.now().toString();
     }
 
-    notifications().create(notificationId, {...defaultOptions, ...options,}, (notificationId) => {
+    notifications().create(notificationId, {...defaultOptions, ...options}, (notificationId) => {
         try {
             throwRuntimeError();
 

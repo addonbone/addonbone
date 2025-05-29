@@ -2,11 +2,11 @@ import get from 'get-value'
 
 import {TransportManager} from '@transport'
 
-import {TransportName} from "@typing/transport";
-import {PropertyOptions, RelayGlobalKey, RelayManager as RelayManagerContract} from "@typing/relay";
+import {TransportManager as TransportManagerContract, TransportName} from "@typing/transport";
+import {PropertyOptions, RelayGlobalKey} from "@typing/relay";
 
-export default class RelayManager extends TransportManager implements RelayManagerContract {
-    public static getInstance(): RelayManagerContract {
+export default class RelayManager extends TransportManager {
+    public static getInstance(): TransportManagerContract {
         return globalThis[RelayGlobalKey] ??= new RelayManager();
     }
 

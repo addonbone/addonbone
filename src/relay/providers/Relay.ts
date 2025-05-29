@@ -1,8 +1,7 @@
 import {isAvailableScripting} from "@browser/scripting";
 import {BaseTransport} from "@transport";
 
-import {TransportDictionary, TransportName} from "@typing/transport";
-import {RelayManager as RelayManagerContract} from "@typing/relay";
+import {TransportDictionary, TransportManager, TransportName} from "@typing/transport";
 
 import RelayManager from "../RelayManager";
 
@@ -11,7 +10,7 @@ export default class<N extends TransportName, T = TransportDictionary[N]> extend
         super(name);
     }
 
-    protected manager(): RelayManagerContract {
+    protected manager(): TransportManager {
         return RelayManager.getInstance();
     }
 

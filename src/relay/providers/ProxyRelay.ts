@@ -3,9 +3,10 @@ import {ProxyTransport} from "@transport";
 
 import RelayManager from "../RelayManager";
 
-import {RelayGlobalKey, RelayManager as RelayManagerContract} from "@typing/relay";
+import {RelayGlobalKey} from "@typing/relay";
+
 import type {DeepAsyncProxy} from "@typing/helpers";
-import type {TransportDictionary, TransportName} from "@typing/transport";
+import type {TransportDictionary, TransportManager, TransportName} from "@typing/transport";
 
 type InjectionTarget = chrome.scripting.InjectionTarget;
 
@@ -14,7 +15,7 @@ export default class ProxyRelay<N extends TransportName, T = DeepAsyncProxy<Tran
         super(name);
     }
 
-    protected manager(): RelayManagerContract {
+    protected manager(): TransportManager {
         return RelayManager.getInstance();
     }
 
@@ -26,7 +27,7 @@ export default class ProxyRelay<N extends TransportName, T = DeepAsyncProxy<Tran
 
             func: async (name: string, path: string, args: any[], key: string) => {
                 try {
-                    const awaitManager = async (maxAttempts = 10, delay = 300): Promise<RelayManagerContract> => {
+                    const awaitManager = async (maxAttempts = 10, delay = 300): Promise<RelayManager> => {
                         for (let count = 0; count < maxAttempts; count++) {
                             const manager = globalThis[key];
 
@@ -38,7 +39,7 @@ export default class ProxyRelay<N extends TransportName, T = DeepAsyncProxy<Tran
                         throw new Error(`Relay manager not found after ${maxAttempts} attempts.`);
                     }
 
-                    const manager: RelayManagerContract = await awaitManager();
+                    const manager: RelayManager = await awaitManager();
 
                     return await manager.property(name, {path, args});
                 } catch (error) {

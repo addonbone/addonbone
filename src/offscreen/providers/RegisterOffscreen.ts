@@ -1,8 +1,8 @@
-import {isBackground} from "@browser/runtime";
+import {isOffscreen} from "@offscreen/utils";
 import {RegisterTransport} from "@transport"
 
-import ServiceMessage from "../ServiceMessage";
-import ServiceManager from "../ServiceManager";
+import OffscreenMessage from "../OffscreenMessage";
+import OffscreenManager from "../OffscreenManager";
 
 import type {TransportDictionary, TransportName} from "@typing/transport";
 
@@ -16,16 +16,16 @@ export default class<
     }
 
     protected message() {
-        return new ServiceMessage(this.name);
+        return new OffscreenMessage(this.name);
     }
 
     protected manager() {
-        return ServiceManager.getInstance();
+        return OffscreenManager.getInstance();
     }
 
     public get(): T {
-        if (!isBackground()) {
-            throw new Error(`Service "${this.name}" can be getting only from background context.`);
+        if (!isOffscreen()) {
+            throw new Error(`Offscreen service "${this.name}" can be getting only from offscreen context.`);
         }
 
         return super.get()

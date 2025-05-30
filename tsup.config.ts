@@ -51,6 +51,8 @@ const framework: Options = {
         'message/index': 'src/message/index.ts',
         'message/react/index': 'src/message/react/index.ts',
 
+        'offscreen/index': 'src/offscreen/index.ts',
+
         'storage/index': 'src/storage/index.ts',
         'storage/react/index': 'src/storage/react/index.ts',
 

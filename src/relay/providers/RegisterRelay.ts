@@ -1,21 +1,25 @@
-import BaseRelay from "./BaseRelay";
+import Relay from "./Relay";
 
-import type {RelayDictionary, RelayName} from "@typing/relay";
+import type {TransportDictionary, TransportName} from "@typing/transport";
 
 export default class<
-    N extends RelayName,
-    T extends object = RelayDictionary[N],
+    N extends TransportName,
+    T extends object = TransportDictionary[N],
     A extends any[] = []
-> extends BaseRelay<N, T> {
+> extends Relay<N, T> {
     constructor(name: N, protected readonly init: (...args: A) => T) {
         super(name)
     }
 
-    public register(...args: A) {
-        if (this.manager.has(this.name)) {
+    public register(...args: A): T {
+        if (this.manager().has(this.name)) {
             throw new Error(`A relay with the name "${this.name}" already exists. The relay name must be unique.`);
         }
 
-        this.manager.add(this.name, this.init(...args))
+        const relay = this.init(...args);
+
+        this.manager().add(this.name, relay);
+
+        return relay
     }
 }

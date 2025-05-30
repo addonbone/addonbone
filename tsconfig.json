@@ -40,8 +40,17 @@
       "@message/*": [
         "message/*"
       ],
+      "@offscreen/*": [
+        "offscreen/*"
+      ],
+      "@relay/*": [
+        "relay/*"
+      ],
       "@service/*": [
         "service/*"
+      ],
+      "@transport": [
+        "transport"
       ],
       "@typing/*": [
         "types/*"

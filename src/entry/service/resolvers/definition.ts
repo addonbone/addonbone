@@ -1,14 +1,15 @@
-import {ServiceDefinition, ServiceInitGetter, ServiceType} from "@typing/service";
+import {TransportType} from "@typing/transport";
+import {ServiceDefinition, ServiceInitGetter} from "@typing/service";
 
-export const isValidServiceDefinition = <T extends ServiceType>(definition: any): definition is ServiceDefinition<T> => {
+export const isValidServiceDefinition = <T extends TransportType>(definition: any): definition is ServiceDefinition<T> => {
     return definition && typeof definition === 'object' && definition.constructor === Object;
 }
 
-export const isValidServiceInitFunction = <T extends ServiceType>(init: any): init is ServiceInitGetter<T> => {
+export const isValidServiceInitFunction = <T extends TransportType>(init: any): init is ServiceInitGetter<T> => {
     return init && typeof init === 'function';
 }
 
-export const isValidServiceMainFunction = <T extends ServiceType>(main: any): main is ServiceInitGetter<T> => {
+export const isValidServiceMainFunction = <T extends TransportType>(main: any): main is ServiceInitGetter<T> => {
     return main && typeof main === 'function';
 }
 

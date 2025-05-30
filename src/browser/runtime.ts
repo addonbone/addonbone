@@ -16,7 +16,7 @@ type RequestUpdateCheck = {
 
 const runtime = () => browser().runtime as typeof chrome.runtime;
 
-const backgroundPaths = ['/_generated_background_page.view'];
+const backgroundPaths = ['/_generated_background_page.html'];
 
 
 // Methods

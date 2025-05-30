@@ -17,11 +17,18 @@ const isValid = (filePath: string): boolean => {
 }
 
 const findFile = (basePath: string): string | undefined => {
-    for (const ext of EntrypointFileExtensions) {
-        const candidate = `${basePath}.${ext}`;
+    const candidates = [
+        basePath,
+        path.join(basePath, 'index'),
+    ];
 
-        if (fs.existsSync(candidate)) {
-            return candidate;
+    for (const ext of EntrypointFileExtensions) {
+        for (const candidate of candidates) {
+            const pathname = `${candidate}.${ext}`;
+
+            if (fs.existsSync(pathname)) {
+                return pathname;
+            }
         }
     }
 }

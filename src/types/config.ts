@@ -299,6 +299,14 @@ export interface Config {
     multiplePopup: boolean;
 
     /**
+     * Flag indicating whether to merge relay files from App and Shared directories.
+     * When `true`, relay files from both directories will be combined.
+     *
+     * @default false
+     */
+    mergeRelay: boolean;
+
+    /**
      * Flag indicating whether to merge service files from App and Shared directories.
      * When `true`, view files from both directories will be combined.
      */

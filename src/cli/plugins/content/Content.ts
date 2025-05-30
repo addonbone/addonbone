@@ -1,49 +1,36 @@
+import ContentDriver from "./ContentDriver";
+
+import {ContentProvider} from "./types";
+
 import {ContentFinder} from "@cli/entrypoint";
+import {virtualContentScriptModule} from "@cli/virtual";
 
 import {ReadonlyConfig} from "@typing/config";
-import {EntrypointEntries} from "@typing/entrypoint";
-import {ManifestContentScripts} from "@typing/manifest";
 import {ContentScriptEntrypointOptions} from "@typing/content";
+import {EntrypointFile} from "@typing/entrypoint";
 
-export default class extends ContentFinder {
-    public constructor(config: ReadonlyConfig) {
+export default class extends ContentFinder implements ContentProvider<ContentScriptEntrypointOptions> {
+    protected _driver?: ContentDriver<ContentScriptEntrypointOptions>;
+
+    constructor(config: ReadonlyConfig) {
         super(config);
-
-        this.names.reserve(this.getFrameworkEntry());
     }
 
-    public getFrameworkEntry(): string {
-        return 'common.' + this.type();
+    public driver(): ContentDriver<ContentScriptEntrypointOptions> {
+        return this._driver ??= new ContentDriver(this);
     }
 
-    public async entries(): Promise<EntrypointEntries> {
-        const entries: EntrypointEntries = new Map;
-
-        for (const [entry, items] of await this.content()) {
-            entries.set(entry, new Set(Array.from(items, ({file}) => file)));
+    public virtual(file: EntrypointFile): string {
+        if (!this.holds(file)) {
+            throw new Error(`File ${file} not found for content script`);
         }
 
-        return entries;
+        return virtualContentScriptModule(file);
     }
 
-    public async manifest(): Promise<ManifestContentScripts> {
-        const manifest: ManifestContentScripts = new Set;
+    public clear(): this {
+        this._driver?.clear();
 
-        for (const [entry, items] of await this.content()) {
-            const {
-                includeApp,
-                excludeApp,
-                includeBrowser,
-                excludeBrowser,
-                ...options
-            } = Array.from(items, ({options}) => options)
-                .reduce((acc, opt) => {
-                    return {...acc, ...opt};
-                }, {} as ContentScriptEntrypointOptions);
-
-            manifest.add({entry, ...options});
-        }
-
-        return manifest;
+        return super.clear();
     }
 }

@@ -7,7 +7,6 @@ import {getAppPath, getAppSourcePath, getSharedPath, getSourcePath} from "@cli/r
 import {ReadonlyConfig} from "@typing/config";
 import {EntrypointFile, EntrypointFinder} from "@typing/entrypoint";
 
-
 export default abstract class implements EntrypointFinder {
     protected _files?: Set<EntrypointFile>;
 
@@ -56,6 +55,10 @@ export default abstract class implements EntrypointFinder {
 
     public async exists(): Promise<boolean> {
         return !await this.empty();
+    }
+
+    public holds(file: EntrypointFile): boolean {
+        return this._files?.has(file) || false;
     }
 
     protected file(filename: string): EntrypointFile {

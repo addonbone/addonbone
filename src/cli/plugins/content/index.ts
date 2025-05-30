@@ -1,39 +1,51 @@
 import {Configuration as RspackConfig} from "@rspack/core";
 
+import ContentManager from "./ContentManager";
 import Content from "./Content";
+import Relay from "./Relay";
 
 import {definePlugin} from "@main/plugin";
-import {virtualContentScriptModule} from "@cli/virtual";
 
 import {EntrypointPlugin, isEntryModuleOrIssuer} from "@cli/bundler";
 
 import {Command} from "@typing/app";
 
-export {Content};
 
 export default definePlugin(() => {
     let content: Content;
+    let relay: Relay;
+    let manager: ContentManager;
 
     return {
         name: 'adnbn:content',
-        startup: ({config}) => {
+        startup: async ({config}) => {
             content = new Content(config);
+            relay = new Relay(config);
+
+            manager = new ContentManager(config)
+                .provider(content)
+                .provider(relay);
         },
         content: () => content.files(),
+        relay: () => relay.files(),
         bundler: async ({config}) => {
-            if (await content.empty()) {
+
+            if (await manager.empty()) {
                 if (config.debug) {
-                    console.warn('Content script entries not found');
+                    console.warn('Content script or relay entries not found');
                 }
 
                 return {};
             }
 
-            const plugin = EntrypointPlugin.from(await content.entries())
-                .virtual(file => virtualContentScriptModule(file));
+            await relay.transport();
+
+
+            const plugin = EntrypointPlugin.from(await manager.entries())
+                .virtual(file => manager.virtual(file));
 
             if (config.command === Command.Watch) {
-                plugin.watch(() => content.clear().entries());
+                plugin.watch(() => manager.clear().entries());
             }
 
             return {
@@ -43,8 +55,8 @@ export default definePlugin(() => {
                         cacheGroups: {
                             frameworkContent: {
                                 minChunks: 2,
-                                name: content.getFrameworkEntry(),
-                                test: isEntryModuleOrIssuer('content'),
+                                name: manager.chunkName(),
+                                test: isEntryModuleOrIssuer(['content', 'relay']),
                                 chunks: (chunk): boolean => {
                                     const {name} = chunk;
 
@@ -52,7 +64,7 @@ export default definePlugin(() => {
                                         return false;
                                     }
 
-                                    return content.likely(name);
+                                    return manager.likely(name);
                                 },
                                 enforce: false,
                                 reuseExistingChunk: true,
@@ -64,7 +76,7 @@ export default definePlugin(() => {
             } satisfies RspackConfig;
         },
         manifest: async ({manifest}) => {
-            manifest.setContentScripts(await content.manifest());
+            manifest.setContentScripts(await manager.manifest());
         }
     };
 });

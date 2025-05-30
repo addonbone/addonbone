@@ -12,14 +12,6 @@ export default class extends ServiceFinder {
     }
 
     public get(file: EntrypointFile): ServiceConfig | undefined {
-        return this._services?.get(file)?.options;
-    }
-
-    public async dictionary(): Promise<Record<string, string>> {
-        const services = await this.services();
-
-        return services.values().reduce((dictionary, service) => {
-            return {...dictionary, [service.options.name]: service.contract || 'any'};
-        }, {} as Record<string, string>);
+        return this._transport?.get(file)?.options;
     }
 }

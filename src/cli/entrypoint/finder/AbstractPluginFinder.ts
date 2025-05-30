@@ -1,6 +1,6 @@
 import EntrypointFinder from "./EntrypointFinder";
 
-import {EntrypointOptions, EntrypointOptionsFinder} from "@typing/entrypoint";
+import {EntrypointFile, EntrypointOptions, EntrypointOptionsFinder} from "@typing/entrypoint";
 
 export default abstract class<O extends EntrypointOptions> extends EntrypointFinder<O> {
     protected _plugin?: EntrypointOptionsFinder<O>;
@@ -11,13 +11,17 @@ export default abstract class<O extends EntrypointOptions> extends EntrypointFin
         return this._plugin ??= this.getPlugin();
     }
 
+    async empty(): Promise<boolean> {
+        return this.plugin().empty();
+    }
+
     public clear(): this {
         this.plugin().clear();
 
         return super.clear();
     }
 
-    async empty(): Promise<boolean> {
-        return this.plugin().empty();
+    public holds(file: EntrypointFile): boolean {
+        return this.plugin().holds(file);
     }
 }

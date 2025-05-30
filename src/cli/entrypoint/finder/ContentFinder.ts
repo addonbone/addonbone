@@ -1,35 +1,16 @@
-import _ from "lodash";
-
-import stringify from "json-stringify-deterministic";
-
 import AbstractPluginFinder from "./AbstractPluginFinder";
 import PluginFinder from "./PluginFinder";
 
-import {NameGenerator} from "../name";
 import {ContentParser} from "../parser";
 
 import {ReadonlyConfig} from "@typing/config";
 import {ContentScriptEntrypointOptions} from "@typing/content";
-import {EntrypointFile, EntrypointOptionsFinder, EntrypointParser, EntrypointType} from "@typing/entrypoint";
+import {EntrypointOptionsFinder, EntrypointParser, EntrypointType} from "@typing/entrypoint";
 
-export interface ContentItem {
-    file: EntrypointFile;
-    options: ContentScriptEntrypointOptions;
-}
-
-export type ContentItems = Map<string, Set<ContentItem>>;
 
 export default class extends AbstractPluginFinder<ContentScriptEntrypointOptions> {
-    protected _content?: ContentItems;
-
-    protected readonly _names = new Map<string, string>();
-
-    protected readonly names: NameGenerator;
-
     public constructor(config: ReadonlyConfig) {
         super(config);
-
-        this.names = new NameGenerator(this.type());
     }
 
     public type(): EntrypointType {
@@ -44,65 +25,7 @@ export default class extends AbstractPluginFinder<ContentScriptEntrypointOptions
         return new ContentParser(this.config);
     }
 
-    protected async getContent(): Promise<ContentItems> {
-        const options = await this.plugin().options();
-
-        return _.chain(Array.from(options.entries()))
-            .groupBy(([file, options]) => {
-                return this.createName(file, options);
-            })
-            .reduce((content, items, name) => {
-                const value = new Set<ContentItem>();
-
-                for (const [file, options] of items) {
-                    value.add({file, options});
-                }
-
-                content.set(name, value);
-
-                return content;
-            }, new Map as ContentItems)
-            .value();
-    }
-
-    public async content(): Promise<ContentItems> {
-       return this._content ??= await this.getContent();
-    }
-
-    public likely(name: string): boolean {
-        return this.names.likely(name);
-    }
-
     public canMerge(): boolean {
         return this.config.mergeContentScripts;
-    }
-
-    public clear(): this {
-        this.names.reset();
-
-        this._names.clear();
-        this._content = undefined;
-
-        return super.clear();
-    }
-
-    protected createName(file: EntrypointFile, options: ContentScriptEntrypointOptions): string {
-        const entry = this.names.file(file);
-
-        if (!this.config.concatContentScripts) {
-            return entry;
-        }
-
-        const key = stringify(options);
-
-        const existingEntry = this._names.get(key);
-
-        if (existingEntry) {
-            return existingEntry;
-        }
-
-        this._names.set(key, entry);
-
-        return entry;
     }
 }

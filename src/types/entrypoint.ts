@@ -8,6 +8,7 @@ export enum EntrypointType {
     ContentScript = 'content',
     Page = 'page',
     Service = 'service',
+    Relay = 'relay',
     Options = 'options',
     Popup = 'popup',
     Sidebar = 'sidebar',
@@ -77,6 +78,8 @@ export interface EntrypointFinder {
     exists(): Promise<boolean>;
 
     clear(): this;
+
+    holds(file: EntrypointFile): boolean;
 }
 
 export interface EntrypointOptionsFinder<O extends EntrypointOptions> extends EntrypointFinder {
@@ -108,7 +111,3 @@ export interface EntrypointBuilder {
 }
 
 export type EntrypointConstructorParameter<T> = T extends new (arg: infer P) => any ? P : never;
-
-export type EntrypointBuilderClass<T> = T extends new (...args: any[]) => any
-    ? EntrypointConstructorParameter<T>
-    : never;

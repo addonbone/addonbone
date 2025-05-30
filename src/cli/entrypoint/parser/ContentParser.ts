@@ -5,8 +5,8 @@ import AbstractParser from "./AbstractParser";
 import {ContentScriptEntrypointOptions, ContentScriptMatches} from "@typing/content";
 import {EntrypointFile} from "@typing/entrypoint";
 
-export default class extends AbstractParser<ContentScriptEntrypointOptions> {
-    protected definition(): string[] {
+export default class<O extends ContentScriptEntrypointOptions = ContentScriptEntrypointOptions> extends AbstractParser<O> {
+    protected definition(): string | string[] {
         return ['defineContentScript', 'defineContentScriptAppend']
     }
 
@@ -18,13 +18,13 @@ export default class extends AbstractParser<ContentScriptEntrypointOptions> {
             includeGlobs: z.array(z.string()).optional(),
             excludeGlobs: z.array(z.string()).optional(),
             allFrames: z.boolean().optional(),
-            world: z.enum(['isolated', 'normal']).optional(),
+            world: z.enum(['ISOLATED', 'MAIN']).optional(),
             runAt: z.enum(['document_start', 'document_end', 'document_idle']).optional(),
             matchOriginAsFallback: z.boolean().optional(),
         });
     }
 
-    public options(file: EntrypointFile): ContentScriptEntrypointOptions {
+    public options(file: EntrypointFile): O {
         const options = super.options(file);
 
         return {

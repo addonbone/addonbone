@@ -121,6 +121,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         mergePages = false,
         mergePopup = false,
         multiplePopup = false,
+        mergeRelay = false,
         mergeServices = false,
     } = config;
 
@@ -157,6 +158,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         mergePages,
         mergePopup,
         multiplePopup,
+        mergeRelay,
         mergeServices,
     };
 

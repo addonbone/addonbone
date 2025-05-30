@@ -1,3 +1,4 @@
+import {EntrypointOptions} from "@typing/entrypoint";
 import {DeepAsyncProxy} from "@typing/helpers";
 
 export type TransportType = ((...args: any[]) => Promise<any>) | { [key: string]: any | TransportType };
@@ -38,3 +39,11 @@ export interface TransportMessage {
 
     watch(handler: (data: TransportMessageData) => any): void
 }
+
+export interface TransportConfig {
+    name: string;
+}
+
+export type TransportOptions = TransportConfig & EntrypointOptions;
+
+export type TransportEntrypointOptions = Partial<TransportOptions>;

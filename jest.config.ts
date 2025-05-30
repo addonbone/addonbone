@@ -14,6 +14,7 @@ const config: Config = {
         "^@cli/(.*)$": "<rootDir>/src/cli/$1",
         "^@entry/(.*)$": "<rootDir>/src/entry/$1",
         "^@locale/(.*)$": "<rootDir>/src/locale/$1",
+        "^@offscreen/(.*)$": "<rootDir>/src/offscreen/$1",
         "^@message/(.*)$": "<rootDir>/src/message/$1",
         "^@service/(.*)$": "<rootDir>/src/service/$1",
         "^@transport": "<rootDir>/src/transport",

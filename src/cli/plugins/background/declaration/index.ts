@@ -1,1 +1,1 @@
-export {default as ServiceDeclaration} from "./ServiceDeclaration";
+export * from "./service";

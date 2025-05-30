@@ -1,4 +1,4 @@
-import {FileBuilder} from "../../typescript";
+import {FileBuilder} from "../../../typescript";
 
 import template from "./service.d.ts?raw";
 import {ReadonlyConfig} from "@typing/config";
@@ -25,7 +25,7 @@ export default class<T extends Record<string, string> = Record<string, string>> 
             return `'${key}': ${value};`;
         }).join('\n\t\t');
 
-        return template.replace('interface ServiceRegistry {}', `interface ServiceRegistry {\n\t\t${type}\n\t}`);
+        return template.replace('interface ServiceRegistry { [name: string]: any }', `interface ServiceRegistry {\n\t\t${type}\n\t}`);
     }
 
     public dictionary(dictionary: T): this {

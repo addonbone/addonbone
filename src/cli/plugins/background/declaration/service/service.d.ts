@@ -2,7 +2,7 @@ import ':package';
 import type {ServiceProxyTarget, ServiceTarget} from ':package/service';
 
 declare module ':package' {
-    export interface ServiceRegistry {}
+    export interface ServiceRegistry { [name: string]: any }
 
     export function getService<N extends keyof ServiceRegistry>(name: N): ServiceProxyTarget<ServiceRegistry, N>;
 }

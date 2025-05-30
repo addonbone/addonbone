@@ -3,7 +3,7 @@ import _ from "lodash";
 import {Configuration as RspackConfig} from "@rspack/core";
 
 import {definePlugin} from "@main/plugin";
-import {virtualBackgroundModule, virtualCommandModule, virtualServiceModule} from "@cli/virtual";
+import {virtualBackgroundModule} from "@cli/virtual";
 
 import {EntrypointPlugin} from "@cli/bundler";
 
@@ -51,30 +51,10 @@ export default definePlugin(() => {
                 .virtual(file => virtualBackgroundModule(file));
 
             const commandPlugin = EntrypointPlugin.from(await command.entry().entries())
-                .virtual((file) => {
-                    const name = command.get(file)?.name;
-
-                    if (!name) {
-                        throw new Error('Command name is not defined');
-                    }
-
-                    return virtualCommandModule(file, name);
-                });
+                .virtual((file) => command.virtual(file));
 
             const servicePlugin = EntrypointPlugin.from(await service.entry().entries())
-                .virtual(file => {
-                    /**
-                     * Before creating the virtual module, it is necessary to run a command `await service.services()` that caches the services.
-                     * This command is executed during the type declaration generation stage for the service.
-                     */
-                    const name = service.get(file)?.name;
-
-                    if (!name) {
-                        throw new Error('Service name is not defined');
-                    }
-
-                    return virtualServiceModule(file, name);
-                });
+                .virtual(file => service.virtual(file));
 
             if (config.command === AppCommand.Watch) {
                 backgroundPlugin.watch(() => background.clear().entry().entries());

@@ -1,40 +1,33 @@
-import get from 'get-value';
+import {isOffscreen} from "@offscreen/utils";
+import {RegisterTransport} from "@transport"
 
 import OffscreenMessage from "../OffscreenMessage";
-import Offscreen from "./Offscreen";
+import OffscreenManager from "../OffscreenManager";
 
-import type {TransportDictionary, TransportMessage, TransportName} from "@typing/transport";
+import type {TransportDictionary, TransportName} from "@typing/transport";
 
 export default class<
     N extends TransportName,
     T extends object = TransportDictionary[N],
     A extends any[] = []
-> extends Offscreen<N, T> {
-    protected message: TransportMessage
-
+> extends RegisterTransport<N, T, A> {
     constructor(name: N, protected readonly init: (...args: A) => T) {
-        super(name)
-        this.message = new OffscreenMessage(name);
+        super(name, init)
     }
 
-    public register(...args: A): T {
-        if (this.manager().has(this.name)) {
-            throw new Error(`A offscreen service with the name "${this.name}" already exists. The offscreen service name must be unique.`);
+    protected message() {
+        return new OffscreenMessage(this.name);
+    }
+
+    protected manager() {
+        return OffscreenManager.getInstance();
+    }
+
+    public get(): T {
+        if (!isOffscreen()) {
+            throw new Error(`Offscreen service "${this.name}" can be getting only from offscreen context.`);
         }
 
-        const offscreen = this.initAndSave(this.init, args);
-
-        this.message.watch(async ({path, args}) => {
-            try {
-                return await this.getProperty(args, offscreen, path);
-
-            } catch (error) {
-                console.error('RegisterOffscreen.register()', error);
-
-                throw error;
-            }
-        });
-
-        return offscreen;
+        return super.get()
     }
 }

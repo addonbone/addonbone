@@ -3,10 +3,11 @@ import {Configuration as RspackConfig} from "@rspack/core";
 import {definePlugin} from "@main/plugin";
 
 import TypescriptConfig from "./TypescriptConfig";
-import VendorDeclaration from "./VendorDeclaration";
+
+import {TransportDeclaration, TransportDeclarationLayer, VendorDeclaration} from "./declaration";
 
 export {default as FileBuilder} from "./FileBuilder";
-export {TypescriptConfig, VendorDeclaration};
+export {TypescriptConfig, VendorDeclaration, TransportDeclaration, TransportDeclarationLayer};
 
 export default definePlugin(() => {
     let typescript: TypescriptConfig;

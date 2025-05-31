@@ -70,6 +70,7 @@ export default class extends FileBuilder {
                 './vendor.d.ts',
                 './locale.d.ts',
                 './service.d.ts',
+                './relay.d.ts',
                 './icon.d.ts',
                 './page.d.ts',
                 './popup.d.ts',

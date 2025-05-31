@@ -1,4 +1,4 @@
-import FileBuilder from "./FileBuilder";
+import FileBuilder from "../FileBuilder";
 
 import {ReadonlyConfig} from "@typing/config";
 

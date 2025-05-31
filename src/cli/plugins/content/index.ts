@@ -3,6 +3,7 @@ import {Configuration as RspackConfig} from "@rspack/core";
 import ContentManager from "./ContentManager";
 import Content from "./Content";
 import Relay from "./Relay";
+import RelayDeclaration from "./RelayDeclaration";
 
 import {definePlugin} from "@main/plugin";
 
@@ -15,6 +16,7 @@ export default definePlugin(() => {
     let content: Content;
     let relay: Relay;
     let manager: ContentManager;
+    let relayDeclaration: RelayDeclaration;
 
     return {
         name: 'adnbn:content',
@@ -25,10 +27,13 @@ export default definePlugin(() => {
             manager = new ContentManager(config)
                 .provider(content)
                 .provider(relay);
+
+            relayDeclaration = new RelayDeclaration(config);
         },
         content: () => content.files(),
         relay: () => relay.files(),
         bundler: async ({config}) => {
+            relayDeclaration.dictionary(await relay.dictionary()).build();
 
             if (await manager.empty()) {
                 if (config.debug) {
@@ -38,14 +43,17 @@ export default definePlugin(() => {
                 return {};
             }
 
-            await relay.transport();
-
-
             const plugin = EntrypointPlugin.from(await manager.entries())
                 .virtual(file => manager.virtual(file));
 
             if (config.command === Command.Watch) {
-                plugin.watch(() => manager.clear().entries());
+                plugin.watch(async () => {
+                    manager.clear();
+
+                    relayDeclaration.dictionary(await relay.dictionary()).build();
+
+                    return manager.entries();
+                });
             }
 
             return {

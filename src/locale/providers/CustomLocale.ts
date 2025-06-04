@@ -1,37 +1,40 @@
 import {convertLocaleKey} from "../utils";
 
 import AbstractLocale from "./AbstractLocale";
-import {LocaleNativeStructure} from "./NativeLocale";
 
-import {Language} from "@typing/locale";
+import {Language, LocaleStructure} from "@typing/locale";
 
-export default class CustomLocale extends AbstractLocale<LocaleNativeStructure> {
+export type CustomLocaleData = Record<string, string>;
+
+export default class<T extends LocaleStructure = LocaleStructure> extends AbstractLocale<T> {
     constructor(
-        protected _lang: Language = Language.English,
-        protected data: Record<string, string> = {}
+        protected language: Language = Language.English,
+        protected data: CustomLocaleData = {}
     ) {
         super();
     }
 
     public setLang(lang: Language): this {
-        this._lang = lang;
-        return this
+        this.language = lang;
+
+        return this;
     }
 
-    public setData(data: Record<string, string>): this {
+    public setData(data: CustomLocaleData): this {
         this.data = data;
-        return this
+
+        return this;
     }
 
     public lang(): Language {
-        return this._lang;
+        return this.language;
     }
 
-    public keys() {
+    public keys(): Set<string> {
         return new Set(Object.keys(this.data));
     }
 
-    public value(key: string) {
+    protected value(key: string): string | undefined {
         const value = this.data[convertLocaleKey(key)];
 
         if (!value || value.length === 0) {

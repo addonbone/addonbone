@@ -24,7 +24,7 @@ export default abstract class extends Builder {
         return this.values.get(anchor) || undefined;
     }
 
-    protected async renderValue(anchor: Element): Promise<void | ContentScriptRenderValue> {
+    protected async renderValue(anchor: Element): Promise<void | undefined | ContentScriptRenderValue> {
         return this.definition.render(this.getProps(anchor));
     }
 

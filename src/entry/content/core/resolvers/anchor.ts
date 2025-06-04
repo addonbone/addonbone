@@ -1,10 +1,10 @@
-import kebabCase from "just-kebab-case";
-
-import {getApp} from "@main/env";
+import {customAlphabet} from "nanoid";
 
 import {ContentScriptAnchor, ContentScriptAnchorGetter, ContentScriptAnchorResolver} from "@typing/content";
 
-export const contentScriptAnchorAttribute = `data-${kebabCase(getApp())}-id`;
+const generateId = customAlphabet('abcdefghijklmnopqrstuvwxyz', 7);
+
+export const contentScriptAnchorAttribute = `data-${generateId()}`;
 
 export const contentScriptAnchorResolver = (
     anchor?: ContentScriptAnchor | ContentScriptAnchorGetter

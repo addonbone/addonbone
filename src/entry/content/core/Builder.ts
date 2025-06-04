@@ -129,16 +129,18 @@ export default abstract class extends Builder implements ContentScriptBuilder {
 
         const anchors = await this.definition.anchor();
 
-        for await (const anchor of anchors) {
-            const node = await this.createNode(anchor);
-
-            this.context.add(node);
-
-            await this.cleanupNode(anchor);
-
-            node.mount();
-        }
+        await Promise.allSettled(anchors.map(this.processAnchor.bind(this)));
 
         this.isProcessing = false;
+    }
+
+    protected async processAnchor(anchor: Element): Promise<void> {
+        const node = await this.createNode(anchor);
+
+        this.context.add(node);
+
+        await this.cleanupNode(anchor);
+
+        node.mount();
     }
 }

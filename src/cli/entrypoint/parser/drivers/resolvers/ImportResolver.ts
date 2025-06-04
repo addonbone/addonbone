@@ -66,7 +66,7 @@ export default class {
                 return resolvedLocal;
             }
 
-            throw new Error(`File not found at path "${resolvedLocal}" or with available extensions`);
+            return importPath;
         }
 
         let aliased = this.ts.matchPath(importPath);

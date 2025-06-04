@@ -1,10 +1,11 @@
-import {customAlphabet} from "nanoid";
-
 import {contentScriptAnchorAttribute} from "./resolvers/anchor";
 
 import {ContentScriptNode} from "@typing/content";
 
-const generateId = customAlphabet('abcdefghijklmnopqrstuvwxyz', 7);
+enum NodeMark {
+    Mounded = '1',
+    Unmounted = '0',
+}
 
 export default class implements ContentScriptNode {
     private readonly _container?: Element;
@@ -18,13 +19,11 @@ export default class implements ContentScriptNode {
     }
 
     public mount(): void {
-        const id = this.mark();
+        this.mark();
 
         if (!this.container && this._container) {
             this.container = this._container.cloneNode(false) as Element;
         }
-
-        this.container?.setAttribute('id', id);
     }
 
     public unmount(): void {
@@ -36,19 +35,17 @@ export default class implements ContentScriptNode {
         }
     }
 
-    protected mark(): string {
-        let id = this.anchor.getAttribute(this.attr)
+    protected mark(): this {
+        let id = this.anchor.getAttribute(this.attr);
 
-        if (typeof id !== "string" || id.length === 0) {
-            id = generateId();
-
-            this.anchor.setAttribute(this.attr, id);
+        if (typeof id !== "string" || id.length === 0 || id === NodeMark.Unmounted) {
+            this.anchor.setAttribute(this.attr, NodeMark.Mounded);
         }
 
-        return id;
+        return this;
     }
 
     protected unmark(): void {
-        this.anchor.setAttribute(this.attr, '');
+        this.anchor.setAttribute(this.attr, NodeMark.Unmounted);
     }
 }

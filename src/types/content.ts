@@ -85,7 +85,7 @@ export type ContentScriptAnchorResolver = () => Awaiter<Element[]>;
 // Render
 export type ContentScriptRenderReactComponent = FC<ContentScriptProps>;
 export type ContentScriptRenderValue = Element | ReactNode | ContentScriptRenderReactComponent;
-export type ContentScriptRenderHandler = (props: ContentScriptProps) => Awaiter<void | ContentScriptRenderValue>;
+export type ContentScriptRenderHandler = (props: ContentScriptProps) => Awaiter<void | undefined | ContentScriptRenderValue>;
 
 // Container
 export type ContentScriptContainerTag = Exclude<keyof HTMLElementTagNameMap, 'html' | 'body'>;

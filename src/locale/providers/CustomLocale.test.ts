@@ -3,15 +3,11 @@ import CustomLocale from "./CustomLocale";
 import {Language, LocaleMessages, LocaleValuesSeparator} from "@typing/locale";
 
 describe("CustomLocale", () => {
-    const transformFromObjToMessages = (obj: Record<string, string>): LocaleMessages => {
-        return Object.fromEntries(Object.entries(obj).map(([key, value]) => [key, {message: value}]));
-    }
-
-    const mockMessages: LocaleMessages = transformFromObjToMessages({
+    const mockMessages = {
         title: "Adnbn",
         greeting: "Hello {{name}}",
         empty: ''
-    });
+    };
 
     const locale = new CustomLocale(Language.English, mockMessages);
     let consoleWarnSpy: jest.SpyInstance;
@@ -26,7 +22,7 @@ describe("CustomLocale", () => {
     });
 
     test("change() - changed language and messages", () => {
-        const newMessages = transformFromObjToMessages({greeting: "Bonjour"});
+        const newMessages = {greeting: "Bonjour"};
         locale.change(Language.French, newMessages);
 
         expect(locale.lang()).toBe(Language.French);
@@ -74,7 +70,7 @@ describe("CustomLocale", () => {
 
         test('languages with 1 plural forms', () => {
             const arr = ["車"]
-            const messages = transformFromObjToMessages({[key]: arr.join(LocaleValuesSeparator)})
+            const messages = {[key]: arr.join(LocaleValuesSeparator)}
 
             locale.change(Language.Japanese, messages);
 
@@ -85,7 +81,7 @@ describe("CustomLocale", () => {
 
         test('languages with 2 plural forms - 0 is plural', () => {
             const arr = ['car', 'cars']
-            const messages = transformFromObjToMessages({[key]: arr.join(LocaleValuesSeparator)})
+            const messages = {[key]: arr.join(LocaleValuesSeparator)}
 
             locale.change(Language.English, messages);
 
@@ -96,7 +92,7 @@ describe("CustomLocale", () => {
 
         test('languages with 2 plural forms - 0 is singular', () => {
             const arr = ["voiture", "voitures"]
-            const messages = transformFromObjToMessages({[key]: arr.join(LocaleValuesSeparator)})
+            const messages = {[key]: arr.join(LocaleValuesSeparator)}
 
             locale.change(Language.French, messages);
 
@@ -107,7 +103,7 @@ describe("CustomLocale", () => {
 
         test('languages with 2 plural forms - Latvian', () => {
             const arr = ['mašīnu', 'mašīna', 'mašīnas']
-            const messages = transformFromObjToMessages({[key]: arr.join(LocaleValuesSeparator)})
+            const messages = {[key]: arr.join(LocaleValuesSeparator)}
 
             locale.change(Language.Latvian, messages);
 
@@ -127,7 +123,7 @@ describe("CustomLocale", () => {
 
         test('languages with 3 plural forms - Croatian, Russian, Serbian, Ukrainian', () => {
             const arr = ['машина', 'машини', 'машин']
-            const messages = transformFromObjToMessages({[key]: arr.join(LocaleValuesSeparator)})
+            const messages = {[key]: arr.join(LocaleValuesSeparator)}
 
             locale.change(Language.Ukrainian, messages);
 
@@ -149,7 +145,7 @@ describe("CustomLocale", () => {
 
         test('languages with 3 plural forms - Czech, Slovak', () => {
             const arr = ["auto", "auta", "aut"]
-            const messages = transformFromObjToMessages({[key]: arr.join(LocaleValuesSeparator)})
+            const messages = {[key]: arr.join(LocaleValuesSeparator)}
 
             locale.change(Language.Czech, messages);
 
@@ -169,7 +165,7 @@ describe("CustomLocale", () => {
 
         test('languages with 3 plural forms - Lithuanian', () => {
             const arr = ["mašina", "mašinos", "mašinų"]
-            const messages = transformFromObjToMessages({[key]: arr.join(LocaleValuesSeparator)})
+            const messages = {[key]: arr.join(LocaleValuesSeparator)}
 
             locale.change(Language.Lithuanian, messages);
 
@@ -191,7 +187,7 @@ describe("CustomLocale", () => {
 
         test('languages with 3 plural forms - Polish', () => {
             const arr = ['samochód', 'samochody', 'samochodów']
-            const messages = transformFromObjToMessages({[key]: arr.join(LocaleValuesSeparator)})
+            const messages = {[key]: arr.join(LocaleValuesSeparator)}
 
             locale.change(Language.Polish, messages);
 
@@ -211,7 +207,7 @@ describe("CustomLocale", () => {
 
         test('languages with 3 plural forms - Romanian', () => {
             const arr = ['samochód', 'samochody', 'samochodów']
-            const messages = transformFromObjToMessages({[key]: arr.join(LocaleValuesSeparator)})
+            const messages = {[key]: arr.join(LocaleValuesSeparator)}
 
             locale.change(Language.Romanian, messages);
 
@@ -232,7 +228,7 @@ describe("CustomLocale", () => {
 
         test('languages with 4 plural forms - Slovenian', () => {
             const arr = ["avto", "avta", "avti", "avtov"]
-            const messages = transformFromObjToMessages({[key]: arr.join(LocaleValuesSeparator)})
+            const messages = {[key]: arr.join(LocaleValuesSeparator)}
 
             locale.change(Language.Slovenian, messages);
 
@@ -259,7 +255,7 @@ describe("CustomLocale", () => {
 
         test('languages with 6 plural forms - Arabic', () => {
             const arr = ["لا سيارات", "سيارة", "سيارتان", "سيارات", "سيارات", "سيارات"]
-            const messages = transformFromObjToMessages({[key]: arr.join(LocaleValuesSeparator)})
+            const messages = {[key]: arr.join(LocaleValuesSeparator)}
 
             locale.change(Language.Arabic, messages);
 

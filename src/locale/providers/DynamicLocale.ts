@@ -1,4 +1,4 @@
-import {getLocaleFilename} from "../utils";
+import {fromMessagesToObj, getLocaleFilename} from "../utils";
 
 import NativeLocale, {LocaleNativeStructure} from "./NativeLocale";
 import CustomLocale from "./CustomLocale";
@@ -13,8 +13,9 @@ export default class DynamicLocale extends NativeLocale implements LocaleDynamic
         const messages = await (await fetch(getLocaleFilename(lang))).json()
 
         if (messages && messages instanceof Object) {
-            this.customLocale ??= new CustomLocale(lang, messages);
-            this.customLocale.change(lang, messages);
+            const newMessages = fromMessagesToObj(messages)
+            this.customLocale ??= new CustomLocale(lang, newMessages);
+            this.customLocale.change(lang, newMessages);
             return
         } else {
             throw new Error(`Data is empty for "${lang}" language`)

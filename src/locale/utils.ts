@@ -1,4 +1,12 @@
-import {Language, LocaleDir, RtlLanguages, LocaleKeyMarker, LocaleKeysSeparator, LocaleNestedKeysSeparator} from "@typing/locale";
+import {
+    Language,
+    LocaleDir,
+    LocaleKeyMarker,
+    LocaleKeysSeparator,
+    LocaleMessages,
+    LocaleNestedKeysSeparator,
+    RtlLanguages
+} from "@typing/locale";
 
 export const getLocaleFilename = (lang: Language): string => {
     return `_locales/${lang}/messages.json`;
@@ -42,4 +50,8 @@ export const isLocaleRtl = (lang: Language): boolean => {
 
 export const getLocaleDir = (lang: Language): LocaleDir => {
     return isLocaleRtl(lang) ? LocaleDir.RightToLeft : LocaleDir.LeftToRight;
+}
+
+export const fromMessagesToObj = (messages: LocaleMessages): Record<string, string> => {
+    return Object.fromEntries(Object.entries(messages).map(([key, value]) => [key, value.message]))
 }

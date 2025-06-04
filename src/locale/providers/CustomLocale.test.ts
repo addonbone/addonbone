@@ -106,19 +106,22 @@ describe("CustomLocale", () => {
         });
 
         test('languages with 2 plural forms - Latvian', () => {
-            const arr = ['mašīna', 'mašīnas']
+            const arr = ['mašīnu', 'mašīna', 'mašīnas']
             const messages = transformFromObjToMessages({[key]: arr.join(LocaleValuesSeparator)})
 
             locale.change(Language.Latvian, messages);
 
+            // Only 0
+            expect(locale.choice(key, 0)).toBe(arr[0]);
+
             // Last number 1 but not 11
             [1, 21, 101].forEach((item) => {
-                expect(locale.choice(key, item)).toBe(arr[0]);
+                expect(locale.choice(key, item)).toBe(arr[1]);
             });
 
             // All other numbers
             [3, 5, 11, 15].forEach((item) => {
-                expect(locale.choice(key, item)).toBe(arr[1]);
+                expect(locale.choice(key, item)).toBe(arr[2]);
             });
         });
 

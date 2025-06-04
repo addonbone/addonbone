@@ -5,7 +5,7 @@ import {Storage} from "../../storage";
 import NativeLocale, {LocaleNativeStructure} from "./NativeLocale";
 import CustomLocale from "./CustomLocale";
 
-import {Language, LocaleDynamicProvider} from "@typing/locale";
+import {Language, LanguageCodes, LocaleDynamicProvider} from "@typing/locale";
 
 export default class DynamicLocale extends NativeLocale implements LocaleDynamicProvider<LocaleNativeStructure> {
     protected customLocale?: CustomLocale;
@@ -17,6 +17,7 @@ export default class DynamicLocale extends NativeLocale implements LocaleDynamic
     }
 
     public async change(lang: Language): Promise<void> {
+        if (lang === this.lang()) return
 
         const messages = await (await fetch(getLocaleFilename(lang))).json()
 
@@ -34,7 +35,18 @@ export default class DynamicLocale extends NativeLocale implements LocaleDynamic
     }
 
     public async sync(): Promise<Language | undefined> {
-        return await this.storage.get(this.storageKey);
+        const lang = await this.storage.get(this.storageKey);
+
+        if (!lang) return
+
+        if (!LanguageCodes.has(lang)) {
+            console.warn(`Incorrect language code in storage - "${lang}"`)
+            return
+        }
+
+        await this.change(lang);
+
+        return lang
     }
 
     public lang(): Language {

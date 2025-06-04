@@ -16,8 +16,8 @@ export default class DynamicLocale extends NativeLocale implements LocaleDynamic
         this.storage = new Storage<Record<typeof storageKey, Language>>()
     }
 
-    public async change(lang: Language): Promise<void> {
-        if (lang === this.lang()) return
+    public async change(lang: Language): Promise<Language> {
+        if (lang === this.lang()) return lang
 
         const messages = await (await fetch(getLocaleFilename(lang))).json()
 
@@ -28,20 +28,20 @@ export default class DynamicLocale extends NativeLocale implements LocaleDynamic
                 .setData(flattenLocaleMessages(messages));
 
             await this.storage.set(this.storageKey, lang);
-            return
+            return lang
         } else {
             throw new Error(`Data is empty for "${lang}" language`)
         }
     }
 
-    public async sync(): Promise<Language | undefined> {
+    public async sync(): Promise<Language> {
         const lang = await this.storage.get(this.storageKey);
 
-        if (!lang) return
+        if (!lang) return this.lang()
 
         if (!LanguageCodes.has(lang)) {
             console.warn(`Incorrect language code in storage - "${lang}"`)
-            return
+            return this.lang()
         }
 
         await this.change(lang);

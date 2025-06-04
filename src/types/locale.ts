@@ -163,5 +163,5 @@ export interface LocaleProvider<S extends LocaleStructure> {
 }
 
 export interface LocaleDynamicProvider<S extends LocaleStructure> extends LocaleProvider<S> {
-    change(lang: Language): Promise<void>;
+    change(lang: Language): Promise<Language>;
 }

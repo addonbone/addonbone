@@ -27,7 +27,7 @@ const LocaleProvider = ({children, storageKey = 'lang'}: PropsWithChildren<Local
 
     const change: LocaleContract['change'] = useCallback((lang): void => {
         locale.change(lang)
-            .then(() => setLang(lang))
+            .then((newLang) => setLang(newLang))
             .catch((err) => console.error(`Cannot find locale file for "${lang}" language`, err));
     }, []);
 
@@ -39,7 +39,7 @@ const LocaleProvider = ({children, storageKey = 'lang'}: PropsWithChildren<Local
     }, [lang]);
 
     useEffect(() => {
-        locale.sync().then((syncLang)=> syncLang && syncLang !== lang && change(syncLang));
+        locale.sync().then((lang) => setLang(lang));
     }, []);
 
     return (

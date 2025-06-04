@@ -1,14 +1,14 @@
 import Relay from "./Relay";
 
-import type {TransportDictionary, TransportName} from "@typing/transport";
+import {TransportDictionary, TransportName, TransportRegister} from "@typing/transport";
 
 export default class<
     N extends TransportName,
     T extends object = TransportDictionary[N],
     A extends any[] = []
-> extends Relay<N, T> {
+> extends Relay<N, T> implements TransportRegister<T, A> {
     constructor(name: N, protected readonly init: (...args: A) => T) {
-        super(name)
+        super(name);
     }
 
     public register(...args: A): T {
@@ -20,6 +20,6 @@ export default class<
 
         this.manager().add(this.name, relay);
 
-        return relay
+        return relay;
     }
 }

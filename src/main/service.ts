@@ -2,9 +2,9 @@ import {ProxyService} from "@service/providers";
 
 import {DeepAsyncProxy} from "@typing/helpers";
 import {TransportDictionary, TransportType} from "@typing/transport";
-import {ServiceDefinition, ServiceInitGetter, ServiceMainHandler} from "@typing/service";
+import {ServiceDefinition} from "@typing/service";
 
-export type {ServiceDefinition, ServiceMainHandler, ServiceInitGetter};
+export type {ServiceDefinition};
 
 export const defineService = <T extends TransportType>(options: ServiceDefinition<T>): ServiceDefinition<T> => {
     return options;

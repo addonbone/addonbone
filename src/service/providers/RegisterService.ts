@@ -28,6 +28,6 @@ export default class<
             throw new Error(`Service "${this.name}" can be getting only from background context.`);
         }
 
-        return super.get()
+        return super.get();
     }
 }

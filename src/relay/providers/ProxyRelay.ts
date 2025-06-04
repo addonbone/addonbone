@@ -10,7 +10,10 @@ import type {TransportDictionary, TransportManager, TransportName} from "@typing
 
 type InjectionTarget = chrome.scripting.InjectionTarget;
 
-export default class ProxyRelay<N extends TransportName, T = DeepAsyncProxy<TransportDictionary[N]>> extends ProxyTransport<N, T> {
+export default class ProxyRelay<
+    N extends TransportName,
+    T = DeepAsyncProxy<TransportDictionary[N]>
+> extends ProxyTransport<N, T> {
     constructor(name: N, protected options: number | InjectionTarget) {
         super(name);
     }
@@ -57,6 +60,6 @@ export default class ProxyRelay<N extends TransportName, T = DeepAsyncProxy<Tran
             throw new Error(`You are trying to get proxy relay "${this.name}" from script content. You can get original relay instead`);
         }
 
-        return super.get()
+        return super.get();
     }
 }

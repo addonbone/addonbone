@@ -13,6 +13,6 @@ export default abstract class TransportMessage implements TransportMessageContra
     }
 
     public watch(handler: (data: TransportMessageData) => any): void {
-        this.message.watch(this.key, handler)
+        this.message.watch(this.key, handler);
     }
 }

@@ -141,4 +141,6 @@ export interface ContentScriptAppendDefinition extends Omit<ContentScriptDefinit
 }
 
 // Builder
-export type ContentScriptBuilder = EntrypointBuilder;
+export interface ContentScriptBuilder extends EntrypointBuilder {
+    getContext(): ContentScriptContext;
+}

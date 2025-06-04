@@ -1,12 +1,13 @@
 import ContentName from "./ContentName";
 
 import {ContentGroupItems, ContentProvider} from "./types";
-import {getContentScriptConfigFromOptions} from "./utils";
+import {filterContentScriptsMatchPatterns, getContentScriptConfigFromOptions} from "./utils";
 
 import {ReadonlyConfig} from "@typing/config";
 import {ContentScriptEntrypointOptions} from "@typing/content";
 import {EntrypointEntries, EntrypointFile} from "@typing/entrypoint";
-import {ManifestContentScripts} from "@typing/manifest";
+import {ManifestContentScripts, ManifestHostPermissions} from "@typing/manifest";
+
 
 export default class {
     protected readonly providers = new Set<ContentProvider<ContentScriptEntrypointOptions>>;
@@ -68,6 +69,28 @@ export default class {
         }
 
         return manifest;
+    }
+
+    public async hostPermissions(): Promise<ManifestHostPermissions> {
+        const hostPermissions = new Set<string>;
+
+        const group = await this.group();
+
+        for (const items of group.values()) {
+            for (const {options} of items) {
+                const {matches} = options;
+
+                if (!matches) {
+                    continue;
+                }
+
+                for (const match of matches) {
+                    hostPermissions.add(match);
+                }
+            }
+        }
+
+        return filterContentScriptsMatchPatterns(hostPermissions);
     }
 
     public virtual(file: EntrypointFile): string {

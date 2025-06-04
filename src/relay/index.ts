@@ -1,4 +1,3 @@
-// import {BaseRelay, ProxyRelay, RegisterRelay} from "./providers";
 import {ProxyRelay, RegisterRelay, Relay} from "./providers";
 
 import type {

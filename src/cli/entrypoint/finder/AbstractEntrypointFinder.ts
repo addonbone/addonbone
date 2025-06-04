@@ -2,14 +2,14 @@ import fs, {Dirent} from "fs";
 import path from "path";
 import pluralize from "pluralize";
 
-import OptionsFinder from "./OptionsFinder";
+import AbstractOptionsFinder from "./AbstractOptionsFinder";
 
 import {getAppSourcePath, getSharedPath} from "@cli/resolvers/path";
 
 import {EntrypointFile, EntrypointFileExtensions, EntrypointOptions} from "@typing/entrypoint";
 import {ReadonlyConfig} from "@typing/config";
 
-export default abstract class<O extends EntrypointOptions> extends OptionsFinder<O> {
+export default abstract class<O extends EntrypointOptions> extends AbstractOptionsFinder<O> {
     protected fileExtensionsPattern: string;
 
     protected possibleIndexFiles: Set<string>;

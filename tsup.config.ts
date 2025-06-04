@@ -68,7 +68,12 @@ const framework: Options = {
         'entry/content/vanilla/index': 'src/entry/content/vanilla/index.ts',
         'entry/content/react/index': 'src/entry/content/react/index.ts',
 
+        //'entry/relay/index': 'src/entry/relay/index.ts',
         'entry/service/index': 'src/entry/service/index.ts',
+        'entry/transport/index': 'src/entry/transport/index.ts',
+
+        'entry/relay/vanilla/index': 'src/entry/relay/vanilla/index.ts',
+        // 'entry/relay/react/index': 'src/entry/relay/react/index.ts',
 
         'entry/view/index': 'src/entry/view/index.ts',
         'entry/view/vanilla/index': 'src/entry/view/vanilla/index.ts',

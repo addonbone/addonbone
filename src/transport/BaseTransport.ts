@@ -1,6 +1,9 @@
 import type {TransportDictionary, TransportManager, TransportName} from "@typing/transport";
 
-export default abstract class<N extends TransportName, T = TransportDictionary[N]> {
+export default abstract class<
+    N extends TransportName,
+    T = TransportDictionary[N]
+> {
     protected constructor(protected readonly name: N) {
     }
 

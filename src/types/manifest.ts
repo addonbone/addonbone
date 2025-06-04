@@ -7,6 +7,25 @@ type ManifestCommon = chrome.runtime.Manifest;
 type ManifestBase = chrome.runtime.ManifestBase;
 type ManifestPermission = chrome.runtime.ManifestPermissions;
 
+export const ManifestMatchSchemes: ReadonlySet<string> = new Set<string>([
+    'http',
+    'https',
+    'file',
+    'ftp',
+    'ws',
+    'wss'
+]);
+
+export const ManifestSpecialSchemes: ReadonlySet<string> = new Set<string>([
+    'chrome-extension',
+    'moz-extension',
+    'data',
+    'blob',
+    'filesystem',
+    'about',
+    'chrome',
+    'resource'
+])
 
 type ManifestFixed<T extends ManifestBase> = Omit<T, 'manifest_version'> & {
     manifest_version: ManifestVersion
@@ -92,6 +111,8 @@ export interface ManifestBuilder<T extends CoreManifest = Manifest> {
     addHostPermission(permission: string): this;
 
     setHostPermissions(permissions: ManifestHostPermissions): this;
+
+    appendHostPermissions(permissions: ManifestHostPermissions): this;
 
     get(): T;
 }

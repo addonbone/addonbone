@@ -84,7 +84,15 @@ export default definePlugin(() => {
             } satisfies RspackConfig;
         },
         manifest: async ({manifest}) => {
-            manifest.setContentScripts(await manager.manifest());
+            manifest
+                .setContentScripts(await manager.manifest())
+                .appendHostPermissions(await manager.hostPermissions())
+
+            if (await relay.exists()) {
+                manifest
+                    .addPermission('scripting')
+                    .addPermission('tabs');
+            }
         }
     };
 });

@@ -1,6 +1,6 @@
 import _ from "lodash";
 
-import OptionsFinder from "./OptionsFinder";
+import AbstractOptionsFinder from "./AbstractOptionsFinder";
 
 import {processPluginHandler} from "@cli/resolvers/plugin";
 
@@ -8,11 +8,11 @@ import {ReadonlyConfig} from "@typing/config";
 import {PluginHandlerKeys} from "@typing/plugin";
 import {EntrypointFile, EntrypointOptions, EntrypointParser, EntrypointType} from "@typing/entrypoint";
 
-export default class<O extends EntrypointOptions> extends OptionsFinder<O> {
+export default class<O extends EntrypointOptions> extends AbstractOptionsFinder<O> {
     constructor(
         config: ReadonlyConfig,
         protected readonly key: PluginHandlerKeys,
-        protected readonly finder: OptionsFinder<O>
+        protected readonly finder: AbstractOptionsFinder<O>
     ) {
         super(config);
     }

@@ -2,15 +2,15 @@ import get from "get-value";
 
 import BaseTransport from "./BaseTransport";
 
-import type {TransportDictionary, TransportMessage, TransportName} from "@typing/transport";
+import type {TransportDictionary, TransportMessage, TransportName, TransportRegister} from "@typing/transport";
 
 export default abstract class<
     N extends TransportName,
     T extends object = TransportDictionary[N],
     A extends any[] = []
-> extends BaseTransport<N, T> {
+> extends BaseTransport<N, T> implements TransportRegister<T, A> {
     protected constructor(name: N, protected readonly init: (...args: A) => T) {
-        super(name)
+        super(name);
     }
 
     protected abstract message(): TransportMessage;

@@ -161,6 +161,14 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
         return this;
     }
 
+    public appendHostPermissions(permissions: ManifestHostPermissions): this {
+        for (const permission of permissions) {
+            this.hostPermissions.add(permission);
+        }
+
+        return this;
+    }
+
     private marge<T extends CoreManifest>(manifest: T, ...sources: Array<Partial<T> | undefined>): T {
         sources = sources.filter((source) => source !== undefined);
 

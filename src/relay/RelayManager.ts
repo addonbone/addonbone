@@ -3,7 +3,13 @@ import get from 'get-value'
 import {TransportManager} from '@transport'
 
 import {TransportManager as TransportManagerContract, TransportName} from "@typing/transport";
-import {PropertyOptions, RelayGlobalKey} from "@typing/relay";
+import {RelayGlobalKey} from "@typing/relay";
+
+type PropertyOptions = {
+    path?: string,
+    args?: any[],
+    getOptions?: get.Options,
+}
 
 export default class RelayManager extends TransportManager {
     public static getInstance(): TransportManagerContract {

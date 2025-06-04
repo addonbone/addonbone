@@ -1,8 +1,8 @@
-import EntrypointFinder from "./EntrypointFinder";
+import AbstractEntrypointFinder from "./AbstractEntrypointFinder";
 
 import {EntrypointFile, EntrypointOptions, EntrypointOptionsFinder} from "@typing/entrypoint";
 
-export default abstract class<O extends EntrypointOptions> extends EntrypointFinder<O> {
+export default abstract class<O extends EntrypointOptions> extends AbstractEntrypointFinder<O> {
     protected _plugin?: EntrypointOptionsFinder<O>;
 
     protected abstract getPlugin(): EntrypointOptionsFinder<O>;

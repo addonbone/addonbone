@@ -21,6 +21,7 @@ import {
     ContentScriptContainerFactory,
     ContentScriptContainerOptions,
     ContentScriptContainerTag,
+    ContentScriptContext,
     ContentScriptDefinition,
     ContentScriptMountFunction,
     ContentScriptNode,
@@ -95,6 +96,10 @@ export default abstract class extends Builder implements ContentScriptBuilder {
         }
 
         return contentScriptLocationResolver(watch);
+    }
+
+    public getContext(): ContentScriptContext {
+        return this.context;
     }
 
     public async build(): Promise<void> {

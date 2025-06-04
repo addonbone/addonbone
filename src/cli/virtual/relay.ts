@@ -1,28 +1,28 @@
 //@ts-ignore
-//import type {ServiceType, ServiceUnresolvedDefinition} from "adnbn";
+import {RelayUnresolvedDefinition} from "adnbn";
 //@ts-ignore
-//import service, {isValidServiceDefinition, isValidServiceInitFunction} from "adnbn/entry/service";
+import {isValidTransportDefinition, isValidTransportInitFunction, type TransportType} from "adnbn/entry/transport";
+
+import relay from "virtual:relay-framework";
 
 import * as module from "virtual:relay-entrypoint";
 
 try {
     const relayName = 'virtual:relay-name';
 
-    console.log(relayName);
+    const {default: defaultDefinition, ...otherDefinition} = module;
 
-    // const {default: defaultDefinition, ...otherDefinition} = module;
-    //
-    // let definition: ServiceUnresolvedDefinition<ServiceType> = otherDefinition;
-    //
-    // if (isValidServiceDefinition(defaultDefinition)) {
-    //     definition = {...definition, ...defaultDefinition};
-    // } else if (isValidServiceInitFunction(defaultDefinition)) {
-    //     definition = {...definition, init: defaultDefinition};
-    // }
-    //
-    // const {init, name = serviceName, ...options} = definition;
-    //
-    // service({name, init, ...options});
+    let definition: RelayUnresolvedDefinition<TransportType> = otherDefinition;
+
+    if (isValidTransportDefinition(defaultDefinition)) {
+        definition = {...definition, ...defaultDefinition};
+    } else if (isValidTransportInitFunction(defaultDefinition)) {
+        definition = {...definition, init: defaultDefinition};
+    }
+
+    const {init, name = relayName, ...options} = definition;
+
+    relay({name, init, ...options});
 } catch (e) {
     console.error('The relay crashed on startup:', e);
 }

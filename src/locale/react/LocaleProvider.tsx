@@ -1,7 +1,5 @@
 import React, {PropsWithChildren, useCallback, useEffect, useMemo, useState} from 'react';
 
-import {useStorage} from "../../storage/react";
-
 import {LocaleContext, LocaleContract} from './context';
 
 import {getLocaleDir, isLocaleRtl} from "../utils";
@@ -14,10 +12,8 @@ type LocaleProviderProps = {
     storageKey?: string
 }
 
-const LocaleProvider = ({children, storageKey = 'locale'}: PropsWithChildren<LocaleProviderProps>) => {
-    const [storageLocale, setStorageLocal] = useStorage<Language>(storageKey)
-
-    const locale = useMemo(() => new DynamicLocale(), [])
+const LocaleProvider = ({children, storageKey = 'lang'}: PropsWithChildren<LocaleProviderProps>) => {
+    const locale = useMemo(() => new DynamicLocale(storageKey), [])
 
     const [lang, setLang] = useState<Language>(locale.lang())
 
@@ -31,10 +27,7 @@ const LocaleProvider = ({children, storageKey = 'locale'}: PropsWithChildren<Loc
 
     const change: LocaleContract['change'] = useCallback((lang): void => {
         locale.change(lang)
-            .then(() => {
-                setLang(lang)
-                setStorageLocal(lang)
-            })
+            .then(() => setLang(lang))
             .catch((err) => console.error(`Cannot find locale file for "${lang}" language`, err));
     }, []);
 
@@ -46,8 +39,8 @@ const LocaleProvider = ({children, storageKey = 'locale'}: PropsWithChildren<Loc
     }, [lang]);
 
     useEffect(() => {
-        storageLocale && storageLocale !== lang && change(storageLocale)
-    }, [storageLocale]);
+        locale.sync().then((syncLang)=> syncLang && syncLang !== lang && change(syncLang));
+    }, []);
 
     return (
         <LocaleContext.Provider value={{

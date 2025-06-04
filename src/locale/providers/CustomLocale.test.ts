@@ -1,23 +1,19 @@
 import CustomLocale from "./CustomLocale";
 
-import {Language, LocaleMessages, LocaleValuesSeparator} from "@typing/locale";
+import {Language, LocaleValuesSeparator} from "@typing/locale";
 
 describe("CustomLocale", () => {
-    const transformFromObjToMessages = (obj: Record<string, string>): LocaleMessages => {
-        return Object.fromEntries(Object.entries(obj).map(([key, value]) => [key, {message: value}]));
-    }
-
-    const mockMessages: LocaleMessages = transformFromObjToMessages({
+    const mockMessages = {
         title: "Adnbn",
         greeting: "Hello {{name}}",
         empty: ''
-    });
+    };
 
     const locale = new CustomLocale(Language.English, mockMessages);
     let consoleWarnSpy: jest.SpyInstance;
 
     beforeEach(() => {
-        locale.change(Language.English, mockMessages)
+        locale.setLang(Language.English).setData(mockMessages)
         consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation();
     });
 
@@ -26,11 +22,11 @@ describe("CustomLocale", () => {
     });
 
     test("change() - changed language and messages", () => {
-        const newMessages = transformFromObjToMessages({greeting: "Bonjour"});
-        locale.change(Language.French, newMessages);
+        const messages = {greeting: "Bonjour"};
+        locale.setLang(Language.French).setData(messages);
 
         expect(locale.lang()).toBe(Language.French);
-        expect(locale['messages']).toEqual(newMessages);
+        expect(locale['data']).toEqual(messages);
     });
 
     test('keys() - returned all message keys', () => {
@@ -74,9 +70,9 @@ describe("CustomLocale", () => {
 
         test('languages with 1 plural forms', () => {
             const arr = ["車"]
-            const messages = transformFromObjToMessages({[key]: arr.join(LocaleValuesSeparator)})
+            const messages = {[key]: arr.join(LocaleValuesSeparator)}
 
-            locale.change(Language.Japanese, messages);
+            locale.setLang(Language.Japanese).setData(messages);
 
             expect(locale.choice(key, 0)).toBe(arr[0]);
             expect(locale.choice(key, 1)).toBe(arr[0]);
@@ -85,9 +81,9 @@ describe("CustomLocale", () => {
 
         test('languages with 2 plural forms - 0 is plural', () => {
             const arr = ['car', 'cars']
-            const messages = transformFromObjToMessages({[key]: arr.join(LocaleValuesSeparator)})
+            const messages = {[key]: arr.join(LocaleValuesSeparator)}
 
-            locale.change(Language.English, messages);
+            locale.setLang(Language.English).setData(messages);
 
             expect(locale.choice(key, 0)).toBe(arr[1]);
             expect(locale.choice(key, 1)).toBe(arr[0]);
@@ -96,9 +92,9 @@ describe("CustomLocale", () => {
 
         test('languages with 2 plural forms - 0 is singular', () => {
             const arr = ["voiture", "voitures"]
-            const messages = transformFromObjToMessages({[key]: arr.join(LocaleValuesSeparator)})
+            const messages = {[key]: arr.join(LocaleValuesSeparator)}
 
-            locale.change(Language.French, messages);
+            locale.setLang(Language.French).setData(messages);
 
             expect(locale.choice(key, 0)).toBe(arr[0]);
             expect(locale.choice(key, 1)).toBe(arr[0]);
@@ -107,9 +103,9 @@ describe("CustomLocale", () => {
 
         test('languages with 2 plural forms - Latvian', () => {
             const arr = ['mašīnu', 'mašīna', 'mašīnas']
-            const messages = transformFromObjToMessages({[key]: arr.join(LocaleValuesSeparator)})
+            const messages = {[key]: arr.join(LocaleValuesSeparator)}
 
-            locale.change(Language.Latvian, messages);
+            locale.setLang(Language.Latvian).setData(messages);
 
             // Only 0
             expect(locale.choice(key, 0)).toBe(arr[0]);
@@ -127,9 +123,9 @@ describe("CustomLocale", () => {
 
         test('languages with 3 plural forms - Croatian, Russian, Serbian, Ukrainian', () => {
             const arr = ['машина', 'машини', 'машин']
-            const messages = transformFromObjToMessages({[key]: arr.join(LocaleValuesSeparator)})
+            const messages = {[key]: arr.join(LocaleValuesSeparator)}
 
-            locale.change(Language.Ukrainian, messages);
+            locale.setLang(Language.Ukrainian).setData(messages);
 
             // Last number 1 but not 11
             [1, 21, 31, 101].forEach((item) => {
@@ -149,9 +145,9 @@ describe("CustomLocale", () => {
 
         test('languages with 3 plural forms - Czech, Slovak', () => {
             const arr = ["auto", "auta", "aut"]
-            const messages = transformFromObjToMessages({[key]: arr.join(LocaleValuesSeparator)})
+            const messages = {[key]: arr.join(LocaleValuesSeparator)}
 
-            locale.change(Language.Czech, messages);
+            locale.setLang(Language.Czech).setData(messages);
 
             // Only 1
             expect(locale.choice(key, 1)).toBe(arr[0]);
@@ -169,9 +165,9 @@ describe("CustomLocale", () => {
 
         test('languages with 3 plural forms - Lithuanian', () => {
             const arr = ["mašina", "mašinos", "mašinų"]
-            const messages = transformFromObjToMessages({[key]: arr.join(LocaleValuesSeparator)})
+            const messages = {[key]: arr.join(LocaleValuesSeparator)}
 
-            locale.change(Language.Lithuanian, messages);
+            locale.setLang(Language.Lithuanian).setData(messages);
 
             // Last number 1 but not 11
             [1, 21, 31, 101].forEach((item) => {
@@ -191,9 +187,9 @@ describe("CustomLocale", () => {
 
         test('languages with 3 plural forms - Polish', () => {
             const arr = ['samochód', 'samochody', 'samochodów']
-            const messages = transformFromObjToMessages({[key]: arr.join(LocaleValuesSeparator)})
+            const messages = {[key]: arr.join(LocaleValuesSeparator)}
 
-            locale.change(Language.Polish, messages);
+            locale.setLang(Language.Polish).setData(messages);
 
             // For only 1
             expect(locale.choice(key, 1)).toBe(arr[0]);
@@ -211,9 +207,9 @@ describe("CustomLocale", () => {
 
         test('languages with 3 plural forms - Romanian', () => {
             const arr = ['samochód', 'samochody', 'samochodów']
-            const messages = transformFromObjToMessages({[key]: arr.join(LocaleValuesSeparator)})
+            const messages = {[key]: arr.join(LocaleValuesSeparator)}
 
-            locale.change(Language.Romanian, messages);
+            locale.setLang(Language.Romanian).setData(messages);
 
             // For only 1
             expect(locale.choice(key, 1)).toBe(arr[0]);
@@ -232,9 +228,9 @@ describe("CustomLocale", () => {
 
         test('languages with 4 plural forms - Slovenian', () => {
             const arr = ["avto", "avta", "avti", "avtov"]
-            const messages = transformFromObjToMessages({[key]: arr.join(LocaleValuesSeparator)})
+            const messages = {[key]: arr.join(LocaleValuesSeparator)}
 
-            locale.change(Language.Slovenian, messages);
+            locale.setLang(Language.Slovenian).setData(messages);
 
             // Last two numbers 1
             [1, 101].forEach((item) => {
@@ -259,9 +255,9 @@ describe("CustomLocale", () => {
 
         test('languages with 6 plural forms - Arabic', () => {
             const arr = ["لا سيارات", "سيارة", "سيارتان", "سيارات", "سيارات", "سيارات"]
-            const messages = transformFromObjToMessages({[key]: arr.join(LocaleValuesSeparator)})
+            const messages = {[key]: arr.join(LocaleValuesSeparator)}
 
-            locale.change(Language.Arabic, messages);
+            locale.setLang(Language.Arabic).setData(messages);
 
             // For only 0
             expect(locale.choice(key, 0)).toBe(arr[0]);

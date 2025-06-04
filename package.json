@@ -38,6 +38,11 @@
       "import": "./dist/locale/index.js",
       "require": "./dist/locale/index.cjs"
     },
+    "./locale/*": {
+      "types": "./dist/locale/*/index.d.ts",
+      "import": "./dist/locale/*/index.js",
+      "require": "./dist/locale/*/index.cjs"
+    },
     "./message": {
       "types": "./dist/message/index.d.ts",
       "import": "./dist/message/index.js",

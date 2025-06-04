@@ -118,6 +118,7 @@
     "test:storage": "jest --testPathPattern=Storage",
     "test:service": "jest --testPathPattern=Service",
     "test:relay": "jest --testPathPattern=Relay",
+    "test:locale": "jest --testPathPattern=Locale",
     "test:entrypoint": "jest --testPathPattern=src/cli/entrypoint"
   },
   "devDependencies": {

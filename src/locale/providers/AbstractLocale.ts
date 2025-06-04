@@ -74,7 +74,6 @@ export default abstract class AbstractLocale<S extends LocaleStructure>
             case Language.Korean:
             case Language.Malay:
             case Language.Thai:
-            case Language.Turkish:
             case Language.Vietnamese:
                 return 0;
 
@@ -105,6 +104,7 @@ export default abstract class AbstractLocale<S extends LocaleStructure>
             case Language.Swahili:
             case Language.Tamil:
             case Language.Telugu:
+            case Language.Turkish:
             case Language.ChineseChina:
             case Language.ChineseTaiwan:
             case Language.PortugueseBrazil:
@@ -134,7 +134,7 @@ export default abstract class AbstractLocale<S extends LocaleStructure>
                 return (count % 100 == 1) ? 0 : ((count % 100 == 2) ? 1 : (((count % 100 == 3) || (count % 100 == 4)) ? 2 : 3));
 
             case Language.Latvian:
-                return (count == 0) ? 0 : (((count % 10 == 1) && (count % 100 != 11)) ? 1 : 2);
+                return ((count % 10 == 1) && (count % 100 != 11)) ? 0 : 1;
 
             case Language.Polish:
                 return (count == 1) ? 0 : (((count % 10 >= 2) && (count % 10 <= 4) && ((count % 100 < 12) || (count % 100 > 14))) ? 1 : 2);

@@ -52,6 +52,6 @@ export const getLocaleDir = (lang: Language): LocaleDir => {
     return isLocaleRtl(lang) ? LocaleDir.RightToLeft : LocaleDir.LeftToRight;
 }
 
-export const fromMessagesToObj = (messages: LocaleMessages): Record<string, string> => {
+export const flattenLocaleMessages = (messages: LocaleMessages): Record<string, string> => {
     return Object.fromEntries(Object.entries(messages).map(([key, value]) => [key, value.message]))
 }

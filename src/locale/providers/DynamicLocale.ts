@@ -1,4 +1,6 @@
-import {fromMessagesToObj, getLocaleFilename} from "../utils";
+import {flattenLocaleMessages, getLocaleFilename} from "../utils";
+
+import {Storage} from "../../storage";
 
 import NativeLocale, {LocaleNativeStructure} from "./NativeLocale";
 import CustomLocale from "./CustomLocale";
@@ -7,19 +9,32 @@ import {Language, LocaleDynamicProvider} from "@typing/locale";
 
 export default class DynamicLocale extends NativeLocale implements LocaleDynamicProvider<LocaleNativeStructure> {
     protected customLocale?: CustomLocale;
+    protected storage: Storage<Record<string, Language>>;
+
+    constructor(protected storageKey: string = 'lang') {
+        super();
+        this.storage = new Storage<Record<typeof storageKey, Language>>()
+    }
 
     public async change(lang: Language): Promise<void> {
 
         const messages = await (await fetch(getLocaleFilename(lang))).json()
 
         if (messages && messages instanceof Object) {
-            const newMessages = fromMessagesToObj(messages)
-            this.customLocale ??= new CustomLocale(lang, newMessages);
-            this.customLocale.change(lang, newMessages);
+            this.customLocale ??= new CustomLocale();
+            this.customLocale
+                .setLang(lang)
+                .setData(flattenLocaleMessages(messages));
+
+            await this.storage.set(this.storageKey, lang);
             return
         } else {
             throw new Error(`Data is empty for "${lang}" language`)
         }
+    }
+
+    public async sync(): Promise<Language | undefined> {
+        return await this.storage.get(this.storageKey);
     }
 
     public lang(): Language {

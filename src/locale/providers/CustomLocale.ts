@@ -6,13 +6,21 @@ import {LocaleNativeStructure} from "./NativeLocale";
 import {Language} from "@typing/locale";
 
 export default class CustomLocale extends AbstractLocale<LocaleNativeStructure> {
-    constructor(protected _lang: Language, protected messages: Record<string, string>) {
+    constructor(
+        protected _lang: Language = Language.English,
+        protected data: Record<string, string> = {}
+    ) {
         super();
     }
 
-    public change(lang: Language, messages: Record<string, string>): void {
+    public setLang(lang: Language): this {
         this._lang = lang;
-        this.messages = messages;
+        return this
+    }
+
+    public setData(data: Record<string, string>): this {
+        this.data = data;
+        return this
     }
 
     public lang(): Language {
@@ -20,11 +28,11 @@ export default class CustomLocale extends AbstractLocale<LocaleNativeStructure> 
     }
 
     public keys() {
-        return new Set(Object.keys(this.messages));
+        return new Set(Object.keys(this.data));
     }
 
     public value(key: string) {
-        const value = this.messages[convertLocaleKey(key)];
+        const value = this.data[convertLocaleKey(key)];
 
         if (!value || value.length === 0) {
             return undefined;

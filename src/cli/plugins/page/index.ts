@@ -11,8 +11,6 @@ import {EntrypointPlugin} from "@cli/bundler";
 
 import {Command} from "@typing/app";
 
-export {Page};
-
 export default definePlugin(() => {
     let page: Page;
     let declaration: PageDeclaration;

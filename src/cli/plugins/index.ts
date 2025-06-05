@@ -1,11 +1,11 @@
 export {default as assetPlugin} from "./asset";
-export {default as backgroundPlugin, Background, Command, Service} from "./background";
-export {default as contentPlugin, Content} from "./content";
+export {default as backgroundPlugin} from "./background";
+export {default as contentPlugin} from "./content";
 export {default as dotenvPlugin} from "./dotenv";
 export {default as htmlPlugin} from "./html";
 export {default as iconPlugin} from "./icon";
-export {default as localePlugin, Locale} from "./locale";
-export {default as pagePlugin, Page} from "./page";
+export {default as localePlugin} from "./locale";
+export {default as pagePlugin} from "./page";
 export {default as popupPlugin} from "./popup";
 export {default as typescriptPlugin, TypescriptConfig, FileBuilder, VendorDeclaration} from "./typescript";
 export {default as reactPlugin} from "./react";

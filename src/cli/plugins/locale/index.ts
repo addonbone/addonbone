@@ -13,8 +13,6 @@ import {Command} from "@typing/app";
 import {Browser} from "@typing/browser";
 import {Language, LanguageCodes} from "@typing/locale";
 
-export {Locale};
-
 export default definePlugin(() => {
     let locale: Locale;
     let declaration: LocaleDeclaration;

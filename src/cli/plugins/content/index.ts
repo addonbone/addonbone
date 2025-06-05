@@ -11,7 +11,6 @@ import {EntrypointPlugin, isEntryModuleOrIssuer} from "@cli/bundler";
 
 import {Command} from "@typing/app";
 
-
 export default definePlugin(() => {
     let content: Content;
     let relay: Relay;

@@ -16,8 +16,6 @@ import ServiceDeclaration from "./ServiceDeclaration";
 
 import {Command as AppCommand} from "@typing/app";
 
-export {Background, Command, Service};
-
 export default definePlugin(() => {
     let background: Background;
     let command: Command;

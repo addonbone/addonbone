@@ -169,6 +169,7 @@
     "rspack-plugin-virtual-module": "^0.1.13",
     "sass": "^1.83.4",
     "sass-loader": "^16.0.4",
+    "semver": "^7.7.2",
     "source-modifier-loader": "^1.0.2",
     "tsconfig-paths": "^4.2.0",
     "type-fest": "^4.37.0",

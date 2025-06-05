@@ -12,8 +12,10 @@ export default definePlugin(() => {
             const trySetVersion = (version?: string): boolean => {
                 if (version && semver.valid(version)) {
                     manifest.setVersion(version);
+
                     return true;
                 }
+
                 return false;
             };
 
@@ -21,12 +23,14 @@ export default definePlugin(() => {
 
             if (trySetVersion(getEnv(config.version))) return;
 
+            const packagePath = getInputPath(config, 'package.json');
+
             try {
-                const packageJsonPath = getInputPath(config, 'package.json');
-                const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
+                const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf-8'));
+
                 trySetVersion(packageJson.version);
-            } catch(err) {
-                console.error('Unable to read version from package.json', err);
+            } catch (e) {
+                console.error(`Unable to read version from "${packagePath}"`, e);
             }
         }
     }

@@ -8,18 +8,21 @@ import CustomLocale, {CustomLocaleData} from "./CustomLocale";
 import {Language, LanguageCodes, LocaleDynamicProvider, LocaleMessages} from "@typing/locale";
 
 export default class<T extends LocaleNativeStructure> extends NativeLocale implements LocaleDynamicProvider<T> {
-    protected unsubscribe?: () => void
     protected cache = new Map<Language, CustomLocaleData>();
+
     protected locale?: CustomLocale<T>;
+
     protected storage?: Storage<Record<string, Language>>;
     protected storageKey?: string;
+
+    protected unsubscribe?: () => void;
 
     constructor(storage: string | false = 'lang') {
         super();
 
         if (storage) {
             this.storageKey = storage;
-            this.storage = new Storage();
+            this.storage = Storage.Sync();
         }
     }
 
@@ -28,15 +31,9 @@ export default class<T extends LocaleNativeStructure> extends NativeLocale imple
             return lang;
         }
 
-        const messages = await this.fetch(lang)
+        const messages = await this.fetch(lang);
 
-        if (!messages || typeof messages !== 'object') {
-            throw new Error(`Invalid or empty locale data for "${lang}"`);
-        }
-
-        this.locale ??= new CustomLocale();
-
-        this.locale.setLang(lang).setData(messages);
+        (this.locale ??= new CustomLocale()).setLang(lang).setData(messages);
 
         if (this.storage && this.storageKey) {
             await this.storage.set(this.storageKey, lang);
@@ -47,7 +44,7 @@ export default class<T extends LocaleNativeStructure> extends NativeLocale imple
 
     public async sync(): Promise<Language> {
         if (!this.storage || !this.storageKey) {
-            throw new Error('Language is not saving in storage')
+            throw new Error('Language is not saving in storage');
         }
 
         const lang = await this.storage.get(this.storageKey);
@@ -88,10 +85,8 @@ export default class<T extends LocaleNativeStructure> extends NativeLocale imple
     }
 
     public unwatch(): void {
-        if (this.unsubscribe) {
-            this.unsubscribe();
-            this.unsubscribe = undefined;
-        }
+        this.unsubscribe?.();
+        this.unsubscribe = undefined;
     }
 
     public lang(): Language {
@@ -102,19 +97,19 @@ export default class<T extends LocaleNativeStructure> extends NativeLocale imple
         return this.locale?.get(key) || super.value(key);
     }
 
-    protected async fetch(lang: Language): Promise<CustomLocaleData | undefined> {
-        let messages: CustomLocaleData | undefined;
+    protected async fetch(lang: Language): Promise<CustomLocaleData> {
+        let messages = this.cache.get(lang);
 
-        if (this.cache.has(lang)) {
-            messages = this.cache.get(lang)
-        } else {
-            try {
-                const response: LocaleMessages = await (await fetch(getLocaleFilename(lang))).json();
-                messages = flattenLocaleMessages(response)
-                messages && this.cache.set(lang, messages);
-            } catch (err) {
-                console.error(`Unable to load locale file for "${lang}".`, err);
+        if (!messages) {
+            const response: LocaleMessages = await (await fetch(getLocaleFilename(lang))).json();
+
+            if (!response || typeof response !== 'object') {
+                throw new Error(`Invalid or empty locale data for "${lang}"`);
             }
+
+            messages = flattenLocaleMessages(response);
+
+            this.cache.set(lang, messages);
         }
 
         return messages;

@@ -53,5 +53,5 @@ export const getLocaleDir = (lang: Language): LocaleDir => {
 }
 
 export const flattenLocaleMessages = (messages: LocaleMessages): Record<string, string> => {
-    return Object.fromEntries(Object.entries(messages).map(([key, value]) => [key, value.message]))
+    return Object.fromEntries(Object.entries(messages).map(([key, value]) => [key, value.message]));
 }

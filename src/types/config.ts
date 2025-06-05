@@ -311,6 +311,15 @@ export interface Config {
      * When `true`, view files from both directories will be combined.
      */
     mergeServices: boolean;
+
+    /**
+     * The version of the extension.
+     * Can be either a direct version string (e.g., "1.0.0")
+     * or a key referencing a value from an .env file.
+     *
+     * @default "VERSION"
+     */
+    version: string
 }
 
 

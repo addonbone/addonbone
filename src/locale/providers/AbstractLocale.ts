@@ -8,7 +8,7 @@ import {
     LocaleValuesSeparator
 } from "@typing/locale";
 
-export default abstract class AbstractLocale<S extends LocaleStructure>
+export default abstract class<S extends LocaleStructure>
     implements LocaleProvider<S> {
 
     public abstract lang(): Language;

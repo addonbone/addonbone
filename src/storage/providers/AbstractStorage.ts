@@ -2,7 +2,7 @@ import {browser} from '@browser/browser'
 import {throwRuntimeError} from '@browser/runtime'
 import {StorageProvider, StorageState, StorageWatchOptions} from '@typing/storage'
 
-const storage = browser().storage;
+const storage = () => browser().storage as typeof chrome.storage;
 
 type AreaName = chrome.storage.AreaName
 type StorageArea = chrome.storage.StorageArea;
@@ -30,7 +30,7 @@ export default abstract class AbstractStorage<T extends StorageState> implements
 
     protected constructor({area, namespace}: StorageOptions = {}) {
         this.area = area ?? "local";
-        this.storage = storage[this.area];
+        this.storage = storage()[this.area];
         this.namespace = namespace?.trim() ? namespace?.trim() : undefined;
     }
 
@@ -112,9 +112,9 @@ export default abstract class AbstractStorage<T extends StorageState> implements
             });
         };
 
-        storage.onChanged.addListener(listener);
+        storage().onChanged.addListener(listener);
 
-        return () => storage.onChanged.removeListener(listener);
+        return () => storage().onChanged.removeListener(listener);
     };
 
     protected isKeyValid(key: string): boolean {

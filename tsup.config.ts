@@ -47,6 +47,7 @@ const framework: Options = {
         'browser/index': 'src/browser/index.ts',
 
         'locale/index': 'src/locale/index.ts',
+        'locale/react/index': 'src/locale/react/index.ts',
 
         'message/index': 'src/message/index.ts',
         'message/react/index': 'src/message/react/index.ts',

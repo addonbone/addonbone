@@ -161,3 +161,7 @@ export interface LocaleProvider<S extends LocaleStructure> {
         substitutions?: LocaleSubstitutionsFor<S, K>
     ): string;
 }
+
+export interface LocaleDynamicProvider<S extends LocaleStructure> extends LocaleProvider<S> {
+    change(lang: Language): Promise<Language>;
+}

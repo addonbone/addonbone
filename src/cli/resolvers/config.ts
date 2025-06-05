@@ -16,6 +16,7 @@ import {
     stylePlugin,
     typescriptPlugin,
     viewPlugin,
+    versionPlugin
 } from "../plugins";
 
 import {getAppPath, getAppSourcePath, getConfigFile, getInputPath} from "../resolvers/path";
@@ -122,6 +123,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         mergePopup = false,
         multiplePopup = false,
         mergeServices = false,
+        version = 'VERSION'
     } = config;
 
     let resolvedConfig: Config = {
@@ -158,6 +160,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         mergePopup,
         multiplePopup,
         mergeServices,
+        version,
     };
 
     let vars = loadDotenv(resolvedConfig);
@@ -182,6 +185,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         pagePlugin(),
         viewPlugin(),
         htmlPlugin(),
+        versionPlugin(),
     ];
 
     return {

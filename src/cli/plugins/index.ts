@@ -11,3 +11,4 @@ export {default as typescriptPlugin, TypescriptConfig, FileBuilder, VendorDeclar
 export {default as reactPlugin} from "./react";
 export {default as stylePlugin} from "./style";
 export {default as viewPlugin} from "./view";
+export {default as versionPlugin} from "./version";

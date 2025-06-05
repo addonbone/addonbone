@@ -9,10 +9,10 @@ import {DynamicLocale} from '../providers'
 import {Language} from "@typing/locale";
 
 type LocaleProviderProps = {
-    storageKey?: string
+    storageKey?: string | false
 }
 
-const LocaleProvider = ({children, storageKey = 'lang'}: PropsWithChildren<LocaleProviderProps>) => {
+const LocaleProvider = ({children, storageKey}: PropsWithChildren<LocaleProviderProps>) => {
     const locale = useMemo(() => new DynamicLocale(storageKey), [])
 
     const [lang, setLang] = useState<Language>(locale.lang())
@@ -27,7 +27,6 @@ const LocaleProvider = ({children, storageKey = 'lang'}: PropsWithChildren<Local
 
     const change: LocaleContract['change'] = useCallback((lang): void => {
         locale.change(lang)
-            .then((newLang) => setLang(newLang))
             .catch((err) => console.error(`Cannot find locale file for "${lang}" language`, err));
     }, []);
 
@@ -41,6 +40,10 @@ const LocaleProvider = ({children, storageKey = 'lang'}: PropsWithChildren<Local
     useEffect(() => {
         locale.sync().then((lang) => setLang(lang));
     }, []);
+
+    useEffect(() => {
+        return locale.watch((lang) => setLang(lang));
+    }, [])
 
     return (
         <LocaleContext.Provider value={{

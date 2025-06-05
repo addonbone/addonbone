@@ -8,12 +8,12 @@ import {DynamicLocale} from '../providers'
 
 import {Language} from "@typing/locale";
 
-type LocaleProviderProps = {
-    storageKey?: string | false
+export interface LocaleProviderProps  {
+    storage?: string | false;
 }
 
-const LocaleProvider = ({children, storageKey}: PropsWithChildren<LocaleProviderProps>) => {
-    const locale = useMemo(() => new DynamicLocale(storageKey), [])
+const LocaleProvider = ({children, storage}: PropsWithChildren<LocaleProviderProps>) => {
+    const locale = useMemo(() => new DynamicLocale(storage), [])
 
     const [lang, setLang] = useState<Language>(locale.lang())
 

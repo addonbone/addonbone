@@ -3,7 +3,12 @@ import {NormalModule, type OptimizationSplitChunksCacheGroupTestFn} from "@rspac
 
 import {PackageName} from "@typing/app";
 
-export const isEntryModuleOrIssuer = (entry: string | string[]): OptimizationSplitChunksCacheGroupTestFn => (module, {moduleGraph}) => {
+export const isEntryModuleOrIssuer = (
+    entry: string | string[]
+): OptimizationSplitChunksCacheGroupTestFn => (
+    module,
+    {moduleGraph}
+) => {
     if (typeof entry === 'string') {
         entry = [entry];
     }
@@ -17,21 +22,43 @@ export const isEntryModuleOrIssuer = (entry: string | string[]): OptimizationSpl
         return dirs;
     }, [] as string[]);
 
-    const resource = (module as NormalModule).resource || '';
+    const visited = new Set<string>();
 
-    if (entryDirs.some((dir) => resource.includes(dir))) {
-        return true;
-    }
+    const checkModule = (mod: NormalModule): boolean => {
+        const resource = mod.resource || '';
 
-    let issuer = moduleGraph.getIssuer(module) as NormalModule | null;
+        if (visited.has(resource)) {
+            return false;
+        }
 
-    while (issuer) {
-        if (entryDirs.some((dir) => (issuer?.resource || '').includes(dir))) {
+        visited.add(resource);
+
+        if (entryDirs.some((dir) => resource.includes(dir))) {
             return true;
         }
 
-        issuer = moduleGraph.getIssuer(issuer) as NormalModule | null;
-    }
+        let issuer = moduleGraph.getIssuer(mod) as NormalModule | null;
 
-    return false;
+        while (issuer) {
+            if (checkModule(issuer)) {
+                return true;
+            }
+
+            issuer = moduleGraph.getIssuer(issuer) as NormalModule | null;
+        }
+
+        const connections = moduleGraph.getOutgoingConnections(mod);
+
+        for (const connection of connections) {
+            if (connection.module && connection.module instanceof NormalModule) {
+                if (checkModule(connection.module)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    };
+
+    return checkModule(module as NormalModule);
 }

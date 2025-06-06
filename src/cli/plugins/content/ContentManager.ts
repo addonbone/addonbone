@@ -5,7 +5,7 @@ import {filterContentScriptsMatchPatterns, getContentScriptConfigFromOptions} fr
 
 import {ReadonlyConfig} from "@typing/config";
 import {ContentScriptEntrypointOptions} from "@typing/content";
-import {EntrypointEntries, EntrypointFile} from "@typing/entrypoint";
+import {EntrypointEntries, EntrypointFile, EntrypointType} from "@typing/entrypoint";
 import {ManifestContentScripts, ManifestHostPermissions} from "@typing/manifest";
 
 
@@ -112,8 +112,15 @@ export default class {
         return this.names.getChunkName();
     }
 
-    public likely(name: string): boolean {
-        return this.names.likely(name);
+    public likely(name?: string): boolean {
+        if(!name) {
+            return false;
+        }
+
+        return [
+            EntrypointType.Relay,
+            EntrypointType.ContentScript
+        ].some(type => name === type || name.endsWith(`.${type}`));
     }
 
     public clear(): this {

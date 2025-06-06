@@ -65,13 +65,7 @@ export default definePlugin(() => {
                                 name: manager.chunkName(),
                                 test: isEntryModuleOrIssuer(['content', 'relay']),
                                 chunks: (chunk): boolean => {
-                                    const {name} = chunk;
-
-                                    if (!name) {
-                                        return false;
-                                    }
-
-                                    return manager.likely(name);
+                                    return manager.likely(chunk.name);
                                 },
                                 enforce: false,
                                 reuseExistingChunk: true,

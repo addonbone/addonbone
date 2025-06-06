@@ -17,9 +17,6 @@ export default abstract class<S extends LocaleStructure>
 
     protected abstract value(key: keyof S & string): string | undefined;
 
-    /**
-     * Non-plural перевод
-     */
     public trans<K extends LocaleNonPluralKeys<S>>(
         key: K,
         substitutions?: LocaleSubstitutionsFor<S, K>
@@ -27,9 +24,6 @@ export default abstract class<S extends LocaleStructure>
         return this.get(key, substitutions);
     }
 
-    /**
-     * Plural-перевод
-     */
     public choice<K extends LocalePluralKeys<S>>(
         key: K,
         count: number,

@@ -1,0 +1,27 @@
+import {createHash} from 'crypto';
+
+export function generateCryptoKey(password: string): string {
+    return createHash('sha256').update(password).digest('base64')
+}
+
+export function encryptData<T = any>(data: T, key: string): string {
+    const jsonString = JSON.stringify(data);
+    const dataBytes = Array.from(jsonString, c => c.charCodeAt(0));
+    const keyBytes = Array.from(key, c => c.charCodeAt(0));
+
+    const encryptedBytes = dataBytes.map((byte, i) => byte ^ keyBytes[i % keyBytes.length]);
+    const encryptedString = String.fromCharCode(...encryptedBytes);
+
+    return btoa(encryptedString);
+}
+
+export function decryptData<T = any>(encrypted: string, key: string): T {
+    const encryptedString = atob(encrypted);
+    const encryptedBytes = Array.from(encryptedString, c => c.charCodeAt(0));
+    const keyBytes = Array.from(key, c => c.charCodeAt(0));
+
+    const decryptedBytes = encryptedBytes.map((byte, i) => byte ^ keyBytes[i % keyBytes.length]);
+    const decryptedString = String.fromCharCode(...decryptedBytes);
+
+    return JSON.parse(decryptedString);
+}

@@ -150,8 +150,8 @@ export interface Config {
         filter?: ((value: string) => boolean) | string;
 
         /**
-         * If true, the environment variable values will be obfuscated with a simple encryption.
-         * This is not a secure encryption.
+         * If true, the environment variable values will be obfuscated with simple encryption.
+         * This is not secure encryption.
          *
          * @default false
          */

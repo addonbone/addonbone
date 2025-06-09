@@ -21,16 +21,14 @@ export default definePlugin((vars: DotenvParseOutput = {}) => {
                 }
             }));
 
-            const secureKey = [config.app, ...Object.keys(filteredVars)].join('-');
+            const key = generateCryptoKey([config.app, ...Object.keys(filteredVars)].join('-'));
 
-            const cryptoKey = generateCryptoKey(secureKey)
-
-            const data = crypt ? encryptData(filteredVars, cryptoKey) : filteredVars
+            const data = crypt ? encryptData(filteredVars, key) : filteredVars;
 
             return {
                 plugins: [
                     new DefinePlugin({
-                        __ADNBN_ENV_CRYPTO_KEY__: JSON.stringify(cryptoKey),
+                        __ADNBN_ENV_CRYPTO_KEY__: JSON.stringify(key),
                         'process.env': JSON.stringify(data),
                     })
                 ]

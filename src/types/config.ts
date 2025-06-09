@@ -139,6 +139,26 @@ export interface Config {
     html: HtmlOptions | HtmlOptions[] | { (): HtmlOptions | HtmlOptions[] };
 
     /**
+     * Environment configuration for the extension.
+     */
+    env: {
+        /**
+         * Filter that determines which environment variables should be included.
+         * Can be a string (interpreted as a prefix) or a function that receives
+         * the variable name and returns true if it should be included.
+         */
+        filter?: ((value: string) => boolean) | string;
+
+        /**
+         * If true, the environment variable values will be obfuscated with simple encryption.
+         * This is not secure encryption.
+         *
+         * @default false
+         */
+        crypt?: boolean;
+    }
+
+    /**
      * Icon configuration for the extension.
      */
     icon: {

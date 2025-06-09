@@ -2,9 +2,9 @@ import {z} from "zod";
 
 import ViewParser from "./ViewParser";
 
-import {PageEntrypointOptions} from "@typing/page";
+import {PopupEntrypointOptions} from "@typing/popup";
 
-export default class extends ViewParser<PageEntrypointOptions> {
+export default class extends ViewParser<PopupEntrypointOptions> {
     protected definition(): string {
         return 'definePopup';
     }

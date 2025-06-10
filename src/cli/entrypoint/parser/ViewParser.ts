@@ -92,7 +92,7 @@ export default abstract class<O extends ViewEntrypointOptions> extends AbstractP
 
     protected schema(): typeof this.CommonPropertiesSchema {
         return this.CommonPropertiesSchema.merge(this.HtmlOptionsSchema).extend({
-            name: z.string().nonempty().optional(),
+            as: z.string().nonempty().optional(),
             title: z.string().nonempty().optional(),
             template: z.string().nonempty().optional(),
         });

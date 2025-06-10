@@ -16,7 +16,8 @@ import {
     stylePlugin,
     typescriptPlugin,
     viewPlugin,
-    versionPlugin
+    versionPlugin,
+    offscreenPlugin,
 } from "../plugins";
 
 import {getAppPath, getAppSourcePath, getConfigFile, getInputPath} from "../resolvers/path";
@@ -124,7 +125,8 @@ export default async (config: OptionalConfig): Promise<Config> => {
         mergePopup = false,
         multiplePopup = false,
         mergeRelay = false,
-        mergeServices = false,
+        mergeService = false,
+        mergeOffscreen = false,
         version = 'VERSION'
     } = config;
 
@@ -163,7 +165,8 @@ export default async (config: OptionalConfig): Promise<Config> => {
         mergePopup,
         multiplePopup,
         mergeRelay,
-        mergeServices,
+        mergeService,
+        mergeOffscreen,
         version,
     };
 
@@ -186,6 +189,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         contentPlugin(),
         backgroundPlugin(),
         popupPlugin(),
+        offscreenPlugin(),
         pagePlugin(),
         viewPlugin(),
         htmlPlugin(),

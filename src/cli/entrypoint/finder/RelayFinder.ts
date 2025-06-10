@@ -1,4 +1,4 @@
-import AbstractTransportPlugin from "./AbstractTransportPlugin";
+import AbstractTransportFinder from "./AbstractTransportFinder";
 import PluginFinder from "./PluginFinder";
 
 import {RelayParser} from "../parser";
@@ -7,7 +7,7 @@ import {ReadonlyConfig} from "@typing/config";
 import {RelayEntrypointOptions} from "@typing/relay";
 import {EntrypointOptionsFinder, EntrypointParser, EntrypointType} from "@typing/entrypoint";
 
-export default class extends AbstractTransportPlugin<RelayEntrypointOptions> {
+export default class extends AbstractTransportFinder<RelayEntrypointOptions> {
     public constructor(config: ReadonlyConfig) {
         super(config);
     }

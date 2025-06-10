@@ -328,9 +328,15 @@ export interface Config {
 
     /**
      * Flag indicating whether to merge service files from App and Shared directories.
-     * When `true`, view files from both directories will be combined.
+     * When `true`, service files from both directories will be combined.
      */
-    mergeServices: boolean;
+    mergeService: boolean;
+
+    /**
+     * Flag indicating whether to merge offscreen files from App and Shared directories.
+     * When `true`, offscreen files from both directories will be combined.
+     */
+    mergeOffscreen: boolean;
 
     /**
      * The version of the extension.

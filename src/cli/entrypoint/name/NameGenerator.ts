@@ -69,7 +69,11 @@ export default class implements EntrypointNameGenerator {
         return this;
     }
 
-    public likely(name: string): boolean {
+    public likely(name?: string): boolean {
+        if (!name) {
+            return false;
+        }
+
         return name === this.entrypoint || name.endsWith(`.${this.entrypoint}`);
     }
 

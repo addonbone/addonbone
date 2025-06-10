@@ -15,7 +15,11 @@ export default class extends NameGenerator {
         return entryName;
     }
 
-    public likely(name: string): boolean {
+    public likely(name?: string): boolean {
+        if(!name) {
+            return false;
+        }
+
         return name === this.entrypoint || /^.*[1-9]$/.test(name);
     }
 }

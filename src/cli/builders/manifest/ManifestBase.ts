@@ -48,8 +48,6 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
 
     public abstract getManifestVersion(): ManifestVersion;
 
-    public abstract setSidebar(sidebar?: ManifestSidebar): this
-
     protected abstract buildBackground(): Partial<T> | undefined;
 
     protected abstract buildAction(): Partial<T> | undefined;
@@ -127,6 +125,12 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
         this.popup = popup;
 
         return this;
+    }
+
+    public setSidebar(sidebar?: ManifestSidebar): this {
+        this.sidebar = sidebar;
+
+        return this
     }
 
     public setDependencies(dependencies: ManifestDependencies): this {

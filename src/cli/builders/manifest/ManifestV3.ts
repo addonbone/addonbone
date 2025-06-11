@@ -15,12 +15,6 @@ export default class extends ManifestBase<ManifestV3> {
         return 3;
     }
 
-    public setSidebar(sidebar?: ManifestSidebar): this {
-        this.sidebar = sidebar;
-
-        return this
-    }
-
     protected buildBackground(): Partial<ManifestV3> | undefined {
         if (this.background) {
             const {entry} = this.background;

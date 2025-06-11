@@ -43,6 +43,24 @@ declare module 'virtual:content-framework' {
     export = module;
 }
 
+declare module 'virtual:offscreen-entrypoint' {
+    type OffscreenDefinition = import('@typing/offscreen').OffscreenDefinition<any, any>;
+
+    interface ModuleType extends OffscreenDefinition {
+        default: OffscreenDefinition | OffscreenDefinition['init'] | undefined;
+    }
+
+    const module: ModuleType;
+    export = module;
+}
+
+declare module 'virtual:offscreen-framework' {
+    type OffscreenUnresolvedDefinition = import('@typing/offscreen').OffscreenUnresolvedDefinition<any>;
+
+    const module: (definition: OffscreenUnresolvedDefinition) => void;
+    export = module;
+}
+
 declare module 'virtual:relay-entrypoint' {
     type RelayDefinition = import('@typing/relay').RelayDefinition<any, any>;
 

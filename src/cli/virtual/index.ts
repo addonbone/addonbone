@@ -2,6 +2,7 @@ import background from "./background.ts?raw";
 import command from "./command.ts?raw";
 import content from "./content.ts?raw";
 import transport from "./transport.ts?raw";
+import offscreen from "./offscreen.ts?raw";
 import relay from "./relay.ts?raw";
 import view from "./view.ts?raw";
 
@@ -11,9 +12,9 @@ import {PackageName} from "@typing/app";
 import {EntrypointFile} from "@typing/entrypoint";
 
 
-const templates = {background, command, content, relay, view, transport};
+const templates = {background, command, content, offscreen, relay, view, transport};
 
-const getEntryFramework = (file: EntrypointFile, entry: 'content' | 'relay' | 'view'): string => {
+const getEntryFramework = (file: EntrypointFile, entry: 'content' | 'offscreen' | 'relay' | 'view'): string => {
     return `${PackageName}/entry/${entry}/${getEntrypointFileFramework(file)}`;
 }
 
@@ -41,6 +42,12 @@ export const virtualCommandModule = (file: EntrypointFile, name: string): string
 export const virtualContentScriptModule = (file: EntrypointFile): string => {
     return getVirtualModule(file, 'content')
         .replace(`virtual:content-framework`, getEntryFramework(file, 'content'));
+}
+
+export const virtualOffscreenModule = (file: EntrypointFile, name: string): string => {
+    return getVirtualModule(file, 'offscreen')
+        .replace('virtual:offscreen-name', name)
+        .replace(`virtual:offscreen-framework`, getEntryFramework(file, 'offscreen'));
 }
 
 export const virtualRelayModule = (file: EntrypointFile, name: string): string => {

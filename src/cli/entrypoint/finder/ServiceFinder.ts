@@ -1,4 +1,4 @@
-import AbstractTransportPlugin from "./AbstractTransportPlugin";
+import AbstractTransportFinder from "./AbstractTransportFinder";
 import PluginFinder from "./PluginFinder";
 
 import {ServiceParser} from "../parser";
@@ -7,7 +7,7 @@ import {ReadonlyConfig} from "@typing/config";
 import {ServiceEntrypointOptions} from "@typing/service";
 import {EntrypointOptionsFinder, EntrypointParser, EntrypointType} from "@typing/entrypoint";
 
-export default class extends AbstractTransportPlugin<ServiceEntrypointOptions> {
+export default class extends AbstractTransportFinder<ServiceEntrypointOptions> {
     public constructor(config: ReadonlyConfig) {
         super(config);
     }
@@ -25,6 +25,6 @@ export default class extends AbstractTransportPlugin<ServiceEntrypointOptions> {
     }
 
     public canMerge(): boolean {
-        return this.config.mergeServices;
+        return this.config.mergeService;
     }
 }

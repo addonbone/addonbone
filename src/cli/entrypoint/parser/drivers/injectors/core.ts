@@ -1,9 +1,9 @@
 import {Command, Mode, PackageName} from "@typing/app";
 import {Browser} from "@typing/browser";
 import {ContentScriptAppend} from "@typing/content";
+import {OffscreenReason} from "@typing/offscreen";
 
 import {Injector} from "../types";
-
 
 export default (): Injector[] => {
     const resolvers: Injector[] = [];
@@ -39,6 +39,15 @@ export default (): Injector[] => {
         resolvers.push({
             from: PackageName,
             target: 'ContentScriptAppend',
+            name: key,
+            value,
+        });
+    });
+
+    Object.entries(OffscreenReason).forEach(([key, value]) => {
+        resolvers.push({
+            from: PackageName,
+            target: 'OffscreenReason',
             name: key,
             value,
         });

@@ -319,6 +319,24 @@ export interface Config {
     multiplePopup: boolean;
 
     /**
+     * Flag indicating whether to merge sidebar files from App and Shared directories.
+     * When `true`, sidebar files from both directories will be combined.
+     * This is useful for sharing sidebar components across different parts of the application.
+     *
+     * @default false
+     */
+    mergeSidebar: boolean;
+
+    /**
+     * Flag indicating whether multiple sidebar files are supported in the extension.
+     * When `true`, the build process will handle and include multiple sidebar files in the extension.
+     * This allows the extension to have different sidebar interfaces for different contexts or states.
+     *
+     * @default false
+     */
+    multipleSidebar: boolean;
+
+    /**
      * Flag indicating whether to merge relay files from App and Shared directories.
      * When `true`, relay files from both directories will be combined.
      *
@@ -328,9 +346,15 @@ export interface Config {
 
     /**
      * Flag indicating whether to merge service files from App and Shared directories.
-     * When `true`, view files from both directories will be combined.
+     * When `true`, service files from both directories will be combined.
      */
-    mergeServices: boolean;
+    mergeService: boolean;
+
+    /**
+     * Flag indicating whether to merge offscreen files from App and Shared directories.
+     * When `true`, offscreen files from both directories will be combined.
+     */
+    mergeOffscreen: boolean;
 
     /**
      * The version of the extension.

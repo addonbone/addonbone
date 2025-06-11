@@ -10,6 +10,7 @@ import {
     ManifestIcons,
     ManifestPermissions,
     ManifestPopup,
+    ManifestSidebar,
     ManifestVersion
 } from "@typing/manifest";
 import {Browser} from "@typing/browser";
@@ -38,6 +39,7 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
     protected icons: ManifestIcons = new Map();
     protected background?: ManifestBackground;
     protected popup?: ManifestPopup;
+    protected sidebar?: ManifestSidebar;
     protected commands: ManifestCommands = new Set();
     protected contentScripts: ManifestContentScripts = new Set();
     protected dependencies: ManifestDependencies = new Map();
@@ -49,6 +51,8 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
     protected abstract buildBackground(): Partial<T> | undefined;
 
     protected abstract buildAction(): Partial<T> | undefined;
+
+    protected abstract buildSidebar(): Partial<T> | undefined;
 
     protected abstract buildHostPermissions(): Partial<T> | undefined;
 
@@ -117,10 +121,16 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
         return this;
     }
 
-    public setPopup(action?: ManifestPopup): this {
-        this.popup = action;
+    public setPopup(popup?: ManifestPopup): this {
+        this.popup = popup;
 
         return this;
+    }
+
+    public setSidebar(sidebar?: ManifestSidebar): this {
+        this.sidebar = sidebar;
+
+        return this
     }
 
     public setDependencies(dependencies: ManifestDependencies): this {
@@ -201,6 +211,7 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
             this.buildBackground(),
             this.buildCommands(),
             this.buildAction(),
+            this.buildSidebar(),
             this.buildContentScripts(),
             this.buildPermissions(),
             this.buildHostPermissions(),

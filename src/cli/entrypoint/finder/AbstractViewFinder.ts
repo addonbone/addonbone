@@ -48,7 +48,7 @@ export default abstract class<O extends ViewEntrypointOptions> extends AbstractP
         const views: ViewItems<O> = new Map;
 
         for (const [file, options] of await this.plugin().options()) {
-            let {name} = options;
+            let {as: name} = options;
 
             let filename = name ? this.filenames.name(name) : this.filenames.file(file);
 
@@ -99,6 +99,18 @@ export default abstract class<O extends ViewEntrypointOptions> extends AbstractP
         }
 
         return aliases;
+    }
+
+    public async getFilenames(): Promise<Map<EntrypointFile, string>> {
+        const views = await this.views();
+
+        const filenames = new Map<EntrypointFile, string>;
+
+        for (const {file, filename} of views.values()) {
+            filenames.set(file, filename);
+        }
+
+        return filenames;
     }
 
     public clear(): this {

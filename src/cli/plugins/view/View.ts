@@ -55,7 +55,7 @@ export default class<O extends ViewEntrypointOptions> {
 
         for (const {filename, options} of views.values()) {
             const {
-                name,
+                as,
                 title,
                 template,
                 excludeApp,

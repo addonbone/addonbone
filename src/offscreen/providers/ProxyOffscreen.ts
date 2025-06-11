@@ -1,4 +1,4 @@
-import {createOffscreen, hasOffscreen} from "@browser/offscreen";
+import {closeOffscreen, createOffscreen, hasOffscreen} from "@browser/offscreen";
 
 import {ProxyTransport} from "@transport";
 
@@ -12,7 +12,7 @@ import type {TransportDictionary, TransportManager, TransportMessage, TransportN
 type CreateParameters = chrome.offscreen.CreateParameters;
 
 export default class<N extends TransportName, T = DeepAsyncProxy<TransportDictionary[N]>> extends ProxyTransport<N, T> {
-    protected message: TransportMessage
+    protected message: TransportMessage;
 
     constructor(name: N, private parameters: CreateParameters) {
         super(name);
@@ -24,9 +24,12 @@ export default class<N extends TransportName, T = DeepAsyncProxy<TransportDictio
     }
 
     protected async apply(args: any[], path?: string): Promise<any> {
-        if (!(await hasOffscreen())) {
-            await createOffscreen(this.parameters);
+        if (await hasOffscreen()) {
+            await closeOffscreen();
         }
+
+        await createOffscreen(this.parameters);
+
         return this.message.send({path, args});
     }
 
@@ -35,6 +38,7 @@ export default class<N extends TransportName, T = DeepAsyncProxy<TransportDictio
         if (isOffscreen()) {
             throw new Error(`You are trying to get proxy offscreen service "${this.name}" from offscreen. You can get original offscreen service instead`);
         }
+
         return super.get()
     }
 }

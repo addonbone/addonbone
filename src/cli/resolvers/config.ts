@@ -12,11 +12,13 @@ import {
     localePlugin,
     pagePlugin,
     popupPlugin,
+    sidebarPlugin,
     reactPlugin,
     stylePlugin,
     typescriptPlugin,
     viewPlugin,
-    versionPlugin
+    versionPlugin,
+    offscreenPlugin,
 } from "../plugins";
 
 import {getAppPath, getAppSourcePath, getConfigFile, getInputPath} from "../resolvers/path";
@@ -123,8 +125,11 @@ export default async (config: OptionalConfig): Promise<Config> => {
         mergePages = false,
         mergePopup = false,
         multiplePopup = false,
+        mergeSidebar = false,
+        multipleSidebar = false,
         mergeRelay = false,
-        mergeServices = false,
+        mergeService = false,
+        mergeOffscreen = false,
         version = 'VERSION'
     } = config;
 
@@ -162,8 +167,11 @@ export default async (config: OptionalConfig): Promise<Config> => {
         mergePages,
         mergePopup,
         multiplePopup,
+        mergeSidebar,
+        multipleSidebar,
         mergeRelay,
-        mergeServices,
+        mergeService,
+        mergeOffscreen,
         version,
     };
 
@@ -186,6 +194,8 @@ export default async (config: OptionalConfig): Promise<Config> => {
         contentPlugin(),
         backgroundPlugin(),
         popupPlugin(),
+        sidebarPlugin(),
+        offscreenPlugin(),
         pagePlugin(),
         viewPlugin(),
         htmlPlugin(),

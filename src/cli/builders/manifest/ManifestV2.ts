@@ -56,6 +56,10 @@ export default class extends ManifestBase<ManifestV2> {
         }
     }
 
+    protected buildSidebar(): Partial<ManifestV2> | undefined {
+        return undefined;
+    }
+
     protected buildContentScripts(): Partial<ManifestV2> | undefined {
         const manifest = super.buildContentScripts() as Partial<ManifestV3>;
 

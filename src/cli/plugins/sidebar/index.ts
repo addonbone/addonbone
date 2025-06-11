@@ -11,6 +11,7 @@ import Sidebar from "./Sidebar";
 import {SidebarDeclaration} from "./declaration";
 
 import {Command} from "@typing/app";
+import {Browser} from "@typing/browser";
 
 export default definePlugin(() => {
     let sidebar: Sidebar;
@@ -22,13 +23,19 @@ export default definePlugin(() => {
             sidebar = new Sidebar(config);
             declaration = new SidebarDeclaration(config);
         },
-        sidebar: () =>  sidebar.files(),
+        sidebar: () => sidebar.files(),
         bundler: async ({config}) => {
             declaration.setAlias(await sidebar.getAlias()).build();
 
             if (await sidebar.empty()) {
                 if (config.debug) {
                     console.info('Sidebar entries not found');
+                }
+
+                return {};
+            } else if (config.manifestVersion === 2) {
+                if (config.debug) {
+                    console.warn('Sidebar not supported for manifest version 2');
                 }
 
                 return {};
@@ -59,8 +66,16 @@ export default definePlugin(() => {
                 ],
             } as RspackConfig;
         },
-        manifest: async ({manifest}) => {
+        manifest: async ({manifest, config}) => {
+            if (config.manifestVersion === 2) {
+                return;
+            }
+
             manifest.setSidebar(await sidebar.manifest());
+
+            if (await sidebar.exists() && config.browser !== Browser.Opera) {
+                manifest.addPermission('sidePanel');
+            }
         }
     };
 });

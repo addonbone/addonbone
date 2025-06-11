@@ -1,6 +1,9 @@
+import path from "path";
 import {Configuration as RspackConfig} from "@rspack/core";
 
 import {definePlugin} from "@main/plugin";
+
+import {getRootPath} from "@cli/resolvers/path";
 
 export default definePlugin(() => {
     return {
@@ -9,6 +12,10 @@ export default definePlugin(() => {
             return {
                 resolve: {
                     extensions: [".js", ".jsx"],
+                    alias: {
+                        'react': getRootPath(path.join('node_modules', 'react')),
+                        'react-dom': getRootPath(path.join('node_modules', 'react-dom')),
+                    }
                 },
                 optimization: {
                     splitChunks: {

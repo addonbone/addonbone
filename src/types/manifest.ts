@@ -100,6 +100,8 @@ export interface ManifestBuilder<T extends CoreManifest = Manifest> {
 
     setPopup(popup?: ManifestPopup): this;
 
+    setSidebar(sidebar?: ManifestSidebar): this;
+
     setDependencies(dependencies: ManifestDependencies): this;
 
     addPermission(permission: ManifestPermission): this;
@@ -132,6 +134,23 @@ export type ManifestCommand = CommandConfig;
 export type ManifestCommands = Set<ManifestCommand>;
 
 export interface ManifestPopup {
+    /**
+     * Represents the group name of an icon that can be used in UI elements.
+     * This property is optional and, if defined, should typically refer to a string
+     * that matches the name of an icon resource available in the application or icon library.
+     */
+    icon?: string;
+    /**
+     * Represents an optional title or name or locale key that can be assigned to an entity.
+     */
+    title?: string;
+    /**
+     * Represents an optional HTML path.
+     */
+    path?: string;
+}
+
+export interface ManifestSidebar {
     /**
      * Represents the group name of an icon that can be used in UI elements.
      * This property is optional and, if defined, should typically refer to a string

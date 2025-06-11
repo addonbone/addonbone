@@ -1,6 +1,6 @@
 import ManifestBase, {ManifestError} from "./ManifestBase";
 
-import {ManifestVersion} from "@typing/manifest";
+import {ManifestSidebar, ManifestVersion} from "@typing/manifest";
 import {Browser} from "@typing/browser";
 import {ContentScriptMatches} from "@typing/content";
 
@@ -13,6 +13,12 @@ export default class extends ManifestBase<ManifestV3> {
 
     public getManifestVersion(): ManifestVersion {
         return 3;
+    }
+
+    public setSidebar(sidebar?: ManifestSidebar): this {
+        this.sidebar = sidebar;
+
+        return this
     }
 
     protected buildBackground(): Partial<ManifestV3> | undefined {
@@ -57,6 +63,21 @@ export default class extends ManifestBase<ManifestV3> {
                 }
             };
         }
+    }
+
+    protected buildSidebar(): Partial<ManifestV3> | undefined {
+        if (!this.sidebar) return undefined;
+
+        const {path, icon, title} = this.sidebar;
+
+        const commonProps = {
+            default_title: title || this.name,
+            default_icon: this.getIconsByName(icon),
+        }
+
+        return this.browser === Browser.Opera
+            ? {sidebar_action: {...commonProps, default_panel: path}}
+            : {side_panel: {...commonProps, default_path: path}}
     }
 
     protected buildHostPermissions(): Partial<ManifestV3> | undefined {

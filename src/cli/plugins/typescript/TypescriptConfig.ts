@@ -75,6 +75,7 @@ export default class extends FileBuilder {
                 './icon.d.ts',
                 './page.d.ts',
                 './popup.d.ts',
+                './sidebar.d.ts',
             ],
             exclude: [
                 outputDir

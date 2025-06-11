@@ -8,6 +8,7 @@ export {default as localePlugin} from "./locale";
 export {default as offscreenPlugin} from "./offscreen";
 export {default as pagePlugin} from "./page";
 export {default as popupPlugin} from "./popup";
+export {default as sidebarPlugin} from "./sidebar";
 export {default as typescriptPlugin, TypescriptConfig, FileBuilder, VendorDeclaration} from "./typescript";
 export {default as reactPlugin} from "./react";
 export {default as stylePlugin} from "./style";

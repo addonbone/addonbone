@@ -16,6 +16,10 @@ export default class extends ManifestBase<ManifestV2> {
         return 2;
     }
 
+    public setSidebar(): this {
+        return this
+    }
+
     protected buildBackground(): Partial<ManifestV2> | undefined {
         if (this.background) {
             const {entry, persistent} = this.background;
@@ -54,6 +58,10 @@ export default class extends ManifestBase<ManifestV2> {
                 }
             };
         }
+    }
+
+    protected buildSidebar(): Partial<ManifestV2> | undefined {
+        return undefined;
     }
 
     protected buildContentScripts(): Partial<ManifestV2> | undefined {

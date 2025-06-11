@@ -15,3 +15,4 @@ export {default as PopupFinder} from "./PopupFinder";
 export {default as RelayFinder} from "./RelayFinder";
 export {default as ServiceFinder} from "./ServiceFinder";
 export {default as PluginFinder} from "./PluginFinder";
+export {default as SidebarFinder} from "./SidebarFinder";

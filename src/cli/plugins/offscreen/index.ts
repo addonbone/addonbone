@@ -30,6 +30,12 @@ export default definePlugin(() => {
                 }
 
                 return {};
+            } else if (config.manifestVersion === 2) {
+                if (config.debug) {
+                    console.warn('Offscreen not supported for manifest version 2');
+                }
+
+                return {};
             }
 
             const plugin = EntrypointPlugin.from(await offscreen.view().entries())
@@ -57,8 +63,8 @@ export default definePlugin(() => {
                 ],
             } satisfies RspackConfig;
         },
-        manifest: async ({manifest}) => {
-            if (await offscreen.exists()) {
+        manifest: async ({manifest, config}) => {
+            if (config.manifestVersion !== 2 && await offscreen.exists()) {
                 manifest.addPermission('offscreen');
             }
         }

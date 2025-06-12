@@ -7,7 +7,7 @@ export default abstract class<
     protected constructor(protected readonly name: N) {
     }
 
-    protected abstract manager() : TransportManager;
+    protected abstract manager(): TransportManager;
 
     public get(): T {
         return this.manager().get(this.name);

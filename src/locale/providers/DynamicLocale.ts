@@ -90,7 +90,7 @@ export default class<T extends LocaleNativeStructure> extends NativeLocale imple
     }
 
     public lang(): Language {
-        return this.locale?.lang() || super.lang();
+        return this.locale?.lang() || super.lang()
     }
 
     protected value(key: Extract<keyof LocaleNativeStructure, string>): string | undefined {

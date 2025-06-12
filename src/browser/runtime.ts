@@ -134,6 +134,8 @@ export const getId = (): string => runtime().id;
 
 export const getManifestVersion = (): ManifestVersion => getManifest().manifest_version;
 
+export const getDefaultLocale = (): string | undefined => getManifest().default_locale;
+
 export const isManifestVersion3 = (): boolean => getManifestVersion() === 3;
 
 export const isBackground = (): boolean => {

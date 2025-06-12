@@ -15,8 +15,7 @@ import {
     LocaleNestedKeysSeparator,
     LocaleStructure,
     LocaleValidator,
-    LocaleValuesSeparator,
-    RtlLanguages
+    LocaleValuesSeparator
 } from "@typing/locale";
 import {Browser} from "@typing/browser";
 
@@ -45,7 +44,7 @@ export default class LocaleBuilder implements LocaleBuilderContract {
             }
         }
 
-        if (this.browser === Browser.Opera && RtlLanguages.has(this.language)) {
+        if (this.browser === Browser.Opera) {
             /**
              * The Opera browser does not support RTL languages,
              * and for Opera you need to directly indicate what kind of language it is.

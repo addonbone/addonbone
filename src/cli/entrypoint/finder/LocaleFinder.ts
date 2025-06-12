@@ -121,6 +121,12 @@ export default class extends AbstractAssetFinder {
         }, {} as LocaleStructure);
     }
 
+    public async languages(): Promise<Set<Language>> {
+        const builders = await this.builders();
+
+        return new Set(builders.keys());
+    }
+
     async empty(): Promise<boolean> {
         return this.plugin().empty();
     }

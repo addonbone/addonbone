@@ -1,5 +1,5 @@
 import _ from "lodash";
-import {DefinePlugin, Configuration as RspackConfig} from "@rspack/core";
+import {Configuration as RspackConfig, DefinePlugin} from "@rspack/core";
 
 import {definePlugin} from "@main/plugin";
 import {GenerateJsonPlugin} from "@cli/bundler";
@@ -44,7 +44,7 @@ export default definePlugin(() => {
                     plugin,
                     new DefinePlugin({
                         __ADNBN_LOCALE_KEYS__: JSON.stringify([...(await locale.keys())]),
-                        __ADNBN_DEFINED_LOCALES__: JSON.stringify([...((await locale.builders()).keys())]),
+                        __ADNBN_DEFINED_LOCALES__: JSON.stringify([...(await locale.languages())]),
                     })
                 ]
             } satisfies RspackConfig;
@@ -59,7 +59,13 @@ export default definePlugin(() => {
                 if (LanguageCodes.has(lang)) {
                     language = lang as Language;
                 } else {
-                    throw new Error(`Invalid lang "${lang}" provided by config`);
+                    throw new Error(`Invalid language "${lang}" provided by config`);
+                }
+
+                const availableLanguages = await locale.languages();
+
+                if (!availableLanguages.has(language)) {
+                    throw new Error(`Language "${language}" not found in available translations. Available languages: ${[...availableLanguages].join(', ')}`);
                 }
             }
 

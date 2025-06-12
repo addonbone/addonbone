@@ -1,5 +1,5 @@
 import {browser} from "./browser";
-import {throwRuntimeError} from "./runtime";
+import {getManifest, throwRuntimeError} from "./runtime";
 
 type LanguageDetectionResult = chrome.i18n.LanguageDetectionResult
 
@@ -51,3 +51,5 @@ export const getI18nUILanguage = (): string | undefined => {
 
     return i18n.getUILanguage();
 }
+
+export const getDefaultLanguage = (): string | undefined => getManifest().default_locale;

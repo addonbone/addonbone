@@ -1,9 +1,9 @@
-import {getDefaultLocale} from "@browser/runtime";
 import {getI18nMessage, getI18nUILanguage} from "@browser/i18n";
 
 import AbstractLocale from "./AbstractLocale";
 
 import {convertLocaleKey} from "@locale/utils";
+
 import {isBrowser} from "@main/env";
 
 import {Language, LanguageCodes, LocaleCustomKeyForLanguage, LocaleProvider, LocaleStructure} from "@typing/locale";
@@ -41,9 +41,8 @@ export default class NativeLocale extends AbstractLocale<LocaleNativeStructure> 
             throw new Error("Locale Native: Unable to get UI language");
         }
 
-        return this.languages().has(lang) ? lang : getDefaultLocale() as Language
+        return lang;
     }
-
 
     public keys(): Set<keyof LocaleNativeStructure> {
         try {

@@ -44,6 +44,7 @@ export default definePlugin(() => {
                     plugin,
                     new DefinePlugin({
                         __ADNBN_LOCALE_KEYS__: JSON.stringify([...(await locale.keys())]),
+                        __ADNBN_DEFINED_LOCALES__: JSON.stringify([...((await locale.builders()).keys())]),
                     })
                 ]
             } satisfies RspackConfig;

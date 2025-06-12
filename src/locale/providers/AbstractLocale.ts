@@ -15,6 +15,8 @@ export default abstract class<S extends LocaleStructure>
 
     public abstract keys(): Set<keyof S>;
 
+    public abstract languages(): Set<Language>;
+
     protected abstract value(key: keyof S & string): string | undefined;
 
     public trans<K extends LocaleNonPluralKeys<S>>(

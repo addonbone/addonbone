@@ -34,6 +34,10 @@ export default class<T extends LocaleStructure = LocaleStructure> extends Abstra
         return new Set(Object.keys(this.data));
     }
 
+    public languages(): Set<Language> {
+        return new Set();
+    }
+
     protected value(key: string): string | undefined {
         const value = this.data[convertLocaleKey(key)];
 

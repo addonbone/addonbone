@@ -1,4 +1,4 @@
-import semver from 'semver';
+import semver from "semver";
 import fs from "fs";
 
 import {getEnv} from "@main/env";
@@ -9,29 +9,42 @@ export default definePlugin(() => {
     return {
         name: 'adnbn:version',
         manifest: ({manifest, config}) => {
-            const trySetVersion = (version?: string): boolean => {
-                if (version && semver.valid(version)) {
-                    manifest.setVersion(version);
+            const getVersion = (
+                configVersion: string | (() => string),
+                packageKey?: string
+            ): string | undefined => {
+                const version = typeof configVersion === "string" ? configVersion : configVersion();
 
-                    return true;
+                if (semver.valid(version)) {
+                    return version;
                 }
 
-                return false;
-            };
+                const envVersion = getEnv(version);
 
-            if (trySetVersion(config.version)) return;
+                if (envVersion && semver.valid(envVersion)) {
+                    return envVersion
+                }
 
-            if (trySetVersion(getEnv(config.version))) return;
+                if (!packageKey) {
+                    return
+                }
 
-            const packagePath = getInputPath(config, 'package.json');
+                const packagePath = getInputPath(config, 'package.json');
 
-            try {
-                const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf-8'));
+                try {
+                    const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf-8'));
 
-                trySetVersion(packageJson.version);
-            } catch (e) {
-                console.error(`Unable to read version from "${packagePath}"`, e);
+                    return packageJson[packageKey];
+                } catch (e) {
+                    console.error(`Unable to read ${packageKey} from "${packagePath}"`, e);
+                }
             }
+
+            const version = getVersion(config.version, 'version')
+            const minimumVersion = getVersion(config.minimumVersion)
+
+            version && manifest.setVersion(version)
+            minimumVersion && manifest.setMinimumVersion(minimumVersion)
         }
     }
 });

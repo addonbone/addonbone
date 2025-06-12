@@ -80,6 +80,8 @@ export type Manifest = ChromeManifest | FirefoxManifest | SafariManifest;
 export interface ManifestBuilder<T extends CoreManifest = Manifest> {
     setVersion(version: string): this;
 
+    setMinimumVersion(minimumVersion: string): this;
+
     setLocale(lang?: Language): this;
 
     setName(name: string): this;

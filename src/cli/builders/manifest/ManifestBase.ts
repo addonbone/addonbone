@@ -80,13 +80,13 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
         return this;
     }
 
-    public setVersion(version: string): this {
-        this.version = version;
+    public setVersion(version?: string): this {
+        this.version = version || "0.0.0";
 
         return this;
     }
 
-    public setMinimumVersion(minimumVersion: string): this {
+    public setMinimumVersion(minimumVersion?: string): this {
         this.minimumVersion = minimumVersion;
 
         return this;

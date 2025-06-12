@@ -370,12 +370,12 @@ export interface Config {
      * The minimum supported version of Chrome.
      * Used to populate the `minimum_chrome_version` field in the manifest.
      * Can be either:
-     * - a static version string, or a key referencing a value from an .env file.
+     * - a static version string/number, or a key referencing a value from an .env file.
      * - a function that returns the version dynamically.
      *
      * @default "MINIMUM_VERSION"
      */
-    minimumVersion : string | (() => string);
+    minimumVersion : string | number | (() => string | number);
 }
 
 

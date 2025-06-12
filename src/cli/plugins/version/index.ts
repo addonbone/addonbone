@@ -1,19 +1,24 @@
-import Version from "./Version";
 import {definePlugin} from "@main/plugin";
 
+import AbstractVersion from "./AbstractVersion";
+import AddonVersion from "./AddonVersion";
+import BrowserMinimumVersion from "./BrowserMinimumVersion";
+
 export default definePlugin(() => {
-    let version: Version
+    let addonVersion: AbstractVersion
+    let browserMinimumVersion: AbstractVersion
 
     return {
         name: 'adnbn:version',
         startup: ({config}) => {
-            version = new Version(config)
+            addonVersion = new AddonVersion(config)
+            browserMinimumVersion = new BrowserMinimumVersion(config)
         },
         manifest: ({manifest}) => {
-            const extVersion = version.resolveVersion()
-            const minimumVersion = version.resolveMinimumVersion()
+            const version = addonVersion.getVersion()
+            const minimumVersion = browserMinimumVersion.getVersion()
 
-            extVersion && manifest.setVersion(extVersion)
+            version && manifest.setVersion(version)
             minimumVersion && manifest.setMinimumVersion(minimumVersion)
         }
     }

@@ -88,11 +88,6 @@
       "import": "./dist/entry/content/*/index.js",
       "require": "./dist/entry/content/*/index.cjs"
     },
-    "./entry/relay/*": {
-      "types": "./dist/entry/relay/*/index.d.ts",
-      "import": "./dist/entry/relay/*/index.js",
-      "require": "./dist/entry/relay/*/index.cjs"
-    },
     "./entry/view/*": {
       "types": "./dist/entry/view/*/index.d.ts",
       "import": "./dist/entry/view/*/index.js",

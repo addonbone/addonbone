@@ -14,7 +14,7 @@ import {EntrypointFile} from "@typing/entrypoint";
 
 const templates = {background, command, content, offscreen, relay, view, transport};
 
-const getEntryFramework = (file: EntrypointFile, entry: 'content' | 'relay' | 'view'): string => {
+const getEntryFramework = (file: EntrypointFile, entry: 'content' | 'view'): string => {
     return `${PackageName}/entry/${entry}/${getEntrypointFileFramework(file)}`;
 }
 
@@ -53,7 +53,7 @@ export const virtualOffscreenModule = (file: EntrypointFile, name: string): stri
 export const virtualRelayModule = (file: EntrypointFile, name: string): string => {
     return getVirtualModule(file, 'relay')
         .replace('virtual:relay-name', name)
-        .replace(`virtual:relay-framework`, getEntryFramework(file, 'relay'));
+        .replace(`virtual:content-framework`, getEntryFramework(file, 'content'));
 }
 
 export const virtualServiceModule = (file: EntrypointFile, name: string): string => {

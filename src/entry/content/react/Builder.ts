@@ -1,7 +1,7 @@
 import {isValidElement} from "react";
 
 import MountBuilder from "../core/MountBuilder";
-import ReactNode from "./ReactNode";
+import ReactNode from "./Node";
 
 import {contentScriptReactRenderResolver} from "./resolvers/render";
 

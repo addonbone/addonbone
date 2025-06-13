@@ -37,7 +37,9 @@ declare module 'virtual:content-entrypoint' {
 }
 
 declare module 'virtual:content-framework' {
-    type ContentScriptDefinition = import('@typing/content').ContentScriptDefinition;
+    import {ContentScriptDefinition, ContentScriptBuilder} from "@typing/content";
+
+    export const Builder = ContentScriptBuilder;
 
     const module: (definition: ContentScriptDefinition) => void;
     export = module;

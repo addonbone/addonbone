@@ -69,7 +69,7 @@ export default definePlugin(() => {
                                 },
                                 enforce: false,
                                 reuseExistingChunk: true,
-                                priority: -10
+                                priority: 10
                             }
                         }
                     }

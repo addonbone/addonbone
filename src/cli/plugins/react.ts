@@ -23,7 +23,7 @@ export default definePlugin(() => {
                             react: {
                                 name: 'react',
                                 test: /[\\/]node_modules[\\/](react|react-dom|scheduler)([\\/]|$)/,
-                                priority: -5,
+                                priority: 100,
                                 reuseExistingChunk: true,
                                 enforce: true,
                             },

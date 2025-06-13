@@ -3,7 +3,7 @@ import {OffscreenUnresolvedDefinition} from "adnbn";
 //@ts-ignore
 import {isValidTransportDefinition, isValidTransportInitFunction, type TransportType} from "adnbn/entry/transport";
 
-import relay from "virtual:offscreen-framework";
+import offscreen from "virtual:offscreen-framework";
 
 import * as module from "virtual:offscreen-entrypoint";
 
@@ -22,7 +22,7 @@ try {
 
     const {init, name = relayName, ...options} = definition;
 
-    relay({name, init, ...options});
+    offscreen({name, init, ...options});
 } catch (e) {
     console.error('The offscreen crashed on startup:', e);
 }

@@ -23,17 +23,16 @@ export default class extends AbstractVersion {
     }
 
     protected resolveVersion(version?: string): string | undefined {
-        if (!version) return
+        const coerceVersion = semver.coerce(version)
 
-        const semverVersion: string = semver.coerce(version)?.raw
+        if (!version || !coerceVersion) return
 
-        if (semverVersion) {
-            const parts = version.split(".")
+        const parts: string[] = coerceVersion.version.split(".");
 
-            if (parts.length === 4 && Number.isFinite(Number(parts[3]))) {
-                return semverVersion + '.' + parts[3]
-            }
-            return semverVersion + '.0';
+        while (parts.length && parts[parts.length - 1] === '0') {
+            parts.pop();
         }
+
+        return parts.join('.') || undefined;
     }
 }

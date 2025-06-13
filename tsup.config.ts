@@ -71,9 +71,7 @@ const framework: Options = {
 
         'entry/service/index': 'src/entry/service/index.ts',
         'entry/transport/index': 'src/entry/transport/index.ts',
-
-        'entry/offscreen/vanilla/index': 'src/entry/offscreen/vanilla/index.ts',
-        'entry/offscreen/react/index': 'src/entry/offscreen/react/index.ts',
+        'entry/offscreen/index': 'src/entry/offscreen/index.ts',
 
         'entry/relay/vanilla/index': 'src/entry/relay/vanilla/index.ts',
         'entry/relay/react/index': 'src/entry/relay/react/index.ts',

@@ -54,13 +54,6 @@ declare module 'virtual:offscreen-entrypoint' {
     export = module;
 }
 
-declare module 'virtual:offscreen-framework' {
-    type OffscreenUnresolvedDefinition = import('@typing/offscreen').OffscreenUnresolvedDefinition<any>;
-
-    const module: (definition: OffscreenUnresolvedDefinition) => void;
-    export = module;
-}
-
 declare module 'virtual:relay-entrypoint' {
     type RelayDefinition = import('@typing/relay').RelayDefinition<any, any>;
 
@@ -93,9 +86,11 @@ declare module 'virtual:view-entrypoint' {
 }
 
 declare module 'virtual:view-framework' {
-    import {ViewOptions} from "@typing/view";
+    import {ViewOptions, ViewBuilder} from "@typing/view";
 
     type ViewDefinition = import('@typing/view').ViewDefinition<ViewOptions>;
+
+    export const Builder = ViewBuilder;
 
     const module: (definition: ViewDefinition) => void;
     export = module;

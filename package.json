@@ -88,11 +88,6 @@
       "import": "./dist/entry/content/*/index.js",
       "require": "./dist/entry/content/*/index.cjs"
     },
-    "./entry/offscreen/*": {
-      "types": "./dist/entry/offscreen/*/index.d.ts",
-      "import": "./dist/entry/offscreen/*/index.js",
-      "require": "./dist/entry/offscreen/*/index.cjs"
-    },
     "./entry/relay/*": {
       "types": "./dist/entry/relay/*/index.d.ts",
       "import": "./dist/entry/relay/*/index.js",

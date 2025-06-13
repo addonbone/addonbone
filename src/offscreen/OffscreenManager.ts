@@ -1,4 +1,4 @@
-import {TransportManager} from '@transport'
+import TransportManager from '@transport/TransportManager'
 
 import {OffscreenGlobalKey} from "@typing/offscreen";
 

@@ -1,6 +1,6 @@
 import {isBackground} from "@browser/runtime";
 
-import {ProxyTransport} from "@transport";
+import ProxyTransport from "@transport/ProxyTransport";
 
 import ServiceManager from "../ServiceManager";
 import ServiceMessage from "../ServiceMessage";

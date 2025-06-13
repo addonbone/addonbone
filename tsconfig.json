@@ -49,8 +49,8 @@
       "@service/*": [
         "service/*"
       ],
-      "@transport": [
-        "transport"
+      "@transport/*": [
+        "transport/*"
       ],
       "@typing/*": [
         "types/*"

@@ -17,7 +17,7 @@ const config: Config = {
         "^@offscreen/(.*)$": "<rootDir>/src/offscreen/$1",
         "^@message/(.*)$": "<rootDir>/src/message/$1",
         "^@service/(.*)$": "<rootDir>/src/service/$1",
-        "^@transport": "<rootDir>/src/transport",
+        "^@transport/(.*)$": "<rootDir>/src/transport/$1",
         "^@main/(.*)$": "<rootDir>/src/main/$1",
         "^@typing/(.*)$": "<rootDir>/src/types/$1"
     },

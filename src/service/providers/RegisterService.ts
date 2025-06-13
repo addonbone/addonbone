@@ -1,5 +1,6 @@
 import {isBackground} from "@browser/runtime";
-import {RegisterTransport} from "@transport"
+
+import RegisterTransport from "@transport/RegisterTransport";
 
 import ServiceMessage from "../ServiceMessage";
 import ServiceManager from "../ServiceManager";

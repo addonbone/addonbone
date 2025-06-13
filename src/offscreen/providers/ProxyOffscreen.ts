@@ -1,10 +1,11 @@
 import {closeOffscreen, createOffscreen, hasOffscreen} from "@browser/offscreen";
 
-import {ProxyTransport} from "@transport";
+import ProxyTransport from "@transport/ProxyTransport";
 
-import {isOffscreen} from "../utils";
 import OffscreenManager from "../OffscreenManager";
 import OffscreenMessage from "../OffscreenMessage";
+
+import {isOffscreen} from "../utils";
 
 import type {DeepAsyncProxy} from "@typing/helpers";
 import type {TransportDictionary, TransportManager, TransportMessage, TransportName} from "@typing/transport";
@@ -16,6 +17,7 @@ export default class<N extends TransportName, T = DeepAsyncProxy<TransportDictio
 
     constructor(name: N, private parameters: CreateParameters) {
         super(name);
+
         this.message = new OffscreenMessage(name);
     }
 

@@ -1,10 +1,10 @@
 import {executeScript, isAvailableScripting} from "@browser/scripting";
-import {ProxyTransport} from "@transport";
+
+import ProxyTransport from "@transport/ProxyTransport";
 
 import RelayManager from "../RelayManager";
 
 import {RelayGlobalKey} from "@typing/relay";
-
 import type {DeepAsyncProxy} from "@typing/helpers";
 import type {TransportDictionary, TransportManager, TransportName} from "@typing/transport";
 

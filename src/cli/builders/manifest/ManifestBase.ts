@@ -346,7 +346,7 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
                 browser_specific_settings: {
                     gecko: {
                         id: this.email,
-                        strict_min_version: this.minimumVersion,
+                        // strict_min_version: this.minimumVersion,
                     }
                 }
             }

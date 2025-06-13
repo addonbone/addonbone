@@ -1,13 +1,18 @@
 import AbstractMeta from "./AbstractMeta";
 
-import type {ReadonlyConfig} from "@typing/config";
+import {ReadonlyConfig} from "@typing/config";
+import {ManifestIncognito, ManifestIncognitoValue} from "@typing/manifest";
 
-export default class extends AbstractMeta {
+export default class extends AbstractMeta<ManifestIncognitoValue> {
     public constructor(config: ReadonlyConfig) {
         super(config);
     }
 
-    public getValue(): string | undefined {
-        return this.getResolvedValue(this.config.incognito) || undefined
+    public getValue(): ReadonlyConfig['incognito'] {
+        return this.config.incognito;
+    }
+
+    protected isValid(value?: ManifestIncognitoValue): boolean {
+        return Object.values(ManifestIncognito).includes(value as ManifestIncognito);
     }
 }

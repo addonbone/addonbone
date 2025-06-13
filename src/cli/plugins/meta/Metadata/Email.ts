@@ -1,7 +1,5 @@
 import isEmail from 'validator/lib/isEmail';
 
-import {getEnv} from "@main/env";
-
 import AbstractMeta from "./AbstractMeta";
 
 import type {ReadonlyConfig} from "@typing/config";
@@ -11,13 +9,11 @@ export default class extends AbstractMeta {
         super(config);
     }
 
-    public getValue(): string | undefined {
-        const email = this.getResolvedValue(this.config.email);
-
-        return this.getValid(email) || this.getValid(getEnv(email));
+    public getValue(): ReadonlyConfig['email'] {
+        return this.config.email;
     }
 
-    protected getValid(value?: string): string | undefined {
-        return isEmail(value || '') ? value : undefined;
+    protected isValid(value?: string): boolean {
+        return value ? isEmail(value) : false;
     }
 }

@@ -133,10 +133,10 @@ export default async (config: OptionalConfig): Promise<Config> => {
         mergeOffscreen = false,
         version = 'VERSION',
         minimumVersion = "MINIMUM_VERSION",
-        author = "",
+        author = "AUTHOR",
         email = "EMAIL",
         homepage = "HOMEPAGE",
-        incognito = "not_allowed",
+        incognito,
     } = config;
 
     let resolvedConfig: Config = {

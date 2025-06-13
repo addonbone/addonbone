@@ -38,7 +38,13 @@ interface ManifestUnstable {
 
 export type ManifestVersion = 2 | 3;
 
-export type ManifestIncognito = "spanning" | "split" | "not_allowed";
+export enum ManifestIncognito {
+    Spanning = 'spanning',
+    Split = 'split',
+    NotAllowed = 'not_allowed',
+}
+
+export type ManifestIncognitoValue = ManifestIncognito | `${ManifestIncognito}`;
 
 export type CoreManifest = ManifestFixed<ManifestBase>;
 
@@ -88,7 +94,7 @@ export interface ManifestBuilder<T extends CoreManifest = Manifest> {
 
     setVersion(version?: string): this;
 
-    setIncognito(incognito?: ManifestIncognito): this;
+    setIncognito(incognito?: ManifestIncognitoValue): this;
 
     setMinimumVersion(minimumVersion?: string): this;
 

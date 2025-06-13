@@ -136,6 +136,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         author = "",
         email = "EMAIL",
         homepage = "HOMEPAGE",
+        incognito = "not_allowed",
     } = config;
 
     let resolvedConfig: Config = {
@@ -182,6 +183,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         email,
         author,
         homepage,
+        incognito
     };
 
     let vars = loadDotenv(resolvedConfig);

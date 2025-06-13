@@ -38,6 +38,8 @@ interface ManifestUnstable {
 
 export type ManifestVersion = 2 | 3;
 
+export type ManifestIncognito = "spanning" | "split" | "not_allowed";
+
 export type CoreManifest = ManifestFixed<ManifestBase>;
 
 export type ChromeManifest = ManifestFixed<ManifestCommon>;
@@ -85,6 +87,8 @@ export interface ManifestBuilder<T extends CoreManifest = Manifest> {
     setHomepage(homepage?: string): this;
 
     setVersion(version?: string): this;
+
+    setIncognito(incognito?: ManifestIncognito): this;
 
     setMinimumVersion(minimumVersion?: string): this;
 

@@ -1,19 +1,20 @@
-import Meta from "./Meta";
 import {definePlugin} from "@main/plugin";
 
-export default definePlugin(() => {
-    let author: Meta
+import {Author, Email, Homepage, Incognito} from "./Metadata";
 
+import type {ManifestIncognito} from "@typing/manifest";
+
+export {Author, Email, Homepage, Incognito};
+
+export default definePlugin(() => {
     return {
         name: 'adnbn:author',
-        startup: ({config}) => {
-            author = new Meta(config)
-        },
-        manifest: ({manifest}) => {
+        manifest: ({manifest, config}) => {
             manifest
-                .setEmail(author.getEmail())
-                .setAuthor(author.getAuthor())
-                .setHomepage(author.getHomepage())
+                .setEmail(Email.value(config))
+                .setAuthor(Author.value(config))
+                .setHomepage(Homepage.value(config))
+                .setIncognito(Incognito.value(config) as ManifestIncognito)
         }
     }
 });

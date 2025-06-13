@@ -2,7 +2,7 @@ import type {Options as HtmlOptions} from "html-rspack-tags-plugin";
 
 import {Command, Mode} from "@typing/app";
 import {Browser} from "@typing/browser";
-import {ManifestVersion} from "@typing/manifest";
+import {ManifestIncognito, ManifestVersion} from "@typing/manifest";
 import {Plugin} from "@typing/plugin";
 import {Language} from "@typing/locale";
 
@@ -405,6 +405,13 @@ export interface Config {
      * @default EMAIL
      */
     email: string | (() => string);
+
+    /**
+     * Used to specify how this extension will behave in incognito mode
+     *
+     * @default "not_allowed"
+     */
+    incognito: ManifestIncognito | (() => ManifestIncognito);
 }
 
 

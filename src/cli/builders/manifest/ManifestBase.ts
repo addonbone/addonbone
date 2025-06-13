@@ -9,6 +9,7 @@ import {
     ManifestDependencies,
     ManifestHostPermissions,
     ManifestIcons,
+    ManifestIncognito,
     ManifestPermissions,
     ManifestPopup,
     ManifestSidebar,
@@ -40,6 +41,7 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
     protected minimumVersion?: string;
     protected version: string = "0.0.0";
     protected icon?: string;
+    protected incognito?: ManifestIncognito;
     protected locale?: Language;
     protected icons: ManifestIcons = new Map();
     protected background?: ManifestBackground;
@@ -116,6 +118,12 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
 
     public setLocale(lang?: Language): this {
         this.locale = lang;
+
+        return this;
+    }
+
+    public setIncognito(incognito?: ManifestIncognito): this {
+        this.incognito = incognito;
 
         return this;
     }
@@ -234,6 +242,7 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
             minimum_chrome_version: this.minimumVersion,
             author: this.author,
             homepage_url: this.homepage,
+            incognito: this.incognito,
         };
 
         manifest = this.marge<Manifest>(

@@ -1,6 +1,9 @@
 import {definePlugin} from "@main/plugin";
 
-import {Author, Email, Homepage, Incognito} from "./Metadata";
+import Author from "./Author";
+import Email from "./Email";
+import Homepage from "./Homepage";
+import Incognito from "./Incognito";
 
 export {Author, Email, Homepage, Incognito};
 
@@ -12,7 +15,7 @@ export default definePlugin(() => {
                 .setEmail(Email.value(config))
                 .setAuthor(Author.value(config))
                 .setHomepage(Homepage.value(config))
-                .setIncognito(Incognito.value(config))
+                .setIncognito(Incognito.value(config));
         }
     }
 });

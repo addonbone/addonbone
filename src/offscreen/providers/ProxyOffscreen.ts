@@ -1,4 +1,5 @@
 import {closeOffscreen, createOffscreen, hasOffscreen} from "@browser/offscreen";
+import {__t} from "@main/locale";
 
 import ProxyTransport from "@transport/ProxyTransport";
 
@@ -30,11 +31,15 @@ export default class<N extends TransportName, T = DeepAsyncProxy<TransportDictio
             await closeOffscreen();
         }
 
-        await createOffscreen(this.parameters);
+        const {justification, ...parameters} = this.parameters;
+
+        await createOffscreen({
+            ...parameters,
+            justification: __t(justification),
+        });
 
         return this.message.send({path, args});
     }
-
 
     public get(): T {
         if (isOffscreen()) {

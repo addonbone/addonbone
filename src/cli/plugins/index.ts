@@ -1,4 +1,5 @@
 export {default as assetPlugin} from "./asset";
+export {default as authorPlugin} from "./author";
 export {default as backgroundPlugin} from "./background";
 export {default as contentPlugin} from "./content";
 export {default as dotenvPlugin} from "./dotenv";

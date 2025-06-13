@@ -4,6 +4,7 @@ import {loadConfig} from "c12";
 
 import {
     assetPlugin,
+    authorPlugin,
     backgroundPlugin,
     contentPlugin,
     dotenvPlugin,
@@ -131,7 +132,10 @@ export default async (config: OptionalConfig): Promise<Config> => {
         mergeService = false,
         mergeOffscreen = false,
         version = 'VERSION',
-        minimumVersion= "MINIMUM_VERSION",
+        minimumVersion = "MINIMUM_VERSION",
+        author = "",
+        email = "EMAIL",
+        homepage = "HOMEPAGE",
     } = config;
 
     let resolvedConfig: Config = {
@@ -175,6 +179,9 @@ export default async (config: OptionalConfig): Promise<Config> => {
         mergeOffscreen,
         version,
         minimumVersion,
+        email,
+        author,
+        homepage,
     };
 
     let vars = loadDotenv(resolvedConfig);
@@ -191,6 +198,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         reactPlugin(),
         iconPlugin(),
         assetPlugin(),
+        authorPlugin(),
         stylePlugin(),
         localePlugin(),
         contentPlugin(),

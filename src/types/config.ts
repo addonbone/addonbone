@@ -39,6 +39,11 @@ export interface Config {
     app: string;
 
     /**
+     * Author of the application (extension).
+     */
+    author: string | (() => string);
+
+    /**
      * Browser for which the extension is being built.
      * Determines specific settings and compatibility.
      */
@@ -359,23 +364,47 @@ export interface Config {
     /**
      * The version of the extension.
      * Can be either:
-     * - a static version string (e.g., "1.0.0"), or a key referencing a value from an .env file.
-     * - a function that returns the version dynamically
+     * - a valid version (e.g., "1.0.0"), or a key referencing a value from an .env file.
+     * - a function that returns the version or key dynamically.
      *
      * @default "VERSION"
      */
     version: string | (() => string);
 
     /**
-     * The minimum supported version of Chrome.
-     * Used to populate the `minimum_chrome_version` field in the manifest.
+     * The minimum supported version of browser.
+     * Used to populate fields in the manifest:
+     * - `minimum_chrome_version`
+     * - `browser_specific_settings.gecko.strict_min_version` for Firefox
+     *
      * Can be either:
-     * - a static version string/number, or a key referencing a value from an .env file.
-     * - a function that returns the version dynamically.
+     * - a valid version, or a key referencing a value from an .env file.
+     * - a function that returns the version or key dynamically.
      *
      * @default "MINIMUM_VERSION"
      */
-    minimumVersion : string | number | (() => string | number);
+    minimumVersion: string | number | (() => string | number);
+
+    /**
+     * The URL for the extension's homepage
+     * Can be either:
+     * - a valid url or a key referencing a value from an .env file.
+     * - a function that returns the url or key dynamically.
+     *
+     * @default HOMEPAGE
+     */
+    homepage: string | (() => string);
+
+    /**
+     * Used for Firefox under `browser_specific_settings.gecko.id`,
+     * but only if the "storage" permission is declared.
+     * Can be either:
+     * - a valid email
+     * - a function that returns the email
+     *
+     * @default EMAIL
+     */
+    email: string | (() => string);
 }
 
 

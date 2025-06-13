@@ -78,6 +78,12 @@ export type SafariManifest = ChromeManifest & {
 export type Manifest = ChromeManifest | FirefoxManifest | SafariManifest;
 
 export interface ManifestBuilder<T extends CoreManifest = Manifest> {
+    setEmail(email?: string): this;
+
+    setAuthor(author?: string): this;
+
+    setHomepage(homepage?: string): this;
+
     setVersion(version?: string): this;
 
     setMinimumVersion(minimumVersion?: string): this;

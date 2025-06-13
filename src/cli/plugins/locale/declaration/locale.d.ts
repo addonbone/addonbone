@@ -4,6 +4,8 @@ import {
     LocaleDir,
     type LocaleNonPluralKeys,
     type LocalePluralKeys,
+    type LocaleProvider,
+    type LocaleDynamicProvider,
     type LocaleSubstitutionsFor
 } from ":package/locale";
 
@@ -24,8 +26,37 @@ declare module ':package' {
     export function __(key: keyof LocaleNativeStructure & string): string;
 }
 
+declare module ':package/locale' {
+    import type {LocaleNativeStructure} from ':package';
+
+    export declare class NativeLocale implements LocaleProvider<LocaleNativeStructure> {
+        lang(): Language;
+
+        languages(): Set<Language>;
+
+        keys(): ReadonlySet<keyof LocaleNativeStructure>;
+
+        // non-plural keys
+        trans<K extends LocaleNonPluralKeys<LocaleNativeStructure>>(
+            key: K,
+            substitutions?: LocaleSubstitutionsFor<LocaleNativeStructure, K>
+        ): string;
+
+        // plural keys
+        choice<K extends LocalePluralKeys<LocaleNativeStructure>>(
+            key: K,
+            count: number,
+            substitutions?: LocaleSubstitutionsFor<LocaleNativeStructure, K>
+        ): string;
+    }
+
+    export declare class DynamicLocale extends NativeLocale implements LocaleDynamicProvider<LocaleNativeStructure> {
+        change(lang: Language): Promise<Language>;
+    }
+}
+
 declare module ':package/locale/react' {
-    import type {LocaleNativeStructure} from ':package'
+    import type {LocaleNativeStructure} from ':package';
 
     export interface LocaleContract {
         lang: Language;
@@ -41,5 +72,5 @@ declare module ':package/locale/react' {
         change(lang: Language): void;
     }
 
-    export function useLocale(): LocaleContract
+    export function useLocale(): LocaleContract;
 }

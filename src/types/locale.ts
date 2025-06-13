@@ -146,6 +146,8 @@ export type LocaleSubstitutionsFor<
 export interface LocaleProvider<S extends LocaleStructure> {
     lang(): Language;
 
+    languages(): Set<Language>;
+
     keys(): ReadonlySet<keyof S>;
 
     // non-plural keys

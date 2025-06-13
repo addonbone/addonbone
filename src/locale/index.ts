@@ -6,6 +6,7 @@ export {
     LocaleDir,
     type LocaleStructure,
     type LocaleProvider,
+    type LocaleDynamicProvider,
     type LocaleKeys,
     type LocaleSubstitutionsFor,
     type LocaleNonPluralKeys,

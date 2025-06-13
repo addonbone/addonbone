@@ -358,12 +358,24 @@ export interface Config {
 
     /**
      * The version of the extension.
-     * Can be either a direct version string (e.g., "1.0.0")
-     * or a key referencing a value from an .env file.
+     * Can be either:
+     * - a static version string (e.g., "1.0.0"), or a key referencing a value from an .env file.
+     * - a function that returns the version dynamically
      *
      * @default "VERSION"
      */
-    version: string
+    version: string | (() => string);
+
+    /**
+     * The minimum supported version of Chrome.
+     * Used to populate the `minimum_chrome_version` field in the manifest.
+     * Can be either:
+     * - a static version string/number, or a key referencing a value from an .env file.
+     * - a function that returns the version dynamically.
+     *
+     * @default "MINIMUM_VERSION"
+     */
+    minimumVersion : string | number | (() => string | number);
 }
 
 

@@ -130,7 +130,8 @@ export default async (config: OptionalConfig): Promise<Config> => {
         mergeRelay = false,
         mergeService = false,
         mergeOffscreen = false,
-        version = 'VERSION'
+        version = 'VERSION',
+        minimumVersion= "MINIMUM_VERSION",
     } = config;
 
     let resolvedConfig: Config = {
@@ -173,6 +174,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         mergeService,
         mergeOffscreen,
         version,
+        minimumVersion,
     };
 
     let vars = loadDotenv(resolvedConfig);

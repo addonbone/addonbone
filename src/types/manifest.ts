@@ -78,7 +78,9 @@ export type SafariManifest = ChromeManifest & {
 export type Manifest = ChromeManifest | FirefoxManifest | SafariManifest;
 
 export interface ManifestBuilder<T extends CoreManifest = Manifest> {
-    setVersion(version: string): this;
+    setVersion(version?: string): this;
+
+    setMinimumVersion(minimumVersion?: string): this;
 
     setLocale(lang?: Language): this;
 

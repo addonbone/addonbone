@@ -1,13 +1,13 @@
-import Author from "./Author";
+import Meta from "./Meta";
 import {definePlugin} from "@main/plugin";
 
 export default definePlugin(() => {
-    let author: Author
+    let author: Meta
 
     return {
         name: 'adnbn:author',
         startup: ({config}) => {
-            author = new Author(config)
+            author = new Meta(config)
         },
         manifest: ({manifest}) => {
             manifest

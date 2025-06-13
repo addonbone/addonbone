@@ -1,6 +1,11 @@
 import type {ReadonlyConfig} from "@typing/config";
 
-export default abstract class {
+export default abstract class AbstractVersion {
+
+    public static version<T extends AbstractVersion>(this: new (config: ReadonlyConfig) => T, config: ReadonlyConfig): string | undefined {
+        return new this(config).getVersion();
+    }
+
     protected constructor(protected readonly config: ReadonlyConfig) {
     }
 

@@ -1,3 +1,5 @@
+import validator from 'validator';
+
 import {getEnv} from "@main/env";
 
 import AbstractMeta from "./AbstractMeta";
@@ -12,18 +14,10 @@ export default class extends AbstractMeta {
     public getValue(): string | undefined {
         const homepage = this.getResolvedValue(this.config.homepage)
 
-        if (this.isValidUrl(homepage)) return homepage;
-
-        const envHomepage = getEnv(homepage);
-        if (this.isValidUrl(envHomepage)) return envHomepage;
+        return this.getValid(homepage) || this.getValid(getEnv(homepage));
     }
 
-    protected isValidUrl(value?: string): boolean {
-        try {
-            new URL(value || '');
-            return true;
-        } catch {
-            return false;
-        }
+    protected getValid(value?: string): string | undefined {
+        return validator.isURL(value || '') ? value : undefined;
     }
 }

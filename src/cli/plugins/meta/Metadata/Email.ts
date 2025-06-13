@@ -1,3 +1,5 @@
+import validator from 'validator';
+
 import {getEnv} from "@main/env";
 
 import AbstractMeta from "./AbstractMeta";
@@ -12,14 +14,10 @@ export default class extends AbstractMeta {
     public getValue(): string | undefined {
         const email = this.getResolvedValue(this.config.email);
 
-        if (this.isValidEmail(email)) return email;
-
-        const envEmail = getEnv(email);
-
-        if (this.isValidEmail(envEmail)) return envEmail;
+        return this.getValid(email) || this.getValid(getEnv(email));
     }
 
-    protected isValidEmail(value?: string): boolean {
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value || '');
+    protected getValid(value?: string): string | undefined {
+        return validator.isEmail(value || '') ? value : undefined;
     }
 }

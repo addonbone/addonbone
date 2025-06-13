@@ -4,9 +4,11 @@ import AbstractVersion from "./AbstractVersion";
 import AddonVersion from "./AddonVersion";
 import BrowserMinimumVersion from "./BrowserMinimumVersion";
 
+export {AddonVersion, BrowserMinimumVersion};
+
 export default definePlugin(() => {
-    let addonVersion: AbstractVersion
-    let browserMinimumVersion: AbstractVersion
+    let addonVersion: AbstractVersion;
+    let browserMinimumVersion: AbstractVersion;
 
     return {
         name: 'adnbn:version',
@@ -15,11 +17,9 @@ export default definePlugin(() => {
             browserMinimumVersion = new BrowserMinimumVersion(config)
         },
         manifest: ({manifest}) => {
-            const version = addonVersion.getVersion()
-            const minimumVersion = browserMinimumVersion.getVersion()
-
-            version && manifest.setVersion(version)
-            minimumVersion && manifest.setMinimumVersion(minimumVersion)
+            manifest
+                .setVersion(addonVersion.getVersion())
+                .setMinimumVersion(browserMinimumVersion.getVersion());
         }
     }
 });

@@ -15,15 +15,15 @@ export default class extends AbstractVersion {
     }
 
     public getVersion(): string | undefined {
-        const version = this.extractVersionValue(this.config.version)
+        const version = this.extractVersionValue(this.config.version);
 
-        if(semver.valid(version)){
+        if (semver.valid(version)) {
             return version;
         }
 
         const envVersion = getEnv(version);
 
-        if(semver.valid(envVersion)){
+        if (semver.valid(envVersion)) {
             return envVersion;
         }
 

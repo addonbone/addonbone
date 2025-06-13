@@ -10,6 +10,7 @@ import {
     htmlPlugin,
     iconPlugin,
     localePlugin,
+    metaPlugin,
     pagePlugin,
     popupPlugin,
     sidebarPlugin,
@@ -131,7 +132,11 @@ export default async (config: OptionalConfig): Promise<Config> => {
         mergeService = false,
         mergeOffscreen = false,
         version = 'VERSION',
-        minimumVersion= "MINIMUM_VERSION",
+        minimumVersion = "MINIMUM_VERSION",
+        author = "",
+        email = "EMAIL",
+        homepage = "HOMEPAGE",
+        incognito = "not_allowed",
     } = config;
 
     let resolvedConfig: Config = {
@@ -175,6 +180,10 @@ export default async (config: OptionalConfig): Promise<Config> => {
         mergeOffscreen,
         version,
         minimumVersion,
+        email,
+        author,
+        homepage,
+        incognito
     };
 
     let vars = loadDotenv(resolvedConfig);
@@ -193,6 +202,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         assetPlugin(),
         stylePlugin(),
         localePlugin(),
+        metaPlugin(),
         contentPlugin(),
         backgroundPlugin(),
         popupPlugin(),

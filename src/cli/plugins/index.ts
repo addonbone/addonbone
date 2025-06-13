@@ -5,6 +5,7 @@ export {default as dotenvPlugin} from "./dotenv";
 export {default as htmlPlugin} from "./html";
 export {default as iconPlugin} from "./icon";
 export {default as localePlugin} from "./locale";
+export {default as metaPlugin} from "./meta";
 export {default as offscreenPlugin} from "./offscreen";
 export {default as pagePlugin} from "./page";
 export {default as popupPlugin} from "./popup";

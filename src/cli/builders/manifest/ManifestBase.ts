@@ -1,5 +1,6 @@
 import {
     CoreManifest,
+    FirefoxManifest,
     Manifest,
     ManifestBackground,
     ManifestBuilder,
@@ -8,6 +9,7 @@ import {
     ManifestDependencies,
     ManifestHostPermissions,
     ManifestIcons,
+    ManifestIncognito,
     ManifestPermissions,
     ManifestPopup,
     ManifestSidebar,
@@ -31,11 +33,15 @@ export class ManifestError extends Error {
 
 export default abstract class<T extends CoreManifest> implements ManifestBuilder<T> {
     protected name: string = "__MSG_app_name__";
+    protected email?: string;
+    protected author?: string;
+    protected homepage?: string;
     protected shortName?: string;
     protected description?: string;
     protected minimumVersion?: string;
     protected version: string = "0.0.0";
     protected icon?: string;
+    protected incognito?: ManifestIncognito;
     protected locale?: Language;
     protected icons: ManifestIcons = new Map();
     protected background?: ManifestBackground;
@@ -60,6 +66,24 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
     protected abstract buildWebAccessibleResources(): Partial<T> | undefined;
 
     protected constructor(protected readonly browser: Browser = Browser.Chrome) {
+    }
+
+    public setAuthor(author?: string): this {
+        this.author = author;
+
+        return this
+    }
+
+    public setHomepage(homepage?: string): this {
+        this.homepage = homepage;
+
+        return this
+    }
+
+    public setEmail(email?: string): this {
+        this.email = email;
+
+        return this
     }
 
     public setName(name: string): this {
@@ -94,6 +118,12 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
 
     public setLocale(lang?: Language): this {
         this.locale = lang;
+
+        return this;
+    }
+
+    public setIncognito(incognito?: ManifestIncognito): this {
+        this.incognito = incognito;
 
         return this;
     }
@@ -210,6 +240,9 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
             version: this.version,
             manifest_version: this.getManifestVersion(),
             minimum_chrome_version: this.minimumVersion,
+            author: this.author,
+            homepage_url: this.homepage,
+            incognito: this.incognito,
         };
 
         manifest = this.marge<Manifest>(
@@ -224,6 +257,7 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
             this.buildPermissions(),
             this.buildHostPermissions(),
             this.buildWebAccessibleResources(),
+            this.buildBrowserSpecificSettings(),
         );
 
         return manifest as T;
@@ -303,6 +337,19 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
     protected buildLocale(): Partial<CoreManifest> | undefined {
         if (this.locale) {
             return {default_locale: this.locale};
+        }
+    }
+
+    protected buildBrowserSpecificSettings(): Partial<FirefoxManifest> | undefined {
+        if (this.browser === Browser.Firefox && this.email && this.permissions.has('storage')) {
+            return {
+                browser_specific_settings: {
+                    gecko: {
+                        id: this.email,
+                        strict_min_version: this.minimumVersion,
+                    }
+                }
+            }
         }
     }
 

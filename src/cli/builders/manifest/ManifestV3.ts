@@ -1,6 +1,6 @@
 import ManifestBase, {ManifestError} from "./ManifestBase";
 
-import {ManifestSidebar, ManifestVersion} from "@typing/manifest";
+import {ManifestVersion} from "@typing/manifest";
 import {Browser} from "@typing/browser";
 import {ContentScriptMatches} from "@typing/content";
 

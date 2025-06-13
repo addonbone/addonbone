@@ -33,6 +33,7 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
     protected name: string = "__MSG_app_name__";
     protected shortName?: string;
     protected description?: string;
+    protected minimumVersion?: string;
     protected version: string = "0.0.0";
     protected icon?: string;
     protected locale?: Language;
@@ -79,8 +80,14 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
         return this;
     }
 
-    public setVersion(version: string): this {
-        this.version = version;
+    public setVersion(version?: string): this {
+        this.version = version || "0.0.0";
+
+        return this;
+    }
+
+    public setMinimumVersion(minimumVersion?: string): this {
+        this.minimumVersion = minimumVersion;
 
         return this;
     }
@@ -202,6 +209,7 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
             description: this.description,
             version: this.version,
             manifest_version: this.getManifestVersion(),
+            minimum_chrome_version: this.minimumVersion,
         };
 
         manifest = this.marge<Manifest>(

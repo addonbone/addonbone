@@ -17,7 +17,11 @@ export default class extends MountBuilder {
         super(definition);
     }
 
-    protected resolveRender(render?: ContentScriptRenderValue): ContentScriptRenderHandler {
+    protected resolveRender(render?: ContentScriptRenderValue): ContentScriptRenderHandler | undefined {
+        if (render === undefined) {
+            return;
+        }
+
         return contentScriptReactRenderResolver(render);
     }
 

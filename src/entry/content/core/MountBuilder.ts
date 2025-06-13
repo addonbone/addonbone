@@ -21,11 +21,17 @@ export default abstract class extends Builder {
             this.values.set(anchor, value === undefined ? undefined : value);
         }
 
-        return this.values.get(anchor) || undefined;
+        return this.values.get(anchor);
     }
 
-    protected async renderValue(anchor: Element): Promise<void | undefined | ContentScriptRenderValue> {
-        return this.definition.render(this.getProps(anchor));
+    protected async renderValue(anchor: Element): Promise<undefined | ContentScriptRenderValue> {
+        const {render} = this.definition;
+
+        if (render === undefined) {
+            return;
+        }
+
+        return render(this.getProps(anchor));
     }
 
     protected async createNode(anchor: Element): Promise<ContentScriptNode> {

@@ -82,7 +82,11 @@ export default abstract class extends Builder implements ContentScriptBuilder {
 
     protected resolveRender(
         render?: ContentScriptRenderValue | ContentScriptRenderHandler
-    ): ContentScriptRenderHandler {
+    ): ContentScriptRenderHandler | undefined {
+        if (render === undefined) {
+            return;
+        }
+
         return contentScriptRenderResolver(render);
     }
 
@@ -104,15 +108,20 @@ export default abstract class extends Builder implements ContentScriptBuilder {
 
     public async build(): Promise<void> {
         await this.destroy();
-        await this.processing();
 
-        await this.definition.main?.(this.context);
+        const {render, main, anchor, container, watch, mount, ...options} = this.definition;
 
-        this.unwatch = this.definition.watch(() => {
-            this.processing().catch(e => {
-                console.error('Content script processing on watch error', e);
-            });
-        }, this.context);
+        if (render !== undefined) {
+            await this.processing();
+
+            this.unwatch = watch(() => {
+                this.processing().catch(e => {
+                    console.error('Content script processing on watch error', e);
+                });
+            }, this.context);
+        }
+
+        await main?.(this.context, options);
     }
 
     public async destroy(): Promise<void> {

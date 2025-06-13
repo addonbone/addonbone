@@ -1,4 +1,4 @@
-import validator from 'validator';
+import isEmail from 'validator/lib/isEmail';
 
 import {getEnv} from "@main/env";
 
@@ -18,6 +18,6 @@ export default class extends AbstractMeta {
     }
 
     protected getValid(value?: string): string | undefined {
-        return validator.isEmail(value || '') ? value : undefined;
+        return isEmail(value || '') ? value : undefined;
     }
 }

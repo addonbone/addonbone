@@ -8,6 +8,8 @@ import {ReadonlyConfig} from "@typing/config";
 import {SidebarEntrypointOptions} from "@typing/sidebar";
 import {ManifestSidebar} from "@typing/manifest";
 
+export type SidebarNameToManifest = Map<string, ManifestSidebar>;
+
 export default class extends SidebarFinder {
     protected _view?: View<SidebarEntrypointOptions>;
 
@@ -35,7 +37,7 @@ export default class extends SidebarFinder {
         }
     }
 
-    public async manifestByAlias(): Promise<Map<string, ManifestSidebar>> {
+    public async manifestByAlias(): Promise<SidebarNameToManifest> {
         return Array.from(await this.views()).reduce((aliases, [_, item]) => {
             const {options, filename} = item;
             const {title, icon} = options;
@@ -48,7 +50,7 @@ export default class extends SidebarFinder {
                     icon,
                 }
             };
-        }, {} as Map<string, ManifestSidebar>);
+        }, new Map as SidebarNameToManifest);
     }
 
     public clear(): this {

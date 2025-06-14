@@ -1,9 +1,10 @@
-import ManifestBase, {ManifestError} from "./ManifestBase";
+import ManifestBase from "./ManifestBase";
 
 import {filterHostPatterns, filterPermissionsForMV2} from "./utils";
 
-import {ManifestVersion} from "@typing/manifest";
+import {CoreManifest, ManifestVersion} from "@typing/manifest";
 import {Browser} from "@typing/browser";
+import {SidebarAlternativeBrowsers} from "@typing/sidebar";
 
 type ManifestV2 = chrome.runtime.ManifestV2;
 type ManifestV3 = chrome.runtime.ManifestV3;
@@ -16,26 +17,6 @@ export default class extends ManifestBase<ManifestV2> {
 
     public getManifestVersion(): ManifestVersion {
         return 2;
-    }
-
-    protected buildBackground(): Partial<ManifestV2> | undefined {
-        if (this.background) {
-            const {entry, persistent} = this.background;
-
-            const dependencies = this.dependencies.get(entry);
-
-            if (!dependencies) {
-                throw new ManifestError(`Background entry "${entry}" not found in dependencies`);
-            }
-
-            if (dependencies.js.size === 0) {
-                throw new ManifestError(`Background entry "${entry}" has no dependencies`);
-            }
-
-            const scripts = Array.from(dependencies.js);
-
-            return {background: {scripts, persistent: persistent || undefined}};
-        }
     }
 
     protected buildAction(): Partial<ManifestV2> | undefined {
@@ -58,8 +39,12 @@ export default class extends ManifestBase<ManifestV2> {
         }
     }
 
-    protected buildSidebar(): Partial<ManifestV2> | undefined {
-        return undefined;
+    protected buildSidebar(): Partial<CoreManifest> | undefined {
+        if (!SidebarAlternativeBrowsers.has(this.browser)) {
+            return;
+        }
+
+        return super.buildSidebar();
     }
 
     protected buildContentScripts(): Partial<ManifestV2> | undefined {

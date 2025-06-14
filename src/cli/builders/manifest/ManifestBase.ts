@@ -21,6 +21,7 @@ import {Browser} from "@typing/browser";
 import {Language} from "@typing/locale";
 import {CommandExecuteActionName} from "@typing/command";
 import {DefaultIconGroupName} from "@typing/icon";
+import {SidebarAlternativeBrowsers} from "@typing/sidebar";
 
 type ManifestV3 = chrome.runtime.ManifestV3;
 type ManifestPermission = chrome.runtime.ManifestPermissions;
@@ -57,11 +58,7 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
 
     public abstract getManifestVersion(): ManifestVersion;
 
-    protected abstract buildBackground(): Partial<T> | undefined;
-
     protected abstract buildAction(): Partial<T> | undefined;
-
-    protected abstract buildSidebar(): Partial<T> | undefined;
 
     protected abstract buildPermissions(): Partial<T> | undefined;
 
@@ -293,6 +290,26 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
         }
     }
 
+    protected buildBackground(): Partial<CoreManifest> | undefined {
+        if (this.background) {
+            const {entry, persistent} = this.background;
+
+            const dependencies = this.dependencies.get(entry);
+
+            if (!dependencies) {
+                throw new ManifestError(`Background entry "${entry}" not found in dependencies`);
+            }
+
+            if (dependencies.js.size === 0) {
+                throw new ManifestError(`Background entry "${entry}" has no dependencies`);
+            }
+
+            const scripts = Array.from(dependencies.js);
+
+            return {background: {scripts, persistent: persistent || undefined}};
+        }
+    }
+
     protected buildCommands(): Partial<CoreManifest> | undefined {
         if (this.commands.size > 0) {
             const commands = Array.from(this.commands).reduce((commands, command) => {
@@ -350,6 +367,23 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
 
             return {content_scripts: contentScripts};
         }
+    }
+
+    protected buildSidebar(): Partial<CoreManifest> | undefined {
+        if (!this.sidebar) {
+            return;
+        }
+
+        const {path, icon, title} = this.sidebar;
+
+        const commonProps = {
+            default_title: title || this.name,
+            default_icon: this.getIconsByName(icon),
+        }
+
+        return SidebarAlternativeBrowsers.has(this.browser)
+            ? {sidebar_action: {...commonProps, default_panel: path}}
+            : {side_panel: {...commonProps, default_path: path}}
     }
 
     protected buildLocale(): Partial<CoreManifest> | undefined {

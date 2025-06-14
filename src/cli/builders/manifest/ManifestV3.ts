@@ -2,7 +2,7 @@ import ManifestBase, {ManifestError} from "./ManifestBase";
 
 import {filterHostPatterns, filterPermissionsForMV3} from "./utils";
 
-import {ManifestVersion} from "@typing/manifest";
+import {CoreManifest, ManifestVersion} from "@typing/manifest";
 import {Browser} from "@typing/browser";
 import {ContentScriptMatches} from "@typing/content";
 
@@ -17,7 +17,11 @@ export default class extends ManifestBase<ManifestV3> {
         return 3;
     }
 
-    protected buildBackground(): Partial<ManifestV3> | undefined {
+    protected buildBackground(): Partial<CoreManifest> | undefined {
+        if (this.browser === Browser.Firefox) {
+            return super.buildBackground();
+        }
+
         if (this.background) {
             const {entry} = this.background;
 
@@ -59,21 +63,6 @@ export default class extends ManifestBase<ManifestV3> {
                 }
             };
         }
-    }
-
-    protected buildSidebar(): Partial<ManifestV3> | undefined {
-        if (!this.sidebar) return undefined;
-
-        const {path, icon, title} = this.sidebar;
-
-        const commonProps = {
-            default_title: title || this.name,
-            default_icon: this.getIconsByName(icon),
-        }
-
-        return this.browser === Browser.Opera
-            ? {sidebar_action: {...commonProps, default_panel: path}}
-            : {side_panel: {...commonProps, default_path: path}}
     }
 
     protected buildPermissions(): Partial<ManifestV3> | undefined {

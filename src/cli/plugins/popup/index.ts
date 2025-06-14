@@ -1,4 +1,4 @@
-import {DefinePlugin, HtmlRspackPlugin, Configuration as RspackConfig} from "@rspack/core";
+import {Configuration as RspackConfig, DefinePlugin, HtmlRspackPlugin, Plugins} from "@rspack/core";
 import HtmlRspackTagsPlugin from "html-rspack-tags-plugin";
 
 import {definePlugin} from "@main/plugin";
@@ -6,7 +6,7 @@ import {definePlugin} from "@main/plugin";
 import {EntrypointPlugin} from "@cli/bundler";
 import {virtualViewModule} from "@cli/virtual";
 
-import Popup from "./Popup";
+import Popup, {PopupNameToManifest} from "./Popup";
 
 import {PopupDeclaration} from "./declaration";
 
@@ -26,36 +26,40 @@ export default definePlugin(() => {
         bundler: async ({config}) => {
             declaration.setAlias(await popup.getAlias()).build();
 
+            const plugins: Plugins = [];
+
+            let alias: PopupNameToManifest = new Map;
+
             if (await popup.empty()) {
                 if (config.debug) {
                     console.info('Popup entries not found');
                 }
+            } else {
+                alias = await popup.manifestByAlias();
 
-                return {};
+                const plugin = EntrypointPlugin.from(await popup.view().entries())
+                    .virtual(file => virtualViewModule(file));
+
+                if (config.command === Command.Watch) {
+                    plugin.watch(async () => {
+                        declaration.setAlias(await popup.clear().getAlias()).build();
+
+                        return popup.view().entries();
+                    });
+                }
+
+                const htmlPlugins = (await popup.view().html()).map(options => new HtmlRspackPlugin(options));
+                const tagsPlugins = (await popup.view().tags()).map(options => new HtmlRspackTagsPlugin(options));
+
+                plugins.push(plugin, ...htmlPlugins, ...tagsPlugins);
             }
-
-            const plugin = EntrypointPlugin.from(await popup.view().entries())
-                .virtual(file => virtualViewModule(file));
-
-            if (config.command === Command.Watch) {
-                plugin.watch(async () => {
-                    declaration.setAlias(await popup.clear().getAlias()).build();
-
-                    return popup.view().entries();
-                });
-            }
-
-            const htmlPlugins = (await popup.view().html()).map(options => new HtmlRspackPlugin(options));
-            const tagsPlugins = (await popup.view().tags()).map(options => new HtmlRspackTagsPlugin(options));
 
             return {
                 plugins: [
                     new DefinePlugin({
-                        __ADNBN_POPUP_MAP__: JSON.stringify(await popup.manifestByAlias()),
+                        __ADNBN_POPUP_MAP__: JSON.stringify(alias),
                     }),
-                    plugin,
-                    ...htmlPlugins,
-                    ...tagsPlugins,
+                    ...plugins,
                 ],
             } as RspackConfig;
         },

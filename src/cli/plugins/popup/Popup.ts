@@ -8,6 +8,8 @@ import {ReadonlyConfig} from "@typing/config";
 import {PopupEntrypointOptions} from "@typing/popup";
 import {ManifestPopup} from "@typing/manifest";
 
+export type PopupNameToManifest = Map<string, ManifestPopup>;
+
 export default class extends PopupFinder {
     protected _view?: View<PopupEntrypointOptions>;
 
@@ -35,7 +37,7 @@ export default class extends PopupFinder {
         }
     }
 
-    public async manifestByAlias(): Promise<Map<string, ManifestPopup>> {
+    public async manifestByAlias(): Promise<PopupNameToManifest> {
         return Array.from(await this.views()).reduce((aliases, [_, item]) => {
             const {options, filename} = item;
             const {title, icon} = options;
@@ -48,7 +50,7 @@ export default class extends PopupFinder {
                     icon,
                 }
             };
-        }, {} as Map<string, ManifestPopup>);
+        }, new Map as PopupNameToManifest);
     }
 
     public clear(): this {

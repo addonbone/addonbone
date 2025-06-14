@@ -1,5 +1,7 @@
 import ManifestBase, {ManifestError} from "./ManifestBase";
 
+import {filterHostPatterns, filterPermissionsForMV2} from "./utils";
+
 import {ManifestVersion} from "@typing/manifest";
 import {Browser} from "@typing/browser";
 
@@ -77,7 +79,21 @@ export default class extends ManifestBase<ManifestV2> {
         }
     }
 
+    protected buildPermissions(): Partial<ManifestV2> | undefined {
+        const permissions: string[] = Array.from(filterPermissionsForMV2(this.permissions));
+
+        if (this.hostPermissions.size > 0) {
+            permissions.push(...filterHostPatterns(this.hostPermissions));
+        }
+
+        if (permissions.length > 0) {
+            return {permissions};
+        }
+    }
+
     protected buildHostPermissions(): Partial<ManifestV2> | undefined {
+        // In Manifest V2, host permissions are declared in the "permissions" array
+
         return undefined;
     }
 

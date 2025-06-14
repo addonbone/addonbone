@@ -50,6 +50,16 @@ export interface ContentScriptConfig {
      * @default false
      */
     matchOriginAsFallback?: boolean;
+    /**
+     * Whether this content script requires explicit permission declaration in the extension manifest.
+     * When set to true, the content script must be declared in the manifest.json permissions section
+     * to be allowed to run on the specified pages.
+     *
+     * @see https://developer.chrome.com/docs/extensions/mv3/declare_permissions/
+     *
+     * @default false
+     */
+    declarative?: boolean;
 }
 
 export type ContentScriptOptions = ContentScriptConfig & EntrypointOptions;

@@ -3,6 +3,7 @@ import z from "zod";
 import ContentParser from "./ContentParser";
 
 import {RelayEntrypointOptions} from "@typing/relay";
+import {EntrypointFile} from "@typing/entrypoint";
 
 export default class extends ContentParser<RelayEntrypointOptions> {
     protected definition(): string {
@@ -26,5 +27,9 @@ export default class extends ContentParser<RelayEntrypointOptions> {
                 })
                 .optional()
         });
+    }
+
+    public options(file: EntrypointFile): RelayEntrypointOptions {
+        return {...super.options(file), declarative: true};
     }
 }

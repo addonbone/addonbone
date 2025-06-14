@@ -1,5 +1,7 @@
 import ManifestBase, {ManifestError} from "./ManifestBase";
 
+import {filterHostPatterns, filterPermissionsForMV3} from "./utils";
+
 import {ManifestVersion} from "@typing/manifest";
 import {Browser} from "@typing/browser";
 import {ContentScriptMatches} from "@typing/content";
@@ -74,9 +76,17 @@ export default class extends ManifestBase<ManifestV3> {
             : {side_panel: {...commonProps, default_path: path}}
     }
 
+    protected buildPermissions(): Partial<ManifestV3> | undefined {
+        const permissions = Array.from(filterPermissionsForMV3(this.permissions));
+
+        if (permissions.length > 0) {
+            return {permissions};
+        }
+    }
+
     protected buildHostPermissions(): Partial<ManifestV3> | undefined {
         if (this.hostPermissions.size > 0) {
-            return {host_permissions: Array.from(this.hostPermissions)};
+            return {host_permissions: [...filterHostPatterns(this.hostPermissions)]};
         }
     }
 

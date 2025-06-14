@@ -63,6 +63,8 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
 
     protected abstract buildSidebar(): Partial<T> | undefined;
 
+    protected abstract buildPermissions(): Partial<T> | undefined;
+
     protected abstract buildHostPermissions(): Partial<T> | undefined;
 
     protected abstract buildWebAccessibleResources(): Partial<T> | undefined;
@@ -347,12 +349,6 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
             }
 
             return {content_scripts: contentScripts};
-        }
-    }
-
-    protected buildPermissions(): Partial<Manifest> | undefined {
-        if (this.permissions.size > 0) {
-            return {permissions: Array.from(this.permissions)};
         }
     }
 

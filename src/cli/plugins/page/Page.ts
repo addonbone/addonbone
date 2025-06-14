@@ -16,7 +16,7 @@ export default class extends PageFinder {
         return this._view ??= new View(this.config, this);
     }
 
-    public async manifest(): Promise<ManifestAccessibleResources> {
+    public async accessibleResources(): Promise<ManifestAccessibleResources> {
         const resources: ManifestAccessibleResources = new Set;
 
         const views = await this.views();

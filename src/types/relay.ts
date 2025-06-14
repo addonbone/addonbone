@@ -20,7 +20,7 @@ export type RelayMainHandler<T extends TransportType> = (
 export interface RelayDefinition<T extends TransportType> extends
     Omit<TransportDefinition<RelayOptions, T>, 'main'>,
     Omit<ContentScriptDefinition, 'main'>,
-    RelayEntrypointOptions
+    Omit<RelayEntrypointOptions, 'declarative'>
 {
     main?: RelayMainHandler<T>;
 }

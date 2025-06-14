@@ -24,8 +24,8 @@ export const getPopups = (): PopupMap => {
         Object.entries<ManifestPopup>(__ADNBN_POPUP_MAP__).forEach(([key, value]) => {
             popups.set(key, value);
         });
-    } catch (e) {
-        console.error('Error getting popups:', e);
+    } catch(e) {
+        console.error('Failed getting popups: ', e);
     }
 
     return popups;

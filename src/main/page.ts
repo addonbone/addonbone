@@ -20,8 +20,8 @@ export const getPages = (): PageMap => {
         Object.entries<string>(__ADNBN_PAGE_ALIAS__).forEach(([key, value]) => {
             pages.set(key, value);
         });
-    } catch (e) {
-        console.error('Error getting pages:', e);
+    } catch(e) {
+        console.error('Failed getting pages: ', e);
     }
 
     return pages;

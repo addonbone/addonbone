@@ -1,7 +1,7 @@
 export {default as AbstractFinder} from "./AbstractFinder";
 export {default as AbstractEntrypointFinder} from "./AbstractEntrypointFinder";
 export {default as AbstractPluginFinder} from "./AbstractPluginFinder";
-export {default as AbstractViewFinder, type ViewItem, type ViewItems} from "./AbstractViewFinder";
+export {default as AbstractViewFinder, type ViewItem, type ViewItems, type ViewAliasToFilename, type ViewFileToFilename} from "./AbstractViewFinder";
 export {default as AbstractOptionsFinder} from "./AbstractOptionsFinder";
 export {default as BackgroundFinder} from "./BackgroundFinder";
 export {default as CommandFinder} from "./CommandFinder";

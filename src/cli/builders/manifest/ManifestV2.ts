@@ -82,7 +82,7 @@ export default class extends ManifestBase<ManifestV2> {
     }
 
     protected buildWebAccessibleResources(): Partial<ManifestV2> | undefined {
-        const resources: string[] = [];
+        const resources: string[] = Array.from(this.accessibleResources).flatMap(({resources}) => resources);
 
         for (const contentScript of this.contentScripts.values()) {
             const assets = this.dependencies.get(contentScript.entry)?.assets;

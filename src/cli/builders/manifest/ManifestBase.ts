@@ -2,6 +2,8 @@ import {
     CoreManifest,
     FirefoxManifest,
     Manifest,
+    ManifestAccessibleResource,
+    ManifestAccessibleResources,
     ManifestBackground,
     ManifestBuilder,
     ManifestCommands,
@@ -19,7 +21,6 @@ import {Browser} from "@typing/browser";
 import {Language} from "@typing/locale";
 import {CommandExecuteActionName} from "@typing/command";
 import {DefaultIconGroupName} from "@typing/icon";
-
 
 type ManifestV3 = chrome.runtime.ManifestV3;
 type ManifestPermission = chrome.runtime.ManifestPermissions;
@@ -52,6 +53,7 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
     protected dependencies: ManifestDependencies = new Map();
     protected permissions: ManifestPermissions = new Set();
     protected hostPermissions: ManifestHostPermissions = new Set();
+    protected accessibleResources: ManifestAccessibleResources = new Set();
 
     public abstract getManifestVersion(): ManifestVersion;
 
@@ -212,6 +214,26 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
         for (const permission of permissions) {
             this.hostPermissions.add(permission);
         }
+
+        return this;
+    }
+
+    public addAccessibleResource(accessibleResource: ManifestAccessibleResource): this {
+        this.accessibleResources.add(accessibleResource);
+
+        return this;
+    }
+
+    public appendAccessibleResources(accessibleResources: ManifestAccessibleResources): this {
+        for (const accessibleResource of accessibleResources) {
+            this.accessibleResources.add(accessibleResource);
+        }
+
+        return this;
+    }
+
+    public setManifestAccessibleResource(accessibleResources: ManifestAccessibleResources): this {
+        this.accessibleResources = accessibleResources;
 
         return this;
     }

@@ -86,6 +86,12 @@ export type SafariManifest = ChromeManifest & {
 export type Manifest = ChromeManifest | FirefoxManifest | SafariManifest;
 
 export interface ManifestBuilder<T extends CoreManifest = Manifest> {
+    setName(name: string): this;
+
+    setShortName(shortName?: string): this;
+
+    setDescription(description?: string): this;
+
     setEmail(email?: string): this;
 
     setAuthor(author?: string): this;
@@ -100,16 +106,12 @@ export interface ManifestBuilder<T extends CoreManifest = Manifest> {
 
     setLocale(lang?: Language): this;
 
-    setName(name: string): this;
-
-    setShortName(shortName?: string): this;
-
-    setDescription(description?: string): this;
-
+    // Icons
     setIcons(icons?: ManifestIcons): this;
 
     setIcon(icon?: string): this; // name of an icon set for manifest.icons
 
+    // Entry
     setBackground(background?: ManifestBackground): this;
 
     setCommands(commands?: ManifestCommands): this;
@@ -120,8 +122,10 @@ export interface ManifestBuilder<T extends CoreManifest = Manifest> {
 
     setSidebar(sidebar?: ManifestSidebar): this;
 
+    // System
     setDependencies(dependencies: ManifestDependencies): this;
 
+    // Permissions
     addPermission(permission: ManifestPermission): this;
 
     setPermissions(permissions: ManifestPermissions): this;
@@ -132,8 +136,17 @@ export interface ManifestBuilder<T extends CoreManifest = Manifest> {
 
     setHostPermissions(permissions: ManifestHostPermissions): this;
 
+    // Host Permissions
     appendHostPermissions(permissions: ManifestHostPermissions): this;
 
+    // Web Accessible Resource
+    setManifestAccessibleResource(accessibleResources: ManifestAccessibleResources): this;
+
+    appendAccessibleResources(accessibleResources: ManifestAccessibleResources): this;
+
+    addAccessibleResource(accessibleResource: ManifestAccessibleResource): this;
+
+    // Getter
     get(): T;
 }
 
@@ -184,6 +197,13 @@ export interface ManifestSidebar {
      */
     path?: string;
 }
+
+export interface ManifestAccessibleResource {
+    resources: string[];
+    matches: string[];
+}
+
+export type ManifestAccessibleResources = Set<ManifestAccessibleResource>;
 
 export interface ManifestDependency {
     js: Set<string>;

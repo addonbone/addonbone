@@ -57,6 +57,9 @@ export default definePlugin(() => {
                     ...tagsPlugins,
                 ],
             } satisfies RspackConfig;
+        },
+        manifest: async ({manifest}) => {
+            manifest.appendAccessibleResources(await page.manifest());
         }
     };
 });

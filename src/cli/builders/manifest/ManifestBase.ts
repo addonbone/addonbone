@@ -329,18 +329,8 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
     }
 
     protected buildPermissions(): Partial<Manifest> | undefined {
-        const permissions: string[] = []
-
         if (this.permissions.size > 0) {
-            permissions.push(...Array.from(this.permissions))
-        }
-
-        if (this.getManifestVersion() === 2 && this.hostPermissions.size > 0) {
-            permissions.push(...Array.from(this.hostPermissions))
-        }
-
-        if (permissions.length > 0) {
-            return {permissions}
+            return {permissions: Array.from(this.permissions)};
         }
     }
 

@@ -1,3 +1,4 @@
+import {nanoid} from "nanoid";
 import {browser} from "./browser";
 import {executeScriptTab} from "./tabs";
 import {isManifestVersion3, throwRuntimeError} from "./runtime";
@@ -38,7 +39,7 @@ export const executeScript = <T = any>(injection: ScriptInjection<any, T>): Prom
         };
 
         if (func) {
-            const id = `async-fn-${Math.random().toString(36).slice(2, 10)}`;
+            const id = nanoid();
 
             const listener = (message: any, {frameId, documentId}: MessageSender) => {
                 if (message?.asyncFuncID === id) {

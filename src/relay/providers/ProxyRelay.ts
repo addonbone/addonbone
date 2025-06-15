@@ -1,3 +1,4 @@
+import {getManifestVersion} from "@browser/runtime";
 import {executeScript, isAvailableScripting} from "@browser/scripting";
 import {ProxyTransport} from "@transport";
 
@@ -56,7 +57,7 @@ export default class ProxyRelay<
     }
 
     public get(): T {
-        if (!isAvailableScripting()) {
+        if (!isAvailableScripting() && getManifestVersion() !== 2) {
             throw new Error(`You are trying to get proxy relay "${this.name}" from script content. You can get original relay instead`);
         }
 

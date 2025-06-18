@@ -1,4 +1,4 @@
-import {ProxyRelay, RegisterRelay, Relay} from "./providers";
+import {ProxyRelay, RegisterRelay, Relay, type ProxyRelayOptions} from "./providers";
 
 import type {
     TransportDictionary,
@@ -10,6 +10,7 @@ import type {
 export {
     type RelayTarget,
     type RelayProxyTarget,
+    type ProxyRelayOptions,
 
     ProxyRelay,
     RegisterRelay

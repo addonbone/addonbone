@@ -68,7 +68,7 @@ describe('ProxyRelay', () => {
     });
 
     test("accesses primitive value as method on the relay object", async () => {
-        const relay = new ProxyRelay<typeof relayName, RelayProxyType>(relayName, {tabId: 1, frameIds: [2]}).get()
+        const relay = new ProxyRelay<typeof relayName, RelayProxyType>(relayName, {tabId: 1, frameId: 2}).get()
 
         expect(await relay.one()).toBe(1)
         expect(chrome.scripting.executeScript).toHaveBeenCalledWith(

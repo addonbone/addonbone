@@ -322,6 +322,18 @@ export const executeScriptTab = (tabId: number, details: InjectDetails): Promise
     });
 });
 
+export const insertCSSTab = (tabId: number, details: InjectDetails): Promise<void> => new Promise<void>((resolve, reject) => {
+    tabs().insertCSS(tabId, details, () => {
+        try {
+            throwRuntimeError();
+
+            resolve();
+        } catch (e) {
+            reject(e);
+        }
+    });
+});
+
 
 // Custom Methods
 export const getTabUrl = async (tabId: number): Promise<string> => {

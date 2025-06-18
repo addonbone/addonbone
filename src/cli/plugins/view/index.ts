@@ -16,8 +16,8 @@ export default definePlugin(() => {
                             test: isEntryModuleOrIssuer('view'),
                             enforce: false,
                             reuseExistingChunk: true,
-                            priority: -10
-                        }
+                            priority: 10
+                        },
                     }
                 }
             }

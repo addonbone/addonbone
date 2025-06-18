@@ -6,7 +6,13 @@ import {InlineNameGenerator} from "../name";
 
 import {ReadonlyConfig} from "@typing/config";
 import {PageEntrypointOptions} from "@typing/page";
-import {EntrypointNameGenerator, EntrypointOptionsFinder, EntrypointParser, EntrypointType} from "@typing/entrypoint";
+import {
+    EntrypointFile,
+    EntrypointNameGenerator,
+    EntrypointOptionsFinder,
+    EntrypointParser,
+    EntrypointType
+} from "@typing/entrypoint";
 
 export default class extends AbstractViewFinder<PageEntrypointOptions> {
 
@@ -27,6 +33,18 @@ export default class extends AbstractViewFinder<PageEntrypointOptions> {
             .reserve(EntrypointType.Popup)
             .reserve(EntrypointType.Offscreen)
             .reserve(EntrypointType.Options);
+    }
+
+    protected createViewAlias(file: EntrypointFile, options: PageEntrypointOptions): string {
+        const {name} = options;
+
+        let alias = name ? this.aliases.name(name) : this.aliases.file(file);
+
+        if (file.external) {
+            alias = file.import;
+        }
+
+        return alias;
     }
 
     protected getParser(): EntrypointParser<PageEntrypointOptions> {

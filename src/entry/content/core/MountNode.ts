@@ -18,7 +18,7 @@ export default class implements ContentScriptNode {
     public mount(): void {
         this.node.mount();
 
-        if (!this.container) {
+        if (!this.container || this.container.isConnected) {
             return;
         }
 

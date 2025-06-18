@@ -21,6 +21,7 @@ export default class<O extends ContentScriptEntrypointOptions = ContentScriptEnt
             world: z.enum(['ISOLATED', 'MAIN']).optional(),
             runAt: z.enum(['document_start', 'document_end', 'document_idle']).optional(),
             matchOriginAsFallback: z.boolean().optional(),
+            declarative: z.boolean().optional(),
         });
     }
 
@@ -30,6 +31,7 @@ export default class<O extends ContentScriptEntrypointOptions = ContentScriptEnt
         return {
             matches: ContentScriptMatches,
             runAt: 'document_idle',
+            declarative: false,
             ...options
         };
     }

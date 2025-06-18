@@ -25,7 +25,7 @@ export const getOffscreens = (): OffscreenMap => {
             offscreens.set(key, value);
         });
     } catch (e) {
-        console.error('Error getting offscreens:', e);
+        console.error('Failed getting offscreens: ', e);
     }
 
     return offscreens;

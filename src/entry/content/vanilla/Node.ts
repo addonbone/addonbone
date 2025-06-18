@@ -1,9 +1,11 @@
 import {ContentScriptNode} from "@typing/content";
 
 export default class implements ContentScriptNode {
+    private mounted: boolean = false;
+
     constructor(
         protected readonly node: ContentScriptNode,
-        protected readonly value?: null | string | number | Element
+        protected readonly value?: null | boolean | string | number | Element
     ) {
     }
 
@@ -18,7 +20,7 @@ export default class implements ContentScriptNode {
     public mount(): void {
         this.node.mount();
 
-        if (!this.container) {
+        if (!this.container || this.mounted) {
             return;
         }
 
@@ -29,9 +31,13 @@ export default class implements ContentScriptNode {
         } else if (this.value === null || this.value === undefined) {
             console.warn('Content script vanilla value is empty');
         }
+
+        this.mounted = true;
     }
 
     public unmount(): void {
         this.node.unmount();
+
+        this.mounted = false;
     }
 }

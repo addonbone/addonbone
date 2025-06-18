@@ -1,3 +1,4 @@
+
 import {getInjectScript, GetInjectScriptOptions, InjectScript} from "@support";
 
 import {getManifestVersion} from "@browser/runtime";
@@ -8,7 +9,6 @@ import ProxyTransport from "@transport/ProxyTransport";
 import RelayManager from "../RelayManager";
 
 import {RelayGlobalKey} from "@typing/relay";
-
 import type {DeepAsyncProxy} from "@typing/helpers";
 import type {TransportDictionary, TransportManager, TransportName} from "@typing/transport";
 

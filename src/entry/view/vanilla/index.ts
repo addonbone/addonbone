@@ -1,3 +1,5 @@
-import VanillaBuilder from './VanillaBuilder';
+import Builder from './Builder';
 
-export default VanillaBuilder.resolver();
+export {Builder};
+
+export default Builder.resolver();

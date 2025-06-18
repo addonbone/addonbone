@@ -1,5 +1,5 @@
 import {isAvailableScripting} from "@browser/scripting";
-import {BaseTransport} from "@transport";
+import BaseTransport from "@transport/BaseTransport";
 
 import {TransportDictionary, TransportManager, TransportName} from "@typing/transport";
 

@@ -1,4 +1,4 @@
-import {DefinePlugin, HtmlRspackPlugin, Configuration as RspackConfig} from "@rspack/core";
+import {Configuration as RspackConfig, DefinePlugin, HtmlRspackPlugin, Plugins} from "@rspack/core";
 import HtmlRspackTagsPlugin from "html-rspack-tags-plugin";
 
 import Page from "./Page";
@@ -8,6 +8,7 @@ import {PageDeclaration} from "./declaration";
 import {definePlugin} from "@main/plugin";
 import {virtualViewModule} from "@cli/virtual";
 import {EntrypointPlugin} from "@cli/bundler";
+import {ViewAliasToFilename} from "@cli/entrypoint";
 
 import {Command} from "@typing/app";
 
@@ -25,38 +26,46 @@ export default definePlugin(() => {
         bundler: async ({config}) => {
             declaration.setAlias(await page.getAlias()).build();
 
+            const plugins: Plugins = [];
+
+            let alias: ViewAliasToFilename = new Map;
+
             if (await page.empty()) {
                 if (config.debug) {
                     console.info('Page entries not found');
                 }
 
-                return {};
+            } else {
+                alias = await page.getAliasToFilename();
+
+                const plugin = EntrypointPlugin.from(await page.view().entries())
+                    .virtual(file => virtualViewModule(file));
+
+                if (config.command === Command.Watch) {
+                    plugin.watch(async () => {
+                        declaration.setAlias(await page.clear().getAlias()).build();
+
+                        return page.view().entries();
+                    });
+                }
+
+                const htmlPlugins = (await page.view().html()).map(options => new HtmlRspackPlugin(options));
+                const tagsPlugins = (await page.view().tags()).map(options => new HtmlRspackTagsPlugin(options));
+
+                plugins.push(plugin, ...htmlPlugins, ...tagsPlugins);
             }
-
-            const plugin = EntrypointPlugin.from(await page.view().entries())
-                .virtual(file => virtualViewModule(file));
-
-            if (config.command === Command.Watch) {
-                plugin.watch(async () => {
-                    declaration.setAlias(await page.clear().getAlias()).build();
-
-                    return page.view().entries();
-                });
-            }
-
-            const htmlPlugins = (await page.view().html()).map(options => new HtmlRspackPlugin(options));
-            const tagsPlugins = (await page.view().tags()).map(options => new HtmlRspackTagsPlugin(options));
 
             return {
                 plugins: [
                     new DefinePlugin({
-                        __ADNBN_PAGE_ALIAS__: JSON.stringify(await page.getAliasToFilename()),
+                        __ADNBN_PAGE_ALIAS__: JSON.stringify(alias),
                     }),
-                    plugin,
-                    ...htmlPlugins,
-                    ...tagsPlugins,
+                    ...plugins
                 ],
             } satisfies RspackConfig;
+        },
+        manifest: async ({manifest}) => {
+            manifest.appendAccessibleResources(await page.accessibleResources());
         }
     };
 });

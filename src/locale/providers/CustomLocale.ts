@@ -35,7 +35,7 @@ export default class<T extends LocaleStructure = LocaleStructure> extends Abstra
     }
 
     public languages(): Set<Language> {
-        return new Set();
+        return new Set([this.lang()]);
     }
 
     protected value(key: string): string | undefined {

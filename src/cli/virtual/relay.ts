@@ -2,8 +2,10 @@
 import {RelayUnresolvedDefinition} from "adnbn";
 //@ts-ignore
 import {isValidTransportDefinition, isValidTransportInitFunction, type TransportType} from "adnbn/entry/transport";
+//@ts-ignore
+import {Builder as RelayBuilder} from "adnbn/entry/relay";
 
-import relay from "virtual:relay-framework";
+import {Builder as ContentScriptBuilder} from "virtual:content-framework";
 
 import * as module from "virtual:relay-entrypoint";
 
@@ -20,9 +22,11 @@ try {
         definition = {...definition, init: defaultDefinition};
     }
 
-    const {init, name = relayName, ...options} = definition;
+    const {init, main, name = relayName, ...options} = definition;
 
-    relay({name, init, ...options});
+    new RelayBuilder({name, init, main, ...options}).content(new ContentScriptBuilder(options)).build().catch((e) => {
+        console.error('Failed to build relay: ', e);
+    });
 } catch (e) {
     console.error('The relay crashed on startup:', e);
 }

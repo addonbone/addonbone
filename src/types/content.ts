@@ -50,9 +50,21 @@ export interface ContentScriptConfig {
      * @default false
      */
     matchOriginAsFallback?: boolean;
+    /**
+     * Whether this content script requires explicit permission declaration in the extension manifest.
+     * When set to true, the content script must be declared in the manifest.json permissions section
+     * to be allowed to run on the specified pages.
+     *
+     * @see https://developer.chrome.com/docs/extensions/mv3/declare_permissions/
+     *
+     * @default false
+     */
+    declarative?: boolean;
 }
 
-export type ContentScriptEntrypointOptions = ContentScriptConfig & EntrypointOptions;
+export type ContentScriptOptions = ContentScriptConfig & EntrypointOptions;
+
+export type ContentScriptEntrypointOptions = Partial<ContentScriptOptions>;
 
 // Append
 export enum ContentScriptAppend {
@@ -85,7 +97,7 @@ export type ContentScriptAnchorResolver = () => Awaiter<Element[]>;
 // Render
 export type ContentScriptRenderReactComponent = FC<ContentScriptProps>;
 export type ContentScriptRenderValue = Element | ReactNode | ContentScriptRenderReactComponent;
-export type ContentScriptRenderHandler = (props: ContentScriptProps) => Awaiter<void | undefined | ContentScriptRenderValue>;
+export type ContentScriptRenderHandler = (props: ContentScriptProps) => Awaiter<undefined | ContentScriptRenderValue>;
 
 // Container
 export type ContentScriptContainerTag = Exclude<keyof HTMLElementTagNameMap, 'html' | 'body'>;
@@ -108,7 +120,7 @@ export interface ContentScriptContext extends ContentScriptMount {
 }
 
 // Main
-export type ContentScriptMainFunction = (context: ContentScriptContext) => Awaiter<void>;
+export type ContentScriptMainFunction = (context: ContentScriptContext, options: ContentScriptOptions) => Awaiter<void>;
 
 // Node
 export interface ContentScriptNode extends ContentScriptMount {
@@ -131,7 +143,7 @@ export interface ContentScriptDefinition extends ContentScriptEntrypointOptions 
 export interface ContentScriptResolvedDefinition extends Omit<ContentScriptDefinition, 'anchor' | 'mount' | 'container' | 'render' | 'watch'> {
     anchor: ContentScriptAnchorResolver;
     mount: ContentScriptMountFunction;
-    render: ContentScriptRenderHandler;
+    render?: ContentScriptRenderHandler;
     container: ContentScriptContainerCreator;
     watch: ContentScriptWatchStrategy;
 }

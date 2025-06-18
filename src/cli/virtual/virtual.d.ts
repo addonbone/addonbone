@@ -37,7 +37,9 @@ declare module 'virtual:content-entrypoint' {
 }
 
 declare module 'virtual:content-framework' {
-    type ContentScriptDefinition = import('@typing/content').ContentScriptDefinition;
+    import {ContentScriptDefinition, ContentScriptBuilder} from "@typing/content";
+
+    export const Builder = ContentScriptBuilder;
 
     const module: (definition: ContentScriptDefinition) => void;
     export = module;
@@ -51,13 +53,6 @@ declare module 'virtual:offscreen-entrypoint' {
     }
 
     const module: ModuleType;
-    export = module;
-}
-
-declare module 'virtual:offscreen-framework' {
-    type OffscreenUnresolvedDefinition = import('@typing/offscreen').OffscreenUnresolvedDefinition<any>;
-
-    const module: (definition: OffscreenUnresolvedDefinition) => void;
     export = module;
 }
 
@@ -93,9 +88,11 @@ declare module 'virtual:view-entrypoint' {
 }
 
 declare module 'virtual:view-framework' {
-    import {ViewOptions} from "@typing/view";
+    import {ViewOptions, ViewBuilder} from "@typing/view";
 
     type ViewDefinition = import('@typing/view').ViewDefinition<ViewOptions>;
+
+    export const Builder = ViewBuilder;
 
     const module: (definition: ViewDefinition) => void;
     export = module;

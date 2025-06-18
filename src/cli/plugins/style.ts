@@ -25,10 +25,9 @@ const styleMergerLoader = (config: ReadonlyConfig) => (
                 let appStyle = fs.readFileSync(appPath, 'utf8');
 
                 appStyle = appStyle.replace(/url\((['"]?)(.*?)\1\)/g, (match, quote, filePath) => {
-                    const fileName = path.basename(filePath);
-                    const newPath = path.join(appDir, path.dirname(relativePath), fileName);
-
-                    return `url("${newPath}")`;
+                    const cssDir = path.dirname(appPath);
+                    const assetAbs = path.resolve(cssDir, filePath);
+                    return `url("${assetAbs}")`;
                 });
 
                 return sharedStyle + appStyle;

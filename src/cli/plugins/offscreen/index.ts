@@ -1,11 +1,11 @@
-import {Configuration as RspackConfig, DefinePlugin, HtmlRspackPlugin} from "@rspack/core";
+import {Configuration as RspackConfig, DefinePlugin, HtmlRspackPlugin, Plugins} from "@rspack/core";
 import HtmlRspackTagsPlugin from "html-rspack-tags-plugin";
 
 import {definePlugin} from "@main/plugin";
 
 import {EntrypointPlugin} from "@cli/bundler";
 
-import Offscreen from "./Offscreen";
+import Offscreen, {OffscreenParameters} from "./Offscreen";
 import OffscreenDeclaration from "./OffscreenDeclaration";
 
 import {Command} from "@typing/app";
@@ -24,42 +24,52 @@ export default definePlugin(() => {
         bundler: async ({config}) => {
             declaration.dictionary(await offscreen.dictionary()).build();
 
+            let build: boolean = true;
+
             if (await offscreen.empty()) {
                 if (config.debug) {
                     console.info('Offscreen entries not found');
                 }
 
-                return {};
+                build = false;
             } else if (config.manifestVersion === 2) {
                 if (config.debug) {
                     console.warn('Offscreen not supported for manifest version 2');
                 }
 
-                return {};
+                build = false;
             }
 
-            const plugin = EntrypointPlugin.from(await offscreen.view().entries())
-                .virtual(file => offscreen.virtual(file));
+            const plugins: Plugins = [];
 
-            if (config.command === Command.Watch) {
-                plugin.watch(async () => {
-                    declaration.dictionary(await offscreen.clear().dictionary()).build();
+            let parameters: OffscreenParameters = {};
 
-                    return offscreen.view().entries();
-                });
+            if (build) {
+                parameters = await offscreen.parameters();
+
+                const plugin = EntrypointPlugin.from(await offscreen.view().entries())
+                    .virtual(file => offscreen.virtual(file));
+
+                if (config.command === Command.Watch) {
+                    plugin.watch(async () => {
+                        declaration.dictionary(await offscreen.clear().dictionary()).build();
+
+                        return offscreen.view().entries();
+                    });
+                }
+
+                const htmlPlugins = (await offscreen.view().html()).map(options => new HtmlRspackPlugin(options));
+                const tagsPlugins = (await offscreen.view().tags()).map(options => new HtmlRspackTagsPlugin(options));
+
+                plugins.push(plugin, ...htmlPlugins, ...tagsPlugins);
             }
-
-            const htmlPlugins = (await offscreen.view().html()).map(options => new HtmlRspackPlugin(options));
-            const tagsPlugins = (await offscreen.view().tags()).map(options => new HtmlRspackTagsPlugin(options));
 
             return {
                 plugins: [
                     new DefinePlugin({
-                        __ADNBN_OFFSCREEN_PARAMETERS__: JSON.stringify(await offscreen.parameters()),
+                        __ADNBN_OFFSCREEN_PARAMETERS__: JSON.stringify(parameters),
                     }),
-                    plugin,
-                    ...htmlPlugins,
-                    ...tagsPlugins,
+                    ...plugins,
                 ],
             } satisfies RspackConfig;
         },

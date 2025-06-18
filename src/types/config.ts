@@ -2,7 +2,7 @@ import type {Options as HtmlOptions} from "html-rspack-tags-plugin";
 
 import {Command, Mode} from "@typing/app";
 import {Browser} from "@typing/browser";
-import {ManifestIncognito, ManifestVersion} from "@typing/manifest";
+import {ManifestIncognitoValue, ManifestVersion} from "@typing/manifest";
 import {Plugin} from "@typing/plugin";
 import {Language} from "@typing/locale";
 
@@ -41,7 +41,7 @@ export interface Config {
     /**
      * Author of the application (extension).
      */
-    author: string | (() => string);
+    author: string | (() => string | undefined);
 
     /**
      * Browser for which the extension is being built.
@@ -369,7 +369,7 @@ export interface Config {
      *
      * @default "VERSION"
      */
-    version: string | (() => string);
+    version: string | (() => string | undefined);
 
     /**
      * The minimum supported version of browser.
@@ -383,7 +383,7 @@ export interface Config {
      *
      * @default "MINIMUM_VERSION"
      */
-    minimumVersion: string | number | (() => string | number);
+    minimumVersion: string | number | (() => string | number | undefined);
 
     /**
      * The URL for the extension's homepage
@@ -393,7 +393,7 @@ export interface Config {
      *
      * @default HOMEPAGE
      */
-    homepage: string | (() => string);
+    homepage: string | (() => string | undefined);
 
     /**
      * Used for Firefox under `browser_specific_settings.gecko.id`,
@@ -404,14 +404,14 @@ export interface Config {
      *
      * @default EMAIL
      */
-    email: string | (() => string);
+    email: string | (() => string | undefined);
 
     /**
      * Used to specify how this extension will behave in incognito mode
      *
      * @default "not_allowed"
      */
-    incognito: ManifestIncognito | (() => ManifestIncognito);
+    incognito?: ManifestIncognitoValue | (() => ManifestIncognitoValue | undefined);
 }
 
 

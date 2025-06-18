@@ -1,7 +1,7 @@
 import ContentName from "./ContentName";
 
 import {ContentGroupItems, ContentProvider} from "./types";
-import {filterContentScriptsMatchPatterns, getContentScriptConfigFromOptions} from "./utils";
+import {getContentScriptConfigFromOptions} from "./utils";
 
 import {ReadonlyConfig} from "@typing/config";
 import {ContentScriptEntrypointOptions} from "@typing/content";
@@ -78,9 +78,9 @@ export default class {
 
         for (const items of group.values()) {
             for (const {options} of items) {
-                const {matches} = options;
+                const {matches, declarative} = options;
 
-                if (!matches) {
+                if (!declarative || !matches) {
                     continue;
                 }
 
@@ -90,7 +90,7 @@ export default class {
             }
         }
 
-        return filterContentScriptsMatchPatterns(hostPermissions);
+        return hostPermissions;
     }
 
     public virtual(file: EntrypointFile): string {
@@ -113,7 +113,7 @@ export default class {
     }
 
     public likely(name?: string): boolean {
-        if(!name) {
+        if (!name) {
             return false;
         }
 

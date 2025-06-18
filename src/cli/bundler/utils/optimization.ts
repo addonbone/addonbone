@@ -5,60 +5,38 @@ import {PackageName} from "@typing/app";
 
 export const isEntryModuleOrIssuer = (
     entry: string | string[]
-): OptimizationSplitChunksCacheGroupTestFn => (
-    module,
-    {moduleGraph}
-) => {
-    if (typeof entry === 'string') {
+): OptimizationSplitChunksCacheGroupTestFn => {
+    if (typeof entry === "string") {
         entry = [entry];
     }
 
-    const entryDirs = entry.reduce((dirs, value) => {
-        dirs.push(
-            path.join('node_modules', PackageName, 'dist', 'entry', value),
-            path.join('addonbone', 'dist', 'entry', value), // TODO: Remove this for production
-        );
+    const entryDirs = entry.flatMap(value => [
+        path.join("node_modules", PackageName, "dist", "entry", value),
+        path.join("addonbone", "dist", "entry", value)
+    ]);
 
-        return dirs;
-    }, [] as string[]);
+    return (module, {moduleGraph}) => {
+        const nm = module as NormalModule;
+        const resource = nm.resource || "";
 
-    const visited = new Set<string>();
-
-    const checkModule = (mod: NormalModule): boolean => {
-        const resource = mod.resource || '';
-
-        if (visited.has(resource)) {
-            return false;
-        }
-
-        visited.add(resource);
-
-        if (entryDirs.some((dir) => resource.includes(dir))) {
+        if (entryDirs.some(dir => resource.includes(dir))) {
             return true;
         }
 
-        let issuer = moduleGraph.getIssuer(mod) as NormalModule | null;
+        for (const connection of moduleGraph.getIncomingConnections(nm)) {
+            const origin = connection.originModule as NormalModule | undefined;
 
-        while (issuer) {
-            if (checkModule(issuer)) {
-                return true;
+            if (!origin?.resource) {
+                continue;
             }
 
-            issuer = moduleGraph.getIssuer(issuer) as NormalModule | null;
-        }
+            const originRes = origin.resource;
 
-        const connections = moduleGraph.getOutgoingConnections(mod);
-
-        for (const connection of connections) {
-            if (connection.module && connection.module instanceof NormalModule) {
-                if (checkModule(connection.module)) {
-                    return true;
-                }
+            if (entryDirs.some(dir => originRes.includes(dir))) {
+                return true;
             }
         }
 
         return false;
     };
-
-    return checkModule(module as NormalModule);
-}
+};

@@ -1,6 +1,6 @@
 import {isBackground} from "@browser/runtime";
 
-import {BaseTransport} from "@transport";
+import BaseTransport from "@transport/BaseTransport";
 
 import ServiceManager from "../ServiceManager";
 

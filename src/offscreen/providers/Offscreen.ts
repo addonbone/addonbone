@@ -1,6 +1,6 @@
 import { isOffscreen} from "../utils";
 
-import {BaseTransport} from "@transport";
+import BaseTransport from "@transport/BaseTransport";
 
 import OffscreenManager from "../OffscreenManager";
 

@@ -1,7 +1,7 @@
 import {isValidElement} from "react";
 
 import MountBuilder from "../core/MountBuilder";
-import ReactNode from "./ReactNode";
+import ReactNode from "./Node";
 
 import {contentScriptReactRenderResolver} from "./resolvers/render";
 
@@ -17,7 +17,11 @@ export default class extends MountBuilder {
         super(definition);
     }
 
-    protected resolveRender(render?: ContentScriptRenderValue): ContentScriptRenderHandler {
+    protected resolveRender(render?: ContentScriptRenderValue): ContentScriptRenderHandler | undefined {
+        if (render === undefined) {
+            return;
+        }
+
         return contentScriptReactRenderResolver(render);
     }
 

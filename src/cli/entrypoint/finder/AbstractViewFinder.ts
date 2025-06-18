@@ -17,6 +17,10 @@ export interface ViewItem<O extends ViewEntrypointOptions> {
 
 export type ViewItems<O extends ViewEntrypointOptions> = Map<string, ViewItem<O>>;
 
+export type ViewAliasToFilename = Map<string, string>;
+
+export type ViewFileToFilename = Map<EntrypointFile, string>;
+
 export default abstract class<O extends ViewEntrypointOptions> extends AbstractPluginFinder<O> {
     protected _views?: ViewItems<O>;
 
@@ -48,21 +52,12 @@ export default abstract class<O extends ViewEntrypointOptions> extends AbstractP
         const views: ViewItems<O> = new Map;
 
         for (const [file, options] of await this.plugin().options()) {
-            let {as: name} = options;
-
-            let filename = name ? this.filenames.name(name) : this.filenames.file(file);
-
-            filename = path.posix.join(this.config.htmlDir, filename + '.html');
-
-            let alias = name ? this.aliases.name(name) : this.aliases.file(file);
-
-            name = name ? this.names.name(name) : this.names.file(file);
-
-            if (file.external) {
-                alias = file.import;
-            }
-
-            views.set(name, {alias, filename, file, options});
+            views.set(this.createViewName(file, options), {
+                alias: this.createViewAlias(file, options),
+                filename: this.createViewFilename(file, options),
+                file,
+                options,
+            });
 
             if (!this.allowMultiple()) {
                 break;
@@ -70,6 +65,32 @@ export default abstract class<O extends ViewEntrypointOptions> extends AbstractP
         }
 
         return views;
+    }
+
+    protected createViewFilename(file: EntrypointFile, options: O): string {
+        const {as} = options;
+
+        const filename = as ? this.filenames.name(as) : this.filenames.file(file);
+
+        return path.posix.join(this.config.htmlDir, filename + '.html');
+    }
+
+    protected createViewAlias(file: EntrypointFile, options: O): string {
+        const {as} = options;
+
+        let alias = as ? this.aliases.name(as) : this.aliases.file(file);
+
+        if (file.external) {
+            alias = file.import;
+        }
+
+        return alias;
+    }
+
+    protected createViewName(file: EntrypointFile, options: O): string {
+        const {as} = options;
+
+        return as ? this.names.name(as) : this.names.file(file);
     }
 
     public async views(): Promise<ViewItems<O>> {
@@ -80,13 +101,13 @@ export default abstract class<O extends ViewEntrypointOptions> extends AbstractP
         return true;
     }
 
-    public async getAliasToFilename(): Promise<Map<string, string>> {
+    public async getAliasToFilename(): Promise<ViewAliasToFilename> {
         return Array.from(await this.views()).reduce((aliases, [_, item]) => {
             return {
                 ...aliases,
                 [item.alias]: item.filename,
             };
-        }, {} as Map<string, string>);
+        }, new Map as ViewAliasToFilename);
     }
 
     public async getAlias(): Promise<Set<string>> {
@@ -101,10 +122,10 @@ export default abstract class<O extends ViewEntrypointOptions> extends AbstractP
         return aliases;
     }
 
-    public async getFilenames(): Promise<Map<EntrypointFile, string>> {
+    public async getFilenames(): Promise<ViewFileToFilename> {
         const views = await this.views();
 
-        const filenames = new Map<EntrypointFile, string>;
+        const filenames: ViewFileToFilename = new Map;
 
         for (const {file, filename} of views.values()) {
             filenames.set(file, filename);

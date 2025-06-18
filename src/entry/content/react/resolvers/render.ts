@@ -4,7 +4,7 @@ import {ContentScriptRenderHandler, ContentScriptRenderValue} from "@typing/cont
 
 export const contentScriptReactRenderResolver = (
     render?: ContentScriptRenderValue
-): ContentScriptRenderHandler => async (props): Promise<void | ContentScriptRenderValue> => {
+): ContentScriptRenderHandler => async (props): Promise<undefined | ContentScriptRenderValue> => {
     let resolvedRender = typeof render === "function" ? createElement(render, props) : render;
 
     if (isValidElement(resolvedRender)) {

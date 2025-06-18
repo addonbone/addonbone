@@ -7,19 +7,14 @@ import AbstractVersion from "./AbstractVersion";
 import type {ReadonlyConfig} from "@typing/config";
 
 export default class extends AbstractVersion {
-
     constructor(config: ReadonlyConfig) {
         super(config);
     }
 
     public getVersion(): string | undefined {
-        const version = this.extractVersionValue(this.config.minimumVersion)
+        const version = this.extractVersionValue(this.config.minimumVersion);
 
-        const configVersion = this.resolveVersion(version);
-
-        const envVersion = this.resolveVersion(getEnv(version));
-
-        return configVersion || envVersion;
+        return this.resolveVersion(version) || this.resolveVersion(getEnv(version));
     }
 
     protected resolveVersion(version?: string): string | undefined {

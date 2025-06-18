@@ -1,5 +1,6 @@
+import RegisterTransport from "@transport/RegisterTransport";
+
 import {isOffscreen} from "@offscreen/utils";
-import {RegisterTransport} from "@transport"
 
 import OffscreenMessage from "../OffscreenMessage";
 import OffscreenManager from "../OffscreenManager";

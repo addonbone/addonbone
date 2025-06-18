@@ -1,16 +1,6 @@
 import _ from "lodash";
-import path from "path";
 
-import {
-    Plugin,
-    PluginEntrypointKeys,
-    PluginHandler,
-    PluginHandlerKeys,
-    PluginHandlerOptions,
-    PluginNameHandlerResult
-} from "@typing/plugin";
-import {ReadonlyConfig} from "@typing/config";
-import {EntrypointFile} from "@typing/entrypoint";
+import {Plugin, PluginHandler, PluginHandlerKeys, PluginHandlerOptions, PluginNameHandlerResult} from "@typing/plugin";
 
 export const resolvePluginHandler = async <O extends object, T>(handler: PluginHandler<O, T> | undefined, options: O): Promise<T | undefined> => {
     if (_.isFunction(handler)) {
@@ -26,7 +16,6 @@ export const resolvePluginHandler = async <O extends object, T>(handler: PluginH
     return handler;
 };
 
-
 export const processPluginHandler = async function* <K extends PluginHandlerKeys>(plugins: Plugin[], key: K, options: PluginHandlerOptions<K>): AsyncGenerator<PluginNameHandlerResult<K>, void, void> {
     for await (const plugin of plugins) {
         const handler = plugin[key] as PluginHandler<PluginHandlerOptions<K>> | undefined;
@@ -37,48 +26,4 @@ export const processPluginHandler = async function* <K extends PluginHandlerKeys
             yield {name: plugin.name, result};
         }
     }
-}
-
-export const getPluginEntrypointFiles = async <K extends PluginEntrypointKeys>(config: ReadonlyConfig, key: K): Promise<Set<EntrypointFile>> => {
-    const pluginResult = await Array.fromAsync(processPluginHandler(config.plugins, key, {
-        config,
-    }));
-
-    if (pluginResult.length > 0) {
-        const pluginFiles = pluginResult.reduce((files, {name, result}) => {
-            let endpoints: Array<string | EntrypointFile> = [];
-
-            if (_.isBoolean(result)) {
-                endpoints = [key];
-            } else if (_.isString(result) || _.isPlainObject(result)) {
-                endpoints = [result as string | EntrypointFile];
-            } else if (_.isArray(result)) {
-                endpoints = result;
-            } else if (result instanceof Set) {
-                endpoints = Array.from(result as Set<EntrypointFile>);
-            }
-
-            const endpointFiles: EntrypointFile[] = [];
-
-            for (const endpoint of endpoints) {
-                if (_.isString(endpoint)) {
-                    const resolved = path.join(name, endpoint);
-
-                    endpointFiles.push({
-                        file: require.resolve(resolved, {paths: [process.cwd()]}),
-                        import: resolved,
-                        external: name,
-                    });
-                } else {
-                    endpointFiles.push(endpoint);
-                }
-            }
-
-            return [...files, ...endpointFiles];
-        }, [] as EntrypointFile[]);
-
-        return new Set(pluginFiles);
-    }
-
-    return new Set();
 }

@@ -1,6 +1,6 @@
 import get from 'get-value'
 
-import {TransportManager} from '@transport'
+import TransportManager from '@transport/TransportManager';
 
 import {TransportManager as TransportManagerContract, TransportName} from "@typing/transport";
 import {RelayGlobalKey} from "@typing/relay";

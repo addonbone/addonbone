@@ -1,1 +1,1 @@
-export type {ManifestBuilder} from "@typing/manifest";
+export {type ManifestBuilder, ManifestIncognito} from "@typing/manifest";

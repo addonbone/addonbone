@@ -1,7 +1,7 @@
 import {isValidContentScriptRenderValue} from "../core/resolvers/render";
 
 import MountBuilder from "../core/MountBuilder";
-import VanillaNode from "./VanillaNode";
+import VanillaNode from "./Node";
 
 import {ContentScriptDefinition, ContentScriptNode} from "@typing/content";
 
@@ -13,7 +13,7 @@ export default class extends MountBuilder {
     protected async createNode(anchor: Element): Promise<ContentScriptNode> {
         let value = await this.getValue(anchor);
 
-        if (!isValidContentScriptRenderValue(value)) {
+        if (value !== true && !isValidContentScriptRenderValue(value)) {
             value = undefined;
 
             console.warn("Content script vanilla value is not a valid render value");

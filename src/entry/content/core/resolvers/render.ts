@@ -6,14 +6,14 @@ export const isValidContentScriptRenderValue = (value: unknown): value is string
 
 export const contentScriptRenderResolver = (
     render?: ContentScriptRenderValue | ContentScriptRenderHandler
-): ContentScriptRenderHandler => async (props): Promise<void | ContentScriptRenderValue> => {
+): ContentScriptRenderHandler => async (props): Promise<undefined | ContentScriptRenderValue> => {
     let resolvedRender = typeof render === "function" ? render(props) : render;
 
     if (resolvedRender instanceof Promise) {
         resolvedRender = await resolvedRender;
     }
 
-    if (!isValidContentScriptRenderValue(resolvedRender)) {
+    if (resolvedRender !== true && !isValidContentScriptRenderValue(resolvedRender)) {
         return;
     }
 

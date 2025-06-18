@@ -1,3 +1,5 @@
-import ReactBuilder from "./ReactBuilder";
+import Builder from "./Builder";
 
-export default ReactBuilder.resolver();
+export {Builder};
+
+export default Builder.resolver();

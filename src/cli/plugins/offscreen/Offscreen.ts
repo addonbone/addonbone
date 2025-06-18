@@ -10,7 +10,7 @@ import {ReadonlyConfig} from "@typing/config";
 import {OffscreenEntrypointOptions} from "@typing/offscreen";
 import {EntrypointFile} from "@typing/entrypoint";
 
-type OffscreenParameters = Record<string, chrome.offscreen.CreateParameters>;
+export type OffscreenParameters = Record<string, chrome.offscreen.CreateParameters>;
 
 
 export default class extends OffscreenFinder {

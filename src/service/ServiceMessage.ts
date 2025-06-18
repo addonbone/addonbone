@@ -1,4 +1,4 @@
-import {TransportMessage} from '@transport'
+import TransportMessage from "@transport/TransportMessage"
 
 export default class ServiceMessage extends TransportMessage {
     protected readonly key: string;

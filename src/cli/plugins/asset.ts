@@ -6,6 +6,8 @@ import {definePlugin} from "@main/plugin";
 
 import {ReplacePlugin} from "@cli/bundler";
 
+import {Browser} from "@typing/browser";
+
 export default definePlugin(() => {
     return {
         name: 'adnbn:asset',
@@ -20,10 +22,10 @@ export default definePlugin(() => {
                             test: /\.(png|apng|jpe?g|gif|webp)$/i,
                             oneOf: [
                                 {
-                                    resourceQuery: /chrome/,
+                                    resourceQuery: /(chrome|browser)/,
                                     type: "asset/resource",
                                     generator: {
-                                        publicPath: "chrome-extension://__MSG_@@extension_id__/"
+                                        publicPath: `${config.browser === Browser.Firefox ? 'moz' : 'chrome'}-extension://__MSG_@@extension_id__/`
                                     }
                                 },
                                 {

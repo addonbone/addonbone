@@ -24,7 +24,7 @@ export const getSidebars = (): SidebarMap => {
             sidebars.set(key, value);
         });
     } catch (e) {
-        console.error('Error getting sidebars:', e);
+        console.error('Failed getting sidebars: ', e);
     }
 
     return sidebars;

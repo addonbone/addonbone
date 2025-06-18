@@ -19,7 +19,7 @@ export default abstract class<T extends AbstractInjectScriptOptions> implements 
 
         this.options = {...this.options, tabId, frameId, matchAboutBlank, injectImmediately};
 
-        return this
+        return this;
     }
 
     public abstract run<A extends any[], R extends any>(func: (...args: A) => R, args?: A): Promise<InjectionResult<Awaited<R>>[]>;

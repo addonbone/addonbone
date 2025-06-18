@@ -14,7 +14,7 @@ export interface InjectScriptV3Options extends AbstractInjectScriptOptions {
 
 export default class extends AbstractInjectScript<InjectScriptV3Options> {
     constructor(protected options: InjectScriptV3Options) {
-        super(options)
+        super(options);
     }
 
     public setOptions(options: Partial<InjectScriptV3Options>): this {
@@ -48,7 +48,7 @@ export default class extends AbstractInjectScript<InjectScriptV3Options> {
             allFrames: this.allFrames,
             frameIds: this.frameIds,
             documentIds: this.documentIds,
-        }
+        };
     }
 
     protected get documentIds(): string[] | undefined {

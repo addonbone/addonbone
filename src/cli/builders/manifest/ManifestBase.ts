@@ -296,7 +296,18 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
             const contentScripts: ManifestV3['content_scripts'] = [];
 
             for (const script of this.contentScripts.values()) {
-                const {entry, matches, excludeMatches, allFrames, runAt, excludeGlobs, includeGlobs, world} = script;
+                const {
+                    entry,
+                    matches,
+                    excludeMatches,
+                    allFrames,
+                    runAt,
+                    excludeGlobs,
+                    includeGlobs,
+                    world,
+                    matchAboutBlank,
+                    matchOriginAsFallback,
+                } = script;
 
                 const dependencies = this.dependencies.get(entry);
 
@@ -320,6 +331,9 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
                     run_at: runAt,
                     exclude_globs: excludeGlobs,
                     include_globs: includeGlobs,
+                    match_about_blank: matchAboutBlank,
+                    //@ts-ignore
+                    match_origin_as_fallback: matchOriginAsFallback,
                     world,
                 });
             }

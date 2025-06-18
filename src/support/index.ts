@@ -1,5 +1,5 @@
 export {
     default as injectScriptFactory,
-    type InjectScriptFactoryOptions,
+    type InjectScriptOptions,
     type InjectScript,
 } from './injectScript'

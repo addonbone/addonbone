@@ -1,4 +1,4 @@
-import {injectScriptFactory, type InjectScriptFactoryOptions, type InjectScript} from "@support";
+import {injectScriptFactory, type InjectScriptOptions, type InjectScript} from "@support";
 
 import {getManifestVersion} from "@browser/runtime";
 import {isAvailableScripting} from "@browser/scripting";
@@ -12,7 +12,7 @@ import {RelayGlobalKey} from "@typing/relay";
 import type {DeepAsyncProxy} from "@typing/helpers";
 import type {TransportDictionary, TransportManager, TransportName} from "@typing/transport";
 
-export type ProxyRelayOptions = number | Omit<InjectScriptFactoryOptions, 'frameId' | 'documentId' | 'timeFallback'> & {
+export type ProxyRelayOptions = number | Omit<InjectScriptOptions, 'frameId' | 'documentId' | 'timeFallback'> & {
     frameId?: number;
     documentId?: string
 }

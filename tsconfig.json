@@ -52,8 +52,8 @@
       "@support": [
         "support"
       ],
-      "@transport": [
-        "transport"
+      "@transport/*": [
+        "transport/*"
       ],
       "@typing/*": [
         "types/*"

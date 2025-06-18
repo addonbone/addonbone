@@ -1,7 +1,9 @@
 import {getInjectScript, GetInjectScriptOptions, InjectScript} from "@support";
+
 import {getManifestVersion} from "@browser/runtime";
 import {isAvailableScripting} from "@browser/scripting";
-import {ProxyTransport} from "@transport";
+
+import ProxyTransport from "@transport/ProxyTransport";
 
 import RelayManager from "../RelayManager";
 

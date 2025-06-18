@@ -1,14 +1,15 @@
 import {isManifestVersion3} from "@browser/runtime";
 
-import InjectScript from './AbstractInjectScript'
 import InjectScriptV2, {type InjectScriptV2Options} from './InjectScriptV2'
 import InjectScriptV3, {type InjectScriptV3Options} from './InjectScriptV3'
 
-export {InjectScript}
+import type {InjectScript} from './types'
 
-export type GetInjectScriptOptions = InjectScriptV2Options & InjectScriptV3Options
+export {type InjectScript}
 
-export const getInjectScript = (options: GetInjectScriptOptions): InjectScript => {
+export type InjectScriptFactoryOptions = InjectScriptV2Options & InjectScriptV3Options
+
+export default(options: InjectScriptFactoryOptions): InjectScript => {
     const {timeFallback, ...optionsV3} = options;
     const {documentId, world, ...optionsV2} = options;
 

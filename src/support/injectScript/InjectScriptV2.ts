@@ -6,7 +6,6 @@ import {getAllFrames} from "@browser/webNavigation";
 import {executeScriptTab} from "@browser/tabs";
 
 import AbstractInjectScript, {type AbstractInjectScriptOptions} from "./AbstractInjectScript";
-import type {InjectScriptV3Options} from "./InjectScriptV3";
 
 type InjectDetails = chrome.tabs.InjectDetails;
 type MessageSender = chrome.runtime.MessageSender;
@@ -18,26 +17,29 @@ export type InjectScriptV2Options = AbstractInjectScriptOptions & {
     timeFallback?: number,
 }
 
-export default class extends AbstractInjectScript {
+export default class extends AbstractInjectScript<InjectScriptV2Options> {
     private message = new Message();
 
     public constructor(protected options: InjectScriptV2Options) {
         super(options);
     }
 
-    public setOptions(options: Partial<InjectScriptV2Options & InjectScriptV3Options>): this {
-        const {world, documentId, ...currentOptions} = options
-        this.options = {...this.options, ...currentOptions};
+    public setOptions(options: Partial<InjectScriptV2Options>): this {
+        const {timeFallback} = options;
+
+        this.options = {...this.options, timeFallback};
+
         super.setOptions(options);
-        return this
+
+        return this;
     }
 
-    public async run<A extends any[], T extends any>(func: (...args: A) => T, args?: A): Promise<InjectionResult<Awaited<T>>[]> {
-        return new Promise<InjectionResult<Awaited<T>>[]>(async (resolve, reject) => {
+    public async run<A extends any[], R extends any>(func: (...args: A) => R, args?: A): Promise<InjectionResult<Awaited<R>>[]> {
+        return new Promise<InjectionResult<Awaited<R>>[]>(async (resolve, reject) => {
             const {tabId} = this.options;
 
             const type = `inject-script-${nanoid()}`;
-            const injectResults: InjectionResult<Awaited<T>>[] = []
+            const injectResults: InjectionResult<Awaited<R>>[] = []
 
             let frameCount: number = 0
 
@@ -151,7 +153,7 @@ export default class extends AbstractInjectScript {
         })();`;
     }
 
-    protected get runAt() {
+    protected get runAt(): string {
         return this.options.injectImmediately ? "document_start" : "document_idle";
     }
 }

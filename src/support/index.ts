@@ -1,1 +1,5 @@
-export {getInjectScript, InjectScript, type GetInjectScriptOptions} from './InjectScript'
+export {
+    default as injectScriptFactory,
+    type InjectScriptFactoryOptions,
+    type InjectScript,
+} from './injectScript'

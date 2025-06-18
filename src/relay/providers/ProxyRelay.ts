@@ -1,5 +1,4 @@
-
-import {getInjectScript, GetInjectScriptOptions, InjectScript} from "@support";
+import {injectScriptFactory, type InjectScriptFactoryOptions, type InjectScript} from "@support";
 
 import {getManifestVersion} from "@browser/runtime";
 import {isAvailableScripting} from "@browser/scripting";
@@ -9,10 +8,11 @@ import ProxyTransport from "@transport/ProxyTransport";
 import RelayManager from "../RelayManager";
 
 import {RelayGlobalKey} from "@typing/relay";
+
 import type {DeepAsyncProxy} from "@typing/helpers";
 import type {TransportDictionary, TransportManager, TransportName} from "@typing/transport";
 
-export type ProxyRelayOptions = number | Omit<GetInjectScriptOptions, 'frameId' | 'documentId' | 'timeFallback'> & {
+export type ProxyRelayOptions = number | Omit<InjectScriptFactoryOptions, 'frameId' | 'documentId' | 'timeFallback'> & {
     frameId?: number;
     documentId?: string
 }
@@ -26,7 +26,7 @@ export default class ProxyRelay<
     constructor(name: N, protected options: ProxyRelayOptions) {
         super(name);
 
-        this.injectScript = getInjectScript({
+        this.injectScript = injectScriptFactory({
             ...(typeof options === "number" ? {tabId: options} : options),
             timeFallback: 4000,
         })

@@ -41,7 +41,7 @@ export default class extends AbstractInjectScript<InjectScriptV2Options> {
             const type = `inject-script-${nanoid()}`;
             const injectResults: InjectionResult<Awaited<R>>[] = [];
 
-            let frameCount: number = 0
+            let frameCount: number = 0;
 
             const listener = (data: { result?: any, error?: Error }, {frameId, documentId}: MessageSender) => {
                 frameCount -= 1;
@@ -53,7 +53,7 @@ export default class extends AbstractInjectScript<InjectScriptV2Options> {
                 }
 
                 if (error) {
-                    console.error(`Error in injection listener with frameId = ${frameId}`, error)
+                    console.error(`Error in injection listener with frameId = ${frameId}`, error);
                 }
 
                 frameId === 0
@@ -61,9 +61,9 @@ export default class extends AbstractInjectScript<InjectScriptV2Options> {
                     : injectResults.push({frameId, documentId, result});
 
                 if (frameCount === 0) {
-                    unsubscribe()
+                    unsubscribe();
                     clearTimeout(timeoutId);
-                    resolve(injectResults)
+                    resolve(injectResults);
                 }
             };
 
@@ -79,10 +79,10 @@ export default class extends AbstractInjectScript<InjectScriptV2Options> {
                 code: this.generateCode(type, func, args),
                 runAt: this.runAt,
                 matchAboutBlank: this.matchAboutBlank,
-            }
+            };
 
             if (this.allFrames) {
-                frameCount = (await getAllFrames(tabId) || []).length
+                frameCount = (await getAllFrames(tabId) || []).length;
 
                 await executeScriptTab(tabId, {...details, allFrames: true});
             } else if (this.frameIds) {

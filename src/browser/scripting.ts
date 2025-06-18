@@ -4,18 +4,17 @@ import {throwRuntimeError} from "./runtime";
 type Awaited<T> = chrome.scripting.Awaited<T>;
 type ContentScriptFilter = chrome.scripting.ContentScriptFilter;
 type CSSInjection = chrome.scripting.CSSInjection;
-type InjectionResult<T> = chrome.scripting.InjectionResult<T>;
+type InjectionResult<T> = chrome.scripting.InjectionResult<T>
 type RegisteredContentScript = chrome.scripting.RegisteredContentScript;
 type ScriptInjection<Args extends any[], Result> = chrome.scripting.ScriptInjection<Args, Result>;
 
-export const scripting = () => browser().scripting as typeof chrome.scripting;
+const scripting = () => browser().scripting as typeof chrome.scripting;
 
 // Methods
-export const executeScript = <T = any>(injection: ScriptInjection<any, T>): Promise<InjectionResult<Awaited<T>>[]> => new Promise<InjectionResult<Awaited<T>>[]>((resolve, reject) => {
+export const executeScript = <T = any>(injection: ScriptInjection<any, T>): Promise<InjectionResult<Awaited<T>>[]> => new Promise<InjectionResult<Awaited<T>>[]>(async (resolve, reject) => {
     scripting().executeScript(injection, (result) => {
         try {
             throwRuntimeError();
-
             resolve(result);
         } catch (e) {
             reject(e);
@@ -35,7 +34,7 @@ export const getRegisteredContentScripts = (filter?: ContentScriptFilter): Promi
     });
 });
 
-export const insertScriptingCSS = (injection: CSSInjection): Promise<void> => new Promise<void>((resolve, reject) => {
+export const insertCSS = (injection: CSSInjection): Promise<void> => new Promise<void>((resolve, reject) => {
     scripting().insertCSS(injection, () => {
         try {
             throwRuntimeError();
@@ -59,7 +58,7 @@ export const registerContentScripts = (scripts: RegisteredContentScript[]): Prom
     });
 });
 
-export const removeScriptingCSS = (injection: CSSInjection): Promise<void> => new Promise<void>((resolve, reject) => {
+export const removeCSS = (injection: CSSInjection): Promise<void> => new Promise<void>((resolve, reject) => {
     scripting().removeCSS(injection, () => {
         try {
             throwRuntimeError();

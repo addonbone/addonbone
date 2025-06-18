@@ -58,7 +58,8 @@ export default class extends ManifestBase<ManifestV2> {
             }
 
             const contentScripts = content_scripts
-                .map(({world, ...script}) => script);
+                //@ts-ignore
+                .map(({world, match_origin_as_fallback, ...script}) => script);
 
             return {content_scripts: contentScripts};
         }

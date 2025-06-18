@@ -10,15 +10,12 @@ type WebNavigationEventFilter = chrome.webNavigation.WebNavigationEventFilter;
 const webNavigation = () => browser().webNavigation as typeof chrome.webNavigation;
 
 // Methods
-export const getAllFrames = (tabId: number): Promise<GetAllFrameResultDetails[] | null> => new Promise<GetAllFrameResultDetails[] | null>((resolve, reject) => {
+export const getAllFrames = (tabId: number): Promise<GetAllFrameResultDetails[]> => new Promise<GetAllFrameResultDetails[]>((resolve, reject) => {
     webNavigation().getAllFrames({tabId}, (frames) => {
         try {
             throwRuntimeError();
 
-            if (!frames) {
-                throw new Error("No frames found for the specified tabId");
-            }
-            resolve(frames);
+            resolve(frames || []);
         } catch (e) {
             reject(e);
         }

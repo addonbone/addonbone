@@ -58,6 +58,11 @@
       "import": "./dist/offscreen/index.js",
       "require": "./dist/offscreen/index.cjs"
     },
+    "./support": {
+      "types": "./dist/support/index.d.ts",
+      "import": "./dist/support/index.js",
+      "require": "./dist/support/index.cjs"
+    },
     "./storage": {
       "types": "./dist/storage/index.d.ts",
       "import": "./dist/storage/index.js",

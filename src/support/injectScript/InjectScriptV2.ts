@@ -11,10 +11,10 @@ type InjectDetails = chrome.tabs.InjectDetails;
 type MessageSender = chrome.runtime.MessageSender;
 
 type Awaited<T> = chrome.scripting.Awaited<T>;
-type InjectionResult<T> = chrome.scripting.InjectionResult<T>
+type InjectionResult<T> = chrome.scripting.InjectionResult<T>;
 
-export type InjectScriptV2Options = AbstractInjectScriptOptions & {
-    timeFallback?: number,
+export interface InjectScriptV2Options extends AbstractInjectScriptOptions {
+    timeFallback?: number;
 }
 
 export default class extends AbstractInjectScript<InjectScriptV2Options> {
@@ -39,7 +39,7 @@ export default class extends AbstractInjectScript<InjectScriptV2Options> {
             const {tabId} = this.options;
 
             const type = `inject-script-${nanoid()}`;
-            const injectResults: InjectionResult<Awaited<R>>[] = []
+            const injectResults: InjectionResult<Awaited<R>>[] = [];
 
             let frameCount: number = 0
 
@@ -84,13 +84,11 @@ export default class extends AbstractInjectScript<InjectScriptV2Options> {
             if (this.allFrames) {
                 frameCount = (await getAllFrames(tabId) || []).length
 
-                await executeScriptTab(tabId, {...details, allFrames: true})
+                await executeScriptTab(tabId, {...details, allFrames: true});
             } else if (this.frameIds) {
                 frameCount = this.frameIds.length;
 
-                for (const frameId of this.frameIds) {
-                    await executeScriptTab(tabId, {...details, frameId})
-                }
+                await Promise.all(this.frameIds.map(frameId => executeScriptTab(tabId, {...details, frameId})));
             } else {
                 await executeScriptTab(tabId, details);
             }
@@ -105,25 +103,23 @@ export default class extends AbstractInjectScript<InjectScriptV2Options> {
 
         const injectTasks: Promise<any>[] = [];
 
-        for await (const file of fileList) {
+        for (const file of fileList) {
             const details: InjectDetails = {
                 file,
                 runAt: this.runAt,
                 matchAboutBlank: this.matchAboutBlank,
-            }
+            };
 
             if (this.allFrames) {
-                injectTasks.push(executeScriptTab(tabId, {...details, allFrames: true}))
+                injectTasks.push(executeScriptTab(tabId, {...details, allFrames: true}));
             } else if (this.frameIds) {
-                for await (const frameId of this.frameIds) {
-                    injectTasks.push(executeScriptTab(tabId, {...details, frameId}))
-                }
+                injectTasks.push(...this.frameIds.map(frameId => executeScriptTab(tabId, {...details, frameId})));
             } else {
                 injectTasks.push(executeScriptTab(tabId, details));
-                await executeScriptTab(tabId, details);
             }
         }
-        await Promise.all(injectTasks)
+
+        await Promise.all(injectTasks);
     }
 
     protected generateCode(type: string, func: Function, args?: any[]): string {

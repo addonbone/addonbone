@@ -1,4 +1,4 @@
-import {injectScriptFactory, type InjectScriptOptions, type InjectScript} from "@support";
+import injectScriptFactory, {type InjectScript, type InjectScriptOptions} from "@support/injectScript";
 
 import {getManifestVersion} from "@browser/runtime";
 import {isAvailableScripting} from "@browser/scripting";
@@ -55,13 +55,13 @@ export default class ProxyRelay<
 
                 return await manager.property(name, {path, args});
             } catch (error) {
-                console.error('ProxyRelay.createProxy()', document.location.href, error)
+                console.error('ProxyRelay.createProxy()', document.location.href, error);
 
-                throw error
+                throw error;
             }
         }
 
-        const result = await this.injectScript.run(func, [this.name, path!, args, RelayGlobalKey])
+        const result = await this.injectScript.run(func, [this.name, path!, args, RelayGlobalKey]);
 
         return result?.[0]?.result;
     }

@@ -15,29 +15,32 @@ export default abstract class<T extends AbstractInjectScriptOptions> implements 
     }
 
     public setOptions(options: Partial<T>): this {
-        const {tabId = this.options.tabId, frameId, matchAboutBlank, injectImmediately} = options
+        const {tabId = this.options.tabId, frameId, matchAboutBlank, injectImmediately} = options;
 
         this.options = {...this.options, tabId, frameId, matchAboutBlank, injectImmediately};
 
         return this
     }
 
-    public abstract run<A extends any[], R extends any>(func: (...args: A) => R, args?: A): Promise<InjectionResult<Awaited<R>>[]>
+    public abstract run<A extends any[], R extends any>(func: (...args: A) => R, args?: A): Promise<InjectionResult<Awaited<R>>[]>;
 
-    public abstract file(files: string | string[]): Promise<void>
+    public abstract file(files: string | string[]): Promise<void>;
 
     protected get frameIds(): number[] | undefined {
-        const {frameId} = this.options
+        const {frameId} = this.options;
+
         return typeof frameId === 'number' ? [frameId] : typeof frameId !== 'boolean' ? frameId : undefined;
     }
 
     protected get allFrames(): boolean | undefined {
-        const {frameId} = this.options
+        const {frameId} = this.options;
+
         return typeof frameId === 'boolean' ? frameId : undefined;
     }
 
     protected get matchAboutBlank(): boolean {
-        const {matchAboutBlank} = this.options
+        const {matchAboutBlank} = this.options;
+
         return typeof matchAboutBlank === "boolean" ? matchAboutBlank : true;
     }
 }

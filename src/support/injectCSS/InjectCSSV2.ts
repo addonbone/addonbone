@@ -1,4 +1,4 @@
-import {insertCSSTab} from "@browser/tabs";
+import {insertCssTab} from "@adnbn/browser";
 
 import AbstractInjectCSS, {AbstractInjectCSSOptions} from "./AbstractInjectCSS";
 
@@ -34,11 +34,11 @@ export default class extends AbstractInjectCSS<InjectCSSV2Options> {
         };
 
         if (this.allFrames) {
-            await insertCSSTab(tabId, {...details, allFrames: true});
+            await insertCssTab(tabId, {...details, allFrames: true});
         } else if (this.frameIds) {
-            await Promise.all(this.frameIds.map(frameId => insertCSSTab(tabId, {...details, frameId})));
+            await Promise.all(this.frameIds.map(frameId => insertCssTab(tabId, {...details, frameId})));
         } else {
-            await insertCSSTab(tabId, details);
+            await insertCssTab(tabId, details);
         }
     }
 
@@ -58,11 +58,11 @@ export default class extends AbstractInjectCSS<InjectCSSV2Options> {
             };
 
             if (this.allFrames) {
-                injectTasks.push(insertCSSTab(tabId, {...details, allFrames: true}));
+                injectTasks.push(insertCssTab(tabId, {...details, allFrames: true}));
             } else if (this.frameIds) {
-                injectTasks.push(...this.frameIds.map(frameId => insertCSSTab(tabId, {...details, frameId})));
+                injectTasks.push(...this.frameIds.map(frameId => insertCssTab(tabId, {...details, frameId})));
             } else {
-                injectTasks.push(insertCSSTab(tabId, details));
+                injectTasks.push(insertCssTab(tabId, details));
             }
         }
 

@@ -1,4 +1,4 @@
-import {getI18nMessage, getI18nUILanguage} from "@browser/i18n";
+import {getI18nMessage, getI18nUILanguage} from "@adnbn/browser";
 
 import AbstractLocale from "./AbstractLocale";
 

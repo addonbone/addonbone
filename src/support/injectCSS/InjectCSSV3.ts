@@ -1,4 +1,4 @@
-import {insertCSS} from "@browser/scripting";
+import {insertCss} from "@adnbn/browser";
 
 import AbstractInjectCSS, {AbstractInjectCSSOptions} from "./AbstractInjectCSS";
 
@@ -26,14 +26,14 @@ export default class extends AbstractInjectCSS<InjectCSSV3Options> {
     public async run(css: string): Promise<void> {
         const {origin} = this.options;
 
-        return insertCSS({target: this.target, css, origin});
+        return insertCss({target: this.target, css, origin});
     }
 
     public async file(fileList: string | string[]): Promise<void> {
         const {origin} = this.options;
         const files = typeof fileList === 'string' ? [fileList] : fileList;
 
-        await insertCSS({target: this.target, files, origin});
+        await insertCss({target: this.target, files, origin});
     }
 
     protected get target(): InjectionTarget {

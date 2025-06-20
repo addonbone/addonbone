@@ -1,6 +1,6 @@
 {
   "name": "adnbn",
-  "version": "0.0.52",
+  "version": "0.0.53",
   "description": "Addon 💀 Bone - Cross browser web extension framework with shared code base",
   "homepage": "https://github.com/addonbone/addonbone",
   "repository": {
@@ -27,11 +27,6 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
-    },
-    "./browser": {
-      "types": "./dist/browser/index.d.ts",
-      "import": "./dist/browser/index.js",
-      "require": "./dist/browser/index.cjs"
     },
     "./locale": {
       "types": "./dist/locale/index.d.ts",
@@ -151,6 +146,7 @@
     "utility-types": "^3.11.0"
   },
   "dependencies": {
+    "@adnbn/browser": "^0.1.5",
     "@rsdoctor/rspack-plugin": "^1.0.2",
     "@rspack/cli": "^1.3.8",
     "@rspack/core": "^1.3.8",
@@ -196,5 +192,6 @@
     "@types/react-dom": {
       "optional": true
     }
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

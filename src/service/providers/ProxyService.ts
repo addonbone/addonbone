@@ -1,4 +1,4 @@
-import {isBackground} from "@browser/runtime";
+import {isBackground} from "@adnbn/browser";
 
 import ProxyTransport from "@transport/ProxyTransport";
 

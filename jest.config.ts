@@ -10,7 +10,6 @@ const config: Config = {
         "<rootDir>/tests/jest.relay.setup.ts",
     ],
     moduleNameMapper: {
-        "^@browser/(.*)$": "<rootDir>/src/browser/$1",
         "^@cli/(.*)$": "<rootDir>/src/cli/$1",
         "^@entry/(.*)$": "<rootDir>/src/entry/$1",
         "^@locale/(.*)$": "<rootDir>/src/locale/$1",

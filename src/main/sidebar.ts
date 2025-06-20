@@ -1,4 +1,4 @@
-import {setSidebarPath, setSidebarTitle} from "@browser/sidebar";
+import {setSidebarPath, setSidebarTitle} from "@adnbn/browser";
 
 import {__t} from "@main/locale"
 
@@ -47,7 +47,7 @@ export const changeSidebar = async (alias: SidebarAlias, tab?: number | Tab): Pr
         throw new Error(`Not found sidebar path: "${alias}"`);
     }
 
-    await setSidebarPath(path, tab)
+    await setSidebarPath(path, tab);
 
     if (title) {
         await setSidebarTitle(__t(title), tab);

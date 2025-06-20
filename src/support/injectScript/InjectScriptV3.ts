@@ -1,4 +1,4 @@
-import {executeScript} from "@browser/scripting";
+import {executeScript} from "@adnbn/browser";
 
 import AbstractInjectScript, {type AbstractInjectScriptOptions} from "./AbstractInjectScript";
 

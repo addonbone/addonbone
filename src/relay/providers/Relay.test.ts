@@ -1,4 +1,4 @@
-import {isAvailableScripting} from '@browser/scripting';
+import {isAvailableScripting} from '@adnbn/browser';
 
 import ProxyRelay from "./ProxyRelay";
 import RegisterRelay from "./RegisterRelay";

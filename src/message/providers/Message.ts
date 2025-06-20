@@ -1,5 +1,5 @@
-import {sendMessage} from "@browser/runtime";
-import {sendTabMessage} from "@browser/tabs";
+import {sendMessage, sendTabMessage} from "@adnbn/browser";
+
 import {
     MessageData,
     MessageDictionary,

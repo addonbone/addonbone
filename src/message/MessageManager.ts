@@ -1,4 +1,4 @@
-import {onMessage} from '@browser/runtime'
+import {onMessage} from '@adnbn/browser';
 
 import {
     MessageBody,

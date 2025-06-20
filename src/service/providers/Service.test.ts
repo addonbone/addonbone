@@ -1,4 +1,4 @@
-import {isBackground} from '@browser/runtime';
+import {isBackground} from '@adnbn/browser';
 
 import MessageManager from "@message/MessageManager";
 
@@ -8,8 +8,8 @@ import ServiceManager from "../ServiceManager";
 
 import {DeepAsyncProxy} from "@typing/helpers";
 
-jest.mock('@browser/runtime', () => {
-    const actual = jest.requireActual('@browser/runtime');
+jest.mock('@adnbn/browser', () => {
+    const actual = jest.requireActual('@adnbn/browser');
     return {
         ...actual,
         isBackground: jest.fn(),

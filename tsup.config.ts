@@ -16,7 +16,6 @@ const common: Options = {
     external: [/^node_modules/],
     esbuildOptions(options) {
         options.alias = {
-            '@browser': resolve(__dirname, './src/browser'),
             '@cli': resolve(__dirname, './src/cli'),
             '@entry': resolve(__dirname, './src/entry'),
             '@locale': resolve(__dirname, './src/locale'),
@@ -43,8 +42,6 @@ const framework: Options = {
     ...common,
     entry: {
         'index': 'src/index.ts',
-
-        'browser/index': 'src/browser/index.ts',
 
         'locale/index': 'src/locale/index.ts',
         'locale/react/index': 'src/locale/react/index.ts',

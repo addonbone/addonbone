@@ -1,4 +1,4 @@
-import {isManifestVersion3} from "@browser/runtime";
+import {isManifestVersion3} from "@adnbn/browser";
 
 import InjectScriptV2, {InjectScriptV2Options} from "./InjectScriptV2";
 import InjectScriptV3, {InjectScriptV3Options} from "./InjectScriptV3";

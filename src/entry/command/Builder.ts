@@ -1,5 +1,4 @@
-import {onActionClicked} from "@browser/action";
-import {onCommand} from "@browser/commands";
+import {onActionClicked, onCommand} from "@adnbn/browser";
 
 import {__t} from "@main/locale";
 

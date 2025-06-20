@@ -1,4 +1,4 @@
-import {closeOffscreen, createOffscreen, hasOffscreen} from '@browser/offscreen';
+import {closeOffscreen, createOffscreen, hasOffscreen} from '@adnbn/browser';
 import {isOffscreen} from '@offscreen/utils';
 
 import MessageManager from "@message/MessageManager";
@@ -10,8 +10,8 @@ import OffscreenManager from "../OffscreenManager";
 import {DeepAsyncProxy} from "@typing/helpers";
 
 jest.mock('@offscreen/utils', () => ({isOffscreen: jest.fn()}));
-jest.mock('@browser/offscreen', () => {
-    const actual = jest.requireActual('@browser/offscreen');
+jest.mock('@adnbn/browser', () => {
+    const actual = jest.requireActual('@adnbn/browser');
     return {
         ...actual,
         hasOffscreen: jest.fn(),

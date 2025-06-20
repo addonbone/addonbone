@@ -1,4 +1,4 @@
-import {isManifestVersion3} from "@browser/runtime";
+import {isManifestVersion3} from "@adnbn/browser";
 
 import InjectCSSV2, {InjectCSSV2Options} from "./InjectCSSV2";
 import InjectCSSV3, {InjectCSSV3Options} from "./InjectCSSV3";

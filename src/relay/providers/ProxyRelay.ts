@@ -1,7 +1,6 @@
-import injectScriptFactory, {type InjectScript, type InjectScriptOptions} from "@support/injectScript";
+import {getManifestVersion, isAvailableScripting} from "@adnbn/browser";
 
-import {getManifestVersion} from "@browser/runtime";
-import {isAvailableScripting} from "@browser/scripting";
+import injectScriptFactory, {type InjectScript, type InjectScriptOptions} from "@support/injectScript";
 
 import ProxyTransport from "@transport/ProxyTransport";
 

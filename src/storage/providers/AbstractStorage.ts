@@ -1,5 +1,5 @@
-import {browser} from '@browser/browser'
-import {throwRuntimeError} from '@browser/runtime'
+import {browser, throwRuntimeError} from '@adnbn/browser';
+
 import {StorageProvider, StorageState, StorageWatchOptions} from '@typing/storage'
 
 const storage = () => browser().storage as typeof chrome.storage;

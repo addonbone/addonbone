@@ -1,4 +1,4 @@
-import {closeOffscreen, createOffscreen, hasOffscreen} from "@browser/offscreen";
+import {closeOffscreen, createOffscreen, hasOffscreen} from "@adnbn/browser";
 import {__t} from "@main/locale";
 
 import ProxyTransport from "@transport/ProxyTransport";

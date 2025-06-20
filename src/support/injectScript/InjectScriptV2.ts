@@ -1,9 +1,7 @@
+import {getAllFrames, executeScriptTab} from "@adnbn/browser";
 import {nanoid} from "nanoid";
 
 import {Message} from "@message/providers";
-
-import {getAllFrames} from "@browser/webNavigation";
-import {executeScriptTab} from "@browser/tabs";
 
 import AbstractInjectScript, {type AbstractInjectScriptOptions} from "./AbstractInjectScript";
 

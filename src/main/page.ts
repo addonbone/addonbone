@@ -1,4 +1,4 @@
-import {getUrl} from "@browser/runtime";
+import {getUrl} from "@adnbn/browser";
 
 import {PageConfig, PageDefinition, PageProps} from "@typing/page";
 

@@ -1,6 +1,6 @@
 import {getManifestVersion, isAvailableScripting} from "@adnbn/browser";
 
-import injectScriptFactory, {type InjectScript, type InjectScriptOptions} from "@support/injectScript";
+import injectScriptFactory, {type InjectScriptContract, type InjectScriptUnionOptions} from "@adnbn/inject-script";
 
 import ProxyTransport from "@transport/ProxyTransport";
 
@@ -11,7 +11,7 @@ import {RelayGlobalKey} from "@typing/relay";
 import type {DeepAsyncProxy} from "@typing/helpers";
 import type {TransportDictionary, TransportManager, TransportName} from "@typing/transport";
 
-export type ProxyRelayOptions = number | Omit<InjectScriptOptions, 'frameId' | 'documentId' | 'timeFallback'> & {
+export type ProxyRelayOptions = number | Omit<InjectScriptUnionOptions, 'frameId' | 'documentId' | 'timeFallback'> & {
     frameId?: number;
     documentId?: string
 }
@@ -20,7 +20,7 @@ export default class ProxyRelay<
     N extends TransportName,
     T = DeepAsyncProxy<TransportDictionary[N]>
 > extends ProxyTransport<N, T> {
-    private injectScript: InjectScript;
+    private injectScript: InjectScriptContract;
 
     constructor(name: N, protected options: ProxyRelayOptions) {
         super(name);

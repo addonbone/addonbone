@@ -56,8 +56,6 @@ const framework: Options = {
 
         'service/index': 'src/service/index.ts',
 
-        'support/index': 'src/support/index.ts',
-
         'relay/index': 'src/relay/index.ts',
 
         'entry/background/index': 'src/entry/background/index.ts',

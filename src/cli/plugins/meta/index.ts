@@ -9,7 +9,7 @@ export {Author, Email, Homepage, Incognito};
 
 export default definePlugin(() => {
     return {
-        name: 'adnbn:author',
+        name: 'adnbn:meta',
         manifest: ({manifest, config}) => {
             manifest
                 .setEmail(Email.value(config))

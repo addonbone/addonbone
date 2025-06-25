@@ -1,7 +1,4 @@
-import 'jest-webextension-mock';
-import {MessageSender} from "../src/types/message";
-
-jest.mock('nanoid', () => ({nanoid: () => 'mocked-id'}));
+type MessageSender = chrome.runtime.MessageSender;
 
 let listener: ((...args: any[]) => boolean | void) | null = null;
 
@@ -9,7 +6,7 @@ chrome.runtime.onMessage.addListener = jest.fn((cb) => listener = cb);
 chrome.runtime.onMessage.removeListener = jest.fn((cb) => listener === cb && (listener = null));
 chrome.runtime.onMessage.hasListeners = jest.fn(() => !!listener);
 
-(chrome.runtime.sendMessage as jest.Mock).mockImplementation((msg, callback) => {
+chrome.runtime.sendMessage = jest.fn().mockImplementation((msg, callback) => {
     if (!listener) return;
 
     let called = false;
@@ -22,7 +19,7 @@ chrome.runtime.onMessage.hasListeners = jest.fn(() => !!listener);
     if (!called) callback?.(undefined);
 });
 
-(chrome.tabs.sendMessage as jest.Mock).mockImplementation((tabId, msg, options, callback) => {
+chrome.tabs.sendMessage = jest.fn().mockImplementation((tabId, msg, options, callback) => {
     if (!listener) return;
 
     let called = false;

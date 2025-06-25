@@ -1,25 +1,17 @@
 import 'jest-webextension-mock';
-import AbstractStorage from '../src/storage/providers/AbstractStorage'
+import AbstractStorage from '../src/storage/providers/AbstractStorage';
 import {TextDecoder, TextEncoder} from 'util';
 
-const listeners: Array<
-    (changes: { [p: string]: chrome.storage.StorageChange }, areaName: chrome.storage.AreaName) => void
-> = [];
+type Listener = (
+    changes: Record<string, chrome.storage.StorageChange>,
+    areaName: chrome.storage.AreaName
+) => void
 
-chrome.storage.onChanged.addListener = (fn) => {
-    listeners.push(fn);
-};
+const listeners = new Set<Listener>();
 
-chrome.storage.onChanged.removeListener = (fn) => {
-    const index = listeners.indexOf(fn);
-    if (index > -1) {
-        listeners.splice(index, 1);
-    }
-};
-
-chrome.storage.onChanged.hasListener = (fn) => {
-    return listeners.includes(fn);
-};
+chrome.storage.onChanged.addListener = jest.fn((cb) => listeners.add(cb));
+chrome.storage.onChanged.removeListener = jest.fn((cb) => listeners.delete(cb));
+chrome.storage.onChanged.hasListener = jest.fn((cb) => listeners.has(cb));
 
 interface StorageChange {
     storage: AbstractStorage<any>,
@@ -32,10 +24,10 @@ interface StorageChange {
 global.simulateStorageChange = ({storage, key, oldValue, newValue, areaName = 'local'}: StorageChange) => {
     const fullKey = storage['getFullKey'](key);
 
-    const changes = {[fullKey]: {oldValue, newValue}}
+    const changes = {[fullKey]: {oldValue, newValue}};
 
-    listeners.forEach((listener) => listener(changes, areaName))
-}
+    listeners.forEach((listener) => listener(changes, areaName));
+};
 
 global.simulateSecureStorageChange = async ({storage, key, oldValue, newValue, areaName}: StorageChange) => {
     const encryptedOldValue = oldValue !== undefined ? await storage['encrypt'](oldValue) : undefined;
@@ -74,7 +66,7 @@ export const cryptoMock = {
         digest: jest.fn()
     },
     getRandomValues: jest.fn()
-}
+};
 
 cryptoMock.subtle.importKey.mockImplementation(
     (format, keyData, algorithm, extractable, keyUsages) => {
@@ -84,9 +76,9 @@ cryptoMock.subtle.importKey.mockImplementation(
             algorithm,
             extractable,
             keyUsages
-        })
+        });
     }
-)
+);
 
 cryptoMock.subtle.deriveKey.mockImplementation(
     (algorithm, baseKey, derivedKeyAlgorithm, extractable, keyUsages) => {
@@ -96,32 +88,32 @@ cryptoMock.subtle.deriveKey.mockImplementation(
             derivedKeyAlgorithm,
             extractable,
             keyUsages
-        })
+        });
     }
-)
+);
 
 // @ts-ignore
 cryptoMock.subtle.decrypt.mockImplementation((_, __, data: ArrayBufferLike) => {
-    return Promise.resolve(new Uint8Array(data))
-})
+    return Promise.resolve(new Uint8Array(data));
+});
 
 // @ts-ignore
 cryptoMock.subtle.encrypt.mockImplementation((_, __, data: ArrayBufferLike) => {
-    return Promise.resolve(new Uint8Array(data))
-})
+    return Promise.resolve(new Uint8Array(data));
+});
 
 // @ts-ignore
 cryptoMock.subtle.digest.mockImplementation((_, __) => {
-    return Promise.resolve(new Uint8Array([0x01, 0x02, 0x03, 0x04]))
-})
+    return Promise.resolve(new Uint8Array([0x01, 0x02, 0x03, 0x04]));
+});
 
 // @ts-ignore
 cryptoMock.getRandomValues.mockImplementation((array: Array<any>) => {
     for (let i = 0; i < array.length; i++) {
-        array[i] = Math.floor(Math.random() * 256)
+        array[i] = Math.floor(Math.random() * 256);
     }
-    return array
-})
+    return array;
+});
 
 // The globalThis does not define crypto by default
 Object.defineProperty(globalThis, "crypto", {
@@ -129,4 +121,4 @@ Object.defineProperty(globalThis, "crypto", {
     writable: true,
     enumerable: true,
     configurable: true
-})
+});

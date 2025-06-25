@@ -1,4 +1,3 @@
-import 'jest-webextension-mock';
 import {RelayGlobalKey} from "../src/types/relay";
 
 chrome.scripting = {
@@ -11,15 +10,3 @@ chrome.scripting = {
         return [{result}];
     })
 };
-
-jest.mock('@browser/scripting', () => ({
-    __esModule: true,
-    isAvailableScripting: jest.fn(),
-    executeScript: jest.fn((injection) => {
-        return new Promise((resolve, reject) => {
-            chrome.scripting.executeScript(injection)
-                .then(resolve)
-                .catch(reject);
-        });
-    }),
-}));

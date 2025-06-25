@@ -5,9 +5,7 @@ const config: Config = {
     preset: 'ts-jest',
     testEnvironment: 'jsdom',
     setupFiles: [
-        "<rootDir>/tests/jest.storage.setup.ts",
-        "<rootDir>/tests/jest.message.setup.ts",
-        "<rootDir>/tests/jest.relay.setup.ts",
+        "<rootDir>/tests/jest.setup.ts",
     ],
     moduleNameMapper: {
         "^@cli/(.*)$": "<rootDir>/src/cli/$1",

@@ -1,6 +1,6 @@
 import AbstractBuilder from "@entry/transport/AbstractBuilder";
 
-import {RegisterService} from "@service/providers";
+import RegisterService from "@service/providers/RegisterService";
 
 import {ServiceOptions, ServiceUnresolvedDefinition} from "@typing/service";
 import {TransportName, TransportType} from "@typing/transport";

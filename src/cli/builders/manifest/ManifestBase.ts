@@ -391,13 +391,14 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
         const {path, icon, title} = this.sidebar;
 
         const commonProps = {
+            open_at_install: this.browser === Browser.Firefox ? false : undefined,
             default_title: title || this.name,
             default_icon: this.getIconsByName(icon),
-        }
+        };
 
         return SidebarAlternativeBrowsers.has(this.browser)
             ? {sidebar_action: {...commonProps, default_panel: path}}
-            : {side_panel: {...commonProps, default_path: path}}
+            : {side_panel: {...commonProps, default_path: path}};
     }
 
     protected buildLocale(): Partial<CoreManifest> | undefined {

@@ -1,5 +1,5 @@
 //@ts-ignore
-import type {CommandUnresolvedDefinition} from "adnbn";
+import {type CommandUnresolvedDefinition, __t} from "adnbn";
 //@ts-ignore
 import command, {isValidCommandDefinition, isValidCommandExecuteFunction} from "adnbn/entry/command";
 
@@ -18,9 +18,19 @@ try {
         definition = {...definition, execute: defaultDefinition};
     }
 
-    const {execute, name = commandName, ...options} = definition;
+    const {
+        execute,
+        name = commandName,
+        description,
+        ...options
+    } = definition;
 
-    command({name, execute, ...options});
+    command({
+        name,
+        execute,
+        description: description ? __t(description) : undefined,
+        ...options
+    });
 } catch (e) {
     console.error('The command crashed on startup:', e);
 }

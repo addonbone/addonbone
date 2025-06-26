@@ -1,6 +1,7 @@
 import {View} from "../view";
 
 import {PageFinder} from "@cli/entrypoint";
+
 import {ReadonlyConfig} from "@typing/config";
 import {PageEntrypointOptions} from "@typing/page";
 import {ManifestAccessibleResources} from "@typing/manifest";

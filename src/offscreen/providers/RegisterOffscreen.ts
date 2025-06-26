@@ -13,7 +13,7 @@ export default class<
     A extends any[] = []
 > extends RegisterTransport<N, T, A> {
     constructor(name: N, protected readonly init: (...args: A) => T) {
-        super(name, init)
+        super(name, init);
     }
 
     protected message() {
@@ -29,6 +29,6 @@ export default class<
             throw new Error(`Offscreen service "${this.name}" can be getting only from offscreen context.`);
         }
 
-        return super.get()
+        return super.get();
     }
 }

@@ -1,5 +1,3 @@
-import {__t} from "@main/locale";
-
 import Builder from "@entry/core/Builder";
 
 import {viewContainerResolver} from "./resolvers/container";
@@ -57,7 +55,7 @@ export default abstract class<T extends ViewConfig> extends Builder implements V
         const {title} = this.definition;
 
         if (title) {
-            document.title = __t(title);
+            document.title = title;
         }
     }
 }

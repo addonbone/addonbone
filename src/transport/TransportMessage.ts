@@ -4,7 +4,7 @@ import type {MessageDictionary, MessageProvider} from "@typing/message";
 import type {TransportMessage as TransportMessageContract, TransportMessageData} from "@typing/transport";
 
 export default abstract class TransportMessage implements TransportMessageContract {
-    private message: MessageProvider<MessageDictionary, MessageSendOptions> = new Message()
+    private message: MessageProvider<MessageDictionary, MessageSendOptions> = new Message();
 
     protected abstract readonly key: string;
 

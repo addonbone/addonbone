@@ -46,6 +46,6 @@ export default class<N extends TransportName, T = DeepAsyncProxy<TransportDictio
             throw new Error(`You are trying to get proxy offscreen service "${this.name}" from offscreen. You can get original offscreen service instead`);
         }
 
-        return super.get()
+        return super.get();
     }
 }

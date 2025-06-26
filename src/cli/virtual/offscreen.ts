@@ -1,6 +1,8 @@
 //@ts-ignore
 import {OffscreenUnresolvedDefinition} from "adnbn";
 //@ts-ignore
+import {__t} from "adnbn/locale";
+//@ts-ignore
 import {isValidTransportDefinition, isValidTransportInitFunction, type TransportType} from "adnbn/entry/transport";
 //@ts-ignore
 import {Builder as OffscreenBuilder} from "adnbn/entry/offscreen";
@@ -24,9 +26,17 @@ try {
 
     const {init, main, name = relayName, ...options} = definition;
 
-    new OffscreenBuilder({name, init, main, ...options}).view(new ViewBuilder(options)).build().catch((e) => {
-        console.error('Failed to build offscreen: ', e);
-    });
+    new OffscreenBuilder({
+        name,
+        init,
+        main,
+        ...options
+    })
+        .view(new ViewBuilder(options))
+        .build()
+        .catch((e) => {
+            console.error('Failed to build offscreen: ', e);
+        });
 
 } catch (e) {
     console.error('The offscreen crashed on startup:', e);

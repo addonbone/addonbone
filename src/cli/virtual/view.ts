@@ -1,5 +1,5 @@
 //@ts-ignore
-import type {ViewDefinition, ViewOptions} from "adnbn";
+import {type ViewDefinition, type ViewOptions, __t} from "adnbn";
 //@ts-ignore
 import {isViewDefinition, isValidViewDefinitionRenderValue} from "adnbn/entry/view"
 
@@ -18,7 +18,9 @@ try {
         definition = {...definition, render: defaultDefinition};
     }
 
-    view(definition);
+    const {title, ...options} = definition;
+
+    view({title: title ? __t(title) : undefined, ...options});
 } catch (e) {
     console.error('The view crashed on startup:', e);
 }

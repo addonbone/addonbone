@@ -1,7 +1,5 @@
 import {onActionClicked, onCommand} from "@adnbn/browser";
 
-import {__t} from "@main/locale";
-
 import Builder from "@entry/core/Builder";
 
 import {isValidCommandExecuteFunction, isValidCommandName} from "./resolvers";
@@ -23,7 +21,7 @@ export default class extends Builder implements CommandBuilder {
     public constructor(definition: CommandUnresolvedDefinition) {
         super();
 
-        const {name, execute, description} = definition;
+        const {name, execute} = definition;
 
         if (!isValidCommandExecuteFunction(execute)) {
             throw new Error('The command entrypoint must export a execute function');
@@ -37,7 +35,6 @@ export default class extends Builder implements CommandBuilder {
             ...definition,
             name,
             execute,
-            description: description ? __t(description) : undefined,
         };
     }
 

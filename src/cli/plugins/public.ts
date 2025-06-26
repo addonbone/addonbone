@@ -1,4 +1,3 @@
-import fs from "fs";
 import path from "path";
 
 import {CopyRspackPlugin} from "@rspack/core";
@@ -25,18 +24,10 @@ export default definePlugin(() => {
                 throw new Error('"publicDir" can\'t be the root directory');
             }
 
-            const patterns: CopyPatterns = [];
+            const patterns: CopyPatterns = [{from: appPublicPath, to: publicDir}];
 
-            if (fs.existsSync(appPublicPath)) {
-                patterns.push({from: appPublicPath, to: publicDir});
-            }
-
-            if (mergePublic && fs.existsSync(sharedPublicPath)) {
+            if (mergePublic) {
                 patterns.push({from: sharedPublicPath, to: publicDir});
-            }
-
-            if (patterns.length === 0) {
-                return {};
             }
 
             return {

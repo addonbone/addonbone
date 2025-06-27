@@ -11,16 +11,16 @@ import {
     iconPlugin,
     localePlugin,
     metaPlugin,
+    offscreenPlugin,
     pagePlugin,
     popupPlugin,
     publicPlugin,
-    sidebarPlugin,
     reactPlugin,
+    sidebarPlugin,
     stylePlugin,
     typescriptPlugin,
-    viewPlugin,
     versionPlugin,
-    offscreenPlugin,
+    viewPlugin,
 } from "../plugins";
 
 import {getAppPath, getAppSourcePath, getConfigFile, getInputPath} from "../resolvers/path";
@@ -50,6 +50,59 @@ const getUserConfig = async (config: ReadonlyConfig): Promise<UserConfig> => {
     }
 
     return {};
+}
+
+const validateConfig = (config: ReadonlyConfig): ReadonlyConfig => {
+    const {
+        outputDir,
+        srcDir,
+        sharedDir,
+        appsDir,
+        appSrcDir,
+        jsDir,
+        cssDir,
+        assetsDir,
+        htmlDir,
+        publicDir,
+        locale,
+        icon
+    } = config;
+
+    if ([
+        outputDir,
+        srcDir,
+        sharedDir,
+        appsDir,
+        appSrcDir,
+        jsDir,
+        cssDir,
+        assetsDir,
+        htmlDir,
+        publicDir,
+        locale.dir,
+        icon.outputDir,
+        icon.sourceDir,
+    ].filter(dir => typeof dir === "string").some(dir => dir.includes('..'))) {
+        throw new Error('Directory paths cannot contain relative paths ("..") for security reasons.');
+    }
+
+    if (appsDir === sharedDir) {
+        throw new Error('Apps directory (appsDir) and shared directory (sharedDir) cannot be the same.');
+    }
+
+    if (srcDir === outputDir) {
+        throw new Error('Source directory (srcDir) and destination directory (outputDir) cannot be the same.');
+    }
+
+    if (srcDir === '.') {
+        throw new Error('Source directory cannot be the root directory (".") for security reasons.');
+    }
+
+    if (publicDir === '.' || [srcDir, outputDir, appSrcDir].includes(publicDir)) {
+        throw new Error('Public directory cannot be the root directory (".") or intersect with other root directories for security reasons.');
+    }
+
+    return config;
 }
 
 const updateLocalDotenv = (config: ReadonlyConfig): DotenvParseOutput => {
@@ -108,14 +161,13 @@ export default async (config: OptionalConfig): Promise<Config> => {
         jsDir = 'js',
         cssDir = 'css',
         assetsDir = 'assets',
+        publicDir = 'public',
         htmlDir = '.',
         html = [],
-        publicDir = 'public',
-        mergePublic = true,
         env = {},
         icon = {},
         locale = {},
-        manifestVersion = (new Set<Browser>([Browser.Firefox, Browser.Safari]).has(browser) ? 2 : 3) as ManifestVersion,
+        manifestVersion = (new Set<Browser>([Browser.Safari]).has(browser) ? 2 : 3) as ManifestVersion,
         mode = Mode.Development,
         analyze = false,
         plugins = [],
@@ -128,6 +180,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         mergeLocales = true,
         mergePages = false,
         mergePopup = false,
+        mergePublic = false,
         multiplePopup = false,
         mergeSidebar = false,
         multipleSidebar = false,
@@ -158,10 +211,9 @@ export default async (config: OptionalConfig): Promise<Config> => {
         jsDir,
         cssDir,
         assetsDir,
+        publicDir,
         htmlDir,
         html,
-        publicDir,
-        mergePublic,
         env,
         icon,
         locale,
@@ -177,6 +229,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         mergeLocales,
         mergePages,
         mergePopup,
+        mergePublic,
         multiplePopup,
         mergeSidebar,
         multipleSidebar,
@@ -195,7 +248,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
 
     const {plugins: userPlugins = [], ...userConfig} = await getUserConfig(resolvedConfig);
 
-    resolvedConfig = {...resolvedConfig, ...userConfig};
+    resolvedConfig = validateConfig({...resolvedConfig, ...userConfig});
 
     vars = {...vars, ...loadDotenv(resolvedConfig)};
 

@@ -143,23 +143,6 @@ export interface Config {
      */
     html: HtmlOptions | HtmlOptions[] | { (): HtmlOptions | HtmlOptions[] };
 
-
-    /**
-     * Path to the directory containing public assets to be copied into the build output.
-     * Must be relative to the project root and cannot be "." (the project root itself).
-     *
-     * @default "public"
-     */
-    publicDir: string;
-
-    /**
-     * If true, merges the contents of the public directory with corresponding
-     * directories from Shared and Apps modules during the copy process.
-     *
-     * @default true
-     */
-    mergePublic: boolean;
-
     /**
      * Environment configuration for the extension.
      */
@@ -377,6 +360,22 @@ export interface Config {
      * When `true`, offscreen files from both directories will be combined.
      */
     mergeOffscreen: boolean;
+
+    /**
+     * Path to the directory containing public assets to be copied into the build output.
+     * Must be relative to the project root and cannot be "." (the project root itself).
+     *
+     * @default "public"
+     */
+    publicDir: string;
+
+    /**
+     * If true, merges the contents of the public directory with corresponding
+     * directories from Shared and Apps modules during the copy process.
+     *
+     * @default true
+     */
+    mergePublic: boolean;
 
     /**
      * The version of the extension.

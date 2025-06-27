@@ -1,4 +1,5 @@
-import path from 'path';
+import path from "path";
+import _ from "lodash";
 
 import {ReadonlyConfig} from "@typing/config";
 
@@ -18,10 +19,6 @@ export const getSharedPath = (config: ReadonlyConfig, to?: string): string => {
     return getInputPath(config, path.join(config.srcDir, config.sharedDir, to ?? ''));
 }
 
-export const getAppsPath = (config: ReadonlyConfig, to?: string): string => {
-    return getInputPath(config, path.join(config.srcDir, config.appsDir, to ?? ''));
-}
-
 export const getAppPath = (config: ReadonlyConfig, to?: string): string => {
     return getInputPath(config, path.join(config.srcDir, config.appsDir, config.app, to ?? ''));
 }
@@ -31,7 +28,7 @@ export const getAppSourcePath = (config: ReadonlyConfig, to?: string): string =>
 }
 
 export const getOutputPath = (config: ReadonlyConfig): string => {
-    return getInputPath(config, path.join(config.outputDir, `${config.app}-${config.browser}-mv${config.manifestVersion}`));
+    return getInputPath(config, path.join(config.outputDir, `${_.kebabCase(config.app)}-${config.browser}-mv${config.manifestVersion}`));
 }
 
 export const getConfigFile = (config: ReadonlyConfig): string => {

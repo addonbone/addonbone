@@ -18,6 +18,10 @@ export const getSharedPath = (config: ReadonlyConfig, to?: string): string => {
     return getInputPath(config, path.join(config.srcDir, config.sharedDir, to ?? ''));
 }
 
+export const getAppsPath = (config: ReadonlyConfig, to?: string): string => {
+    return getInputPath(config, path.join(config.srcDir, config.appsDir, to ?? ''));
+}
+
 export const getAppPath = (config: ReadonlyConfig, to?: string): string => {
     return getInputPath(config, path.join(config.srcDir, config.appsDir, config.app, to ?? ''));
 }

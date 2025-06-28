@@ -32,6 +32,12 @@ export interface Config {
     mode: Mode;
 
     /**
+     * Browser for which the extension is being built.
+     * Determines specific settings and compatibility.
+     */
+    browser: Browser;
+
+    /**
      * Name of the application (extension) that will be built.
      * Used to identify a specific extension in a multi-project structure.
      * @example "my-app"
@@ -44,10 +50,56 @@ export interface Config {
     author: string | (() => string | undefined);
 
     /**
-     * Browser for which the extension is being built.
-     * Determines specific settings and compatibility.
+     * The version of the extension.
+     * Can be either:
+     * - a valid version (e.g., "1.0.0"), or a key referencing a value from an .env file.
+     * - a function that returns the version or key dynamically.
+     *
+     * @default "VERSION"
      */
-    browser: Browser;
+    version: string | (() => string | undefined);
+
+    /**
+     * The minimum supported version of browser.
+     * Used to populate fields in the manifest:
+     * - `minimum_chrome_version`
+     * - `browser_specific_settings.gecko.strict_min_version` for Firefox
+     *
+     * Can be either:
+     * - a valid version, or a key referencing a value from an .env file.
+     * - a function that returns the version or key dynamically.
+     *
+     * @default "MINIMUM_VERSION"
+     */
+    minimumVersion: string | number | (() => string | number | undefined);
+
+    /**
+     * The URL for the extension's homepage
+     * Can be either:
+     * - a valid url or a key referencing a value from an .env file.
+     * - a function that returns the url or key dynamically.
+     *
+     * @default HOMEPAGE
+     */
+    homepage: string | (() => string | undefined);
+
+    /**
+     * Used for Firefox under `browser_specific_settings.gecko.id`,
+     * but only if the "storage" permission is declared.
+     * Can be either:
+     * - a valid email
+     * - a function that returns the email
+     *
+     * @default EMAIL
+     */
+    email: string | (() => string | undefined);
+
+    /**
+     * Used to specify how this extension will behave in incognito mode
+     *
+     * @default "not_allowed"
+     */
+    incognito?: ManifestIncognitoValue | (() => ManifestIncognitoValue | undefined);
 
     /**
      * Extension manifest version (e.g., v2 or v3).
@@ -378,56 +430,14 @@ export interface Config {
     mergePublic: boolean;
 
     /**
-     * The version of the extension.
-     * Can be either:
-     * - a valid version (e.g., "1.0.0"), or a key referencing a value from an .env file.
-     * - a function that returns the version or key dynamically.
+     * Flag indicating whether to create separate chunks for common code.
+     * When `true`, common code will be extracted into separate chunks for build size optimization
+     * and improved caching. This allows the browser to load common modules once
+     * and reuse them across different parts of the extension.
      *
-     * @default "VERSION"
+     * @default true
      */
-    version: string | (() => string | undefined);
-
-    /**
-     * The minimum supported version of browser.
-     * Used to populate fields in the manifest:
-     * - `minimum_chrome_version`
-     * - `browser_specific_settings.gecko.strict_min_version` for Firefox
-     *
-     * Can be either:
-     * - a valid version, or a key referencing a value from an .env file.
-     * - a function that returns the version or key dynamically.
-     *
-     * @default "MINIMUM_VERSION"
-     */
-    minimumVersion: string | number | (() => string | number | undefined);
-
-    /**
-     * The URL for the extension's homepage
-     * Can be either:
-     * - a valid url or a key referencing a value from an .env file.
-     * - a function that returns the url or key dynamically.
-     *
-     * @default HOMEPAGE
-     */
-    homepage: string | (() => string | undefined);
-
-    /**
-     * Used for Firefox under `browser_specific_settings.gecko.id`,
-     * but only if the "storage" permission is declared.
-     * Can be either:
-     * - a valid email
-     * - a function that returns the email
-     *
-     * @default EMAIL
-     */
-    email: string | (() => string | undefined);
-
-    /**
-     * Used to specify how this extension will behave in incognito mode
-     *
-     * @default "not_allowed"
-     */
-    incognito?: ManifestIncognitoValue | (() => ManifestIncognitoValue | undefined);
+    commonChunks: boolean;
 }
 
 

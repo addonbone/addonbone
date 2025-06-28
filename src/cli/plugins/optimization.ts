@@ -9,6 +9,10 @@ export default definePlugin(() => {
     return {
         name: "adnbn:optimization",
         bundler: ({config}) => {
+            if (!config.commonChunks) {
+                return {};
+            }
+
             return {
                 optimization: {
                     usedExports: true,

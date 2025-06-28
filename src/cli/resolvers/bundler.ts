@@ -2,12 +2,8 @@ import {Configuration as RspackConfig, RspackPluginInstance} from "@rspack/core"
 import {CleanWebpackPlugin} from "clean-webpack-plugin";
 import {RsdoctorRspackPlugin} from "@rsdoctor/rspack-plugin";
 import {merge as mergeConfig} from "webpack-merge";
-import path from "path";
-import _ from "lodash";
 
 import manifestFactory from "../builders/manifest";
-
-import {getOutputPath, getRootPath} from "./path";
 import {processPluginHandler} from "./plugin";
 
 import ManifestPlugin from "@cli/bundler/plugins/ManifestPlugin";
@@ -54,15 +50,7 @@ export default async (config: ReadonlyConfig): Promise<RspackConfig> => {
         entry: {},
         mode: config.mode,
         cache: false,
-        output: {
-            path: getRootPath(getOutputPath(config)),
-            filename: path.posix.join(config.jsDir, '[name].js'),
-            hotUpdateGlobal: _.snakeCase(config.app) + 'HotUpdate',
-            chunkLoadingGlobal: _.snakeCase(config.app) + 'ChunkLoading',
-            devtoolNamespace: config.app,
-            uniqueName: config.app
-        },
-    }
+    };
 
     rspack = mergeConfig(
         rspack,

@@ -1,3 +1,4 @@
+import type {Filename} from "@rspack/core";
 import type {Options as HtmlOptions} from "html-rspack-tags-plugin";
 
 import {Command, Mode} from "@typing/app";
@@ -5,6 +6,7 @@ import {Browser} from "@typing/browser";
 import {ManifestIncognitoValue, ManifestVersion} from "@typing/manifest";
 import {Plugin} from "@typing/plugin";
 import {Language} from "@typing/locale";
+
 
 /**
  * Interface representing the configuration options for building an extension.
@@ -438,6 +440,9 @@ export interface Config {
      * @default true
      */
     commonChunks: boolean;
+
+
+    jsFilename: Filename;
 }
 
 

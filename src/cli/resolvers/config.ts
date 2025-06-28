@@ -9,6 +9,7 @@ import {
     dotenvPlugin,
     htmlPlugin,
     optimizationPlugin,
+    outputPlugin,
     iconPlugin,
     localePlugin,
     metaPlugin,
@@ -195,6 +196,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         mergeService = false,
         mergeOffscreen = false,
         commonChunks = true,
+        jsFilename = mode === Mode.Production && !debug ? '[apphash:10].js' : '[name].js',
     } = config;
 
     let resolvedConfig: Config = {
@@ -245,6 +247,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         mergeService,
         mergeOffscreen,
         commonChunks,
+        jsFilename,
     };
 
     let vars = loadDotenv(resolvedConfig);
@@ -257,6 +260,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
 
     const corePlugins: Plugin[] = [
         dotenvPlugin(vars),
+        outputPlugin(),
         optimizationPlugin(),
         typescriptPlugin(),
         reactPlugin(),

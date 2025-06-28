@@ -4,6 +4,7 @@ export {default as contentPlugin} from "./content";
 export {default as dotenvPlugin} from "./dotenv";
 export {default as htmlPlugin} from "./html";
 export {default as optimizationPlugin} from "./optimization";
+export {default as outputPlugin} from "./output";
 export {default as iconPlugin} from "./icon";
 export {default as localePlugin} from "./locale";
 export {default as metaPlugin} from "./meta";

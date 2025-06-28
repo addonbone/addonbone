@@ -8,12 +8,12 @@ import {
     contentPlugin,
     dotenvPlugin,
     htmlPlugin,
-    optimizationPlugin,
-    outputPlugin,
     iconPlugin,
     localePlugin,
     metaPlugin,
     offscreenPlugin,
+    optimizationPlugin,
+    outputPlugin,
     pagePlugin,
     popupPlugin,
     publicPlugin,
@@ -196,7 +196,9 @@ export default async (config: OptionalConfig): Promise<Config> => {
         mergeService = false,
         mergeOffscreen = false,
         commonChunks = true,
-        jsFilename = mode === Mode.Production && !debug ? '[apphash:10].js' : '[name].js',
+        jsFilename = (mode === Mode.Production && command === Command.Build) && !debug ? '[apphash:10].js' : '[name].js',
+        cssFilename = (mode === Mode.Production && command === Command.Build) && !debug ? '[apphash:10].css' : '[name].css',
+        cssIdentName = (mode === Mode.Production && command === Command.Build) && !debug ? '[app]-[hash:base64:5]' : '[local]-[hash:base64:5]',
     } = config;
 
     let resolvedConfig: Config = {
@@ -248,6 +250,8 @@ export default async (config: OptionalConfig): Promise<Config> => {
         mergeOffscreen,
         commonChunks,
         jsFilename,
+        cssFilename,
+        cssIdentName,
     };
 
     let vars = loadDotenv(resolvedConfig);

@@ -1,12 +1,15 @@
 import {rspack, RuleSetUse, Configuration as RspackConfig} from '@rspack/core';
 import path from "path";
 import fs from "fs";
+import {createHash} from "crypto";
+import _ from "lodash";
 
 import {definePlugin} from "@main/plugin"
 
 import {getAppSourcePath, getRootPath, getSharedPath} from "@cli/resolvers/path";
 
 import {ReadonlyConfig} from "@typing/config";
+import {appFilenameResolver} from "@cli/bundler";
 
 const styleMergerLoader = (config: ReadonlyConfig) => (
     sharedStyle: string,
@@ -42,14 +45,18 @@ export default definePlugin(() => {
     return {
         name: 'adnbn:styles',
         bundler: ({config}) => {
+            const {app, cssDir, cssFilename, cssIdentName} = config;
+
+            const filename = appFilenameResolver(app, cssFilename, cssDir);
+
             return {
                 resolve: {
                     extensions: [".css", ".scss"],
                 },
                 plugins: [
                     new rspack.CssExtractRspackPlugin({
-                        filename: path.join(config.cssDir, '[name].css'),
-                        chunkFilename: path.join(config.cssDir, '[name].css'),
+                        filename,
+                        chunkFilename: filename,
                     }),
                 ],
                 module: {
@@ -66,7 +73,8 @@ export default definePlugin(() => {
                                         modules: {
                                             exportLocalsConvention: 'as-is',
                                             namedExport: false,
-                                            localIdentName: '[local]-[hash:base64:5]',
+                                            localIdentName: cssIdentName.replaceAll('[app]', _.kebabCase(app)),
+                                            localIdentHashSalt: createHash('sha256').update(app).digest('hex'),
                                         }
                                     }
                                 },

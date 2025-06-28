@@ -5,6 +5,8 @@ import path from "path";
 
 export const appFilenameResolver = (app: string, filename: Filename, dirname?: string): Extract<Filename, Filename> =>
     (pathData, assetInfo): string => {
+        app = _.kebabCase(app);
+
         let name = _.isFunction(filename) ? filename(pathData, assetInfo) : filename;
 
         const {chunk = {}} = pathData;
@@ -12,6 +14,8 @@ export const appFilenameResolver = (app: string, filename: Filename, dirname?: s
         const appHash = createHash('sha256')
             .update([app, chunk.name, chunk.hash].join('-'))
             .digest('hex');
+
+        name = name.replaceAll('[app]', app);
 
         name = name.replace(/\[apphash(?::(\d+))?]/g, (match, lengthStr) => {
             if (lengthStr) {
@@ -24,7 +28,7 @@ export const appFilenameResolver = (app: string, filename: Filename, dirname?: s
         });
 
         if (dirname) {
-            return path.posix.join(dirname, name);
+            return path.join(dirname, name);
         }
 
         return name;

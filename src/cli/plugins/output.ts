@@ -15,7 +15,7 @@ export default definePlugin(() => {
             const kebabApp = _.kebabCase(app);
             const snakeApp = _.snakeCase(app);
 
-            const filename = appFilenameResolver(kebabApp, jsFilename, jsDir);
+            const filename = appFilenameResolver(app, jsFilename, jsDir);
 
             return {
                 output: {

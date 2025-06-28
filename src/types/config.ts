@@ -441,8 +441,95 @@ export interface Config {
      */
     commonChunks: boolean;
 
-
+    /**
+     * Template for generating JavaScript output file names.
+     *
+     * This property defines how JavaScript files will be named in the build output.
+     * It uses Rspack's Filename type, which can be either a string template or a function
+     * that returns a filename string.
+     *
+     * Supported placeholders in string templates:
+     * - `[app]` - Extension name (kebab case)
+     * - `[name]` - The name of the entry or chunk
+     * - `[hash]` - A hash of the module identifier and content
+     * - `[chunkhash]` - A hash of the chunk content
+     * - `[contenthash]` - A hash of the content only
+     * - `[apphash]` - Unique hash based on extension name and chunk hash
+     * - `[apphash:length]` - Truncated app hash to specified length
+     *
+     * When used as a function, it receives pathData and assetInfo parameters
+     * and should return the final filename string.
+     *
+     * @example
+     * // String template examples:
+     * "[name].[contenthash].js"
+     * "[app]-[name].[hash:8].js"
+     * "js/[name].[apphash:12].js"
+     *
+     * @example
+     * // Function example:
+     * (pathData, assetInfo) => {
+     *   return `${pathData.chunk.name}.${pathData.chunk.hash}.js`;
+     * }
+     *
+     * @see {@link https://rspack.dev/config/output#outputfilename} Rspack filename documentation
+     */
     jsFilename: Filename;
+
+    /**
+     * Template for generating CSS output file names.
+     *
+     * This property defines how CSS files will be named in the build output.
+     * It uses Rspack's Filename type, which can be either a string template or a function
+     * that returns a filename string.
+     *
+     * Supported placeholders in string templates:
+     * - `[app]` - Extension name (kebab case)
+     * - `[name]` - The name of the entry or chunk
+     * - `[hash]` - A hash of the module identifier and content
+     * - `[chunkhash]` - A hash of the chunk content
+     * - `[contenthash]` - A hash of the content only
+     * - `[apphash]` - Unique hash based on extension name and chunk hash
+     * - `[apphash:length]` - Truncated app hash to specified length
+     *
+     * When used as a function, it receives pathData and assetInfo parameters
+     * and should return the final filename string.
+     *
+     * @example
+     * // String template examples:
+     * "[name].[contenthash].css"
+     * "[app]-[name].[hash:8].css"
+     * "styles/[name].[apphash:12].css"
+     *
+     * @example
+     * // Function example:
+     * (pathData, assetInfo) => {
+     *   return `${pathData.chunk.name}.${pathData.chunk.hash}.css`;
+     * }
+     *
+     * @see {@link https://rspack.dev/config/output#outputfilename} Rspack filename documentation
+     */
+    cssFilename: Filename;
+
+    /**
+     * Template for generating scoped CSS class names.
+     *
+     * Supported placeholders:
+     * - `[app]` – extension name (kebab case)
+     * - `[name]` – file basename without extension
+     * - `[local]` – original class name from your CSS
+     * - `[path]` – path to the resource, relative to the build context
+     * - `[folder]` – name of the folder containing the resource
+     * - `[file]` – combination of `[path]` and `[name]`
+     * - `[ext]` – file extension (including the dot)
+     * - `[hash]` – hash based on resourcePath + exportName, uniq for app.
+     *
+     *
+     * Note: all characters illegal in filenames (except inside `[local]`) are replaced with “-”
+     *
+     * @type {string}
+     */
+    cssIdentName: string;
 }
 
 

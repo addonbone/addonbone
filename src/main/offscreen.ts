@@ -1,4 +1,4 @@
-import {ProxyOffscreen} from "@offscreen/providers";
+import ProxyOffscreen from "@offscreen/providers/ProxyOffscreen";
 
 import {type OffscreenDefinition, OffscreenReason, type OffscreenUnresolvedDefinition} from "@typing/offscreen";
 import {TransportDictionary, TransportType} from "@typing/transport";

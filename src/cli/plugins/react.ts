@@ -15,6 +15,7 @@ export default definePlugin(() => {
                     alias: {
                         'react': getRootPath(path.join('node_modules', 'react')),
                         'react-dom': getRootPath(path.join('node_modules', 'react-dom')),
+                        'scheduler': getRootPath(path.join('node_modules', 'scheduler')),
                     }
                 },
                 optimization: {

@@ -12,7 +12,7 @@ export const isEntryModuleOrIssuer = (
 
     const entryDirs = entry.flatMap(value => [
         path.join("node_modules", PackageName, "dist", "entry", value),
-        path.join("addonbone", "dist", "entry", value)
+        path.join("addonbone", "dist", "entry", value) // TODO: Only for test. Remove this
     ]);
 
     return (module, {moduleGraph}) => {

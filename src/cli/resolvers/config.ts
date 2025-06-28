@@ -8,6 +8,7 @@ import {
     contentPlugin,
     dotenvPlugin,
     htmlPlugin,
+    optimizationPlugin,
     iconPlugin,
     localePlugin,
     metaPlugin,
@@ -254,6 +255,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
 
     const corePlugins: Plugin[] = [
         dotenvPlugin(vars),
+        optimizationPlugin(),
         typescriptPlugin(),
         reactPlugin(),
         iconPlugin(),

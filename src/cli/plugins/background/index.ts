@@ -75,12 +75,6 @@ export default definePlugin(() => {
                 optimization: {
                     splitChunks: {
                         chunks(chunk) {
-                            const {chunks} = rspack.optimization?.splitChunks || {};
-
-                            if (_.isFunction(chunks) && !chunks(chunk)) {
-                                return false;
-                            }
-
                             return chunk.name !== BackgroundEntry.name;
                         },
                     }

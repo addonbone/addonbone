@@ -62,23 +62,6 @@ export default async (config: ReadonlyConfig): Promise<RspackConfig> => {
             devtoolNamespace: config.app,
             uniqueName: config.app
         },
-        optimization: {
-            usedExports: true,
-            providedExports: true,
-            splitChunks: {
-                minSize: 10,
-                cacheGroups: {
-                    default: false,
-                    defaultVendors: false,
-                    // common: {
-                    //     name: "common",
-                    //     minChunks: 2,
-                    //     priority: -20,
-                    //     reuseExistingChunk: true,
-                    // },
-                },
-            },
-        },
     }
 
     rspack = mergeConfig(

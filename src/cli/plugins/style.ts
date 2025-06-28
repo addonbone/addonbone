@@ -1,15 +1,17 @@
-import {rspack, RuleSetUse, Configuration as RspackConfig} from '@rspack/core';
+import _ from "lodash";
 import path from "path";
 import fs from "fs";
 import {createHash} from "crypto";
-import _ from "lodash";
+import {Configuration as RspackConfig, CssExtractRspackPlugin, rspack, RuleSetUse, RuleSetUseItem} from '@rspack/core';
 
 import {definePlugin} from "@main/plugin"
+
+import {appFilenameResolver} from "@cli/bundler";
 
 import {getAppSourcePath, getRootPath, getSharedPath} from "@cli/resolvers/path";
 
 import {ReadonlyConfig} from "@typing/config";
-import {appFilenameResolver} from "@cli/bundler";
+
 
 const styleMergerLoader = (config: ReadonlyConfig) => (
     sharedStyle: string,
@@ -41,13 +43,33 @@ const styleMergerLoader = (config: ReadonlyConfig) => (
     }
 }
 
+
 export default definePlugin(() => {
     return {
         name: 'adnbn:styles',
         bundler: ({config}) => {
-            const {app, cssDir, cssFilename, cssIdentName} = config;
+            const {app, cssDir, cssFilename, cssIdentName, mergeStyles} = config;
 
             const filename = appFilenameResolver(app, cssFilename, cssDir);
+
+            const createRuleSet = (rule: RuleSetUseItem): RuleSetUse => {
+                const rules: RuleSetUse = [
+                    CssExtractRspackPlugin.loader,
+                    rule,
+                    'sass-loader',
+                ];
+
+                if (mergeStyles) {
+                    rules.push({
+                        loader: 'source-modifier-loader',
+                        options: {
+                            modify: styleMergerLoader(config),
+                        },
+                    });
+                }
+
+                return rules;
+            }
 
             return {
                 resolve: {
@@ -64,30 +86,39 @@ export default definePlugin(() => {
                         {
                             test: /\.(scss|css)$/,
                             type: 'javascript/auto',
-                            use: [
-                                rspack.CssExtractRspackPlugin.loader,
+                            oneOf: [
                                 {
-                                    loader: 'css-loader',
-                                    options: {
-                                        esModule: true,
-                                        modules: {
-                                            exportLocalsConvention: 'as-is',
-                                            namedExport: false,
-                                            localIdentName: cssIdentName.replaceAll('[app]', _.kebabCase(app)),
-                                            localIdentHashSalt: createHash('sha256').update(app).digest('hex'),
-                                        }
-                                    }
+                                    resourceQuery: /asis/,
+                                    use: createRuleSet({
+                                        loader: 'css-loader',
+                                        options: {
+                                            esModule: true,
+                                            modules: false,
+                                        },
+                                    }),
                                 },
-                                'sass-loader',
-                                config.mergeStyles && {
-                                    loader: 'source-modifier-loader',
-                                    options: {
-                                        modify: styleMergerLoader(config),
-                                    }
-                                }
-                            ].filter(Boolean) as RuleSetUse,
-                        }
-                    ]
+                                {
+                                    use: createRuleSet({
+                                        loader: 'css-loader',
+                                        options: {
+                                            esModule: true,
+                                            modules: {
+                                                exportLocalsConvention: 'as-is',
+                                                namedExport: false,
+                                                localIdentName: cssIdentName.replaceAll(
+                                                    '[app]',
+                                                    _.kebabCase(app)
+                                                ),
+                                                localIdentHashSalt: createHash('sha256')
+                                                    .update(app)
+                                                    .digest('hex'),
+                                            },
+                                        },
+                                    }),
+                                },
+                            ],
+                        },
+                    ],
                 },
             } satisfies RspackConfig;
         }

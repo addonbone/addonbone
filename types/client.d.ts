@@ -296,7 +296,17 @@ declare module '*?chrome' {
     export default src
 }
 
+declare module '*?browser' {
+    const src: string
+    export default src
+}
+
 declare module '*?base64' {
+    const src: string
+    export default src
+}
+
+declare module '*?asis' {
     const src: string
     export default src
 }

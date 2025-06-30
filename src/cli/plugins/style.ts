@@ -52,7 +52,7 @@ export default definePlugin(() => {
 
             const filename = appFilenameResolver(app, cssFilename, cssDir);
 
-            const createRuleSet = (rule: RuleSetUseItem): RuleSetUse => {
+            const createSassRuleSet = (rule: RuleSetUseItem): RuleSetUse => {
                 const rules: RuleSetUse = [
                     CssExtractRspackPlugin.loader,
                     rule,
@@ -89,7 +89,7 @@ export default definePlugin(() => {
                             oneOf: [
                                 {
                                     resourceQuery: /asis/,
-                                    use: createRuleSet({
+                                    use: createSassRuleSet({
                                         loader: 'css-loader',
                                         options: {
                                             esModule: true,
@@ -98,7 +98,7 @@ export default definePlugin(() => {
                                     }),
                                 },
                                 {
-                                    use: createRuleSet({
+                                    use: createSassRuleSet({
                                         loader: 'css-loader',
                                         options: {
                                             esModule: true,

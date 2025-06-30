@@ -442,6 +442,40 @@ export interface Config {
     commonChunks: boolean;
 
     /**
+     * Template for generating asset output file names.
+     *
+     * This property defines how asset files (images, fonts, etc.) will be named in the build output.
+     * It uses Rspack's Filename type, which can be either a string template or a function
+     * that returns a filename string.
+     *
+     * Supported placeholders in string templates:
+     * - `[app]` - Extension name (kebab case)
+     * - `[name]` - The original asset file name without extension
+     * - `[ext]` - The original asset file extension (including the dot)
+     * - `[hash]` - A hash of the asset content
+     * - `[contenthash]` - A hash of the content only
+     *
+     * When used as a function, it receives pathData and assetInfo parameters
+     * and should return the final filename string.
+     *
+     * @example
+     * // String template examples:
+     * "[name].[hash][ext]"
+     * "[app]-[name].[contenthash:8][ext]"
+     * "images/[name].[hash][ext]"
+     *
+     * @example
+     * // Function example:
+     * (pathData, assetInfo) => {
+     *   const info = pathData.module.resourceResolveData;
+     *   return `${info.descriptionFileData.name}.${pathData.contentHash}${info.relativePath}`;
+     * }
+     *
+     * @see {@link https://rspack.dev/config/output#outputassetmodulefilename} Rspack asset module filename documentation
+     */
+    assetsFilename: Filename;
+
+    /**
      * Template for generating JavaScript output file names.
      *
      * This property defines how JavaScript files will be named in the build output.
@@ -454,8 +488,6 @@ export interface Config {
      * - `[hash]` - A hash of the module identifier and content
      * - `[chunkhash]` - A hash of the chunk content
      * - `[contenthash]` - A hash of the content only
-     * - `[apphash]` - Unique hash based on extension name and chunk hash
-     * - `[apphash:length]` - Truncated app hash to specified length
      *
      * When used as a function, it receives pathData and assetInfo parameters
      * and should return the final filename string.
@@ -464,7 +496,6 @@ export interface Config {
      * // String template examples:
      * "[name].[contenthash].js"
      * "[app]-[name].[hash:8].js"
-     * "js/[name].[apphash:12].js"
      *
      * @example
      * // Function example:
@@ -489,8 +520,6 @@ export interface Config {
      * - `[hash]` - A hash of the module identifier and content
      * - `[chunkhash]` - A hash of the chunk content
      * - `[contenthash]` - A hash of the content only
-     * - `[apphash]` - Unique hash based on extension name and chunk hash
-     * - `[apphash:length]` - Truncated app hash to specified length
      *
      * When used as a function, it receives pathData and assetInfo parameters
      * and should return the final filename string.
@@ -499,7 +528,6 @@ export interface Config {
      * // String template examples:
      * "[name].[contenthash].css"
      * "[app]-[name].[hash:8].css"
-     * "styles/[name].[apphash:12].css"
      *
      * @example
      * // Function example:
@@ -511,7 +539,7 @@ export interface Config {
      */
     cssFilename: Filename;
 
-    /**
+     /**
      * Template for generating scoped CSS class names.
      *
      * Supported placeholders:

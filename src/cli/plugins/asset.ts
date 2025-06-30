@@ -1,10 +1,8 @@
 import {Configuration as RspackConfig} from "@rspack/core";
 
-import path from "path";
-
 import {definePlugin} from "@main/plugin";
 
-import {ReplacePlugin} from "@cli/bundler";
+import {appFilenameResolver, ReplacePlugin} from "@cli/bundler";
 
 import {Browser} from "@typing/browser";
 
@@ -12,9 +10,11 @@ export default definePlugin(() => {
     return {
         name: 'adnbn:asset',
         bundler: ({config}) => {
+            const {app, browser, assetsDir, assetsFilename} = config;
+
             return {
                 output: {
-                    assetModuleFilename: path.join(config.assetsDir, '[name]-[hash:4][ext]'),
+                    assetModuleFilename: appFilenameResolver(app, assetsFilename, assetsDir),
                 },
                 module: {
                     rules: [
@@ -25,7 +25,7 @@ export default definePlugin(() => {
                                     resourceQuery: /(chrome|browser)/,
                                     type: "asset/resource",
                                     generator: {
-                                        publicPath: `${config.browser === Browser.Firefox ? 'moz' : 'chrome'}-extension://__MSG_@@extension_id__/`
+                                        publicPath: `${browser === Browser.Firefox ? 'moz' : 'chrome'}-extension://__MSG_@@extension_id__/`
                                     }
                                 },
                                 {

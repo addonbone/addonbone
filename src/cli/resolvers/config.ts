@@ -196,9 +196,9 @@ export default async (config: OptionalConfig): Promise<Config> => {
         mergeService = false,
         mergeOffscreen = false,
         commonChunks = true,
-        assetsFilename = (mode === Mode.Production && command === Command.Build) && !debug ? '[apphash:4][ext]' : '[name]-[hash:4][ext]',
-        jsFilename = (mode === Mode.Production && command === Command.Build) && !debug ? '[apphash:10].js' : '[name].js',
-        cssFilename = (mode === Mode.Production && command === Command.Build) && !debug ? '[apphash:10].css' : '[name].css',
+        assetsFilename = (mode === Mode.Production && command === Command.Build) && !debug ? '[contenthash:4][ext]' : '[name]-[contenthash:4][ext]',
+        jsFilename = (mode === Mode.Production && command === Command.Build) && !debug ? '[contenthash:10].js' : '[name].js',
+        cssFilename = (mode === Mode.Production && command === Command.Build) && !debug ? '[contenthash:10].css' : '[name].css',
         cssIdentName = (mode === Mode.Production && command === Command.Build) && !debug ? '[app]-[hash:base64:5]' : '[local]-[hash:base64:5]',
     } = config;
 

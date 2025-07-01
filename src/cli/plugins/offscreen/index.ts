@@ -1,14 +1,22 @@
+import path from "path";
 import {Configuration as RspackConfig, DefinePlugin, HtmlRspackPlugin, Plugins} from "@rspack/core";
+import {RspackVirtualModulePlugin} from 'rspack-plugin-virtual-module';
 import HtmlRspackTagsPlugin from "html-rspack-tags-plugin";
 
 import {definePlugin} from "@main/plugin";
 
 import {EntrypointPlugin} from "@cli/bundler";
+import {virtualOffscreenBackgroundModule} from "@cli/virtual";
 
 import Offscreen, {OffscreenParameters} from "./Offscreen";
 import OffscreenDeclaration from "./OffscreenDeclaration";
 
 import {Command} from "@typing/app";
+import {Browser} from "@typing/browser";
+import {BackgroundEntryName} from "@typing/background";
+
+const OffscreenTempDir = 'virtual';
+const OffscreenBackground = 'offscreen.background';
 
 export default definePlugin(() => {
     let offscreen: Offscreen;
@@ -25,16 +33,11 @@ export default definePlugin(() => {
             declaration.dictionary(await offscreen.dictionary()).build();
 
             let build: boolean = true;
+            let rspack: RspackConfig = {};
 
             if (await offscreen.empty()) {
                 if (config.debug) {
                     console.info('Offscreen entries not found');
-                }
-
-                build = false;
-            } else if (config.manifestVersion === 2) {
-                if (config.debug) {
-                    console.warn('Offscreen not supported for manifest version 2');
                 }
 
                 build = false;
@@ -62,9 +65,24 @@ export default definePlugin(() => {
                 const tagsPlugins = (await offscreen.view().tags()).map(options => new HtmlRspackTagsPlugin(options));
 
                 plugins.push(plugin, ...htmlPlugins, ...tagsPlugins);
+
+                if (config.manifestVersion === 2 || config.browser === Browser.Firefox) {
+                    plugins.push(new RspackVirtualModulePlugin({
+                        [OffscreenBackground]: virtualOffscreenBackgroundModule()
+                    }, OffscreenTempDir));
+
+                    rspack = {
+                        entry: {
+                            [BackgroundEntryName]: {
+                                import: [path.join(OffscreenTempDir, OffscreenBackground)],
+                            }
+                        }
+                    };
+                }
             }
 
             return {
+                ...rspack,
                 plugins: [
                     new DefinePlugin({
                         __ADNBN_OFFSCREEN_PARAMETERS__: JSON.stringify(parameters),
@@ -78,5 +96,5 @@ export default definePlugin(() => {
                 manifest.addPermission('offscreen');
             }
         }
-    }
+    };
 });

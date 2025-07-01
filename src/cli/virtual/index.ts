@@ -3,6 +3,7 @@ import command from "./command.ts?raw";
 import content from "./content.ts?raw";
 import transport from "./transport.ts?raw";
 import offscreen from "./offscreen.ts?raw";
+import offscreenBackground from "./offscreenBackground.ts?raw";
 import relay from "./relay.ts?raw";
 import view from "./view.ts?raw";
 
@@ -48,6 +49,10 @@ export const virtualOffscreenModule = (file: EntrypointFile, name: string): stri
     return getVirtualModule(file, 'offscreen')
         .replace('virtual:offscreen-name', name)
         .replace(`virtual:view-framework`, getEntryFramework(file, 'view'));
+}
+
+export const virtualOffscreenBackgroundModule = (): string => {
+    return offscreenBackground;
 }
 
 export const virtualRelayModule = (file: EntrypointFile, name: string): string => {

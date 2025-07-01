@@ -1,4 +1,5 @@
-import {Offscreen, ProxyOffscreen, RegisterOffscreen} from './providers'
+import {Offscreen, ProxyOffscreen, RegisterOffscreen} from './providers';
+import OffscreenBackground from './OffscreenBackground';
 
 import {
     TransportDictionary,
@@ -12,10 +13,11 @@ export {
     type OffscreenProxyTarget,
 
     ProxyOffscreen,
-    RegisterOffscreen
+    RegisterOffscreen,
+    OffscreenBackground,
 };
 
 export const getOffscreen = <N extends TransportName>(name: N): TransportDictionary[N] => {
     return new Offscreen<N>(name).get();
-}
+};
 

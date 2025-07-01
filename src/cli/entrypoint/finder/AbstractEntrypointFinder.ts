@@ -50,7 +50,7 @@ export default abstract class<O extends EntrypointOptions> extends AbstractOptio
                 files = new Set([...files, ...sharedFiles]);
 
                 if (this.config.debug) {
-                    console.info(`Shared ${entrypoint}" files added:`, sharedFiles);
+                    console.info(`Shared "${entrypoint}" files added:`, sharedFiles);
                 }
             }
         }

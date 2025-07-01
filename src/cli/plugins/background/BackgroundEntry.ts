@@ -1,11 +1,11 @@
 import {AbstractPluginFinder} from "@cli/entrypoint";
 
 import {EntrypointEntries} from "@typing/entrypoint";
-import {BackgroundEntrypointOptions} from "@typing/background";
+import {BackgroundEntrypointOptions, BackgroundEntryName} from "@typing/background";
 import {ManifestPermissions} from "@typing/manifest";
 
 export default class BackgroundEntry<O extends BackgroundEntrypointOptions> {
-    public static readonly name: string = 'background';
+    public static readonly name: string = BackgroundEntryName;
 
     constructor(public readonly finder: AbstractPluginFinder<O>) {
     }

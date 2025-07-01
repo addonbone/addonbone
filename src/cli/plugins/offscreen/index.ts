@@ -74,7 +74,7 @@ export default definePlugin(() => {
                     rspack = {
                         entry: {
                             [BackgroundEntryName]: {
-                                import: [path.posix.join(OffscreenTempDir, OffscreenBackground)],
+                                import: [path.join(OffscreenTempDir, OffscreenBackground)],
                             }
                         }
                     };

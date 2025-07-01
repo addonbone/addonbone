@@ -16,7 +16,7 @@ import {Browser} from "@typing/browser";
 import {BackgroundEntryName} from "@typing/background";
 
 const OffscreenTempDir = 'virtual';
-const OffscreenBackground = 'offscreen.background';
+const OffscreenBackgroundModule = 'offscreen.background.ts';
 
 export default definePlugin(() => {
     let offscreen: Offscreen;
@@ -68,13 +68,13 @@ export default definePlugin(() => {
 
                 if (config.manifestVersion === 2 || config.browser === Browser.Firefox) {
                     plugins.push(new RspackVirtualModulePlugin({
-                        [OffscreenBackground]: virtualOffscreenBackgroundModule()
+                        [OffscreenBackgroundModule]: virtualOffscreenBackgroundModule()
                     }, OffscreenTempDir));
 
                     rspack = {
                         entry: {
                             [BackgroundEntryName]: {
-                                import: [path.join(OffscreenTempDir, OffscreenBackground)],
+                                import: [path.join(OffscreenTempDir, OffscreenBackgroundModule)],
                             }
                         }
                     };

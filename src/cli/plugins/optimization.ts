@@ -43,7 +43,6 @@ export default definePlugin(() => {
 
                                     return `${entryNames.join('-')}.${cacheGroupKey}`;
                                 },
-                                minSize: 10,
                                 minChunks: 2,
                                 priority: -10,
                                 reuseExistingChunk: true,

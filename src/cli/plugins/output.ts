@@ -24,7 +24,6 @@ export default definePlugin(() => {
                     chunkFilename: filename,
                     hotUpdateGlobal: snakeApp + 'HotUpdate',
                     chunkLoadingGlobal: snakeApp + 'ChunkLoading',
-                    devtoolNamespace: kebabApp,
                     uniqueName: kebabApp
                 },
             } satisfies RspackConfig;

@@ -2,7 +2,7 @@ import _ from "lodash";
 import path from "path";
 import fs from "fs";
 import {createHash} from "crypto";
-import {Configuration as RspackConfig, CssExtractRspackPlugin, rspack, RuleSetUse, RuleSetUseItem} from '@rspack/core';
+import {Configuration as RspackConfig, CssExtractRspackPlugin, RuleSetUse, RuleSetUseItem} from '@rspack/core';
 
 import {definePlugin} from "@main/plugin"
 
@@ -76,7 +76,7 @@ export default definePlugin(() => {
                     extensions: [".css", ".scss"],
                 },
                 plugins: [
-                    new rspack.CssExtractRspackPlugin({
+                    new CssExtractRspackPlugin({
                         filename,
                         chunkFilename: filename,
                     }),

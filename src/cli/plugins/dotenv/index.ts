@@ -1,4 +1,7 @@
+import _ from "lodash";
+
 import {DefinePlugin} from '@rspack/core';
+
 import {definePlugin} from "@main/plugin";
 
 import {encryptData, generateCryptoKey} from "./utils";
@@ -14,8 +17,8 @@ export default definePlugin((vars: DotenvParseOutput = {}) => {
             const filteredVars = !filter ? vars : Object.fromEntries(Object.entries(vars).filter(([key]) => {
                 if (
                     ['APP', 'BROWSER', 'MODE', 'MANIFEST_VERSION'].includes(key) ||
-                    (typeof filter === 'function' && filter(key)) ||
-                    (typeof filter === 'string' && filter.trim() && key.startsWith(filter.trim()))
+                    (_.isFunction(filter) && filter(key)) ||
+                    (_.isString(filter) && filter.trim() && key.startsWith(filter.trim()))
                 ) {
                     return true;
                 }

@@ -121,10 +121,10 @@ export interface LocaleValidator {
     validate(locale: LocaleBuilder): this;
 }
 
-export type LocaleFutures = {
+export interface LocaleFutures {
     plural: boolean;
     substitutions: readonly string[];
-};
+}
 
 export interface LocaleStructure {
     [key: string]: LocaleFutures;

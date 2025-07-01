@@ -1,5 +1,3 @@
-import _ from "lodash";
-
 import {Configuration as RspackConfig} from "@rspack/core";
 
 import {definePlugin} from "@main/plugin";

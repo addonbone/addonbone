@@ -92,7 +92,7 @@ export default definePlugin(() => {
             } satisfies RspackConfig;
         },
         manifest: async ({manifest, config}) => {
-            if (config.manifestVersion !== 2 && await offscreen.exists()) {
+            if (config.manifestVersion !== 2 && config.browser !== Browser.Firefox && await offscreen.exists()) {
                 manifest.addPermission('offscreen');
             }
         }

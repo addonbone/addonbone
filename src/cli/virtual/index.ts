@@ -3,7 +3,7 @@ import command from "./command.ts?raw";
 import content from "./content.ts?raw";
 import transport from "./transport.ts?raw";
 import offscreen from "./offscreen.ts?raw";
-import offscreenBackground from "./offscreenBackground.ts?raw";
+import offscreenBackground from "./offscreen.background.ts?raw";
 import relay from "./relay.ts?raw";
 import view from "./view.ts?raw";
 

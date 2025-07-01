@@ -1,8 +1,7 @@
-import OffscreenBackgroundMessage from "./OffscreenBackgroundMessage";
-import AbstractOffscreenBackground from "./AbstractOffscreenBackground";
+import OffscreenBridge from "./OffscreenBridge";
 
-export default class extends AbstractOffscreenBackground {
+export default class extends OffscreenBridge {
     public build(): void {
-        OffscreenBackgroundMessage.getInstance().watch(this.addFrame);
+        this.message.watch(this.key, this.apply.bind(this));
     }
 }

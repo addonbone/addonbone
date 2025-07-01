@@ -6,7 +6,7 @@ import ProxyTransport from "@transport/ProxyTransport";
 
 import OffscreenManager from "../OffscreenManager";
 import OffscreenMessage from "../OffscreenMessage";
-import OffscreenBackgroundMessage from "../OffscreenBackgroundMessage";
+import OffscreenBridge from "../OffscreenBridge";
 
 import {isOffscreen} from "../utils";
 
@@ -36,9 +36,7 @@ export default class<N extends TransportName, T = DeepAsyncProxy<TransportDictio
         };
 
         if (!isManifestVersion3() || getBrowser() === Browser.Firefox) {
-            await OffscreenBackgroundMessage
-                .getInstance()
-                .createOffscreen(parameters);
+            await OffscreenBridge.createOffscreen(parameters);
 
         } else {
             if (await hasOffscreen()) {

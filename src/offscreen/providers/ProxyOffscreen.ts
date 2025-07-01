@@ -1,15 +1,18 @@
-import {closeOffscreen, createOffscreen, hasOffscreen} from "@adnbn/browser";
+import {closeOffscreen, createOffscreen, hasOffscreen, isManifestVersion3} from "@adnbn/browser";
 import {__t} from "@main/locale";
+import {getBrowser} from "@main/env";
 
 import ProxyTransport from "@transport/ProxyTransport";
 
 import OffscreenManager from "../OffscreenManager";
 import OffscreenMessage from "../OffscreenMessage";
+import OffscreenBridge from "../OffscreenBridge";
 
 import {isOffscreen} from "../utils";
 
-import type {DeepAsyncProxy} from "@typing/helpers";
-import type {TransportDictionary, TransportManager, TransportMessage, TransportName} from "@typing/transport";
+import {Browser} from "@typing/browser";
+import {DeepAsyncProxy} from "@typing/helpers";
+import {TransportDictionary, TransportManager, TransportMessage, TransportName} from "@typing/transport";
 
 type CreateParameters = chrome.offscreen.CreateParameters;
 
@@ -27,16 +30,21 @@ export default class<N extends TransportName, T = DeepAsyncProxy<TransportDictio
     }
 
     protected async apply(args: any[], path?: string): Promise<any> {
-        if (await hasOffscreen()) {
-            await closeOffscreen();
+        const parameters: CreateParameters = {
+            ...this.parameters,
+            justification: __t(this.parameters.justification)
+        };
+
+        if (!isManifestVersion3() || getBrowser() === Browser.Firefox) {
+            await OffscreenBridge.createOffscreen(parameters);
+
+        } else {
+            if (await hasOffscreen()) {
+                await closeOffscreen();
+            }
+
+            await createOffscreen(parameters);
         }
-
-        const {justification, ...parameters} = this.parameters;
-
-        await createOffscreen({
-            ...parameters,
-            justification: __t(justification),
-        });
 
         return this.message.send({path, args});
     }

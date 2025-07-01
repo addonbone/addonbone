@@ -19,7 +19,15 @@ export default class extends ManifestBase<ManifestV3> {
 
     protected buildBackground(): Partial<CoreManifest> | undefined {
         if (this.browser === Browser.Firefox) {
-            return super.buildBackground();
+            const manifest = super.buildBackground();
+
+            if (manifest) {
+                const {background, ...other} = manifest;
+
+                return {...other, background: {...background, persistent: undefined}};
+            }
+
+            return;
         }
 
         if (this.background) {

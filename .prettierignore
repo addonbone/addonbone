@@ -2,3 +2,4 @@ node_modules/
 dist/
 build/
 addon/
+src/cli/entrypoint/parser/drivers/tests/

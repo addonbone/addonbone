@@ -19,16 +19,16 @@ export default definePlugin((vars: DotenvParseOutput = {}) => {
             const filteredVars = !filter
                 ? vars
                 : Object.fromEntries(
-                    Object.entries(vars).filter(([key]) => {
-                        if (
-                            ReservedEnvKeys.has(key) ||
-                            (_.isFunction(filter) && filter(key)) ||
-                            (_.isString(filter) && filter.trim() && key.startsWith(filter.trim()))
-                        ) {
-                            return true;
-                        }
-                    })
-                );
+                      Object.entries(vars).filter(([key]) => {
+                          if (
+                              ReservedEnvKeys.has(key) ||
+                              (_.isFunction(filter) && filter(key)) ||
+                              (_.isString(filter) && filter.trim() && key.startsWith(filter.trim()))
+                          ) {
+                              return true;
+                          }
+                      })
+                  );
 
             const key = generateCryptoKey([config.app, ...Object.keys(filteredVars)].join("-"));
 

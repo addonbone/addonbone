@@ -10,8 +10,7 @@ export default abstract class AbstractVersion {
         return new this(config).getVersion();
     }
 
-    protected constructor(protected readonly config: ReadonlyConfig) {
-    }
+    protected constructor(protected readonly config: ReadonlyConfig) {}
 
     public abstract getVersion(): string | undefined;
 

@@ -16,7 +16,7 @@ export default class extends AbstractVersion {
     public getVersion(): string | undefined {
         const version = this.extractVersionValue(this.config.version);
 
-        if(!version) {
+        if (!version) {
             return;
         }
 

@@ -127,18 +127,18 @@ export interface LocaleStructure {
 }
 
 export type LocaleNonPluralKeys<T extends LocaleStructure> = {
-    [K in keyof T]: T[K] extends { plural: false } ? K : never;
+    [K in keyof T]: T[K] extends {plural: false} ? K : never;
 }[keyof T] &
     string;
 
 export type LocalePluralKeys<T extends LocaleStructure> = {
-    [K in keyof T]: T[K] extends { plural: true } ? K : never;
+    [K in keyof T]: T[K] extends {plural: true} ? K : never;
 }[keyof T] &
     string;
 
 export type LocaleSubstitutionsFor<T extends LocaleStructure, K extends keyof T> = T[K] extends {
-        substitutions: readonly (infer U)[];
-    }
+    substitutions: readonly (infer U)[];
+}
     ? Partial<Record<U & string, string | number>>
     : never;
 

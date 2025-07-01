@@ -1,3 +1,5 @@
+import path from "path";
+
 import AbstractPluginFinder from "./AbstractPluginFinder";
 
 import {InlineNameGenerator} from "../name";
@@ -38,7 +40,7 @@ export default abstract class<
             let name: string;
 
             if (file.external) {
-                name = file.import;
+                name = _name ? path.posix.join(file.external, _name) : file.import;
 
                 if (this.names.has(name)) {
                     throw new Error(`Transport name "${name}" for "${this.type()}" is already in use.`);

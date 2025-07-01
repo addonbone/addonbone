@@ -8,13 +8,12 @@ import AbstractFinder from "./AbstractFinder";
 import {EntrypointFile} from "@typing/entrypoint";
 
 export default abstract class extends AbstractFinder {
-
     public abstract getNames(): ReadonlySet<string>;
 
     public abstract isValidExtension(extension: string): boolean;
 
     public getDirectory(): string {
-        return '.'
+        return ".";
     }
 
     public isValidName(name: string): boolean {
@@ -28,7 +27,7 @@ export default abstract class extends AbstractFinder {
     public isValidFilename(filename: string): boolean {
         let {name, ext} = path.parse(filename);
 
-        if (ext.startsWith('.')) {
+        if (ext.startsWith(".")) {
             ext = ext.slice(1);
         }
 
@@ -36,7 +35,7 @@ export default abstract class extends AbstractFinder {
     }
 
     protected async getFiles(): Promise<Set<EntrypointFile>> {
-        const files = new Set<EntrypointFile>;
+        const files = new Set<EntrypointFile>();
 
         const parser = async (directory: string): Promise<void> => {
             if (files.size === 0 || this.canMerge()) {
@@ -59,7 +58,7 @@ export default abstract class extends AbstractFinder {
     }
 
     protected async findFiles(directory: string): Promise<Set<EntrypointFile>> {
-        const files = new Set<EntrypointFile>;
+        const files = new Set<EntrypointFile>();
 
         try {
             const entries = fs.readdirSync(directory);
@@ -72,8 +71,7 @@ export default abstract class extends AbstractFinder {
                     files.add(this.file(fullPath));
                 }
             }
-        } catch {
-        }
+        } catch {}
 
         return files;
     }

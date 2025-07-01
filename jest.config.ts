@@ -1,12 +1,10 @@
-import type {Config} from 'jest';
+import type {Config} from "jest";
 
 const config: Config = {
     verbose: true,
-    preset: 'ts-jest',
-    testEnvironment: 'jsdom',
-    setupFiles: [
-        "<rootDir>/tests/jest.setup.ts",
-    ],
+    preset: "ts-jest",
+    testEnvironment: "jsdom",
+    setupFiles: ["<rootDir>/tests/jest.setup.ts"],
     moduleNameMapper: {
         "^@cli/(.*)$": "<rootDir>/src/cli/$1",
         "^@entry/(.*)$": "<rootDir>/src/entry/$1",
@@ -16,16 +14,16 @@ const config: Config = {
         "^@service/(.*)$": "<rootDir>/src/service/$1",
         "^@transport/(.*)$": "<rootDir>/src/transport/$1",
         "^@main/(.*)$": "<rootDir>/src/main/$1",
-        "^@typing/(.*)$": "<rootDir>/src/types/$1"
+        "^@typing/(.*)$": "<rootDir>/src/types/$1",
     },
     transform: {
         "^.+\\.tsx?$": [
             "ts-jest",
             {
                 useESM: true,
-                tsconfig: "tsconfig.jest.json"
-            }
-        ]
+                tsconfig: "tsconfig.jest.json",
+            },
+        ],
     },
     testMatch: ["**/*.test.ts"],
 };

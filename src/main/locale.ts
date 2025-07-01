@@ -8,7 +8,7 @@ import {
     LocaleDir,
     LocaleNonPluralKeys,
     LocalePluralKeys,
-    LocaleSubstitutionsFor
+    LocaleSubstitutionsFor,
 } from "@typing/locale";
 
 export {Language, LanguageCodes, LocaleDir};
@@ -24,7 +24,7 @@ export {Language, LanguageCodes, LocaleDir};
  */
 export const _ = <K extends LocaleNonPluralKeys<LocaleNativeStructure>>(
     key: K,
-    substitutions?: LocaleSubstitutionsFor<LocaleNativeStructure, K>,
+    substitutions?: LocaleSubstitutionsFor<LocaleNativeStructure, K>
 ): string => {
     return NativeLocale.getInstance().trans(key, substitutions);
 };
@@ -43,7 +43,7 @@ export const _ = <K extends LocaleNonPluralKeys<LocaleNativeStructure>>(
 export const _c = <K extends LocalePluralKeys<LocaleNativeStructure>>(
     key: K,
     count: number,
-    substitutions?: LocaleSubstitutionsFor<LocaleNativeStructure, K>,
+    substitutions?: LocaleSubstitutionsFor<LocaleNativeStructure, K>
 ): string => {
     return NativeLocale.getInstance().choice(key, count, substitutions);
 };
@@ -65,7 +65,6 @@ export const __ = (key: keyof LocaleNativeStructure & string): string => {
 
     return convertLocaleMessageKey(key);
 };
-
 
 /**
  * Attempts to extract a locale key from the provided string and translates it

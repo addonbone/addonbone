@@ -95,32 +95,23 @@ export interface Plugin extends PluginName {
 
 export type PluginHandler<O, T = void> = T | PluginHandlerCallback<O, T>;
 
-export type PluginHandlerCallback<O, T = void> = { (options: O): Awaiter<T> }
+export type PluginHandlerCallback<O, T = void> = {(options: O): Awaiter<T>};
 
-export type PluginHandlerKeys = keyof Omit<Plugin, 'name'>;
+export type PluginHandlerKeys = keyof Omit<Plugin, "name">;
 
-export type PluginEntrypointKeys = keyof Pick<Plugin,
-    'background' |
-    'command' |
-    'content' |
-    'page' |
-    'popup' |
-    'relay' |
-    'service' |
-    'sidebar' |
-    'offscreen'
+export type PluginEntrypointKeys = keyof Pick<
+    Plugin,
+    "background" | "command" | "content" | "page" | "popup" | "relay" | "service" | "sidebar" | "offscreen"
 >;
 
-export type PluginAssetKeys = keyof Pick<Plugin, 'icon' | 'locale'>;
+export type PluginAssetKeys = keyof Pick<Plugin, "icon" | "locale">;
 
 export type PluginHandlerType<T extends Plugin[PluginHandlerKeys]> =
-    T extends PluginHandlerCallback<infer O, infer R> ? { options: O; result: R } : never;
+    T extends PluginHandlerCallback<infer O, infer R> ? {options: O; result: R} : never;
 
-export type PluginHandlerOptions<K extends PluginHandlerKeys> =
-    PluginHandlerType<Plugin[K]>['options'];
+export type PluginHandlerOptions<K extends PluginHandlerKeys> = PluginHandlerType<Plugin[K]>["options"];
 
-export type PluginHandlerResult<K extends PluginHandlerKeys> =
-    NonNullable<PluginHandlerType<Plugin[K]>['result']>;
+export type PluginHandlerResult<K extends PluginHandlerKeys> = NonNullable<PluginHandlerType<Plugin[K]>["result"]>;
 
 export interface PluginNameHandlerResult<K extends PluginHandlerKeys> extends PluginName {
     result: PluginHandlerResult<K>;

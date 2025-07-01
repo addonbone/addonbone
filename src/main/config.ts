@@ -4,4 +4,4 @@ export type {Config, ReadonlyConfig, ConfigDefinition, UserConfig};
 
 export const defineConfig = (config: ConfigDefinition): ConfigDefinition => {
     return config;
-}
+};

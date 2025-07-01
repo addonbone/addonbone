@@ -3,7 +3,7 @@ import {Awaiter} from "@typing/helpers";
 
 type ManifestPermissions = chrome.runtime.ManifestPermissions;
 
-export const BackgroundEntryName = 'background';
+export const BackgroundEntryName = "background";
 
 export interface BackgroundConfig {
     persistent?: boolean;

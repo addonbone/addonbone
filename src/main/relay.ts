@@ -8,10 +8,11 @@ export type {RelayDefinition, RelayUnresolvedDefinition};
 
 export const defineRelay = <T extends TransportType>(options: RelayDefinition<T>): RelayDefinition<T> => {
     return options;
-}
+};
 
-export const getRelay = <
-    N extends Extract<keyof TransportDictionary, string>
->(name: N, options: ProxyRelayOptions): DeepAsyncProxy<TransportDictionary[N]> => {
+export const getRelay = <N extends Extract<keyof TransportDictionary, string>>(
+    name: N,
+    options: ProxyRelayOptions
+): DeepAsyncProxy<TransportDictionary[N]> => {
     return new ProxyRelay(name, options).get();
-}
+};

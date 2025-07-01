@@ -10,14 +10,12 @@ export default class<O extends ContentScriptEntrypointOptions> implements Conten
 
     protected readonly itemNames: EntrypointNameGenerator;
 
-    constructor(
-        protected readonly finder: AbstractPluginFinder<O>
-    ) {
+    constructor(protected readonly finder: AbstractPluginFinder<O>) {
         this.itemNames = new InlineNameGenerator(this.finder.type());
     }
 
     protected async getItems(): Promise<ContentItems<O>> {
-        const items: ContentItems<O> = new Map;
+        const items: ContentItems<O> = new Map();
 
         const files = await this.finder.plugin().options();
 
@@ -29,7 +27,7 @@ export default class<O extends ContentScriptEntrypointOptions> implements Conten
     }
 
     public async items(): Promise<ContentItems<O>> {
-        return this._items ??= await this.getItems();
+        return (this._items ??= await this.getItems());
     }
 
     public clear(): this {

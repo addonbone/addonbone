@@ -7,9 +7,7 @@ import {ReadonlyConfig} from "@typing/config";
 import {BackgroundEntrypointOptions} from "@typing/background";
 import {EntrypointOptionsFinder, EntrypointParser, EntrypointType} from "@typing/entrypoint";
 
-
 export default class extends AbstractPluginFinder<BackgroundEntrypointOptions> {
-
     public constructor(config: ReadonlyConfig) {
         super(config);
     }
@@ -27,6 +25,6 @@ export default class extends AbstractPluginFinder<BackgroundEntrypointOptions> {
     }
 
     protected getPlugin(): EntrypointOptionsFinder<BackgroundEntrypointOptions> {
-        return new PluginFinder(this.config, 'background', this);
+        return new PluginFinder(this.config, "background", this);
     }
 }

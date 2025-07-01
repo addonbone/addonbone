@@ -14,4 +14,4 @@ export default <K extends MessageType<T>, T extends MessageDictionary = MessageD
 
         return () => unsubscribe();
     }, [type, handler]);
-}
+};

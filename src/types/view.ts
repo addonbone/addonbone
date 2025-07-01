@@ -21,13 +21,18 @@ export type ViewRenderValue<T extends ViewConfig> = string | Element | ReactNode
 export type ViewRenderHandler<T extends ViewConfig> = (props: T) => Awaiter<void | ViewRenderValue<T>>;
 
 // Container
-export type ViewContainerTag = Exclude<keyof HTMLElementTagNameMap, 'html' | 'body'>;
+export type ViewContainerTag = Exclude<keyof HTMLElementTagNameMap, "html" | "body">;
 
 export type ViewContainerOptions = {
-    [Tag in ViewContainerTag]: { tagName: Tag } & Exclude<Optional<PickNonFunctionProperties<HTMLElementTagNameMap[Tag]>>, 'id'>;
+    [Tag in ViewContainerTag]: {tagName: Tag} & Exclude<
+        Optional<PickNonFunctionProperties<HTMLElementTagNameMap[Tag]>>,
+        "id"
+    >;
 }[ViewContainerTag];
 
-export type ViewContainerFactory<T extends ViewConfig> = (props: T) => Awaiter<Element | ViewContainerTag | ViewContainerOptions>;
+export type ViewContainerFactory<T extends ViewConfig> = (
+    props: T
+) => Awaiter<Element | ViewContainerTag | ViewContainerOptions>;
 export type ViewContainerCreator<T extends ViewConfig> = (props: T) => Awaiter<Element>;
 
 // Definition

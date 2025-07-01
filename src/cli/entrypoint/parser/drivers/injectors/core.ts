@@ -11,7 +11,7 @@ export default (): Injector[] => {
     Object.entries(Browser).forEach(([key, value]) => {
         resolvers.push({
             from: PackageName,
-            target: 'Browser',
+            target: "Browser",
             name: key,
             value,
         });
@@ -20,7 +20,7 @@ export default (): Injector[] => {
     Object.entries(Mode).forEach(([key, value]) => {
         resolvers.push({
             from: PackageName,
-            target: 'Mode',
+            target: "Mode",
             name: key,
             value,
         });
@@ -29,7 +29,7 @@ export default (): Injector[] => {
     Object.entries(Command).forEach(([key, value]) => {
         resolvers.push({
             from: PackageName,
-            target: 'Command',
+            target: "Command",
             name: key,
             value,
         });
@@ -38,7 +38,7 @@ export default (): Injector[] => {
     Object.entries(ContentScriptAppend).forEach(([key, value]) => {
         resolvers.push({
             from: PackageName,
-            target: 'ContentScriptAppend',
+            target: "ContentScriptAppend",
             name: key,
             value,
         });
@@ -47,7 +47,7 @@ export default (): Injector[] => {
     Object.entries(OffscreenReason).forEach(([key, value]) => {
         resolvers.push({
             from: PackageName,
-            target: 'OffscreenReason',
+            target: "OffscreenReason",
             name: key,
             value,
         });

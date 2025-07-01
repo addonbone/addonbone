@@ -30,7 +30,7 @@ export default class<T extends TransportType> extends Builder {
 
         if (main) {
             if (!this._content) {
-                throw new Error('Content script builder not set');
+                throw new Error("Content script builder not set");
             }
 
             await main(this._transport.get(), this._content.getContext(), this.definition);

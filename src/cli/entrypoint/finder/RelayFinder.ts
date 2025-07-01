@@ -21,7 +21,7 @@ export default class extends AbstractTransportFinder<RelayEntrypointOptions> {
     }
 
     protected getPlugin(): EntrypointOptionsFinder<RelayEntrypointOptions> {
-        return new PluginFinder(this.config, 'relay', this);
+        return new PluginFinder(this.config, "relay", this);
     }
 
     public canMerge(): boolean {

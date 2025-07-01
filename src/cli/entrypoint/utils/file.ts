@@ -7,4 +7,4 @@ export const getEntrypointFileFramework = (file: EntrypointFile): Framework => {
     }
 
     return Framework.Vanilla;
-}
+};

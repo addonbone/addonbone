@@ -1,6 +1,6 @@
 import {setSidebarPath, setSidebarTitle} from "@adnbn/browser";
 
-import {__t} from "./locale"
+import {__t} from "./locale";
 
 import type {SidebarDefinition} from "@typing/sidebar";
 import type {ManifestSidebar} from "@typing/manifest";
@@ -13,7 +13,7 @@ export type SidebarMap = Map<SidebarAlias, ManifestSidebar>;
 
 export const defineSidebar = (options: SidebarDefinition): SidebarDefinition => {
     return options;
-}
+};
 
 export const getSidebars = (): SidebarMap => {
     const sidebars: SidebarMap = new Map();
@@ -24,7 +24,7 @@ export const getSidebars = (): SidebarMap => {
             sidebars.set(key, value);
         });
     } catch (e) {
-        console.error('Failed getting sidebars: ', e);
+        console.error("Failed getting sidebars: ", e);
     }
 
     return sidebars;
@@ -52,4 +52,4 @@ export const changeSidebar = async (alias: SidebarAlias, tab?: number | Tab): Pr
     if (title) {
         await setSidebarTitle(__t(title), tab);
     }
-}
+};

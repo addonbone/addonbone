@@ -5,16 +5,12 @@ import AbstractParser from "./AbstractParser";
 import {ViewEntrypointOptions} from "@typing/view";
 
 export default abstract class<O extends ViewEntrypointOptions> extends AbstractParser<O> {
-    protected HtmlTypeStringSchema = z.enum(['css', 'js']);
+    protected HtmlTypeStringSchema = z.enum(["css", "js"]);
     protected HtmlAttributesObjectSchema = z.record(z.string(), z.union([z.string(), z.boolean(), z.number()]));
 
-    protected HtmlAddHashFunctionSchema = z.function()
-        .args(z.string(), z.string())
-        .returns(z.string());
+    protected HtmlAddHashFunctionSchema = z.function().args(z.string(), z.string()).returns(z.string());
 
-    protected HtmlAddPublicPathFunctionSchema = z.function()
-        .args(z.string(), z.string())
-        .returns(z.string());
+    protected HtmlAddPublicPathFunctionSchema = z.function().args(z.string(), z.string()).returns(z.string());
 
     protected HtmlCommonOptionsSchema = z.object({
         append: z.boolean().optional(),
@@ -67,27 +63,37 @@ export default abstract class<O extends ViewEntrypointOptions> extends AbstractP
         prependExternals: z.boolean().optional(),
         jsExtensions: z.union([z.string(), z.array(z.string())]).optional(),
         cssExtensions: z.union([z.string(), z.array(z.string())]).optional(),
-        tags: z.union([
-            z.string(),
-            this.HtmlMaybeLinkTagOptionsSchema,
-            this.HtmlMaybeScriptTagOptionsSchema,
-            z.array(z.union([z.string(), this.HtmlMaybeLinkTagOptionsSchema, this.HtmlMaybeScriptTagOptionsSchema]))
-        ]).optional(),
-        links: z.union([
-            z.string(),
-            this.HtmlLinkTagOptionsSchema,
-            z.array(z.union([z.string(), this.HtmlLinkTagOptionsSchema]))
-        ]).optional(),
-        scripts: z.union([
-            z.string(),
-            this.HtmlScriptTagOptionsSchema,
-            z.array(z.union([z.string(), this.HtmlScriptTagOptionsSchema]))
-        ]).optional(),
-        metas: z.union([
-            z.string(),
-            this.HtmlMetaTagOptionsSchema,
-            z.array(z.union([z.string(), this.HtmlMetaTagOptionsSchema]))
-        ]).optional(),
+        tags: z
+            .union([
+                z.string(),
+                this.HtmlMaybeLinkTagOptionsSchema,
+                this.HtmlMaybeScriptTagOptionsSchema,
+                z.array(
+                    z.union([z.string(), this.HtmlMaybeLinkTagOptionsSchema, this.HtmlMaybeScriptTagOptionsSchema])
+                ),
+            ])
+            .optional(),
+        links: z
+            .union([
+                z.string(),
+                this.HtmlLinkTagOptionsSchema,
+                z.array(z.union([z.string(), this.HtmlLinkTagOptionsSchema])),
+            ])
+            .optional(),
+        scripts: z
+            .union([
+                z.string(),
+                this.HtmlScriptTagOptionsSchema,
+                z.array(z.union([z.string(), this.HtmlScriptTagOptionsSchema])),
+            ])
+            .optional(),
+        metas: z
+            .union([
+                z.string(),
+                this.HtmlMetaTagOptionsSchema,
+                z.array(z.union([z.string(), this.HtmlMetaTagOptionsSchema])),
+            ])
+            .optional(),
     });
 
     protected schema(): typeof this.CommonPropertiesSchema {

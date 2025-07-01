@@ -6,11 +6,11 @@ import {ServiceEntrypointOptions} from "@typing/service";
 
 export default class extends BackgroundParser<ServiceEntrypointOptions> {
     protected definition(): string {
-        return 'defineService';
+        return "defineService";
     }
 
     protected agreement(): string {
-        return 'init';
+        return "init";
     }
 
     protected schema(): typeof this.CommonPropertiesSchema {
@@ -22,9 +22,9 @@ export default class extends BackgroundParser<ServiceEntrypointOptions> {
                 .max(100)
                 .regex(/^[\p{L}_$][\p{L}\p{N}_$]*$/u, {
                     message:
-                        'Key must start with a Unicode letter, `$` or `_`, and may only contain letters, digits, `$` or `_`',
+                        "Key must start with a Unicode letter, `$` or `_`, and may only contain letters, digits, `$` or `_`",
                 })
-                .optional()
+                .optional(),
         });
     }
 }

@@ -4,7 +4,6 @@ import {FileBuilder} from "@cli/plugins/typescript";
 
 import {ReadonlyConfig} from "@typing/config";
 
-
 export default class extends FileBuilder {
     protected names = new Set<string>();
 
@@ -22,7 +21,7 @@ export default class extends FileBuilder {
         if (this.names.size > 0) {
             const type = '"' + Array.from(this.names).join('" | "') + '"';
 
-            content = content.replace('type IconName = string', `type IconName = ${type}`);
+            content = content.replace("type IconName = string", `type IconName = ${type}`);
         }
 
         return content;

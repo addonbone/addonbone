@@ -7,7 +7,7 @@ export default class extends AbstractMeta {
         super(config);
     }
 
-    public getValue(): ReadonlyConfig['author'] {
+    public getValue(): ReadonlyConfig["author"] {
         return this.config.author;
     }
 }

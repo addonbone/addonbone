@@ -21,7 +21,7 @@ export default class extends AbstractTransportFinder<OffscreenEntrypointOptions,
     }
 
     protected getPlugin(): EntrypointOptionsFinder<OffscreenEntrypointOptions> {
-        return new PluginFinder(this.config, 'offscreen', this);
+        return new PluginFinder(this.config, "offscreen", this);
     }
 
     public canMerge(): boolean {

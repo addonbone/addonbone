@@ -17,7 +17,7 @@ export default class<T extends LocaleNativeStructure> extends NativeLocale imple
 
     protected unsubscribe?: () => void;
 
-    constructor(storage: string | false = 'lang') {
+    constructor(storage: string | false = "lang") {
         super();
 
         if (storage) {
@@ -44,7 +44,7 @@ export default class<T extends LocaleNativeStructure> extends NativeLocale imple
 
     public async sync(): Promise<Language> {
         if (!this.storage || !this.storageKey) {
-            throw new Error('Language is not saving in storage');
+            throw new Error("Language is not saving in storage");
         }
 
         const lang = await this.storage.get(this.storageKey);
@@ -64,22 +64,22 @@ export default class<T extends LocaleNativeStructure> extends NativeLocale imple
 
     public watch(handler?: (lang: Language) => void): () => void {
         if (!this.storage || !this.storageKey) {
-            throw new Error('Language is not saved in storage')
+            throw new Error("Language is not saved in storage");
         }
 
         if (this.unsubscribe) {
-            throw new Error('Already subscribed to language changes in storage')
+            throw new Error("Already subscribed to language changes in storage");
         }
 
         this.unsubscribe = this.storage.watch({
-            [this.storageKey]: (newValue) => {
+            [this.storageKey]: newValue => {
                 if (newValue) {
                     this.change(newValue)
                         .then(() => handler && handler(newValue))
-                        .catch((err) => console.error('Error while changing language:', err));
+                        .catch(err => console.error("Error while changing language:", err));
                 }
-            }
-        })
+            },
+        });
 
         return this.unwatch.bind(this);
     }
@@ -103,7 +103,7 @@ export default class<T extends LocaleNativeStructure> extends NativeLocale imple
         if (!messages) {
             const response: LocaleMessages = await (await fetch(getLocaleFilename(lang))).json();
 
-            if (!response || typeof response !== 'object') {
+            if (!response || typeof response !== "object") {
                 throw new Error(`Invalid or empty locale data for "${lang}"`);
             }
 

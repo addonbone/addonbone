@@ -5,14 +5,14 @@ import {Message} from "@message/providers";
 type CreateParameters = chrome.offscreen.CreateParameters;
 
 export default class OffscreenBridge {
-    protected readonly key: string = 'offscreen-background';
+    protected readonly key: string = "offscreen-background";
 
     protected readonly message = new Message();
 
     private static instance?: OffscreenBridge;
 
     public static getInstance(): OffscreenBridge {
-        return OffscreenBridge.instance ??= new OffscreenBridge();
+        return (OffscreenBridge.instance ??= new OffscreenBridge());
     }
 
     public static async createOffscreen(parameters: CreateParameters): Promise<void> {

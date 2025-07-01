@@ -1,1 +1,1 @@
-export const DefaultIconGroupName = 'default';
+export const DefaultIconGroupName = "default";

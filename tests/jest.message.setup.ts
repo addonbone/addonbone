@@ -2,8 +2,8 @@ type MessageSender = chrome.runtime.MessageSender;
 
 let listener: ((...args: any[]) => boolean | void) | null = null;
 
-chrome.runtime.onMessage.addListener = jest.fn((cb) => listener = cb);
-chrome.runtime.onMessage.removeListener = jest.fn((cb) => listener === cb && (listener = null));
+chrome.runtime.onMessage.addListener = jest.fn(cb => (listener = cb));
+chrome.runtime.onMessage.removeListener = jest.fn(cb => listener === cb && (listener = null));
 chrome.runtime.onMessage.hasListeners = jest.fn(() => !!listener);
 
 chrome.runtime.sendMessage = jest.fn().mockImplementation((msg, callback) => {

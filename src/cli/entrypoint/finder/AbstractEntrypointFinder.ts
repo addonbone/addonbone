@@ -17,11 +17,9 @@ export default abstract class<O extends EntrypointOptions> extends AbstractOptio
     protected constructor(config: ReadonlyConfig) {
         super(config);
 
-        this.fileExtensionsPattern = [...EntrypointFileExtensions]
-            .map(ext => ext.replace('.', '\\.'))
-            .join('|');
+        this.fileExtensionsPattern = [...EntrypointFileExtensions].map(ext => ext.replace(".", "\\.")).join("|");
 
-        this.possibleIndexFiles = new Set([...EntrypointFileExtensions].map((ext) => `index.${ext}`));
+        this.possibleIndexFiles = new Set([...EntrypointFileExtensions].map(ext => `index.${ext}`));
     }
 
     public canMerge(): boolean {
@@ -43,7 +41,7 @@ export default abstract class<O extends EntrypointOptions> extends AbstractOptio
             }
         }
 
-        if (appFiles.size > 0 && this.canMerge() || appFiles.size === 0) {
+        if ((appFiles.size > 0 && this.canMerge()) || appFiles.size === 0) {
             const sharedFiles = this.findFiles(getSharedPath(this.config));
 
             if (sharedFiles.size > 0) {
@@ -95,7 +93,6 @@ export default abstract class<O extends EntrypointOptions> extends AbstractOptio
                                 if (this.config.debug) {
                                     console.log(`Error reading ${entrypoint} entrypoint index file: ${indexPath}`);
                                 }
-
                             }
                         }
                     } else if (entry.name === entrypointPluralize) {
@@ -120,7 +117,7 @@ export default abstract class<O extends EntrypointOptions> extends AbstractOptio
                 }
             } catch (e) {
                 if (this.config.debug) {
-                    console.log('Error reading entrypoint directory:', directory);
+                    console.log("Error reading entrypoint directory:", directory);
                 }
             }
         }
@@ -129,7 +126,7 @@ export default abstract class<O extends EntrypointOptions> extends AbstractOptio
     }
 
     protected isValidFilename(filename: string): boolean {
-        const name = this.type().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const name = this.type().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
         const pattern = new RegExp(`^(?:.*\\.)?${name}\\.(${this.fileExtensionsPattern})$`);
 
@@ -139,6 +136,6 @@ export default abstract class<O extends EntrypointOptions> extends AbstractOptio
     protected isValidDirname(dirname: string): boolean {
         const entrypoint = this.type();
 
-        return dirname === entrypoint || dirname.endsWith(`.${entrypoint}`)
+        return dirname === entrypoint || dirname.endsWith(`.${entrypoint}`);
     }
 }

@@ -3,7 +3,7 @@ import {
     CommandDefinition,
     CommandExecute,
     CommandExecuteActionName,
-    ExecuteActionCommandDefinition
+    ExecuteActionCommandDefinition,
 } from "@typing/command";
 
 export {
@@ -11,13 +11,13 @@ export {
     type ExecuteActionCommandDefinition,
     CommandExecuteActionName,
     type CommandConfig,
-    type CommandExecute
+    type CommandExecute,
 };
 
 export const defineCommand = (options: CommandDefinition): CommandDefinition => {
     return options;
-}
+};
 
 export const defineExecuteActionCommand = (options: ExecuteActionCommandDefinition): CommandDefinition => {
     return {...options, name: CommandExecuteActionName};
-}
+};

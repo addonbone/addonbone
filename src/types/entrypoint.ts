@@ -1,18 +1,18 @@
 import {Browser} from "@typing/browser";
 
-export const EntrypointFileExtensions: ReadonlySet<string> = new Set(['ts', 'tsx', 'js', 'jsx', 'vue', 'svelte']);
+export const EntrypointFileExtensions: ReadonlySet<string> = new Set(["ts", "tsx", "js", "jsx", "vue", "svelte"]);
 
 export enum EntrypointType {
-    Background = 'background',
-    Command = 'command',
-    ContentScript = 'content',
-    Page = 'page',
-    Service = 'service',
-    Relay = 'relay',
-    Options = 'options',
-    Popup = 'popup',
-    Sidebar = 'sidebar',
-    Offscreen = 'offscreen',
+    Background = "background",
+    Command = "command",
+    ContentScript = "content",
+    Page = "page",
+    Service = "service",
+    Relay = "relay",
+    Options = "options",
+    Popup = "popup",
+    Sidebar = "sidebar",
+    Offscreen = "offscreen",
 }
 
 export interface EntrypointOptions {

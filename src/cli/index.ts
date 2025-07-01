@@ -1,4 +1,4 @@
-import cac from 'cac';
+import cac from "cac";
 import {consola} from "consola";
 
 import app from "./builders/app";
@@ -6,25 +6,22 @@ import app from "./builders/app";
 import {Command} from "@typing/app";
 import {Browser} from "@typing/browser";
 
-import {name, version} from '../../package.json';
+import {name, version} from "../../package.json";
 
 const cli = cac(name);
 
-cli.option('--debug', 'Enable debug mode');
+cli.option("--debug", "Enable debug mode");
 
-cli
-    .command('init', 'Initialize a new project')
-    .action(() => {
-        consola.box('Coming soon...');
-    });
+cli.command("init", "Initialize a new project").action(() => {
+    consola.box("Coming soon...");
+});
 
-cli
-    .command('watch [root]', 'Start watch mode')
-    .option('-m, --mode <mode>', 'Set env mode', {default: 'development'})
-    .option('-c, --config <config>', 'Path to config file')
-    .option('-a, --app <app>', 'Specify an app to run', {default: 'myapp'})
-    .option('-b, --browser <browser>', 'Specify a browser')
-    .option('--mv2', 'Target manifest v2')
+cli.command("watch [root]", "Start watch mode")
+    .option("-m, --mode <mode>", "Set env mode", {default: "development"})
+    .option("-c, --config <config>", "Path to config file")
+    .option("-a, --app <app>", "Specify an app to run", {default: "myapp"})
+    .option("-b, --browser <browser>", "Specify a browser")
+    .option("--mv2", "Target manifest v2")
     .action(async (root, options) => {
         try {
             await app({
@@ -42,14 +39,13 @@ cli
         }
     });
 
-cli
-    .command('build [root]', 'Build for production')
-    .option('-m, --mode <mode>', 'Set env mode', {default: 'production'})
-    .option('-c, --config <config>', 'Path to config file')
-    .option('-a, --app <app>', 'Specify an app to run', {default: 'myapp'})
-    .option('-b, --browser <browser>', 'Specify a browser', {default: Browser.Chrome})
-    .option('--mv2', 'Target manifest v2')
-    .option('--analyze', 'Visualize extension bundle')
+cli.command("build [root]", "Build for production")
+    .option("-m, --mode <mode>", "Set env mode", {default: "production"})
+    .option("-c, --config <config>", "Path to config file")
+    .option("-a, --app <app>", "Specify an app to run", {default: "myapp"})
+    .option("-b, --browser <browser>", "Specify a browser", {default: Browser.Chrome})
+    .option("--mv2", "Target manifest v2")
+    .option("--analyze", "Visualize extension bundle")
     .action(async (root, options) => {
         try {
             await app({

@@ -13,7 +13,10 @@ export interface TransportItem<O extends TransportOptions> {
 
 export type TransportItems<O extends TransportOptions> = Map<EntrypointFile, TransportItem<O>>;
 
-export default abstract class<O extends TransportEntrypointOptions, T extends TransportOptions = TransportOptions> extends AbstractPluginFinder<O> {
+export default abstract class<
+    O extends TransportEntrypointOptions,
+    T extends TransportOptions = TransportOptions,
+> extends AbstractPluginFinder<O> {
     protected _transport?: TransportItems<T>;
 
     protected readonly names: InlineNameGenerator;
@@ -25,7 +28,7 @@ export default abstract class<O extends TransportEntrypointOptions, T extends Tr
     }
 
     protected async getTransport(): Promise<TransportItems<T>> {
-        const transport: TransportItems<T> = new Map;
+        const transport: TransportItems<T> = new Map();
 
         const contracts = await this.plugin().contracts();
 
@@ -61,15 +64,18 @@ export default abstract class<O extends TransportEntrypointOptions, T extends Tr
     }
 
     public async transport(): Promise<TransportItems<T>> {
-        return this._transport ??= await this.getTransport();
+        return (this._transport ??= await this.getTransport());
     }
 
     public async dictionary(): Promise<Record<string, string>> {
         const transport = await this.transport();
 
-        return transport.values().reduce((dictionary, item) => {
-            return {...dictionary, [item.options.name]: item.contract || 'any'};
-        }, {} as Record<string, string>);
+        return transport.values().reduce(
+            (dictionary, item) => {
+                return {...dictionary, [item.options.name]: item.contract || "any"};
+            },
+            {} as Record<string, string>
+        );
     }
 
     public clear(): this {

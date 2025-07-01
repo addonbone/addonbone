@@ -7,15 +7,14 @@ import {
     TransportRegister,
     TransportResolvedDefinition,
     TransportType,
-    TransportUnresolvedDefinition
+    TransportUnresolvedDefinition,
 } from "@typing/transport";
 import {EntrypointBuilder} from "@typing/entrypoint";
 
-
-export default abstract class<
-    O extends TransportOptions,
-    T extends TransportType = TransportType
-> extends Builder implements EntrypointBuilder {
+export default abstract class<O extends TransportOptions, T extends TransportType = TransportType>
+    extends Builder
+    implements EntrypointBuilder
+{
     protected readonly definition: TransportResolvedDefinition<O, T>;
 
     protected instance?: TransportRegister<T, [O]>;
@@ -28,11 +27,11 @@ export default abstract class<
         const {name, init} = definition;
 
         if (!isValidTransportInitFunction(init)) {
-            throw new Error('The transport entrypoint must export a init function');
+            throw new Error("The transport entrypoint must export a init function");
         }
 
         if (!isValidTransportName(name)) {
-            throw new Error('The transport entrypoint must export a name string');
+            throw new Error("The transport entrypoint must export a name string");
         }
 
         this.definition = {
@@ -44,7 +43,7 @@ export default abstract class<
 
     public get(): T {
         if (!this.instance) {
-            throw new Error('Before using get function run build() method');
+            throw new Error("Before using get function run build() method");
         }
 
         return this.instance.get();

@@ -14,11 +14,11 @@ export default class extends PageFinder {
     }
 
     public view(): View<PageEntrypointOptions> {
-        return this._view ??= new View(this.config, this);
+        return (this._view ??= new View(this.config, this));
     }
 
     public async accessibleResources(): Promise<ManifestAccessibleResources> {
-        const resources: ManifestAccessibleResources = new Set;
+        const resources: ManifestAccessibleResources = new Set();
 
         const views = await this.views();
 

@@ -12,7 +12,6 @@ import {EntrypointFile} from "@typing/entrypoint";
 
 export type OffscreenParameters = Record<string, chrome.offscreen.CreateParameters>;
 
-
 export default class extends OffscreenFinder {
     protected _view?: View<OffscreenEntrypointOptions>;
 
@@ -25,7 +24,7 @@ export default class extends OffscreenFinder {
     }
 
     public chunkName(): string {
-        return 'common.' + this.type();
+        return "common." + this.type();
     }
 
     public likely(name?: string): boolean {
@@ -33,11 +32,11 @@ export default class extends OffscreenFinder {
     }
 
     public view(): View<OffscreenEntrypointOptions> {
-        return this._view ??= new View(this.config, this.views());
+        return (this._view ??= new View(this.config, this.views()));
     }
 
     public views(): OffscreenViewFinder {
-        return this._views ??= new OffscreenViewFinder(this.config, this);
+        return (this._views ??= new OffscreenViewFinder(this.config, this));
     }
 
     /**
@@ -67,11 +66,7 @@ export default class extends OffscreenFinder {
                 throw new Error(`Offscreen filename not found for "${file.file}"`);
             }
 
-            let {
-                name,
-                reasons = 'TESTING',
-                justification = 'Just for testing',
-            } = transport.options;
+            let {name, reasons = "DOM_PARSER", justification = "Just for testing"} = transport.options;
 
             if (_.isString(reasons)) {
                 reasons = [reasons];

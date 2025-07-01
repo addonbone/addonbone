@@ -6,7 +6,7 @@ import {
     LocaleNonPluralKeys,
     LocaleStructure,
     LocaleSubstitutionsFor,
-    LocalePluralKeys
+    LocalePluralKeys,
 } from "@typing/locale";
 
 import {LocaleNativeStructure} from "@locale/providers";
@@ -18,7 +18,7 @@ export interface LocaleContract<S extends LocaleStructure = LocaleNativeStructur
 
     isRtl: boolean;
 
-    _<K extends LocaleNonPluralKeys<S> >(key: K, substitutions?: LocaleSubstitutionsFor<S, K>): string;
+    _<K extends LocaleNonPluralKeys<S>>(key: K, substitutions?: LocaleSubstitutionsFor<S, K>): string;
 
     choice<K extends LocalePluralKeys<S>>(key: K, count: number, substitutions?: LocaleSubstitutionsFor<S, K>): string;
 
@@ -35,8 +35,7 @@ export const DefaultLocale: LocaleContract = {
     choice(key: string): string {
         return key;
     },
-    change(_lang: Language)  {
-    }
+    change(_lang: Language) {},
 };
 
 export const LocaleContext = createContext<LocaleContract>(DefaultLocale);

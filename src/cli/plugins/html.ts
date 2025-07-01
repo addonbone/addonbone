@@ -7,7 +7,7 @@ import {definePlugin} from "@main/plugin";
 
 export default definePlugin(() => {
     return {
-        name: 'adnbn:html',
+        name: "adnbn:html",
         bundler: ({config}) => {
             let options = _.isFunction(config.html) ? config.html() : config.html;
 

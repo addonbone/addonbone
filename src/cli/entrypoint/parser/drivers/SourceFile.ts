@@ -1,6 +1,6 @@
-import ts from 'typescript';
-import fs from 'fs';
-import path from 'path';
+import ts from "typescript";
+import fs from "fs";
+import path from "path";
 
 import {ImportResolver} from "./resolvers";
 
@@ -23,23 +23,16 @@ export default class EntryFile {
         return new this(file);
     }
 
-    constructor(protected readonly file: string) {
-
-    }
+    constructor(protected readonly file: string) {}
 
     public getSourceFile(): ts.SourceFile {
         if (this.sourceFile) {
             return this.sourceFile;
         }
 
-        const sourceCode = fs.readFileSync(this.file, 'utf8');
+        const sourceCode = fs.readFileSync(this.file, "utf8");
 
-        return this.sourceFile = ts.createSourceFile(
-            this.file,
-            sourceCode,
-            ts.ScriptTarget.ESNext,
-            true
-        );
+        return (this.sourceFile = ts.createSourceFile(this.file, sourceCode, ts.ScriptTarget.ESNext, true));
     }
 
     public getImports(): ImportMap {
@@ -67,7 +60,7 @@ export default class EntryFile {
             }
 
             ts.forEachChild(node, parse);
-        }
+        };
 
         parse(this.getSourceFile());
 
@@ -88,7 +81,7 @@ export default class EntryFile {
 
                 node.members.forEach(member => {
                     const key = member.name.getText();
-                    const value = member.initializer ? member.initializer.getText().replace(/['"]/g, '') : key;
+                    const value = member.initializer ? member.initializer.getText().replace(/['"]/g, "") : key;
 
                     enumProperties.set(key, value);
                 });
@@ -97,7 +90,7 @@ export default class EntryFile {
             }
 
             ts.forEachChild(node, parse);
-        }
+        };
 
         parse(this.getSourceFile());
 
@@ -123,7 +116,7 @@ export default class EntryFile {
                         this.variables?.set(name, {
                             name,
                             value,
-                            exported: isExported || false
+                            exported: isExported || false,
                         });
                     }
                 });
@@ -139,7 +132,7 @@ export default class EntryFile {
                         this.variables?.set(name, {
                             name,
                             value: variable.value,
-                            exported: true
+                            exported: true,
                         });
                     }
                 });
@@ -154,7 +147,7 @@ export default class EntryFile {
                     this.variables?.set(name, {
                         name,
                         value: variable.value,
-                        exported: true
+                        exported: true,
                     });
                 }
             }
@@ -243,31 +236,32 @@ export default class EntryFile {
                 return name;
             }
             case ts.SyntaxKind.ArrayLiteralExpression:
-                return (node as ts.ArrayLiteralExpression).elements.map(element =>
-                    this.parseNode(element)
-                );
+                return (node as ts.ArrayLiteralExpression).elements.map(element => this.parseNode(element));
             case ts.SyntaxKind.ObjectLiteralExpression:
                 return (node as ts.ObjectLiteralExpression).properties
                     .filter(
                         (property): property is ts.PropertyAssignment =>
                             ts.isPropertyAssignment(property) || ts.isShorthandPropertyAssignment(property)
                     )
-                    .reduce((acc, property) => {
-                        if (ts.isComputedPropertyName(property.name)) {
+                    .reduce(
+                        (acc, property) => {
+                            if (ts.isComputedPropertyName(property.name)) {
+                                return acc;
+                            }
+
+                            const key = (property.name as ts.Identifier | ts.StringLiteral).text;
+                            let value = this.parseNode(property.initializer);
+
+                            if (typeof value === "string" && this.variables?.has(value)) {
+                                value = this.variables?.get(value)?.value;
+                            }
+
+                            acc[key] = value;
+
                             return acc;
-                        }
-
-                        const key = (property.name as ts.Identifier | ts.StringLiteral).text;
-                        let value = this.parseNode(property.initializer);
-
-                        if (typeof value === 'string' && this.variables?.has(value)) {
-                            value = this.variables?.get(value)?.value;
-                        }
-
-                        acc[key] = value;
-
-                        return acc;
-                    }, {} as Record<string, any>);
+                        },
+                        {} as Record<string, any>
+                    );
             case ts.SyntaxKind.PropertyAccessExpression: {
                 return this.findPropertyAccessValue(node);
             }
@@ -285,6 +279,6 @@ export default class EntryFile {
     }
 
     public setImportResolver(resolver: ImportResolver): ImportResolver {
-        return this.importResolver = resolver.setBaseDir(path.dirname(this.file));
+        return (this.importResolver = resolver.setBaseDir(path.dirname(this.file)));
     }
 }

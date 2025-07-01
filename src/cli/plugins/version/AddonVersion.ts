@@ -9,13 +9,16 @@ import AbstractVersion from "./AbstractVersion";
 import type {ReadonlyConfig} from "@typing/config";
 
 export default class extends AbstractVersion {
-
     constructor(config: ReadonlyConfig) {
         super(config);
     }
 
     public getVersion(): string | undefined {
         const version = this.extractVersionValue(this.config.version);
+
+        if(!version) {
+            return;
+        }
 
         if (semver.valid(version)) {
             return version;
@@ -27,10 +30,10 @@ export default class extends AbstractVersion {
             return envVersion;
         }
 
-        const packagePath = getInputPath(this.config, 'package.json');
+        const packagePath = getInputPath(this.config, "package.json");
 
         try {
-            const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf-8'));
+            const packageJson = JSON.parse(fs.readFileSync(packagePath, "utf-8"));
 
             return packageJson.version;
         } catch (e) {

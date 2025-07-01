@@ -1,1 +1,1 @@
-export {Mode, Command} from "@typing/app"
+export {Mode, Command} from "@typing/app";

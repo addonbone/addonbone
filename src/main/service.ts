@@ -8,8 +8,10 @@ export type {ServiceDefinition};
 
 export const defineService = <T extends TransportType>(options: ServiceDefinition<T>): ServiceDefinition<T> => {
     return options;
-}
+};
 
-export const getService = <N extends Extract<keyof TransportDictionary, string>>(name: N): DeepAsyncProxy<TransportDictionary[N]> => {
+export const getService = <N extends Extract<keyof TransportDictionary, string>>(
+    name: N
+): DeepAsyncProxy<TransportDictionary[N]> => {
     return new ProxyService(name).get();
-}
+};

@@ -14,7 +14,7 @@ export default definePlugin(() => {
     let icon: Icon;
 
     return {
-        name: 'adnbn:icon',
+        name: "adnbn:icon",
         startup: ({config}) => {
             icon = new Icon(config);
         },
@@ -30,13 +30,11 @@ export default definePlugin(() => {
                     new DefinePlugin({
                         __ADNBN_ICONS__: JSON.stringify(await icon.define()),
                     }),
-                ]
+                ],
             } satisfies RspackConfig;
         },
         manifest: async ({manifest, config}) => {
-            manifest
-                .setIcons(await icon.manifest())
-                .setIcon(config.icon.name || DefaultIconGroupName);
-        }
+            manifest.setIcons(await icon.manifest()).setIcon(config.icon.name || DefaultIconGroupName);
+        },
     };
 });

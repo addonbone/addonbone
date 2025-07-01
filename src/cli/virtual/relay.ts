@@ -10,7 +10,7 @@ import {Builder as ContentScriptBuilder} from "virtual:content-framework";
 import * as module from "virtual:relay-entrypoint";
 
 try {
-    const relayName = 'virtual:relay-name';
+    const relayName = "virtual:relay-name";
 
     const {default: defaultDefinition, ...otherDefinition} = module;
 
@@ -24,9 +24,12 @@ try {
 
     const {init, main, name = relayName, ...options} = definition;
 
-    new RelayBuilder({name, init, main, ...options}).content(new ContentScriptBuilder(options)).build().catch((e) => {
-        console.error('Failed to build relay: ', e);
-    });
+    new RelayBuilder({name, init, main, ...options})
+        .content(new ContentScriptBuilder(options))
+        .build()
+        .catch(e => {
+            console.error("Failed to build relay: ", e);
+        });
 } catch (e) {
-    console.error('The relay crashed on startup:', e);
+    console.error("The relay crashed on startup:", e);
 }

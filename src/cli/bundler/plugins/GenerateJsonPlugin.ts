@@ -1,9 +1,9 @@
-import {Compilation, Compiler, sources} from '@rspack/core';
+import {Compilation, Compiler, sources} from "@rspack/core";
 
 type JsonValue = string | number | boolean | null | JsonObject | JsonArray;
 
 interface JsonObject {
-    [key: string]: JsonValue
+    [key: string]: JsonValue;
 }
 
 type JsonArray = JsonValue[];
@@ -13,13 +13,11 @@ export type GenerateJsonPluginData = Record<string, JsonValue>;
 export type GenerateJsonPluginUpdate = () => Promise<GenerateJsonPluginData>;
 
 export default class GenerateJsonPlugin {
-    private readonly pluginName: string = 'GenerateJsonPlugin';
+    private readonly pluginName: string = "GenerateJsonPlugin";
 
     private update?: GenerateJsonPluginUpdate;
 
-    constructor(protected data: GenerateJsonPluginData) {
-
-    }
+    constructor(protected data: GenerateJsonPluginData) {}
 
     public apply(compiler: Compiler): void {
         compiler.hooks.watchRun.tapPromise(this.pluginName, async () => {
@@ -30,7 +28,7 @@ export default class GenerateJsonPlugin {
                     this.data = await update();
                 }
             } catch (e) {
-                console.error('GenerateJsonPlugin: Error updating data', e);
+                console.error("GenerateJsonPlugin: Error updating data", e);
             }
         });
 
@@ -55,10 +53,7 @@ export default class GenerateJsonPlugin {
         Object.entries(this.data).forEach(([filename, jsonData]) => {
             const json = JSON.stringify(jsonData, null, 2);
 
-            compilation.emitAsset(
-                filename,
-                new sources.RawSource(json)
-            );
+            compilation.emitAsset(filename, new sources.RawSource(json));
         });
-    };
+    }
 }

@@ -4,10 +4,13 @@ import {
     EntrypointOptions,
     EntrypointOptionsFinder,
     EntrypointParser,
-    EntrypointType
+    EntrypointType,
 } from "@typing/entrypoint";
 
-export default abstract class<O extends EntrypointOptions> extends AbstractFinder implements EntrypointOptionsFinder<O> {
+export default abstract class<O extends EntrypointOptions>
+    extends AbstractFinder
+    implements EntrypointOptionsFinder<O>
+{
     protected _parser?: EntrypointParser<O>;
     protected _options?: Map<EntrypointFile, O>;
     protected _contract?: Map<EntrypointFile, string | undefined>;
@@ -17,15 +20,15 @@ export default abstract class<O extends EntrypointOptions> extends AbstractFinde
     protected abstract getParser(): EntrypointParser<O>;
 
     public parser(): EntrypointParser<O> {
-        return this._parser ??= this.getParser();
+        return (this._parser ??= this.getParser());
     }
 
     public async options(): Promise<Map<EntrypointFile, O>> {
-        return this._options ??= await this.getOptions();
+        return (this._options ??= await this.getOptions());
     }
 
     public async contracts(): Promise<Map<EntrypointFile, string | undefined>> {
-        return this._contract ??= await this.getContracts();
+        return (this._contract ??= await this.getContracts());
     }
 
     protected async getContracts(): Promise<Map<EntrypointFile, string | undefined>> {

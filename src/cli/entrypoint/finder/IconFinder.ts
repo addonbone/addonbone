@@ -26,26 +26,18 @@ export default class extends AbstractAssetFinder {
     protected _plugin?: AssetPluginFinder;
     protected _icons?: IconGroups;
 
-    protected readonly sizes: ReadonlySet<number> = new Set([
-        16,
-        32,
-        48,
-        64,
-        128,
-        256,
-        512,
-    ]);
+    protected readonly sizes: ReadonlySet<number> = new Set([16, 32, 48, 64, 128, 256, 512]);
 
     public constructor(config: ReadonlyConfig) {
         super(config);
     }
 
     protected getPlugin(): AssetPluginFinder {
-        return new AssetPluginFinder(this.config, 'icon', this);
+        return new AssetPluginFinder(this.config, "icon", this);
     }
 
     public plugin(): AssetPluginFinder {
-        return this._plugin ??= this.getPlugin();
+        return (this._plugin ??= this.getPlugin());
     }
 
     public getNames(): ReadonlySet<string> {
@@ -57,14 +49,14 @@ export default class extends AbstractAssetFinder {
     }
 
     public isValidExtension(extension: string): boolean {
-        return extension === 'png';
+        return extension === "png";
     }
 
     protected parseName(name: string): IconName | undefined {
         name = name.toLowerCase().trim();
 
-        if (name.includes('.')) {
-            const index = name.lastIndexOf('.');
+        if (name.includes(".")) {
+            const index = name.lastIndexOf(".");
 
             if (index >= 0) {
                 name = name.substring(0, index);
@@ -99,7 +91,7 @@ export default class extends AbstractAssetFinder {
     }
 
     public getDirectory(): string {
-        return this.config.icon.sourceDir || 'icons';
+        return this.config.icon.sourceDir || "icons";
     }
 
     public canMerge(): boolean {
@@ -110,19 +102,18 @@ export default class extends AbstractAssetFinder {
         const files = await this.plugin().files();
 
         const groups = _.chain([...files])
-            .map((file) => ({file, name: this.getName(file)}))
+            .map(file => ({file, name: this.getName(file)}))
             .groupBy(({name}) => name.group)
-            .mapValues((items) => {
-                return new Map(
-                    items.map(item => [item.name.size, item])
-                );
-            }).value();
+            .mapValues(items => {
+                return new Map(items.map(item => [item.name.size, item]));
+            })
+            .value();
 
         return new Map(Object.entries(groups));
     }
 
     public async icons(): Promise<IconGroups> {
-        return this._icons ??= await this.getIcons();
+        return (this._icons ??= await this.getIcons());
     }
 
     public clear(): this {

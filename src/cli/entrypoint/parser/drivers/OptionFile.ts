@@ -1,5 +1,5 @@
-import ts from 'typescript';
-import _ from 'lodash';
+import ts from "typescript";
+import _ from "lodash";
 
 import SourceFile from "./SourceFile";
 
@@ -65,7 +65,7 @@ export default class<T extends Record<string, any>> extends SourceFile {
             }
 
             ts.forEachChild(node, parse);
-        }
+        };
 
         parse(this.getSourceFile());
 
@@ -77,7 +77,10 @@ export default class<T extends Record<string, any>> extends SourceFile {
 
         if (ts.isObjectLiteralExpression(expr)) {
             return expr;
-        } else if ((ts.isAsExpression(expr) || ts.isSatisfiesExpression(expr)) && ts.isObjectLiteralExpression(expr.expression)) {
+        } else if (
+            (ts.isAsExpression(expr) || ts.isSatisfiesExpression(expr)) &&
+            ts.isObjectLiteralExpression(expr.expression)
+        ) {
             return expr.expression;
         } else if (ts.isCallExpression(expr) && ts.isIdentifier(expr.expression)) {
             const functionName = expr.expression.text;

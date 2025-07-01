@@ -7,7 +7,6 @@ import {ManifestIncognitoValue, ManifestVersion} from "@typing/manifest";
 import {Plugin} from "@typing/plugin";
 import {Language} from "@typing/locale";
 
-
 /**
  * Interface representing the configuration options for building an extension.
  * This configuration includes settings for directories, output locations,
@@ -195,7 +194,7 @@ export interface Config {
      * - { (): HtmlOptions | HtmlOptions[] }: A function that dynamically generates and
      *   returns either an HtmlOptions object or an array of HtmlOptions objects.
      */
-    html: HtmlOptions | HtmlOptions[] | { (): HtmlOptions | HtmlOptions[] };
+    html: HtmlOptions | HtmlOptions[] | {(): HtmlOptions | HtmlOptions[]};
 
     /**
      * Environment configuration for the extension.
@@ -215,7 +214,7 @@ export interface Config {
          * @default false
          */
         crypt?: boolean;
-    }
+    };
 
     /**
      * Icon configuration for the extension.
@@ -247,7 +246,7 @@ export interface Config {
          * @example "default"
          */
         name?: string;
-    },
+    };
 
     /**
      * Locale configuration for the extension.
@@ -290,7 +289,7 @@ export interface Config {
          * @example "#app.description" or "My awesome app description"
          */
         description?: string;
-    }
+    };
 
     /**
      * Array of plugins used when building the extension.
@@ -539,7 +538,7 @@ export interface Config {
      */
     cssFilename: Filename;
 
-     /**
+    /**
      * Template for generating scoped CSS class names.
      *
      * Supported placeholders:
@@ -560,9 +559,8 @@ export interface Config {
     cssIdentName: string;
 }
 
-
 export type OptionalConfig = Partial<Config>;
-export type UserConfig = Omit<OptionalConfig, 'configFile' | 'command'>;
+export type UserConfig = Omit<OptionalConfig, "configFile" | "command">;
 export type ReadonlyConfig = Readonly<Config>;
 
 export type UserConfigCallback = (config: ReadonlyConfig) => UserConfig;

@@ -1,4 +1,4 @@
-import ':package';
+import ":package";
 import {
     Language,
     LocaleDir,
@@ -6,28 +6,29 @@ import {
     type LocalePluralKeys,
     type LocaleProvider,
     type LocaleDynamicProvider,
-    type LocaleSubstitutionsFor
+    type LocaleSubstitutionsFor,
 } from ":package/locale";
 
-declare module ':package' {
+declare module ":package" {
+    // prettier-ignore
     export interface LocaleNativeStructure {}
 
     export function _<K extends LocaleNonPluralKeys<LocaleNativeStructure>>(
         key: K,
-        substitutions?: LocaleSubstitutionsFor<LocaleNativeStructure, K>,
+        substitutions?: LocaleSubstitutionsFor<LocaleNativeStructure, K>
     ): string;
 
     export function _c<K extends LocalePluralKeys<LocaleNativeStructure>>(
         key: K,
         count: number,
-        substitutions?: LocaleSubstitutionsFor<LocaleNativeStructure, K>,
+        substitutions?: LocaleSubstitutionsFor<LocaleNativeStructure, K>
     ): string;
 
     export function __(key: keyof LocaleNativeStructure & string): string;
 }
 
-declare module ':package/locale' {
-    import type {LocaleNativeStructure} from ':package';
+declare module ":package/locale" {
+    import type {LocaleNativeStructure} from ":package";
 
     export declare class NativeLocale implements LocaleProvider<LocaleNativeStructure> {
         lang(): Language;
@@ -55,8 +56,8 @@ declare module ':package/locale' {
     }
 }
 
-declare module ':package/locale/react' {
-    import type {LocaleNativeStructure} from ':package';
+declare module ":package/locale/react" {
+    import type {LocaleNativeStructure} from ":package";
 
     export interface LocaleContract {
         lang: Language;
@@ -65,9 +66,16 @@ declare module ':package/locale/react' {
 
         isRtl: boolean;
 
-        _<K extends LocaleNonPluralKeys<LocaleNativeStructure>>(key: K, substitutions?: LocaleSubstitutionsFor<LocaleNativeStructure, K>): string;
+        _<K extends LocaleNonPluralKeys<LocaleNativeStructure>>(
+            key: K,
+            substitutions?: LocaleSubstitutionsFor<LocaleNativeStructure, K>
+        ): string;
 
-        choice<K extends LocalePluralKeys<LocaleNativeStructure>>(key: K, count: number, substitutions?: LocaleSubstitutionsFor<LocaleNativeStructure, K>): string;
+        choice<K extends LocalePluralKeys<LocaleNativeStructure>>(
+            key: K,
+            count: number,
+            substitutions?: LocaleSubstitutionsFor<LocaleNativeStructure, K>
+        ): string;
 
         change(lang: Language): void;
     }

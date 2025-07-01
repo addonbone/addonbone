@@ -1,27 +1,15 @@
-import type {
-    TransportDictionary,
-    TransportManager as TransportManagerContract,
-    TransportName
-} from "@typing/transport";
+import type {TransportDictionary, TransportManager as TransportManagerContract, TransportName} from "@typing/transport";
 
 export default abstract class TransportManager implements TransportManagerContract {
-    private items = new Map<
-        TransportName,
-        TransportDictionary[TransportName]
-    >();
+    private items = new Map<TransportName, TransportDictionary[TransportName]>();
 
-    public add<K extends TransportName>(
-        name: K,
-        instance: TransportDictionary[K]
-    ): this {
+    public add<K extends TransportName>(name: K, instance: TransportDictionary[K]): this {
         this.items.set(name, instance);
 
         return this;
     }
 
-    public get<K extends TransportName>(
-        name: K
-    ): TransportDictionary[K] | undefined {
+    public get<K extends TransportName>(name: K): TransportDictionary[K] | undefined {
         return this.items.get(name) as TransportDictionary[K] | undefined;
     }
 
@@ -29,9 +17,7 @@ export default abstract class TransportManager implements TransportManagerContra
         return this.items.has(name);
     }
 
-    public remove<K extends TransportName>(
-        name: K
-    ): TransportDictionary[K] | undefined {
+    public remove<K extends TransportName>(name: K): TransportDictionary[K] | undefined {
         const service = this.get(name);
 
         this.items.delete(name);

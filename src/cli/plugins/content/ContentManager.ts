@@ -8,9 +8,8 @@ import {ContentScriptEntrypointOptions} from "@typing/content";
 import {EntrypointEntries, EntrypointFile, EntrypointType} from "@typing/entrypoint";
 import {ManifestContentScripts, ManifestHostPermissions} from "@typing/manifest";
 
-
 export default class {
-    protected readonly providers = new Set<ContentProvider<ContentScriptEntrypointOptions>>;
+    protected readonly providers = new Set<ContentProvider<ContentScriptEntrypointOptions>>();
 
     protected readonly names: ContentName;
 
@@ -29,7 +28,7 @@ export default class {
     protected async getGroup(): Promise<ContentGroupItems<ContentScriptEntrypointOptions>> {
         const content = await Promise.all(Array.from(this.providers, provider => provider.driver().items()));
 
-        const group: ContentGroupItems<ContentScriptEntrypointOptions> = new Map;
+        const group: ContentGroupItems<ContentScriptEntrypointOptions> = new Map();
 
         for (const items of content) {
             for (const [name, item] of items) {
@@ -43,11 +42,11 @@ export default class {
     }
 
     public async group(): Promise<ContentGroupItems<ContentScriptEntrypointOptions>> {
-        return this._group ??= await this.getGroup();
+        return (this._group ??= await this.getGroup());
     }
 
     public async entries(): Promise<EntrypointEntries> {
-        const entries: EntrypointEntries = new Map;
+        const entries: EntrypointEntries = new Map();
 
         for (const [entry, items] of await this.group()) {
             entries.set(entry, new Set(Array.from(items, ({file}) => file)));
@@ -57,13 +56,12 @@ export default class {
     }
 
     public async manifest(): Promise<ManifestContentScripts> {
-        const manifest: ManifestContentScripts = new Set;
+        const manifest: ManifestContentScripts = new Set();
 
         for (const [entry, items] of await this.group()) {
-            const options = Array.from(items, ({options}) => options)
-                .reduce((acc, opt) => {
-                    return {...acc, ...opt};
-                }, {} as ContentScriptEntrypointOptions);
+            const options = Array.from(items, ({options}) => options).reduce((acc, opt) => {
+                return {...acc, ...opt};
+            }, {} as ContentScriptEntrypointOptions);
 
             manifest.add({entry, ...getContentScriptConfigFromOptions(options)});
         }
@@ -72,7 +70,7 @@ export default class {
     }
 
     public async hostPermissions(): Promise<ManifestHostPermissions> {
-        const hostPermissions = new Set<string>;
+        const hostPermissions = new Set<string>();
 
         const group = await this.group();
 
@@ -97,8 +95,7 @@ export default class {
         for (const provider of this.providers) {
             try {
                 return provider.virtual(file);
-            } catch {
-            }
+            } catch {}
         }
 
         throw new Error(`Virtual file "${file.file}" not found.`);
@@ -117,10 +114,9 @@ export default class {
             return false;
         }
 
-        return [
-            EntrypointType.Relay,
-            EntrypointType.ContentScript
-        ].some(type => name === type || name.endsWith(`.${type}`));
+        return [EntrypointType.Relay, EntrypointType.ContentScript].some(
+            type => name === type || name.endsWith(`.${type}`)
+        );
     }
 
     public clear(): this {

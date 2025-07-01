@@ -1,4 +1,4 @@
-import isURL from 'validator/lib/isURL';
+import isURL from "validator/lib/isURL";
 
 import AbstractMeta from "./AbstractMeta";
 
@@ -9,7 +9,7 @@ export default class extends AbstractMeta {
         super(config);
     }
 
-    public getValue(): ReadonlyConfig['homepage'] {
+    public getValue(): ReadonlyConfig["homepage"] {
         return this.config.homepage;
     }
 

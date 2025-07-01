@@ -15,7 +15,7 @@ import {
     LocaleNestedKeysSeparator,
     LocaleStructure,
     LocaleValidator,
-    LocaleValuesSeparator
+    LocaleValuesSeparator,
 } from "@typing/locale";
 import {Browser} from "@typing/browser";
 
@@ -28,8 +28,7 @@ export default class LocaleBuilder implements LocaleBuilderContract {
     constructor(
         protected readonly browser: Browser,
         protected readonly language: Language
-    ) {
-    }
+    ) {}
 
     public get(): LocaleItems {
         if (this.items) {
@@ -54,7 +53,7 @@ export default class LocaleBuilder implements LocaleBuilderContract {
             items.set(LocaleCustomKeyForLanguage, this.language);
         }
 
-        return this.items = items;
+        return (this.items = items);
     }
 
     public keys(): LocaleKeys {
@@ -62,12 +61,16 @@ export default class LocaleBuilder implements LocaleBuilderContract {
     }
 
     public build(): LocaleMessages {
-        return this.validate().get().entries().reduce((locale, [key, value]) => (
-            {
-                ...locale,
-                [convertLocaleKey(key)]: {message: value}
-            }
-        ), {});
+        return this.validate()
+            .get()
+            .entries()
+            .reduce(
+                (locale, [key, value]) => ({
+                    ...locale,
+                    [convertLocaleKey(key)]: {message: value},
+                }),
+                {}
+            );
     }
 
     public structure(): LocaleStructure {
@@ -82,15 +85,20 @@ export default class LocaleBuilder implements LocaleBuilderContract {
             }
 
             return substitutions;
-        }
+        };
 
-        return this.get().entries().reduce((structure, [key, value]) => ({
-            ...structure,
-            [key]: {
-                plural: value.includes(LocaleValuesSeparator),
-                substitutions: substitutions(value),
-            }
-        }), {} as LocaleStructure);
+        return this.get()
+            .entries()
+            .reduce(
+                (structure, [key, value]) => ({
+                    ...structure,
+                    [key]: {
+                        plural: value.includes(LocaleValuesSeparator),
+                        substitutions: substitutions(value),
+                    },
+                }),
+                {} as LocaleStructure
+            );
     }
 
     public merge(data: LocaleData): this {
@@ -130,7 +138,7 @@ export default class LocaleBuilder implements LocaleBuilderContract {
     }
 
     protected convert(data: LocaleData, prefix?: string): LocaleItems {
-        const items: LocaleItems = new Map;
+        const items: LocaleItems = new Map();
 
         for (const [key, value] of Object.entries(data)) {
             const resolvedKey = prefix ? [prefix, key].join(LocaleNestedKeysSeparator) : key;
@@ -138,7 +146,10 @@ export default class LocaleBuilder implements LocaleBuilderContract {
             if (_.isString(value) || _.isNumber(value)) {
                 items.set(resolvedKey, value.toString());
             } else if (_.isArray(value)) {
-                items.set(resolvedKey, _.filter(value, v => _.isString(v) || _.isNumber(v)).join(LocaleValuesSeparator));
+                items.set(
+                    resolvedKey,
+                    _.filter(value, v => _.isString(v) || _.isNumber(v)).join(LocaleValuesSeparator)
+                );
             } else if (_.isPlainObject(value)) {
                 for (const [k, v] of this.convert(value, resolvedKey).entries()) {
                     items.set(k, v);

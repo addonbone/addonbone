@@ -49,7 +49,7 @@ export default abstract class<O extends ViewEntrypointOptions> extends AbstractP
     }
 
     protected async getViews(): Promise<ViewItems<O>> {
-        const views: ViewItems<O> = new Map;
+        const views: ViewItems<O> = new Map();
 
         for (const [file, options] of await this.plugin().options()) {
             views.set(this.createViewName(file, options), {
@@ -72,7 +72,7 @@ export default abstract class<O extends ViewEntrypointOptions> extends AbstractP
 
         const filename = as ? this.filenames.name(as) : this.filenames.file(file);
 
-        return path.posix.join(this.config.htmlDir, filename + '.html');
+        return path.posix.join(this.config.htmlDir, filename + ".html");
     }
 
     protected createViewAlias(file: EntrypointFile, options: O): string {
@@ -94,7 +94,7 @@ export default abstract class<O extends ViewEntrypointOptions> extends AbstractP
     }
 
     public async views(): Promise<ViewItems<O>> {
-        return this._views ??= await this.getViews();
+        return (this._views ??= await this.getViews());
     }
 
     public allowMultiple(): boolean {
@@ -107,7 +107,7 @@ export default abstract class<O extends ViewEntrypointOptions> extends AbstractP
                 ...aliases,
                 [item.alias]: item.filename,
             };
-        }, new Map as ViewAliasToFilename);
+        }, new Map() as ViewAliasToFilename);
     }
 
     public async getAlias(): Promise<Set<string>> {
@@ -125,7 +125,7 @@ export default abstract class<O extends ViewEntrypointOptions> extends AbstractP
     public async getFilenames(): Promise<ViewFileToFilename> {
         const views = await this.views();
 
-        const filenames: ViewFileToFilename = new Map;
+        const filenames: ViewFileToFilename = new Map();
 
         for (const {file, filename} of views.values()) {
             filenames.set(file, filename);

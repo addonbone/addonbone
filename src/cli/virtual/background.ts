@@ -19,5 +19,5 @@ try {
 
     background({main, ...options});
 } catch (e) {
-    console.error('The background crashed on startup:', e);
+    console.error("The background crashed on startup:", e);
 }

@@ -6,7 +6,7 @@ import {Awaiter} from "@typing/helpers";
 
 type Tab = chrome.tabs.Tab;
 
-export const CommandExecuteActionName = '_execute_action';
+export const CommandExecuteActionName = "_execute_action";
 
 export interface CommandConfig extends BackgroundConfig {
     name: string;
@@ -29,10 +29,10 @@ export interface CommandDefinition extends CommandEntrypointOptions {
     execute: CommandExecute;
 }
 
-export type ExecuteActionCommandDefinition = Omit<CommandDefinition, 'name'>;
+export type ExecuteActionCommandDefinition = Omit<CommandDefinition, "name">;
 
 export type CommandUnresolvedDefinition = Partial<CommandDefinition>;
 
-export type CommandResolvedDefinition = Required<CommandDefinition, 'name' | 'execute'>;
+export type CommandResolvedDefinition = Required<CommandDefinition, "name" | "execute">;
 
 export type CommandBuilder = EntrypointBuilder;

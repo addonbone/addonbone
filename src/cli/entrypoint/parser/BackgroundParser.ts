@@ -6,7 +6,7 @@ import {BackgroundEntrypointOptions} from "@typing/background";
 
 export default class<T extends BackgroundEntrypointOptions = BackgroundEntrypointOptions> extends AbstractParser<T> {
     protected definition(): string | string[] {
-        return 'defineBackground';
+        return "defineBackground";
     }
 
     protected schema(): typeof this.CommonPropertiesSchema {

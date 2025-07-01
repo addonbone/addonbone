@@ -9,7 +9,7 @@ import {
     ContentScriptDefinition,
     ContentScriptNode,
     ContentScriptRenderHandler,
-    ContentScriptRenderValue
+    ContentScriptRenderValue,
 } from "@typing/content";
 
 export default class extends MountBuilder {

@@ -13,19 +13,19 @@ export default class TsResolver {
 
     protected config?: ts.ParsedCommandLine;
 
-    public get matchPath(): { (path: string): string | undefined } {
+    public get matchPath(): {(path: string): string | undefined} {
         const config = this.getConfig();
 
-        const absoluteBaseUrl = path.resolve(path.dirname(this.filename), config.options.baseUrl || '.', SystemDir);
+        const absoluteBaseUrl = path.resolve(path.dirname(this.filename), config.options.baseUrl || ".", SystemDir);
 
         const match = createMatchPath(absoluteBaseUrl, config.options.paths || {});
 
-        const extensions = [...EntrypointFileExtensions].map(ext => '.' + ext);
+        const extensions = [...EntrypointFileExtensions].map(ext => "." + ext);
 
         return (path: string): string | undefined => match(path, undefined, fs.existsSync, extensions);
     }
 
-    public static make(filename: string = 'tsconfig.json'): TsResolver {
+    public static make(filename: string = "tsconfig.json"): TsResolver {
         if (this.instances.has(filename)) {
             return this.instances.get(filename)!;
         }
@@ -37,7 +37,7 @@ export default class TsResolver {
         return instance;
     }
 
-    constructor(filename: string = 'tsconfig.json') {
+    constructor(filename: string = "tsconfig.json") {
         this.setFilename(filename);
     }
 
@@ -60,19 +60,19 @@ export default class TsResolver {
             throw new Error(`Cannot find tsconfig.json at: ${this.filename}`);
         }
 
-        const tsconfigRaw = ts.readConfigFile(this.filename, (p) => fs.readFileSync(p, "utf8"));
+        const tsconfigRaw = ts.readConfigFile(this.filename, p => fs.readFileSync(p, "utf8"));
 
         const parseConfigHost: ts.ParseConfigHost = {
             fileExists: fs.existsSync,
-            readFile: (p) => fs.readFileSync(p, "utf8"),
+            readFile: p => fs.readFileSync(p, "utf8"),
             readDirectory: ts.sys.readDirectory,
-            useCaseSensitiveFileNames: true
+            useCaseSensitiveFileNames: true,
         };
 
-        return this.config = ts.parseJsonConfigFileContent(
+        return (this.config = ts.parseJsonConfigFileContent(
             tsconfigRaw.config,
             parseConfigHost,
             path.dirname(this.filename)
-        );
+        ));
     }
 }

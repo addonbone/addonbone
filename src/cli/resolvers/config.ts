@@ -1,6 +1,7 @@
 import {existsSync} from "fs";
-import dotenv, {type DotenvParseOutput} from 'dotenv';
+import dotenv, {type DotenvParseOutput} from "dotenv";
 import {loadConfig} from "c12";
+import _ from "lodash";
 
 import {
     assetPlugin,
@@ -43,16 +44,16 @@ const getUserConfig = async (config: ReadonlyConfig): Promise<UserConfig> => {
         });
 
         if (config.debug) {
-            console.log('Loaded user config:', configFilePath);
+            console.log("Loaded user config:", configFilePath);
         }
 
         return userConfig || {};
     } else if (config.debug) {
-        console.warn('Config file not found:', configFilePath);
+        console.warn("Config file not found:", configFilePath);
     }
 
     return {};
-}
+};
 
 const validateConfig = (config: ReadonlyConfig): ReadonlyConfig => {
     const {
@@ -67,45 +68,51 @@ const validateConfig = (config: ReadonlyConfig): ReadonlyConfig => {
         htmlDir,
         publicDir,
         locale,
-        icon
+        icon,
     } = config;
 
-    if ([
-        outputDir,
-        srcDir,
-        sharedDir,
-        appsDir,
-        appSrcDir,
-        jsDir,
-        cssDir,
-        assetsDir,
-        htmlDir,
-        publicDir,
-        locale.dir,
-        icon.outputDir,
-        icon.sourceDir,
-    ].filter(dir => typeof dir === "string").some(dir => dir.includes('..'))) {
+    if (
+        [
+            outputDir,
+            srcDir,
+            sharedDir,
+            appsDir,
+            appSrcDir,
+            jsDir,
+            cssDir,
+            assetsDir,
+            htmlDir,
+            publicDir,
+            locale.dir,
+            icon.outputDir,
+            icon.sourceDir,
+        ]
+            .filter(dir => _.isString(dir))
+            .some(dir => dir.includes(".."))
+    ) {
         throw new Error('Directory paths cannot contain relative paths ("..") for security reasons.');
     }
 
     if (appsDir === sharedDir) {
-        throw new Error('Apps directory (appsDir) and shared directory (sharedDir) cannot be the same.');
+        throw new Error("Apps directory (appsDir) and shared directory (sharedDir) cannot be the same.");
     }
 
     if (srcDir === outputDir) {
-        throw new Error('Source directory (srcDir) and destination directory (outputDir) cannot be the same.');
+        throw new Error("Source directory (srcDir) and destination directory (outputDir) cannot be the same.");
     }
 
-    if (srcDir === '.') {
+    if (srcDir === ".") {
         throw new Error('Source directory cannot be the root directory (".") for security reasons.');
     }
 
-    if (publicDir === '.' || [srcDir, outputDir, appSrcDir].includes(publicDir)) {
-        throw new Error('Public directory cannot be the root directory (".") or intersect with other root directories for security reasons.');
+    if (publicDir === "." || [srcDir, outputDir, appSrcDir].includes(publicDir)) {
+        throw new Error(
+            'Public directory cannot be the root directory (".") or intersect with other root directories for security reasons.'
+        );
     }
 
     return config;
-}
+};
 
 const updateLocalDotenv = (config: ReadonlyConfig): DotenvParseOutput => {
     const {mode, app, browser, manifestVersion} = config;
@@ -120,7 +127,7 @@ const updateLocalDotenv = (config: ReadonlyConfig): DotenvParseOutput => {
     Object.assign(process.env, localVars);
 
     return localVars;
-}
+};
 
 const loadDotenv = (config: ReadonlyConfig): DotenvParseOutput => {
     const {mode, browser} = config;
@@ -136,41 +143,41 @@ const loadDotenv = (config: ReadonlyConfig): DotenvParseOutput => {
         `.env`,
     ];
 
-    const appSourcePaths = preset.map((file) => getAppSourcePath(config, file));
-    const appPaths = preset.map((file) => getAppPath(config, file));
-    const rootPaths = preset.map((file) => getInputPath(config, file));
+    const appSourcePaths = preset.map(file => getAppSourcePath(config, file));
+    const appPaths = preset.map(file => getAppPath(config, file));
+    const rootPaths = preset.map(file => getInputPath(config, file));
 
     const paths = [...appSourcePaths, ...appPaths, ...rootPaths];
 
     const {parsed: fileVars = {}} = dotenv.config({path: paths});
 
     return {...fileVars, ...updateLocalDotenv(config)};
-}
+};
 
 export default async (config: OptionalConfig): Promise<Config> => {
     let {
         command = Command.Build,
         debug = false,
-        configFile = 'adnbn.config.ts',
+        configFile = "adnbn.config.ts",
         browser = Browser.Chrome,
-        app = 'myapp',
-        version = 'VERSION',
+        app = "myapp",
+        version = "VERSION",
         minimumVersion = "MINIMUM_VERSION",
         author = "AUTHOR",
         email = "EMAIL",
         homepage = "HOMEPAGE",
         incognito,
-        inputDir = '.',
-        outputDir = 'dist',
-        srcDir = 'src',
-        sharedDir = 'shared',
-        appsDir = 'apps',
-        appSrcDir = '.',
-        jsDir = 'js',
-        cssDir = 'css',
-        assetsDir = 'assets',
-        publicDir = 'public',
-        htmlDir = '.',
+        inputDir = ".",
+        outputDir = "dist",
+        srcDir = "src",
+        sharedDir = "shared",
+        appsDir = "apps",
+        appSrcDir = ".",
+        jsDir = "js",
+        cssDir = "css",
+        assetsDir = "assets",
+        publicDir = "public",
+        htmlDir = ".",
         html = [],
         env = {},
         icon = {},
@@ -196,10 +203,18 @@ export default async (config: OptionalConfig): Promise<Config> => {
         mergeService = false,
         mergeOffscreen = false,
         commonChunks = true,
-        assetsFilename = (mode === Mode.Production && command === Command.Build) && !debug ? '[contenthash:4][ext]' : '[name]-[contenthash:4][ext]',
-        jsFilename = (mode === Mode.Production && command === Command.Build) && !debug ? '[contenthash:10].js' : '[name].js',
-        cssFilename = (mode === Mode.Production && command === Command.Build) && !debug ? '[contenthash:10].css' : '[name].css',
-        cssIdentName = (mode === Mode.Production && command === Command.Build) && !debug ? '[app]-[hash:base64:5]' : '[local]-[hash:base64:5]',
+        assetsFilename = mode === Mode.Production && command === Command.Build && !debug
+            ? "[contenthash:4][ext]"
+            : "[name]-[contenthash:4][ext]",
+        jsFilename = mode === Mode.Production && command === Command.Build && !debug
+            ? "[contenthash:5].js"
+            : "[name].js",
+        cssFilename = mode === Mode.Production && command === Command.Build && !debug
+            ? "[contenthash:5].css"
+            : "[name].css",
+        cssIdentName = mode === Mode.Production && command === Command.Build && !debug
+            ? "[app]-[hash:base64:5]"
+            : "[local]-[hash:base64:5]",
     } = config;
 
     let resolvedConfig: Config = {
@@ -289,10 +304,6 @@ export default async (config: OptionalConfig): Promise<Config> => {
 
     return {
         ...resolvedConfig,
-        plugins: [
-            ...plugins,
-            ...userPlugins,
-            ...corePlugins,
-        ],
+        plugins: [...plugins, ...userPlugins, ...corePlugins],
     };
-}
+};

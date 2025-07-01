@@ -3,12 +3,11 @@ import path from "path";
 import {EntrypointFile, EntrypointNameGenerator, EntrypointType} from "@typing/entrypoint";
 
 export default class implements EntrypointNameGenerator {
-    protected names = new Set<string>;
+    protected names = new Set<string>();
 
     protected reservedNames = new Set<string>();
 
-    constructor(protected readonly entrypoint: EntrypointType) {
-    }
+    constructor(protected readonly entrypoint: EntrypointType) {}
 
     public reserve(name: string): this {
         this.reservedNames.add(name);
@@ -42,11 +41,11 @@ export default class implements EntrypointNameGenerator {
     }
 
     public file(file: EntrypointFile): string {
-        const key = '.' + this.entrypoint;
+        const key = "." + this.entrypoint;
 
         let {name, dir} = path.parse(file.file);
 
-        if (name === 'index') {
+        if (name === "index") {
             name = path.basename(dir);
         }
 

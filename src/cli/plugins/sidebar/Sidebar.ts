@@ -18,7 +18,7 @@ export default class extends SidebarFinder {
     }
 
     public view(): View<SidebarEntrypointOptions> {
-        return this._view ??= new View(this.config, this);
+        return (this._view ??= new View(this.config, this));
     }
 
     public async manifest(): Promise<ManifestSidebar | undefined> {
@@ -48,9 +48,9 @@ export default class extends SidebarFinder {
                     path: filename,
                     title,
                     icon,
-                }
+                },
             };
-        }, new Map as SidebarNameToManifest);
+        }, new Map() as SidebarNameToManifest);
     }
 
     public clear(): this {

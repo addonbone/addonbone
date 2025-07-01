@@ -6,7 +6,7 @@ import {SidebarEntrypointOptions} from "@typing/sidebar";
 
 export default class extends ViewParser<SidebarEntrypointOptions> {
     protected definition(): string {
-        return 'defineSidebar';
+        return "defineSidebar";
     }
 
     protected schema(): typeof this.CommonPropertiesSchema {

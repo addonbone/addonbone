@@ -18,7 +18,7 @@ export default class extends PopupFinder {
     }
 
     public view(): View<PopupEntrypointOptions> {
-        return this._view ??= new View(this.config, this);
+        return (this._view ??= new View(this.config, this));
     }
 
     public async manifest(): Promise<ManifestPopup | undefined> {
@@ -48,9 +48,9 @@ export default class extends PopupFinder {
                     path: filename,
                     title,
                     icon,
-                }
+                },
             };
-        }, new Map as PopupNameToManifest);
+        }, new Map() as PopupNameToManifest);
     }
 
     public clear(): this {

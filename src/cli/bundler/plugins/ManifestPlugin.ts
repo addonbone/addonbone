@@ -1,19 +1,18 @@
-import rspack, {Chunk, Compilation, Compiler} from '@rspack/core';
+import rspack, {Chunk, Compilation, Compiler} from "@rspack/core";
 
 import {toPosix} from "@cli/utils/path";
 
 import {ManifestBuilder, ManifestDependencies, ManifestDependency} from "@typing/manifest";
 
 class ManifestPlugin {
-    constructor(private readonly manifest: ManifestBuilder) {
-    }
+    constructor(private readonly manifest: ManifestBuilder) {}
 
     apply(compiler: Compiler): void {
-        compiler.hooks.compilation.tap('ManifestPlugin', (compilation) => {
+        compiler.hooks.compilation.tap("ManifestPlugin", compilation => {
             compilation.hooks.processAssets.tap(
                 {
-                    name: 'ManifestPlugin',
-                    stage: Compilation.PROCESS_ASSETS_STAGE_ADDITIONS
+                    name: "ManifestPlugin",
+                    stage: Compilation.PROCESS_ASSETS_STAGE_ADDITIONS,
                 },
                 () => {
                     const entryDependencies: ManifestDependencies = new Map();
@@ -33,9 +32,9 @@ class ManifestPlugin {
                             chunk.files.forEach((fileName: string) => {
                                 fileName = toPosix(fileName);
 
-                                if (fileName.endsWith('.js')) {
+                                if (fileName.endsWith(".js")) {
                                     dependencies.js.add(fileName);
-                                } else if (fileName.endsWith('.css')) {
+                                } else if (fileName.endsWith(".css")) {
                                     dependencies.css.add(fileName);
                                 } else if (this.isAsset(fileName)) {
                                     dependencies.assets.add(fileName);
@@ -47,7 +46,7 @@ class ManifestPlugin {
                             auxiliaryFiles.forEach((fileName: string) => {
                                 fileName = toPosix(fileName);
 
-                                if (fileName.endsWith('.css')) {
+                                if (fileName.endsWith(".css")) {
                                     dependencies.css.add(fileName);
                                 } else if (this.isAsset(fileName)) {
                                     dependencies.assets.add(fileName);
@@ -61,10 +60,7 @@ class ManifestPlugin {
                     const manifest = this.manifest.setDependencies(entryDependencies).get();
                     const json = JSON.stringify(manifest, null, 2);
 
-                    compilation.emitAsset(
-                        'manifest.json',
-                        new rspack.sources.RawSource(json)
-                    );
+                    compilation.emitAsset("manifest.json", new rspack.sources.RawSource(json));
                 }
             );
         });

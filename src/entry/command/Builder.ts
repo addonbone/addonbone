@@ -8,7 +8,7 @@ import {
     CommandBuilder,
     CommandExecuteActionName,
     CommandResolvedDefinition,
-    CommandUnresolvedDefinition
+    CommandUnresolvedDefinition,
 } from "@typing/command";
 
 type Tab = chrome.tabs.Tab;
@@ -24,11 +24,11 @@ export default class extends Builder implements CommandBuilder {
         const {name, execute} = definition;
 
         if (!isValidCommandExecuteFunction(execute)) {
-            throw new Error('The command entrypoint must export a execute function');
+            throw new Error("The command entrypoint must export a execute function");
         }
 
         if (!isValidCommandName(name)) {
-            throw new Error('The command entrypoint must export a name string');
+            throw new Error("The command entrypoint must export a name string");
         }
 
         this.definition = {
@@ -42,7 +42,7 @@ export default class extends Builder implements CommandBuilder {
         const {name} = this.definition;
 
         if (name == CommandExecuteActionName) {
-            this.unsubscribe = onActionClicked((tab) => {
+            this.unsubscribe = onActionClicked(tab => {
                 this.handle(tab);
             });
 
@@ -64,11 +64,11 @@ export default class extends Builder implements CommandBuilder {
         const {name, execute, ...options} = this.definition;
 
         try {
-            Promise.resolve(execute(tab, {name, ...options})).catch((e) => {
-                console.error('The command execute async function crashed:', e);
+            Promise.resolve(execute(tab, {name, ...options})).catch(e => {
+                console.error("The command execute async function crashed:", e);
             });
         } catch (e) {
-            console.error('The command execute function crashed:', e);
+            console.error("The command execute function crashed:", e);
         }
     }
 }

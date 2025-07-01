@@ -3,7 +3,7 @@ import {ContentScriptConfig, ContentScriptContext, ContentScriptDefinition} from
 import {TransportConfig, TransportDefinition, TransportType} from "@typing/transport";
 import {Awaiter} from "@typing/helpers";
 
-export const RelayGlobalKey = 'adnbnRelay';
+export const RelayGlobalKey = "adnbnRelay";
 
 export type RelayConfig = TransportConfig & ContentScriptConfig;
 
@@ -17,11 +17,10 @@ export type RelayMainHandler<T extends TransportType> = (
     options: RelayEntrypointOptions
 ) => Awaiter<void>;
 
-export interface RelayDefinition<T extends TransportType> extends
-    Omit<TransportDefinition<RelayOptions, T>, 'main'>,
-    Omit<ContentScriptDefinition, 'main'>,
-    Omit<RelayEntrypointOptions, 'declarative'>
-{
+export interface RelayDefinition<T extends TransportType>
+    extends Omit<TransportDefinition<RelayOptions, T>, "main">,
+        Omit<ContentScriptDefinition, "main">,
+        Omit<RelayEntrypointOptions, "declarative"> {
     main?: RelayMainHandler<T>;
 }
 

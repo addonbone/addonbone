@@ -6,6 +6,6 @@ import type {TransportManager as TransportManagerContract} from "@typing/transpo
 
 export default class ServiceManager extends TransportManager {
     public static getInstance(): TransportManagerContract {
-        return globalThis[ServiceGlobalKey] ??= new ServiceManager();
+        return (globalThis[ServiceGlobalKey] ??= new ServiceManager());
     }
 }

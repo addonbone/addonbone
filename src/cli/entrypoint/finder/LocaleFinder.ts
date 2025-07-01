@@ -17,9 +17,8 @@ import {
     LocaleData,
     LocaleFileExtensions,
     LocaleKeys,
-    LocaleStructure
+    LocaleStructure,
 } from "@typing/locale";
-
 
 export type LocaleBuilders = Map<Language, LocaleBuilder>;
 
@@ -32,8 +31,8 @@ export default class extends AbstractAssetFinder {
     }
 
     public isValidName(name: string): boolean {
-        if (name.includes('.')) {
-            name = name.split('.').slice(0, -1).join('.');
+        if (name.includes(".")) {
+            name = name.split(".").slice(0, -1).join(".");
         }
 
         return super.isValidName(name);
@@ -44,7 +43,7 @@ export default class extends AbstractAssetFinder {
     }
 
     public getDirectory(): string {
-        return this.config.locale.dir || 'locales';
+        return this.config.locale.dir || "locales";
     }
 
     public getNames(): ReadonlySet<string> {
@@ -56,11 +55,11 @@ export default class extends AbstractAssetFinder {
     }
 
     protected getPlugin(): AssetPluginFinder {
-        return new AssetPluginFinder(this.config, 'locale', this);
+        return new AssetPluginFinder(this.config, "locale", this);
     }
 
     public plugin(): AssetPluginFinder {
-        return this._plugin ??= this.getPlugin();
+        return (this._plugin ??= this.getPlugin());
     }
 
     protected async getBuilders(): Promise<LocaleBuilders> {
@@ -70,11 +69,11 @@ export default class extends AbstractAssetFinder {
                 const locale = localeFactory(lang as Language, this.config);
 
                 for (const {file} of files) {
-                    const content = fs.readFileSync(file, 'utf8');
+                    const content = fs.readFileSync(file, "utf8");
 
-                    if (isFileExtension(file, ['yaml', 'yml'])) {
+                    if (isFileExtension(file, ["yaml", "yml"])) {
                         locale.merge(yaml.load(content) as LocaleData);
-                    } else if (isFileExtension(file, 'json')) {
+                    } else if (isFileExtension(file, "json")) {
                         locale.merge(JSON.parse(content));
                     }
                 }
@@ -82,14 +81,15 @@ export default class extends AbstractAssetFinder {
                 map.set(locale.lang(), locale);
 
                 return map;
-            }, new Map as LocaleBuilders).value();
+            }, new Map() as LocaleBuilders)
+            .value();
     }
 
     protected getLanguageFromFilename(filename: string): Language {
         let {name} = path.parse(filename);
 
-        if (name.includes('.')) {
-            name = name.split('.').slice(0, -1).join('.');
+        if (name.includes(".")) {
+            name = name.split(".").slice(0, -1).join(".");
         }
 
         if (LanguageCodes.has(name)) {
@@ -100,7 +100,7 @@ export default class extends AbstractAssetFinder {
     }
 
     public async builders(): Promise<LocaleBuilders> {
-        return this._builders ??= await this.getBuilders();
+        return (this._builders ??= await this.getBuilders());
     }
 
     public async keys(): Promise<LocaleKeys> {

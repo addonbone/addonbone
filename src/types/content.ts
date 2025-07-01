@@ -1,5 +1,5 @@
-import type {FC, ReactNode} from "react"
-import {Optional} from 'utility-types';
+import type {FC, ReactNode} from "react";
+import {Optional} from "utility-types";
 
 import {EntrypointBuilder, EntrypointOptions} from "@typing/entrypoint";
 import {Awaiter, PickNonFunctionProperties} from "@typing/helpers";
@@ -7,7 +7,7 @@ import {Awaiter, PickNonFunctionProperties} from "@typing/helpers";
 type ExecutionWorld = chrome.scripting.ExecutionWorld;
 type RunAt = chrome.userScripts.RunAt;
 
-export const ContentScriptMatches = ['*://*/*'];
+export const ContentScriptMatches = ["*://*/*"];
 
 export interface ContentScriptConfig {
     matches?: string[];
@@ -68,11 +68,11 @@ export type ContentScriptEntrypointOptions = Partial<ContentScriptOptions>;
 
 // Append
 export enum ContentScriptAppend {
-    Last = 'last',
-    First = 'first',
-    Replace = 'replace',
-    Before = 'before',
-    After = 'after',
+    Last = "last",
+    First = "first",
+    Replace = "replace",
+    Before = "before",
+    After = "after",
 }
 
 // Mount
@@ -100,15 +100,17 @@ export type ContentScriptRenderValue = Element | ReactNode | ContentScriptRender
 export type ContentScriptRenderHandler = (props: ContentScriptProps) => Awaiter<undefined | ContentScriptRenderValue>;
 
 // Container
-export type ContentScriptContainerTag = Exclude<keyof HTMLElementTagNameMap, 'html' | 'body'>;
+export type ContentScriptContainerTag = Exclude<keyof HTMLElementTagNameMap, "html" | "body">;
 
 export type ContentScriptContainerOptions = {
     [Tag in ContentScriptContainerTag]: {
-    tagName: Tag
-} & Exclude<Optional<PickNonFunctionProperties<HTMLElementTagNameMap[Tag]>>, 'id'>;
+        tagName: Tag;
+    } & Exclude<Optional<PickNonFunctionProperties<HTMLElementTagNameMap[Tag]>>, "id">;
 }[ContentScriptContainerTag];
 
-export type ContentScriptContainerFactory = (props: ContentScriptProps) => Awaiter<Element | ContentScriptContainerTag | ContentScriptContainerOptions>;
+export type ContentScriptContainerFactory = (
+    props: ContentScriptProps
+) => Awaiter<Element | ContentScriptContainerTag | ContentScriptContainerOptions>;
 export type ContentScriptContainerCreator = (props: ContentScriptProps) => Awaiter<Element>;
 
 // Watch
@@ -140,7 +142,8 @@ export interface ContentScriptDefinition extends ContentScriptEntrypointOptions 
     main?: ContentScriptMainFunction;
 }
 
-export interface ContentScriptResolvedDefinition extends Omit<ContentScriptDefinition, 'anchor' | 'mount' | 'container' | 'render' | 'watch'> {
+// prettier-ignore
+export interface ContentScriptResolvedDefinition extends Omit<ContentScriptDefinition, "anchor" | "mount" | "container" | "render" | "watch"> {
     anchor: ContentScriptAnchorResolver;
     mount: ContentScriptMountFunction;
     render?: ContentScriptRenderHandler;
@@ -148,7 +151,7 @@ export interface ContentScriptResolvedDefinition extends Omit<ContentScriptDefin
     watch: ContentScriptWatchStrategy;
 }
 
-export interface ContentScriptAppendDefinition extends Omit<ContentScriptDefinition, 'mount'> {
+export interface ContentScriptAppendDefinition extends Omit<ContentScriptDefinition, "mount"> {
     append?: ContentScriptAppend;
 }
 

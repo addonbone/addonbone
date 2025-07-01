@@ -1,11 +1,10 @@
-import _ from 'lodash';
+import _ from "lodash";
 
 import {getEnv} from "@main/env";
 
 import type {ReadonlyConfig} from "@typing/config";
 
 export default abstract class AbstractMeta<V extends string = string> {
-
     public static value<T extends AbstractMeta<any>>(
         this: new (config: ReadonlyConfig) => T,
         config: ReadonlyConfig
@@ -15,8 +14,7 @@ export default abstract class AbstractMeta<V extends string = string> {
 
     public abstract getValue(): undefined | V | (() => V | undefined);
 
-    protected constructor(protected readonly config: ReadonlyConfig) {
-    }
+    protected constructor(protected readonly config: ReadonlyConfig) {}
 
     public getResolved(): V | undefined {
         const value = this.getValue();

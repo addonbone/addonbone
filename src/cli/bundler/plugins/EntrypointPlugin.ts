@@ -1,8 +1,8 @@
-import _ from "lodash"
+import _ from "lodash";
 import path from "path";
 
 import {Compiler, EntryNormalized} from "@rspack/core";
-import VirtualModulesPlugin from 'rspack-plugin-virtual-module';
+import VirtualModulesPlugin from "rspack-plugin-virtual-module";
 
 import {EntrypointEntries, EntrypointFile} from "@typing/entrypoint";
 
@@ -27,7 +27,7 @@ export type EntrypointPluginModules = Map<EntrypointFile, EntrypointPluginModule
 export type EntrypointPluginEntryModules = Map<string, EntrypointPluginModules>;
 
 export default class EntrypointPlugin {
-    private readonly pluginName: string = 'EntrypointPlugin';
+    private readonly pluginName: string = "EntrypointPlugin";
 
     private _plugin?: VirtualModulesPlugin;
     private _modules?: EntrypointPluginEntryModules;
@@ -43,7 +43,7 @@ export default class EntrypointPlugin {
             name = file.import + ext;
         }
 
-        return path.join('virtual', name);
+        return path.join("virtual", name);
     }
 
     protected get plugin(): VirtualModulesPlugin {
@@ -53,11 +53,11 @@ export default class EntrypointPlugin {
 
         const modules = Object.fromEntries(this.getModuleContents(this.modules));
 
-        return this._plugin = new VirtualModulesPlugin(modules, 'entrypoint');
+        return (this._plugin = new VirtualModulesPlugin(modules, "entrypoint"));
     }
 
     protected get modules(): EntrypointPluginEntryModules {
-        return this._modules ??= this.createModules(this.entries);
+        return (this._modules ??= this.createModules(this.entries));
     }
 
     protected get watchFiles(): ReadonlySet<string> {
@@ -73,8 +73,7 @@ export default class EntrypointPlugin {
         return new EntrypointPlugin(entries);
     }
 
-    constructor(private readonly entries: EntrypointEntries = new Map) {
-    }
+    constructor(private readonly entries: EntrypointEntries = new Map()) {}
 
     public virtual(template: EntrypointPluginTemplate): this {
         this.template = template;
@@ -97,7 +96,9 @@ export default class EntrypointPlugin {
 
         if (this.update) {
             compiler.hooks.watchRun.tapAsync(this.pluginName, (compiler, callback) => {
-                this.hookWatchRun(compiler).then(() => callback()).catch(callback);
+                this.hookWatchRun(compiler)
+                    .then(() => callback())
+                    .catch(callback);
             });
         }
     }
@@ -107,23 +108,23 @@ export default class EntrypointPlugin {
             this.modules.entries().forEach(([name, modules]) => {
                 let currentFiles = structuredClone(entry[name] ?? []);
 
-                if ('import' in currentFiles) {
+                if ("import" in currentFiles) {
                     currentFiles = currentFiles.import;
                 }
 
                 currentFiles.push(...Array.from(modules.values(), ({name}) => name));
 
                 entry[name] = {
-                    import: _.uniq(currentFiles)
+                    import: _.uniq(currentFiles),
                 };
             });
         } else {
-            throw new Error('EntrypointPlugin: entry is not an object');
+            throw new Error("EntrypointPlugin: entry is not an object");
         }
     }
 
     protected async hookWatchRun(compiler: Compiler): Promise<void> {
-        const {modifiedFiles = new Set} = compiler;
+        const {modifiedFiles = new Set()} = compiler;
 
         const watchFiles = this.watchFiles;
 
@@ -146,17 +147,13 @@ export default class EntrypointPlugin {
         const currentContents = this.getModuleContents(this.modules);
         const updatedContents = this.getModuleContents(updatedModules);
 
-        const removedContents = new Map(
-            Array.from(currentContents).filter(entry => !updatedContents.has(entry[0]))
-        );
+        const removedContents = new Map(Array.from(currentContents).filter(entry => !updatedContents.has(entry[0])));
 
-        const addedContents = new Map(
-            Array.from(updatedContents).filter(entry => !currentContents.has(entry[0]))
-        );
+        const addedContents = new Map(Array.from(updatedContents).filter(entry => !currentContents.has(entry[0])));
 
         if (removedContents.size > 0 || addedContents.size > 0) {
             removedContents.keys().forEach(name => {
-                this.plugin.writeModule(name, '');
+                this.plugin.writeModule(name, "");
             });
 
             addedContents.forEach((content, name) => {
@@ -166,7 +163,7 @@ export default class EntrypointPlugin {
             updatedModules.entries().forEach(([name, modules]) => {
                 let entry: string[] = structuredClone(compiler.options.entry[name]);
 
-                if ('import' in entry) {
+                if ("import" in entry) {
                     entry = entry.import as string[];
                 }
 
@@ -181,7 +178,6 @@ export default class EntrypointPlugin {
         this._modules = updatedModules;
     }
 
-
     protected createModules(entries: EntrypointEntries): EntrypointPluginEntryModules {
         const entryModules: EntrypointPluginEntryModules = new Map();
 
@@ -191,7 +187,7 @@ export default class EntrypointPlugin {
             for (const file of files) {
                 modules.set(file, {
                     name: EntrypointPlugin.filename(file),
-                    module: this.template ? this.template(file) : '',
+                    module: this.template ? this.template(file) : "",
                 });
             }
 
@@ -204,7 +200,7 @@ export default class EntrypointPlugin {
     protected getModuleContents(modules: EntrypointPluginEntryModules): Map<string, string> {
         const content = new Map<string, string>();
 
-        modules.values().forEach((modules) => {
+        modules.values().forEach(modules => {
             modules.forEach(({name, module}) => {
                 content.set(name, module);
             });

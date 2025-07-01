@@ -23,7 +23,7 @@ export default definePlugin(() => {
                             default: false,
                             defaultVendors: false,
                             common: {
-                                test: (module) => {
+                                test: module => {
                                     const {resource} = module as NormalModule;
 
                                     if (!resource) {
@@ -34,14 +34,10 @@ export default definePlugin(() => {
                                 },
                                 name: (module, chunks, cacheGroupKey) => {
                                     const entryNames = Array.from(
-                                        new Set(
-                                            chunks
-                                                .map(({name}) => name)
-                                                .filter((name) => _.isString(name))
-                                        )
+                                        new Set(chunks.map(({name}) => name).filter(name => _.isString(name)))
                                     ).sort();
 
-                                    return `${entryNames.join('-')}.${cacheGroupKey}`;
+                                    return `${entryNames.join("-")}.${cacheGroupKey}`;
                                 },
                                 minChunks: 2,
                                 priority: -10,

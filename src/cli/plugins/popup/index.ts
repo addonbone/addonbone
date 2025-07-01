@@ -17,7 +17,7 @@ export default definePlugin(() => {
     let declaration: PopupDeclaration;
 
     return {
-        name: 'adnbn:popup',
+        name: "adnbn:popup",
         startup: ({config}) => {
             popup = new Popup(config);
             declaration = new PopupDeclaration(config);
@@ -28,15 +28,16 @@ export default definePlugin(() => {
 
             const plugins: Plugins = [];
 
-            let alias: PopupNameToManifest = new Map;
+            let alias: PopupNameToManifest = new Map();
 
             if (await popup.empty()) {
                 if (config.debug) {
-                    console.info('Popup entries not found');
+                    console.info("Popup entries not found");
                 }
             } else {
                 alias = await popup.manifestByAlias();
 
+                // prettier-ignore
                 const plugin = EntrypointPlugin.from(await popup.view().entries())
                     .virtual(file => virtualViewModule(file));
 
@@ -65,6 +66,6 @@ export default definePlugin(() => {
         },
         manifest: async ({manifest}) => {
             manifest.setPopup(await popup.manifest());
-        }
+        },
     };
 });

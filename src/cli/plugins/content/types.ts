@@ -1,6 +1,5 @@
 import {ContentScriptEntrypointOptions} from "@typing/content";
 import {EntrypointFile} from "@typing/entrypoint";
-import {ManifestContentScripts} from "@typing/manifest";
 
 export interface ContentItem<O extends ContentScriptEntrypointOptions> {
     file: EntrypointFile;
@@ -25,10 +24,4 @@ export interface ContentProvider<O extends ContentScriptEntrypointOptions> {
     driver(): ContentDriver<O>;
 
     clear(): this;
-}
-
-
-export interface ContentManifest {
-    contentScripts: ManifestContentScripts;
-    hostPermi
 }

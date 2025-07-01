@@ -7,6 +7,7 @@
     "useTabs": false,
     "bracketSpacing": false,
     "arrowParens": "avoid",
+    "endOfLine": "lf",
     "overrides": [
         {
             "files": "*.json",

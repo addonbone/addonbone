@@ -1,7 +1,7 @@
 //@ts-ignore
 import {type ViewDefinition, type ViewOptions, __t} from "adnbn";
 //@ts-ignore
-import {isViewDefinition, isValidViewDefinitionRenderValue} from "adnbn/entry/view"
+import {isViewDefinition, isValidViewDefinitionRenderValue} from "adnbn/entry/view";
 
 import view from "virtual:view-framework";
 
@@ -12,7 +12,7 @@ try {
 
     let definition: ViewDefinition<ViewOptions> = otherDefinition;
 
-    if (isViewDefinition(defaultDefinition)){
+    if (isViewDefinition(defaultDefinition)) {
         definition = {...definition, ...defaultDefinition};
     } else if (isValidViewDefinitionRenderValue(defaultDefinition)) {
         definition = {...definition, render: defaultDefinition};
@@ -22,5 +22,5 @@ try {
 
     view({title: title ? __t(title) : undefined, ...options});
 } catch (e) {
-    console.error('The view crashed on startup:', e);
+    console.error("The view crashed on startup:", e);
 }

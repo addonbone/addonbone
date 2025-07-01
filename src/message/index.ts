@@ -23,8 +23,7 @@ export type {
 
 export {Message};
 
-export interface MessageRegistry extends MessageDictionary {
-}
+export interface MessageRegistry extends MessageDictionary {}
 
 export function sendMessage<K extends MessageType<MessageRegistry>>(
     type: K,
@@ -43,9 +42,7 @@ export function onMessage<K extends MessageType<MessageRegistry>>(
     handler: MessageGeneralHandler<MessageRegistry, K>
 ): () => void;
 
-export function onMessage(
-    map: MessageMapHandler<MessageRegistry>
-): () => void;
+export function onMessage(map: MessageMapHandler<MessageRegistry>): () => void;
 
 export function onMessage<K extends MessageType<MessageRegistry>>(
     arg1: K | MessageMapHandler<MessageRegistry> | MessageGeneralHandler<MessageRegistry, K>,

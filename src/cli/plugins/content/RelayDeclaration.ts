@@ -8,8 +8,9 @@ export default class extends TransportDeclaration {
     }
 
     protected template(): string {
-        return super.template()
-            .replace('RelayProxyTarget, RelayTarget', 'RelayProxyTarget, RelayTarget, ProxyRelayOptions')
-            .replace('(name: N): RelayProxyTarget', '(name: N, options: ProxyRelayOptions): RelayProxyTarget');
+        return super
+            .template()
+            .replace("RelayProxyTarget, RelayTarget", "RelayProxyTarget, RelayTarget, ProxyRelayOptions")
+            .replace("(name: N): RelayProxyTarget", "(name: N, options: ProxyRelayOptions): RelayProxyTarget");
     }
 }

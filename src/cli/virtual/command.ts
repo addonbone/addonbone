@@ -6,7 +6,7 @@ import command, {isValidCommandDefinition, isValidCommandExecuteFunction} from "
 import * as module from "virtual:command-entrypoint";
 
 try {
-    const commandName = 'virtual:command-name';
+    const commandName = "virtual:command-name";
 
     const {default: defaultDefinition, ...otherDefinition} = module;
 
@@ -18,19 +18,14 @@ try {
         definition = {...definition, execute: defaultDefinition};
     }
 
-    const {
-        execute,
-        name = commandName,
-        description,
-        ...options
-    } = definition;
+    const {execute, name = commandName, description, ...options} = definition;
 
     command({
         name,
         execute,
         description: description ? __t(description) : undefined,
-        ...options
+        ...options,
     });
 } catch (e) {
-    console.error('The command crashed on startup:', e);
+    console.error("The command crashed on startup:", e);
 }

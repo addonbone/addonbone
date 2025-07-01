@@ -23,31 +23,31 @@ export const getEnv: {
 })();
 
 export const getApp = (): string => {
-    const app = getEnv('APP');
+    const app = getEnv("APP");
 
     if (app === undefined) {
-        throw new Error('App is not defined');
+        throw new Error("App is not defined");
     }
 
     return app;
 };
 
 export const getBrowser = (): Browser => {
-    const browser = getEnv<Browser>('BROWSER');
+    const browser = getEnv<Browser>("BROWSER");
 
     if (browser === undefined) {
-        throw new Error('Browser is not defined');
+        throw new Error("Browser is not defined");
     }
 
     return browser;
-}
+};
 
 export const isBrowser = (browser: Browser): browser is Browser => {
     return getBrowser() === browser;
-}
+};
 
 export const getManifestVersion = (): ManifestVersion => {
-    const manifestVersion = getEnv('MANIFEST_VERSION', '3');
+    const manifestVersion = getEnv("MANIFEST_VERSION", "3");
 
     return parseInt(manifestVersion) as ManifestVersion;
-}
+};

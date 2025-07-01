@@ -21,7 +21,7 @@ export default class extends AbstractViewFinder<SidebarEntrypointOptions> {
     }
 
     protected getPlugin(): EntrypointOptionsFinder<SidebarEntrypointOptions> {
-        return new PluginFinder(this.config, 'sidebar', this);
+        return new PluginFinder(this.config, "sidebar", this);
     }
 
     public canMerge(): boolean {

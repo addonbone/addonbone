@@ -18,7 +18,7 @@ export default definePlugin(() => {
     let declaration: LocaleDeclaration;
 
     return {
-        name: 'adnbn:locale',
+        name: "adnbn:locale",
         startup: ({config}) => {
             locale = new Locale(config);
             declaration = new LocaleDeclaration(config);
@@ -45,8 +45,8 @@ export default definePlugin(() => {
                     new DefinePlugin({
                         __ADNBN_LOCALE_KEYS__: JSON.stringify([...(await locale.keys())]),
                         __ADNBN_DEFINED_LOCALES__: JSON.stringify([...(await locale.languages())]),
-                    })
-                ]
+                    }),
+                ],
             } satisfies RspackConfig;
         },
         manifest: async ({config, manifest}) => {
@@ -65,7 +65,9 @@ export default definePlugin(() => {
                 const availableLanguages = await locale.languages();
 
                 if (!availableLanguages.has(language)) {
-                    throw new Error(`Language "${language}" not found in available translations. Available languages: ${[...availableLanguages].join(', ')}`);
+                    throw new Error(
+                        `Language "${language}" not found in available translations. Available languages: ${[...availableLanguages].join(", ")}`
+                    );
                 }
             }
 
@@ -128,6 +130,6 @@ export default definePlugin(() => {
             }
 
             manifest.setName(_.startCase(config.app));
-        }
+        },
     };
 });

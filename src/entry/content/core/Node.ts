@@ -3,8 +3,8 @@ import {contentScriptAnchorAttribute} from "./resolvers/anchor";
 import {ContentScriptNode} from "@typing/content";
 
 enum NodeMark {
-    Mounded = '1',
-    Unmounted = '0',
+    Mounded = "1",
+    Unmounted = "0",
 }
 
 export default class implements ContentScriptNode {
@@ -12,7 +12,10 @@ export default class implements ContentScriptNode {
 
     private readonly attr = contentScriptAnchorAttribute;
 
-    constructor(public readonly anchor: Element, public container?: Element) {
+    constructor(
+        public readonly anchor: Element,
+        public container?: Element
+    ) {
         if (this.container) {
             this._container = this.container.cloneNode(false) as Element;
         }

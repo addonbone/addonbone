@@ -4,13 +4,13 @@ export {
     type EntrypointPluginModule,
     type EntrypointPluginEntryModules,
     type EntrypointPluginTemplate,
-    type EntrypointPluginUpdate
+    type EntrypointPluginUpdate,
 } from "./EntrypointPlugin";
 
 export {
     default as GenerateJsonPlugin,
     type GenerateJsonPluginData,
-    type GenerateJsonPluginUpdate
+    type GenerateJsonPluginUpdate,
 } from "./GenerateJsonPlugin";
 
 export {default as ManifestPlugin} from "./ManifestPlugin";

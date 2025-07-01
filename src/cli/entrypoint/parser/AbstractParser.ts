@@ -22,7 +22,7 @@ export default abstract class AbstractParser<O extends EntrypointOptions> implem
     protected abstract definition(): string | string[];
 
     constructor(protected readonly config: ReadonlyConfig) {
-        this.ir = new ImportResolver(TsResolver.make(path.resolve(this.config.inputDir, 'tsconfig.json')));
+        this.ir = new ImportResolver(TsResolver.make(path.resolve(this.config.inputDir, "tsconfig.json")));
     }
 
     protected optionFile(file: EntrypointFile): OptionFile<Record<string, any>> {
@@ -30,9 +30,7 @@ export default abstract class AbstractParser<O extends EntrypointOptions> implem
 
         instance.setImportResolver(this.ir);
 
-        return instance
-            .setProperties(Object.keys(this.schema().shape))
-            .setDefinition(this.definition());
+        return instance.setProperties(Object.keys(this.schema().shape)).setDefinition(this.definition());
     }
 
     protected getOptions(file: EntrypointFile): Record<string, any> {
@@ -52,7 +50,7 @@ export default abstract class AbstractParser<O extends EntrypointOptions> implem
             const e = error?.errors[0];
 
             if (e) {
-                throw new Error(`Invalid options ${e.path.join(', ')} in "${file.file}": ${e.message}`);
+                throw new Error(`Invalid options ${e.path.join(", ")} in "${file.file}": ${e.message}`);
             } else {
                 throw new Error(`Invalid options in "${file.file}"`);
             }
@@ -72,9 +70,6 @@ export default abstract class AbstractParser<O extends EntrypointOptions> implem
 
         instance.setImportResolver(this.ir);
 
-        return instance
-            .setDefinition(this.definition())
-            .setProperty(agreement)
-            .getType();
+        return instance.setDefinition(this.definition()).setProperty(agreement).getType();
     }
 }

@@ -18,14 +18,12 @@ export default definePlugin(() => {
     let relayDeclaration: RelayDeclaration;
 
     return {
-        name: 'adnbn:content',
+        name: "adnbn:content",
         startup: async ({config}) => {
             content = new Content(config);
             relay = new Relay(config);
 
-            manager = new ContentManager(config)
-                .provider(content)
-                .provider(relay);
+            manager = new ContentManager(config).provider(content).provider(relay);
 
             relayDeclaration = new RelayDeclaration(config);
         },
@@ -36,14 +34,13 @@ export default definePlugin(() => {
 
             if (await manager.empty()) {
                 if (config.debug) {
-                    console.warn('Content script or relay entries not found');
+                    console.warn("Content script or relay entries not found");
                 }
 
                 return {};
             }
 
-            const plugin = EntrypointPlugin.from(await manager.entries())
-                .virtual(file => manager.virtual(file));
+            const plugin = EntrypointPlugin.from(await manager.entries()).virtual(file => manager.virtual(file));
 
             if (config.command === Command.Watch) {
                 plugin.watch(async () => {
@@ -63,29 +60,31 @@ export default definePlugin(() => {
                             frameworkContent: {
                                 minChunks: 2,
                                 name: manager.chunkName(),
-                                test: isEntryModuleOrIssuer(['content', 'relay']),
+                                test: isEntryModuleOrIssuer(["content", "relay"]),
                                 chunks: (chunk): boolean => {
                                     return manager.likely(chunk.name);
                                 },
                                 enforce: false,
                                 reuseExistingChunk: true,
-                                priority: 10
-                            }
-                        }
-                    }
-                }
+                                priority: 10,
+                            },
+                        },
+                    },
+                },
             } satisfies RspackConfig;
         },
         manifest: async ({manifest}) => {
+            // prettier-ignore
             manifest
                 .setContentScripts(await manager.manifest())
-                .appendHostPermissions(await manager.hostPermissions())
+                .appendHostPermissions(await manager.hostPermissions());
 
             if (await relay.exists()) {
+                // prettier-ignore
                 manifest
-                    .addPermission('scripting')
-                    .addPermission('tabs');
+                    .addPermission("scripting")
+                    .addPermission("tabs");
             }
-        }
+        },
     };
 });

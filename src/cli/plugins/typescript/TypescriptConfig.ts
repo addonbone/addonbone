@@ -14,7 +14,7 @@ export default class extends FileBuilder {
     }
 
     protected filename(): string {
-        return 'tsconfig.json';
+        return "tsconfig.json";
     }
 
     protected withBanner(): boolean {
@@ -35,18 +35,18 @@ export default class extends FileBuilder {
 
         return {
             [srcDir]: srcDir,
-            '@': srcDir,
-            '@shared': sharedDir,
-            '~': sharedDir,
+            "@": srcDir,
+            "@shared": sharedDir,
+            "~": sharedDir,
         };
     }
 
     public aliases(): Record<string, string> {
-        return _.mapValues(this.alias(), (value) => getRootPath(value))
+        return _.mapValues(this.alias(), value => getRootPath(value));
     }
 
     public json(): TsConfigJson {
-        const outputDir = path.posix.join('..', this.config.outputDir);
+        const outputDir = path.posix.join("..", this.config.outputDir);
 
         return {
             compilerOptions: {
@@ -60,26 +60,28 @@ export default class extends FileBuilder {
                 skipLibCheck: true,
                 noEmit: true,
                 outDir: outputDir,
-                paths: _.reduce(this.alias(), (paths, value, key) => ({
-                    ...paths,
-                    [path.posix.join(key, '*')]: [path.posix.join('..', value, '*')]
-                }), {} as Record<string, string[]>),
+                paths: _.reduce(
+                    this.alias(),
+                    (paths, value, key) => ({
+                        ...paths,
+                        [path.posix.join(key, "*")]: [path.posix.join("..", value, "*")],
+                    }),
+                    {} as Record<string, string[]>
+                ),
             },
             include: [
-                '../**/*',
-                './vendor.d.ts',
-                './locale.d.ts',
-                './service.d.ts',
-                './relay.d.ts',
-                './offscreen.d.ts',
-                './icon.d.ts',
-                './page.d.ts',
-                './popup.d.ts',
-                './sidebar.d.ts',
+                "../**/*",
+                "./vendor.d.ts",
+                "./locale.d.ts",
+                "./service.d.ts",
+                "./relay.d.ts",
+                "./offscreen.d.ts",
+                "./icon.d.ts",
+                "./page.d.ts",
+                "./popup.d.ts",
+                "./sidebar.d.ts",
             ],
-            exclude: [
-                outputDir
-            ]
+            exclude: [outputDir],
         };
     }
 }

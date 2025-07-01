@@ -21,7 +21,7 @@ export default class extends AbstractTransportFinder<ServiceEntrypointOptions> {
     }
 
     protected getPlugin(): EntrypointOptionsFinder<ServiceEntrypointOptions> {
-        return new PluginFinder(this.config, 'service', this);
+        return new PluginFinder(this.config, "service", this);
     }
 
     public canMerge(): boolean {

@@ -6,7 +6,7 @@ import {PopupEntrypointOptions} from "@typing/popup";
 
 export default class extends ViewParser<PopupEntrypointOptions> {
     protected definition(): string {
-        return 'definePopup';
+        return "definePopup";
     }
 
     protected schema(): typeof this.CommonPropertiesSchema {

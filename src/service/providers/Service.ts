@@ -8,7 +8,7 @@ import type {TransportDictionary, TransportManager, TransportName} from "@typing
 
 export default class<N extends TransportName, T = TransportDictionary[N]> extends BaseTransport<N, T> {
     constructor(name: N) {
-        super(name)
+        super(name);
     }
 
     protected manager(): TransportManager {
@@ -20,6 +20,6 @@ export default class<N extends TransportName, T = TransportDictionary[N]> extend
             throw new Error(`Service "${this.name}" can be getting only from background context.`);
         }
 
-        return super.get()
+        return super.get();
     }
 }

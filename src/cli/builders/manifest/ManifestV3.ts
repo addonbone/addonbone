@@ -62,13 +62,13 @@ export default class extends ManifestBase<ManifestV3> {
                     default_title: title || this.name,
                     default_popup: path,
                     default_icon: this.getIconsByName(icon),
-                }
+                },
             };
         } else if (this.hasExecuteActionCommand()) {
             return {
                 action: {
                     default_title: this.name,
-                }
+                },
             };
         }
     }
@@ -88,7 +88,7 @@ export default class extends ManifestBase<ManifestV3> {
     }
 
     protected buildWebAccessibleResources(): Partial<ManifestV3> | undefined {
-        const resources: Array<{ resources: string[]; matches: string[] }> = [...this.accessibleResources];
+        const resources: Array<{resources: string[]; matches: string[]}> = [...this.accessibleResources];
 
         for (const contentScript of this.contentScripts.values()) {
             const assets = this.dependencies.get(contentScript.entry)?.assets;

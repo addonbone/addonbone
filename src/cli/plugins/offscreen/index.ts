@@ -1,6 +1,6 @@
 import path from "path";
 import {Configuration as RspackConfig, DefinePlugin, HtmlRspackPlugin, Plugins} from "@rspack/core";
-import {RspackVirtualModulePlugin} from 'rspack-plugin-virtual-module';
+import {RspackVirtualModulePlugin} from "rspack-plugin-virtual-module";
 import HtmlRspackTagsPlugin from "html-rspack-tags-plugin";
 
 import {definePlugin} from "@main/plugin";
@@ -15,15 +15,15 @@ import {Command} from "@typing/app";
 import {Browser} from "@typing/browser";
 import {BackgroundEntryName} from "@typing/background";
 
-const OffscreenTempDir = 'virtual';
-const OffscreenBackgroundModule = 'offscreen.background.ts';
+const OffscreenTempDir = "virtual";
+const OffscreenBackgroundModule = "offscreen.background.ts";
 
 export default definePlugin(() => {
     let offscreen: Offscreen;
     let declaration: OffscreenDeclaration;
 
     return {
-        name: 'adnbn:offscreen',
+        name: "adnbn:offscreen",
         startup: ({config}) => {
             offscreen = new Offscreen(config);
             declaration = new OffscreenDeclaration(config);
@@ -37,7 +37,7 @@ export default definePlugin(() => {
 
             if (await offscreen.empty()) {
                 if (config.debug) {
-                    console.info('Offscreen entries not found');
+                    console.info("Offscreen entries not found");
                 }
 
                 build = false;
@@ -50,6 +50,7 @@ export default definePlugin(() => {
             if (build) {
                 parameters = await offscreen.parameters();
 
+                // prettier-ignore
                 const plugin = EntrypointPlugin.from(await offscreen.view().entries())
                     .virtual(file => offscreen.virtual(file));
 
@@ -67,16 +68,21 @@ export default definePlugin(() => {
                 plugins.push(plugin, ...htmlPlugins, ...tagsPlugins);
 
                 if (config.manifestVersion === 2 || config.browser === Browser.Firefox) {
-                    plugins.push(new RspackVirtualModulePlugin({
-                        [OffscreenBackgroundModule]: virtualOffscreenBackgroundModule()
-                    }, OffscreenTempDir));
+                    plugins.push(
+                        new RspackVirtualModulePlugin(
+                            {
+                                [OffscreenBackgroundModule]: virtualOffscreenBackgroundModule(),
+                            },
+                            OffscreenTempDir
+                        )
+                    );
 
                     rspack = {
                         entry: {
                             [BackgroundEntryName]: {
                                 import: [path.join(OffscreenTempDir, OffscreenBackgroundModule)],
-                            }
-                        }
+                            },
+                        },
                     };
                 }
             }
@@ -92,9 +98,9 @@ export default definePlugin(() => {
             } satisfies RspackConfig;
         },
         manifest: async ({manifest, config}) => {
-            if (config.manifestVersion !== 2 && config.browser !== Browser.Firefox && await offscreen.exists()) {
-                manifest.addPermission('offscreen');
+            if (config.manifestVersion !== 2 && config.browser !== Browser.Firefox && (await offscreen.exists())) {
+                manifest.addPermission("offscreen");
             }
-        }
+        },
     };
 });

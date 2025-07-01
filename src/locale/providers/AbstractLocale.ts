@@ -5,11 +5,10 @@ import {
     LocaleProvider,
     LocaleStructure,
     LocaleSubstitutionsFor,
-    LocaleValuesSeparator
+    LocaleValuesSeparator,
 } from "@typing/locale";
 
 export default abstract class<S extends LocaleStructure> implements LocaleProvider<S> {
-
     public abstract lang(): Language;
 
     public abstract keys(): Set<keyof S>;
@@ -18,10 +17,7 @@ export default abstract class<S extends LocaleStructure> implements LocaleProvid
 
     protected abstract value(key: keyof S & string): string | undefined;
 
-    public trans<K extends LocaleNonPluralKeys<S>>(
-        key: K,
-        substitutions?: LocaleSubstitutionsFor<S, K>
-    ): string {
+    public trans<K extends LocaleNonPluralKeys<S>>(key: K, substitutions?: LocaleSubstitutionsFor<S, K>): string {
         return this.get(key, substitutions);
     }
 
@@ -35,10 +31,7 @@ export default abstract class<S extends LocaleStructure> implements LocaleProvid
         return parts[idx] ?? parts[0] ?? (key as string);
     }
 
-    public get<K extends keyof S & string>(
-        key: K,
-        substitutions?: LocaleSubstitutionsFor<S, K>
-    ): string {
+    public get<K extends keyof S & string>(key: K, substitutions?: LocaleSubstitutionsFor<S, K>): string {
         const template = this.value(key);
 
         if (template === undefined) {
@@ -104,45 +97,66 @@ export default abstract class<S extends LocaleStructure> implements LocaleProvid
             case Language.ChineseTaiwan:
             case Language.PortugueseBrazil:
             case Language.PortuguesePortugal:
-                return (count == 1) ? 0 : 1;
+                return count == 1 ? 0 : 1;
 
             case Language.Amharic:
             case Language.Filipino:
             case Language.French:
             case Language.Hindi:
-                return ((count == 0) || (count == 1)) ? 0 : 1;
+                return count == 0 || count == 1 ? 0 : 1;
 
             case Language.Croatian:
             case Language.Russian:
             case Language.Serbian:
             case Language.Ukrainian:
-                return ((count % 10 == 1) && (count % 100 != 11)) ? 0 : (((count % 10 >= 2) && (count % 10 <= 4) && ((count % 100 < 10) || (count % 100 >= 20))) ? 1 : 2);
+                return count % 10 == 1 && count % 100 != 11
+                    ? 0
+                    : count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 10 || count % 100 >= 20)
+                      ? 1
+                      : 2;
 
             case Language.Czech:
             case Language.Slovak:
-                return (count == 1) ? 0 : (((count >= 2) && (count <= 4)) ? 1 : 2);
+                return count == 1 ? 0 : count >= 2 && count <= 4 ? 1 : 2;
 
             case Language.Lithuanian:
-                return ((count % 10 == 1) && (count % 100 != 11)) ? 0 : (((count % 10 >= 2) && ((count % 100 < 10) || (count % 100 >= 20))) ? 1 : 2);
+                return count % 10 == 1 && count % 100 != 11
+                    ? 0
+                    : count % 10 >= 2 && (count % 100 < 10 || count % 100 >= 20)
+                      ? 1
+                      : 2;
 
             case Language.Slovenian:
-                return (count % 100 == 1) ? 0 : ((count % 100 == 2) ? 1 : (((count % 100 == 3) || (count % 100 == 4)) ? 2 : 3));
+                return count % 100 == 1 ? 0 : count % 100 == 2 ? 1 : count % 100 == 3 || count % 100 == 4 ? 2 : 3;
 
             case Language.Latvian:
-                return (count == 0) ? 0 : (((count % 10 == 1) && (count % 100 != 11)) ? 1 : 2);
+                return count == 0 ? 0 : count % 10 == 1 && count % 100 != 11 ? 1 : 2;
 
             case Language.Polish:
-                return (count == 1) ? 0 : (((count % 10 >= 2) && (count % 10 <= 4) && ((count % 100 < 12) || (count % 100 > 14))) ? 1 : 2);
+                return count == 1
+                    ? 0
+                    : count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 12 || count % 100 > 14)
+                      ? 1
+                      : 2;
 
             case Language.Romanian:
-                return (count == 1) ? 0 : (((count == 0) || ((count % 100 > 0) && (count % 100 < 20))) ? 1 : 2);
+                return count == 1 ? 0 : count == 0 || (count % 100 > 0 && count % 100 < 20) ? 1 : 2;
 
             case Language.Arabic:
-                return (count == 0) ? 0 : ((count == 1) ? 1 : ((count == 2) ? 2 : (((count % 100 >= 3) && (count % 100 <= 10)) ? 3 : (((count % 100 >= 11) && (count % 100 <= 99)) ? 4 : 5))));
+                return count == 0
+                    ? 0
+                    : count == 1
+                      ? 1
+                      : count == 2
+                        ? 2
+                        : count % 100 >= 3 && count % 100 <= 10
+                          ? 3
+                          : count % 100 >= 11 && count % 100 <= 99
+                            ? 4
+                            : 5;
 
             default:
                 return 0;
         }
     }
 }
-

@@ -9,8 +9,7 @@ export default class implements ContentScriptNode {
     constructor(
         protected readonly node: ContentScriptNode,
         protected readonly component?: ReactComponent
-    ) {
-    }
+    ) {}
 
     public get anchor(): Element {
         return this.node.anchor;
@@ -28,7 +27,7 @@ export default class implements ContentScriptNode {
         }
 
         if (!this.component) {
-            console.warn('Content script react component is empty');
+            console.warn("Content script react component is empty");
 
             return;
         }

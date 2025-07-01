@@ -13,10 +13,12 @@ export default class implements LocaleValidator {
     protected shortNameKey?: string;
 
     protected get nameLimit(): number {
-        return {
-            [Browser.Chrome]: 75,
-            [Browser.Firefox]: 50
-        }[this.browser] || 45;
+        return (
+            {
+                [Browser.Chrome]: 75,
+                [Browser.Firefox]: 50,
+            }[this.browser] || 45
+        );
     }
 
     protected get descriptionLimit(): number {
@@ -30,8 +32,7 @@ export default class implements LocaleValidator {
     constructor(
         protected readonly browser: Browser,
         protected readonly language: Language
-    ) {
-    }
+    ) {}
 
     public isValid(locale: LocaleBuilder): boolean {
         try {
@@ -51,15 +52,27 @@ export default class implements LocaleValidator {
         const description = this.descriptionKey && data.get(this.descriptionKey);
 
         if (name && name.length > this.nameLimit) {
-            throw new LocaleError(this.browser, this.language, `Name "${name}" [${this.nameKey}] exceeds ${this.nameLimit} characters`);
+            throw new LocaleError(
+                this.browser,
+                this.language,
+                `Name "${name}" [${this.nameKey}] exceeds ${this.nameLimit} characters`
+            );
         }
 
         if (shortName && shortName.length > this.shortNameLimit) {
-            throw new LocaleError(this.browser, this.language, `Short name ${shortName} [${this.shortNameKey}] exceeds ${this.shortNameLimit} characters`);
+            throw new LocaleError(
+                this.browser,
+                this.language,
+                `Short name ${shortName} [${this.shortNameKey}] exceeds ${this.shortNameLimit} characters`
+            );
         }
 
         if (description && description.length > this.descriptionLimit) {
-            throw new LocaleError(this.browser, this.language, `Description "${description}" [${this.descriptionKey}] exceeds ${this.descriptionLimit} characters`);
+            throw new LocaleError(
+                this.browser,
+                this.language,
+                `Description "${description}" [${this.descriptionKey}] exceeds ${this.descriptionLimit} characters`
+            );
         }
 
         return this;

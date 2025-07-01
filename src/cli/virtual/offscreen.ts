@@ -12,7 +12,7 @@ import {Builder as ViewBuilder} from "virtual:view-framework";
 import * as module from "virtual:offscreen-entrypoint";
 
 try {
-    const relayName = 'virtual:offscreen-name';
+    const relayName = "virtual:offscreen-name";
 
     const {default: defaultDefinition, ...otherDefinition} = module;
 
@@ -30,14 +30,13 @@ try {
         name,
         init,
         main,
-        ...options
+        ...options,
     })
         .view(new ViewBuilder(options))
         .build()
-        .catch((e) => {
-            console.error('Failed to build offscreen: ', e);
+        .catch(e => {
+            console.error("Failed to build offscreen: ", e);
         });
-
 } catch (e) {
-    console.error('The offscreen crashed on startup:', e);
+    console.error("The offscreen crashed on startup:", e);
 }

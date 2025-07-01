@@ -8,7 +8,7 @@ import {getOutputPath, getRootPath} from "@cli/resolvers/path";
 
 export default definePlugin(() => {
     return {
-        name: 'adnbn:output',
+        name: "adnbn:output",
         bundler: ({config}) => {
             const {app, jsDir, jsFilename} = config;
 
@@ -22,11 +22,11 @@ export default definePlugin(() => {
                     path: getRootPath(getOutputPath(config)),
                     filename,
                     chunkFilename: filename,
-                    hotUpdateGlobal: snakeApp + 'HotUpdate',
-                    chunkLoadingGlobal: snakeApp + 'ChunkLoading',
-                    uniqueName: kebabApp
+                    hotUpdateGlobal: snakeApp + "HotUpdate",
+                    chunkLoadingGlobal: snakeApp + "ChunkLoading",
+                    uniqueName: kebabApp,
                 },
             } satisfies RspackConfig;
         },
-    }
+    };
 });

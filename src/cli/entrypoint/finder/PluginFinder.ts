@@ -26,9 +26,11 @@ export default class<O extends EntrypointOptions> extends AbstractOptionsFinder<
     }
 
     protected async getFiles(): Promise<Set<EntrypointFile>> {
-        const pluginResult = await Array.fromAsync(processPluginHandler(this.config.plugins, this.key, {
-            config: this.config,
-        }));
+        const pluginResult = await Array.fromAsync(
+            processPluginHandler(this.config.plugins, this.key, {
+                config: this.config,
+            })
+        );
 
         const files = new Set<EntrypointFile>();
 

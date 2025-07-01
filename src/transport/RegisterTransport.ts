@@ -4,12 +4,14 @@ import BaseTransport from "./BaseTransport";
 
 import type {TransportDictionary, TransportMessage, TransportName, TransportRegister} from "@typing/transport";
 
-export default abstract class<
-    N extends TransportName,
-    T extends object = TransportDictionary[N],
-    A extends any[] = []
-> extends BaseTransport<N, T> implements TransportRegister<T, A> {
-    protected constructor(name: N, protected readonly init: (...args: A) => T) {
+export default abstract class<N extends TransportName, T extends object = TransportDictionary[N], A extends any[] = []>
+    extends BaseTransport<N, T>
+    implements TransportRegister<T, A>
+{
+    protected constructor(
+        name: N,
+        protected readonly init: (...args: A) => T
+    ) {
         super(name);
     }
 
@@ -32,19 +34,18 @@ export default abstract class<
                     throw new Error(`Property not found at path "${path}" in "${this.name}"`);
                 }
 
-                if (typeof property === 'function') {
+                if (typeof property === "function") {
                     return await property.apply(instance, args);
                 }
 
-                return property
-
+                return property;
             } catch (error) {
-                console.error('register() error', error);
+                console.error("register() error", error);
 
                 throw error;
             }
         });
 
-        return instance
+        return instance;
     }
 }

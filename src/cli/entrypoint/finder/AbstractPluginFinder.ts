@@ -8,7 +8,7 @@ export default abstract class<O extends EntrypointOptions> extends AbstractEntry
     protected abstract getPlugin(): EntrypointOptionsFinder<O>;
 
     public plugin(): EntrypointOptionsFinder<O> {
-        return this._plugin ??= this.getPlugin();
+        return (this._plugin ??= this.getPlugin());
     }
 
     async empty(): Promise<boolean> {

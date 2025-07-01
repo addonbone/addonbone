@@ -6,21 +6,16 @@ import TsResolver from "./TsResolver";
 import {PackageName} from "@typing/app";
 import {EntrypointFileExtensions} from "@typing/entrypoint";
 
-const extPattern = [...EntrypointFileExtensions]
-    .map(ext => ext.replace('.', '\\.'))
-    .join('|');
+const extPattern = [...EntrypointFileExtensions].map(ext => ext.replace(".", "\\.")).join("|");
 
-const extRegex = new RegExp(`\\.(${extPattern})$`, 'i');
+const extRegex = new RegExp(`\\.(${extPattern})$`, "i");
 
 const isValid = (filePath: string): boolean => {
     return extRegex.test(filePath);
-}
+};
 
 const findFile = (basePath: string): string | undefined => {
-    const candidates = [
-        basePath,
-        path.join(basePath, 'index'),
-    ];
+    const candidates = [basePath, path.join(basePath, "index")];
 
     for (const ext of EntrypointFileExtensions) {
         for (const candidate of candidates) {
@@ -31,7 +26,7 @@ const findFile = (basePath: string): string | undefined => {
             }
         }
     }
-}
+};
 
 export default class {
     protected baseDir: string;
@@ -53,7 +48,7 @@ export default class {
     }
 
     public get(importPath: string): string {
-        if (importPath.startsWith('.') || importPath.startsWith('/')) {
+        if (importPath.startsWith(".") || importPath.startsWith("/")) {
             let resolvedLocal: string | undefined = path.resolve(this.baseDir, importPath);
 
             if (isValid(resolvedLocal) && fs.existsSync(resolvedLocal)) {
@@ -90,7 +85,9 @@ export default class {
 
             return require.resolve(importPath, {paths: [this.baseDir]});
         } catch {
-            throw new Error(`Cannot resolve "${importPath}" as a local path, alias, or npm package from "${this.baseDir}"`);
+            throw new Error(
+                `Cannot resolve "${importPath}" as a local path, alias, or npm package from "${this.baseDir}"`
+            );
         }
     }
 }

@@ -2,7 +2,10 @@ import _ from "lodash";
 
 import {Plugin, PluginHandler, PluginHandlerKeys, PluginHandlerOptions, PluginNameHandlerResult} from "@typing/plugin";
 
-export const resolvePluginHandler = async <O extends object, T>(handler: PluginHandler<O, T> | undefined, options: O): Promise<T | undefined> => {
+export const resolvePluginHandler = async <O extends object, T>(
+    handler: PluginHandler<O, T> | undefined,
+    options: O
+): Promise<T | undefined> => {
     if (_.isFunction(handler)) {
         const result = handler(options);
 
@@ -16,7 +19,11 @@ export const resolvePluginHandler = async <O extends object, T>(handler: PluginH
     return handler;
 };
 
-export const processPluginHandler = async function* <K extends PluginHandlerKeys>(plugins: Plugin[], key: K, options: PluginHandlerOptions<K>): AsyncGenerator<PluginNameHandlerResult<K>, void, void> {
+export const processPluginHandler = async function* <K extends PluginHandlerKeys>(
+    plugins: Plugin[],
+    key: K,
+    options: PluginHandlerOptions<K>
+): AsyncGenerator<PluginNameHandlerResult<K>, void, void> {
     for await (const plugin of plugins) {
         const handler = plugin[key] as PluginHandler<PluginHandlerOptions<K>> | undefined;
 
@@ -26,4 +33,4 @@ export const processPluginHandler = async function* <K extends PluginHandlerKeys
             yield {name: plugin.name, result};
         }
     }
-}
+};

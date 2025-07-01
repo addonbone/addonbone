@@ -1,13 +1,13 @@
-export const PackageName = 'adnbn';
-export const SystemDir = '.adnbn';
+export const PackageName = "adnbn";
+export const SystemDir = ".adnbn";
 
 export enum Mode {
-    None = 'none',
-    Development = 'development',
-    Production = 'production',
+    None = "none",
+    Development = "development",
+    Production = "production",
 }
 
 export enum Command {
-    Build = 'build',
-    Watch = 'watch',
+    Build = "build",
+    Watch = "watch",
 }

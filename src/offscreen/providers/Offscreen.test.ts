@@ -1,5 +1,5 @@
-import {closeOffscreen, createOffscreen, hasOffscreen} from '@adnbn/browser';
-import {isOffscreen} from '@offscreen/utils';
+import {closeOffscreen, createOffscreen, hasOffscreen} from "@adnbn/browser";
+import {isOffscreen} from "@offscreen/utils";
 
 import {getBrowser} from "@main/env";
 
@@ -13,8 +13,8 @@ import {DeepAsyncProxy} from "@typing/helpers";
 import {MessageTypeSeparator} from "@typing/message";
 import {Browser} from "@typing/browser";
 
-jest.mock('@offscreen/utils', () => ({isOffscreen: jest.fn()}));
-jest.mock('@main/env', () => ({getBrowser: jest.fn()}));
+jest.mock("@offscreen/utils", () => ({isOffscreen: jest.fn()}));
+jest.mock("@main/env", () => ({getBrowser: jest.fn()}));
 
 beforeEach(async () => {
     jest.clearAllMocks();
@@ -32,7 +32,7 @@ const MatchService = {
     },
     one: 1,
     obj: {
-        concat: (a: string, b: string): string => a + ' ' + b,
+        concat: (a: string, b: string): string => a + " " + b,
         zero: 0,
     },
 };
@@ -40,26 +40,28 @@ const MatchService = {
 type OffscreenType = typeof MatchService;
 type OffscreenProxyType = DeepAsyncProxy<OffscreenType>;
 
-const offscreenName = 'math';
+const offscreenName = "math";
 const parameters = {
-    reasons: ['TESTING' as const],
-    url: 'offscreen.html',
-    justification: 'for testing'
+    reasons: ["TESTING" as const],
+    url: "offscreen.html",
+    justification: "for testing",
 };
 
-describe('ProxyOffscreen', () => {
+describe("ProxyOffscreen", () => {
     beforeEach(async () => {
         (isOffscreen as jest.Mock).mockReturnValue(false);
         (hasOffscreen as jest.Mock).mockReturnValue(true);
         (getBrowser as jest.Mock).mockReturnValue(Browser.Chrome);
     });
 
-    test('throws an error when get() is called in offscreen context', async () => {
+    test("throws an error when get() is called in offscreen context", async () => {
         (isOffscreen as jest.Mock).mockReturnValue(true);
 
         const proxy = new ProxyOffscreen(offscreenName, parameters);
 
-        expect(() => proxy.get()).toThrow(`You are trying to get proxy offscreen service "${offscreenName}" from offscreen. You can get original offscreen service instead`);
+        expect(() => proxy.get()).toThrow(
+            `You are trying to get proxy offscreen service "${offscreenName}" from offscreen. You can get original offscreen service instead`
+        );
     });
 
     test("returns a proxy when not in offscreen context", () => {
@@ -78,8 +80,8 @@ describe('ProxyOffscreen', () => {
                 type: `offscreen${MessageTypeSeparator}${offscreenName}`,
                 data: {
                     path: "sum",
-                    args: [1, 2]
-                }
+                    args: [1, 2],
+                },
             }),
             expect.any(Function)
         );
@@ -94,8 +96,8 @@ describe('ProxyOffscreen', () => {
                 type: `offscreen${MessageTypeSeparator}${offscreenName}`,
                 data: {
                     path: "one",
-                    args: []
-                }
+                    args: [],
+                },
             }),
             expect.any(Function)
         );
@@ -104,14 +106,14 @@ describe('ProxyOffscreen', () => {
     test("accesses nested method or property ", async () => {
         const offscreen = new ProxyOffscreen<typeof offscreenName, OffscreenProxyType>(offscreenName, parameters).get();
 
-        expect(await offscreen.obj.concat('Hello', 'world')).toBe('Hello world');
+        expect(await offscreen.obj.concat("Hello", "world")).toBe("Hello world");
         expect(chrome.runtime.sendMessage).toHaveBeenCalledWith(
             expect.objectContaining({
                 type: `offscreen${MessageTypeSeparator}${offscreenName}`,
                 data: {
                     path: "obj.concat",
-                    args: ['Hello', 'world']
-                }
+                    args: ["Hello", "world"],
+                },
             }),
             expect.any(Function)
         );
@@ -122,8 +124,8 @@ describe('ProxyOffscreen', () => {
                 type: `offscreen${MessageTypeSeparator}${offscreenName}`,
                 data: {
                     path: "obj.zero",
-                    args: []
-                }
+                    args: [],
+                },
             }),
             expect.any(Function)
         );
@@ -152,28 +154,36 @@ describe('ProxyOffscreen', () => {
     });
 });
 
-describe('RegisterOffscreen', () => {
+describe("RegisterOffscreen", () => {
     beforeEach(async () => {
         (isOffscreen as jest.Mock).mockReturnValue(true);
     });
 
-    test('throws an error when get() is called outside offscreen context', async () => {
+    test("throws an error when get() is called outside offscreen context", async () => {
         (isOffscreen as jest.Mock).mockReturnValue(false);
 
         const proxy = new RegisterOffscreen(offscreenName, () => MatchService);
 
-        expect(() => proxy.get()).toThrow(`Offscreen service "${offscreenName}" can be getting only from offscreen context.`);
+        expect(() => proxy.get()).toThrow(
+            `Offscreen service "${offscreenName}" can be getting only from offscreen context.`
+        );
     });
 
     test("returns real offscreen service when called in offscreen context", () => {
-        const offscreen = new RegisterOffscreen<typeof offscreenName, OffscreenType>(offscreenName, () => MatchService).get();
+        const offscreen = new RegisterOffscreen<typeof offscreenName, OffscreenType>(
+            offscreenName,
+            () => MatchService
+        ).get();
 
         //@ts-ignore
         expect(offscreen.__proxy).toBe(undefined);
     });
 
     test("invokes methods directly without using Message.send in offscreen", async () => {
-        const offscreen = new RegisterOffscreen<typeof offscreenName, OffscreenType>(offscreenName, () => MatchService).get();
+        const offscreen = new RegisterOffscreen<typeof offscreenName, OffscreenType>(
+            offscreenName,
+            () => MatchService
+        ).get();
 
         expect(offscreen.sum(1, 2)).toBe(3);
         expect(chrome.runtime.sendMessage).toHaveBeenCalledTimes(0);
@@ -182,6 +192,8 @@ describe('RegisterOffscreen', () => {
     test("throws an error when attempting to register the same offscreen service twice", async () => {
         const offscreen = new RegisterOffscreen<typeof offscreenName, OffscreenType>(offscreenName, () => MatchService);
 
-        expect(() => offscreen.register()).toThrow(`A instance with name "${offscreenName}" already exists. The name must be unique.`);
+        expect(() => offscreen.register()).toThrow(
+            `A instance with name "${offscreenName}" already exists. The name must be unique.`
+        );
     });
 });

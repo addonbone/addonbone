@@ -16,7 +16,7 @@ export default abstract class implements EntrypointFinder {
 
     protected constructor(protected readonly config: ReadonlyConfig) {
         this.priorityDirectories = [
-            'node_modules',
+            "node_modules",
             getSourcePath(config),
             getSharedPath(config),
             getAppPath(config),
@@ -46,7 +46,7 @@ export default abstract class implements EntrypointFinder {
             return a.file.length - b.file.length;
         });
 
-        return this._files = new Set(files);
+        return (this._files = new Set(files));
     }
 
     public async empty(): Promise<boolean> {
@@ -54,7 +54,7 @@ export default abstract class implements EntrypointFinder {
     }
 
     public async exists(): Promise<boolean> {
-        return !await this.empty();
+        return !(await this.empty());
     }
 
     public holds(file: EntrypointFile): boolean {
@@ -64,7 +64,7 @@ export default abstract class implements EntrypointFinder {
     protected file(filename: string): EntrypointFile {
         const {dir, name} = path.parse(filename);
 
-        const result = toPosix(name === 'index' ? dir : path.join(dir, name));
+        const result = toPosix(name === "index" ? dir : path.join(dir, name));
 
         return {file: filename, import: result};
     }

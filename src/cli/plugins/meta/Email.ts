@@ -1,4 +1,4 @@
-import isEmail from 'validator/lib/isEmail';
+import isEmail from "validator/lib/isEmail";
 
 import AbstractMeta from "./AbstractMeta";
 
@@ -9,7 +9,7 @@ export default class extends AbstractMeta {
         super(config);
     }
 
-    public getValue(): ReadonlyConfig['email'] {
+    public getValue(): ReadonlyConfig["email"] {
         return this.config.email;
     }
 

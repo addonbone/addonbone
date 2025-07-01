@@ -1,4 +1,4 @@
-import {StorageState, StorageWatchOptions} from '@typing/storage'
+import {StorageState, StorageWatchOptions} from "@typing/storage";
 
 import AbstractStorage, {StorageOptions} from "./AbstractStorage";
 
@@ -6,23 +6,23 @@ type StorageChange = chrome.storage.StorageChange;
 
 export default class Storage<T extends StorageState> extends AbstractStorage<T> {
     static Sync<T extends StorageState>(namespace?: string): Storage<T> {
-        return new Storage<T>({area: 'sync', namespace});
+        return new Storage<T>({area: "sync", namespace});
     }
 
     static Local<T extends StorageState>(namespace?: string): Storage<T> {
-        return new Storage<T>({area: 'local', namespace});
+        return new Storage<T>({area: "local", namespace});
     }
 
     static Session<T extends StorageState>(namespace?: string): Storage<T> {
-        return new Storage<T>({area: 'session', namespace});
+        return new Storage<T>({area: "session", namespace});
     }
 
     static Managed<T extends StorageState>(namespace?: string): Storage<T> {
-        return new Storage<T>({area: 'managed', namespace});
+        return new Storage<T>({area: "managed", namespace});
     }
 
     constructor(options: StorageOptions = {}) {
-        super(options)
+        super(options);
     }
 
     public async clear(): Promise<void> {
@@ -36,12 +36,12 @@ export default class Storage<T extends StorageState> extends AbstractStorage<T> 
 
         const parts = key.split(this.separator);
 
-        return (parts.length === 1 || (parts.length === 2 && parts[0] === this.namespace))
+        return parts.length === 1 || (parts.length === 2 && parts[0] === this.namespace);
     }
 
     protected async handleChange<P extends T>(key: string, changes: StorageChange, options: StorageWatchOptions<P>) {
-        await this.triggerChange(key, changes, options)
-    };
+        await this.triggerChange(key, changes, options);
+    }
 
     protected getFullKey(key: keyof T): string {
         return this.namespace ? `${this.namespace}${this.separator}${key.toString()}` : key.toString();

@@ -5,7 +5,6 @@ import MountNode from "./MountNode";
 import {ContentScriptNode, ContentScriptProps, ContentScriptRenderValue} from "@typing/content";
 
 export default abstract class extends Builder {
-
     private values = new Map<Element, null | ContentScriptRenderValue>();
 
     protected getProps(anchor: Element): ContentScriptProps {
@@ -38,7 +37,7 @@ export default abstract class extends Builder {
         let container: Element | undefined;
 
         if (await this.getValue(anchor)) {
-            container = await this.definition.container(this.getProps(anchor)) as Element | undefined;
+            container = (await this.definition.container(this.getProps(anchor))) as Element | undefined;
         }
 
         return new MountNode(new Node(anchor, container), this.definition.mount);

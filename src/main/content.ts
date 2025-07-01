@@ -7,7 +7,7 @@ export * from "@typing/content";
 
 export const defineContentScript = (options: ContentScriptDefinition): ContentScriptDefinition => {
     return options;
-}
+};
 
 export const defineContentScriptAppend = (options: ContentScriptAppendDefinition): ContentScriptDefinition => {
     const {append, ...definition} = options;
@@ -16,4 +16,4 @@ export const defineContentScriptAppend = (options: ContentScriptAppendDefinition
         ...definition,
         mount: contentScriptMountAppendResolver(append),
     };
-}
+};

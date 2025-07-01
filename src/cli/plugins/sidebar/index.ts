@@ -20,7 +20,7 @@ export default definePlugin(() => {
     let sidebarAvailable: boolean = false;
 
     return {
-        name: 'adnbn:sidebar',
+        name: "adnbn:sidebar",
         startup: ({config}) => {
             sidebar = new Sidebar(config);
             declaration = new SidebarDeclaration(config);
@@ -35,13 +35,13 @@ export default definePlugin(() => {
 
             if (await sidebar.empty()) {
                 if (config.debug) {
-                    console.info('Sidebar entries not found');
+                    console.info("Sidebar entries not found");
                 }
 
                 build = false;
             } else if (!sidebarAvailable) {
                 if (config.debug) {
-                    console.warn('Sidebar not supported for manifest version 2');
+                    console.warn("Sidebar not supported for manifest version 2");
                 }
 
                 build = false;
@@ -49,11 +49,12 @@ export default definePlugin(() => {
 
             const plugins: Plugins = [];
 
-            let alias: SidebarNameToManifest = new Map;
+            let alias: SidebarNameToManifest = new Map();
 
             if (build) {
                 alias = await sidebar.manifestByAlias();
 
+                // prettier-ignore
                 const plugin = EntrypointPlugin.from(await sidebar.view().entries())
                     .virtual(file => virtualViewModule(file));
 
@@ -87,9 +88,9 @@ export default definePlugin(() => {
 
             manifest.setSidebar(await sidebar.manifest());
 
-            if (await sidebar.exists() && !SidebarAlternativeBrowsers.has(config.browser)) {
-                manifest.addPermission('sidePanel');
+            if ((await sidebar.exists()) && !SidebarAlternativeBrowsers.has(config.browser)) {
+                manifest.addPermission("sidePanel");
             }
-        }
+        },
     };
 });

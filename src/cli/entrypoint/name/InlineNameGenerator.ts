@@ -16,7 +16,7 @@ export default class extends NameGenerator {
     }
 
     public likely(name?: string): boolean {
-        if(!name) {
+        if (!name) {
             return false;
         }
 

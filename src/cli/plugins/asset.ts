@@ -8,7 +8,7 @@ import {Browser} from "@typing/browser";
 
 export default definePlugin(() => {
     return {
-        name: 'adnbn:asset',
+        name: "adnbn:asset",
         bundler: ({config}) => {
             const {app, browser, assetsDir, assetsFilename} = config;
 
@@ -25,28 +25,28 @@ export default definePlugin(() => {
                                     resourceQuery: /(chrome|browser)/,
                                     type: "asset/resource",
                                     generator: {
-                                        publicPath: `${browser === Browser.Firefox ? 'moz' : 'chrome'}-extension://__MSG_@@extension_id__/`
-                                    }
+                                        publicPath: `${browser === Browser.Firefox ? "moz" : "chrome"}-extension://__MSG_@@extension_id__/`,
+                                    },
                                 },
                                 {
                                     resourceQuery: /base64/,
-                                    type: "asset/inline"
+                                    type: "asset/inline",
                                 },
                                 {
-                                    type: "asset/resource"
-                                }
-                            ]
-                        }
-                    ]
+                                    type: "asset/resource",
+                                },
+                            ],
+                        },
+                    ],
                 },
                 plugins: [
                     new ReplacePlugin({
                         // Fix for asset/resource publicPath
                         values: {
-                            '__MSG_%40@extension_id__': '__MSG_@@extension_id__'
-                        }
-                    })
-                ]
+                            "__MSG_%40@extension_id__": "__MSG_@@extension_id__",
+                        },
+                    }),
+                ],
             } as RspackConfig;
         },
     };

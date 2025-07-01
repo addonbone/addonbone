@@ -21,7 +21,7 @@ export default class extends AbstractViewFinder<PopupEntrypointOptions> {
     }
 
     protected getPlugin(): EntrypointOptionsFinder<PopupEntrypointOptions> {
-        return new PluginFinder(this.config, 'popup', this);
+        return new PluginFinder(this.config, "popup", this);
     }
 
     public canMerge(): boolean {

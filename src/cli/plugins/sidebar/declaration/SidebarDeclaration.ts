@@ -21,7 +21,7 @@ export default class extends FileBuilder {
         if (this.alias.size > 0) {
             const type = '"' + Array.from(this.alias).join('" | "') + '"';
 
-            content = content.replace('type SidebarAlias = string', `type SidebarAlias = ${type}`);
+            content = content.replace("type SidebarAlias = string", `type SidebarAlias = ${type}`);
         }
 
         return content;

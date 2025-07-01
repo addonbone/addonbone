@@ -1,4 +1,4 @@
-import {onMessage} from '@adnbn/browser';
+import {onMessage} from "@adnbn/browser";
 
 import {
     MessageBody,
@@ -6,15 +6,15 @@ import {
     MessageGlobalKey,
     MessageHandler,
     MessageSender,
-    MessageType
-} from '@typing/message';
+    MessageType,
+} from "@typing/message";
 
 export default class MessageManager<T extends MessageDictionary> {
-    private handlers: Set<MessageHandler<T>> = new Set()
+    private handlers: Set<MessageHandler<T>> = new Set();
     private unsubscribe: (() => void) | null = null;
 
     public static getInstance<T extends MessageDictionary>(): MessageManager<T> {
-        return globalThis[MessageGlobalKey] ??= new MessageManager<T>();
+        return (globalThis[MessageGlobalKey] ??= new MessageManager<T>());
     }
 
     constructor() {
@@ -50,7 +50,7 @@ export default class MessageManager<T extends MessageDictionary> {
         sender: MessageSender,
         sendResponse: (response?: any) => void
     ): boolean | void {
-        if (!message || typeof message !== 'object' || !message.type) return;
+        if (!message || typeof message !== "object" || !message.type) return;
 
         const results: Promise<any>[] = [];
 
@@ -61,17 +61,19 @@ export default class MessageManager<T extends MessageDictionary> {
                     results.push(Promise.resolve(result));
                 }
             } catch (err) {
-                console.error('Message handler error:', err);
+                console.error("Message handler error:", err);
             }
         }
 
         if (results.length > 1) {
-            throw new Error(`Message type "${message.type}" has multiple handlers returning a response. Only one response is allowed.`)
+            throw new Error(
+                `Message type "${message.type}" has multiple handlers returning a response. Only one response is allowed.`
+            );
         }
 
         if (results.length === 1) {
             results[0].then(sendResponse);
             return true;
         }
-    };
+    }
 }

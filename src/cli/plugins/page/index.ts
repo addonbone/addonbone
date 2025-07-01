@@ -17,7 +17,7 @@ export default definePlugin(() => {
     let declaration: PageDeclaration;
 
     return {
-        name: 'adnbn:page',
+        name: "adnbn:page",
         startup: ({config}) => {
             page = new Page(config);
             declaration = new PageDeclaration(config);
@@ -28,16 +28,16 @@ export default definePlugin(() => {
 
             const plugins: Plugins = [];
 
-            let alias: ViewAliasToFilename = new Map;
+            let alias: ViewAliasToFilename = new Map();
 
             if (await page.empty()) {
                 if (config.debug) {
-                    console.info('Page entries not found');
+                    console.info("Page entries not found");
                 }
-
             } else {
                 alias = await page.getAliasToFilename();
 
+                // prettier-ignore
                 const plugin = EntrypointPlugin.from(await page.view().entries())
                     .virtual(file => virtualViewModule(file));
 
@@ -60,12 +60,12 @@ export default definePlugin(() => {
                     new DefinePlugin({
                         __ADNBN_PAGE_ALIAS__: JSON.stringify(alias),
                     }),
-                    ...plugins
+                    ...plugins,
                 ],
             } satisfies RspackConfig;
         },
         manifest: async ({manifest}) => {
             manifest.appendAccessibleResources(await page.accessibleResources());
-        }
+        },
     };
 });

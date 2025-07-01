@@ -7,41 +7,34 @@ type ManifestCommon = chrome.runtime.Manifest;
 type ManifestBase = chrome.runtime.ManifestBase;
 type ManifestPermission = chrome.runtime.ManifestPermissions;
 
-export const ManifestMatchSchemes: ReadonlySet<string> = new Set<string>([
-    'http',
-    'https',
-    'file',
-    'ftp',
-    'ws',
-    'wss'
-]);
+export const ManifestMatchSchemes: ReadonlySet<string> = new Set<string>(["http", "https", "file", "ftp", "ws", "wss"]);
 
 export const ManifestSpecialSchemes: ReadonlySet<string> = new Set<string>([
-    'chrome-extension',
-    'moz-extension',
-    'data',
-    'blob',
-    'filesystem',
-    'about',
-    'chrome',
-    'resource'
-])
+    "chrome-extension",
+    "moz-extension",
+    "data",
+    "blob",
+    "filesystem",
+    "about",
+    "chrome",
+    "resource",
+]);
 
-type ManifestFixed<T extends ManifestBase> = Omit<T, 'manifest_version'> & {
-    manifest_version: ManifestVersion
-}
+type ManifestFixed<T extends ManifestBase> = Omit<T, "manifest_version"> & {
+    manifest_version: ManifestVersion;
+};
 
 interface ManifestUnstable {
     permissions?: (ManifestPermission | (string & Record<never, never>))[];
-    web_accessible_resources?: string[] | chrome.runtime.ManifestV3['web_accessible_resources'];
+    web_accessible_resources?: string[] | chrome.runtime.ManifestV3["web_accessible_resources"];
 }
 
 export type ManifestVersion = 2 | 3;
 
 export enum ManifestIncognito {
-    Spanning = 'spanning',
-    Split = 'split',
-    NotAllowed = 'not_allowed',
+    Spanning = "spanning",
+    Split = "split",
+    NotAllowed = "not_allowed",
 }
 
 export type ManifestIncognitoValue = ManifestIncognito | `${ManifestIncognito}`;
@@ -51,13 +44,13 @@ export type CoreManifest = ManifestFixed<ManifestBase>;
 export type ChromeManifest = ManifestFixed<ManifestCommon>;
 
 export type FirefoxManifest = ChromeManifest & {
-    action?: chrome.runtime.ManifestV3['action'] & {
+    action?: chrome.runtime.ManifestV3["action"] & {
         browser_style?: boolean;
     };
-    browser_action?: chrome.runtime.ManifestV2['browser_action'] & {
+    browser_action?: chrome.runtime.ManifestV2["browser_action"] & {
         browser_style?: boolean;
     };
-    page_action?: chrome.runtime.ManifestV2['page_action'] & {
+    page_action?: chrome.runtime.ManifestV2["page_action"] & {
         browser_style?: boolean;
     };
     browser_specific_settings?: {
@@ -71,7 +64,7 @@ export type FirefoxManifest = ChromeManifest & {
             strict_min_version?: string;
             strict_max_version?: string;
         };
-    }
+    };
 } & ManifestUnstable;
 
 export type SafariManifest = ChromeManifest & {
@@ -153,7 +146,7 @@ export interface ManifestBuilder<T extends CoreManifest = Manifest> {
 type Entry = string;
 
 export interface ManifestEntry {
-    entry: Entry,
+    entry: Entry;
 }
 
 export type ManifestBackground = ManifestEntry & BackgroundConfig;

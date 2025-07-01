@@ -21,7 +21,7 @@ export default class extends FileBuilder {
         if (this.alias.size > 0) {
             const type = '"' + Array.from(this.alias).join('" | "') + '"';
 
-            content = content.replace('type PageAlias = string', `type PageAlias = ${type}`);
+            content = content.replace("type PageAlias = string", `type PageAlias = ${type}`);
         }
 
         return content;

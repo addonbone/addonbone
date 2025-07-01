@@ -13,9 +13,8 @@ import {
     ViewDefinition,
     ViewRenderHandler,
     ViewRenderValue,
-    ViewResolvedDefinition
+    ViewResolvedDefinition,
 } from "@typing/view";
-
 
 export default abstract class<T extends ViewConfig> extends Builder implements ViewBuilder {
     protected readonly definition: ViewResolvedDefinition<T>;
@@ -31,17 +30,12 @@ export default abstract class<T extends ViewConfig> extends Builder implements V
     }
 
     protected resolveContainer(
-        container?:
-            ViewContainerTag |
-            ViewContainerOptions |
-            ViewContainerFactory<T>
+        container?: ViewContainerTag | ViewContainerOptions | ViewContainerFactory<T>
     ): ViewContainerCreator<T> {
         return viewContainerResolver<T>(container);
     }
 
-    protected resolveRender(
-        render?: ViewRenderValue<T> | ViewRenderHandler<T>
-    ): ViewRenderHandler<T> {
+    protected resolveRender(render?: ViewRenderValue<T> | ViewRenderHandler<T>): ViewRenderHandler<T> {
         return viewRenderResolver<T>(render);
     }
 

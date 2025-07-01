@@ -11,11 +11,10 @@ import {
     EntrypointNameGenerator,
     EntrypointOptionsFinder,
     EntrypointParser,
-    EntrypointType
+    EntrypointType,
 } from "@typing/entrypoint";
 
 export default class extends AbstractViewFinder<PageEntrypointOptions> {
-
     constructor(config: ReadonlyConfig) {
         super(config);
     }
@@ -52,7 +51,7 @@ export default class extends AbstractViewFinder<PageEntrypointOptions> {
     }
 
     protected getPlugin(): EntrypointOptionsFinder<PageEntrypointOptions> {
-        return new PluginFinder(this.config, 'page', this);
+        return new PluginFinder(this.config, "page", this);
     }
 
     public canMerge(): boolean {

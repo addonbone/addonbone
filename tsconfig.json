@@ -22,36 +22,16 @@
     ],
     "baseUrl": "./src",
     "paths": {
-      "@cli/*": [
-        "cli/*"
-      ],
-      "@entry/*": [
-        "entry/*"
-      ],
-      "@locale/*": [
-        "locale/*"
-      ],
-      "@main/*": [
-        "main/*"
-      ],
-      "@message/*": [
-        "message/*"
-      ],
-      "@offscreen/*": [
-        "offscreen/*"
-      ],
-      "@relay/*": [
-        "relay/*"
-      ],
-      "@service/*": [
-        "service/*"
-      ],
-      "@transport/*": [
-        "transport/*"
-      ],
-      "@typing/*": [
-        "types/*"
-      ]
+      "@cli/*": ["cli/*"],
+      "@entry/*": ["entry/*"],
+      "@locale/*": ["locale/*"],
+      "@main/*": ["main/*"],
+      "@message/*": ["message/*"],
+      "@offscreen/*": ["offscreen/*"],
+      "@relay/*": ["relay/*"],
+      "@service/*": ["service/*"],
+      "@transport/*": ["transport/*"],
+      "@typing/*": ["types/*"]
     },
     "isolatedModules": true,
     "allowJs": true,

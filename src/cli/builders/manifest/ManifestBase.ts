@@ -15,7 +15,7 @@ import {
     ManifestPermissions,
     ManifestPopup,
     ManifestSidebar,
-    ManifestVersion
+    ManifestVersion,
 } from "@typing/manifest";
 import {Browser} from "@typing/browser";
 import {Language} from "@typing/locale";
@@ -29,7 +29,7 @@ type CoreManifestIcons = chrome.runtime.ManifestIcons;
 
 export class ManifestError extends Error {
     public constructor(message: string) {
-        super('Manifest: ' + message);
+        super("Manifest: " + message);
     }
 }
 
@@ -66,25 +66,24 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
 
     protected abstract buildWebAccessibleResources(): Partial<T> | undefined;
 
-    protected constructor(protected readonly browser: Browser = Browser.Chrome) {
-    }
+    protected constructor(protected readonly browser: Browser = Browser.Chrome) {}
 
     public setAuthor(author?: string): this {
         this.author = author;
 
-        return this
+        return this;
     }
 
     public setHomepage(homepage?: string): this {
         this.homepage = homepage;
 
-        return this
+        return this;
     }
 
     public setEmail(email?: string): this {
         this.email = email;
 
-        return this
+        return this;
     }
 
     public setName(name: string): this {
@@ -168,7 +167,7 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
     public setSidebar(sidebar?: ManifestSidebar): this {
         this.sidebar = sidebar;
 
-        return this
+        return this;
     }
 
     public setDependencies(dependencies: ManifestDependencies): this {
@@ -238,7 +237,7 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
     }
 
     private marge<T extends CoreManifest>(manifest: T, ...sources: Array<Partial<T> | undefined>): T {
-        sources = sources.filter((source) => source !== undefined);
+        sources = sources.filter(source => source !== undefined);
 
         if (sources.length === 0) {
             return manifest;
@@ -278,7 +277,7 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
             this.buildPermissions(),
             this.buildHostPermissions(),
             this.buildWebAccessibleResources(),
-            this.buildBrowserSpecificSettings(),
+            this.buildBrowserSpecificSettings()
         );
 
         return manifest as T;
@@ -312,21 +311,26 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
 
     protected buildCommands(): Partial<CoreManifest> | undefined {
         if (this.commands.size > 0) {
-            const commands = Array.from(this.commands).reduce((commands, command) => {
-                const item = {
-                    suggested_key: {
-                        default: command?.defaultKey,
-                        windows: command?.windowsKey,
-                        mac: command?.macKey,
-                        chromeos: command?.chromeosKey,
-                        linux: command?.linuxKey,
-                    },
-                    description: command?.description || (command.name === CommandExecuteActionName ? undefined : command.name),
-                    global: command?.global,
-                };
+            const commands = Array.from(this.commands).reduce(
+                (commands, command) => {
+                    const item = {
+                        suggested_key: {
+                            default: command?.defaultKey,
+                            windows: command?.windowsKey,
+                            mac: command?.macKey,
+                            chromeos: command?.chromeosKey,
+                            linux: command?.linuxKey,
+                        },
+                        description:
+                            command?.description ||
+                            (command.name === CommandExecuteActionName ? undefined : command.name),
+                        global: command?.global,
+                    };
 
-                return {...commands, [command.name]: item};
-            }, {} as CoreManifest['commands']);
+                    return {...commands, [command.name]: item};
+                },
+                {} as CoreManifest["commands"]
+            );
 
             return {commands};
         }
@@ -334,7 +338,7 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
 
     protected buildContentScripts(): Partial<CoreManifest> | undefined {
         if (this.contentScripts.size > 0) {
-            const contentScripts: ManifestV3['content_scripts'] = [];
+            const contentScripts: ManifestV3["content_scripts"] = [];
 
             for (const script of this.contentScripts.values()) {
                 const {
@@ -408,21 +412,20 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
     }
 
     protected buildBrowserSpecificSettings(): Partial<FirefoxManifest> | undefined {
-        if (this.browser === Browser.Firefox && this.email && this.permissions.has('storage')) {
+        if (this.browser === Browser.Firefox && this.email && this.permissions.has("storage")) {
             return {
                 browser_specific_settings: {
                     gecko: {
                         id: this.email,
                         // strict_min_version: this.minimumVersion,
-                    }
-                }
-            }
+                    },
+                },
+            };
         }
     }
 
     protected hasExecuteActionCommand(): boolean {
-        return this.commands.size > 0 && Array.from(this.commands)
-            .some(({name}) => name === CommandExecuteActionName);
+        return this.commands.size > 0 && Array.from(this.commands).some(({name}) => name === CommandExecuteActionName);
     }
 
     protected getIconsByName(name?: string): CoreManifestIcons | undefined {
@@ -434,9 +437,7 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
             name = DefaultIconGroupName;
         }
 
-        const icons = this.icons.get(name) ||
-            this.icons.get(DefaultIconGroupName) ||
-            this.icons.values().next().value;
+        const icons = this.icons.get(name) || this.icons.get(DefaultIconGroupName) || this.icons.values().next().value;
 
         if (icons) {
             return Object.fromEntries(icons);

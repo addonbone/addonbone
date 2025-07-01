@@ -1,12 +1,18 @@
-//@ts-ignore
-import {isValidTransportDefinition, isValidTransportInitFunction, type TransportType, type TransportUnresolvedDefinition, type TransportOptions} from "adnbn/entry/transport";
+import {
+    isValidTransportDefinition,
+    isValidTransportInitFunction,
+    type TransportType,
+    type TransportUnresolvedDefinition,
+    type TransportOptions,
+    //@ts-ignore
+} from "adnbn/entry/transport";
 //@ts-ignore
 import transport from "adnbn/entry/:entry";
 
 import * as module from "virtual:transport-entrypoint";
 
 try {
-    const transportName = 'virtual:transport-name';
+    const transportName = "virtual:transport-name";
 
     const {default: defaultDefinition, ...otherDefinition} = module;
 
@@ -22,5 +28,5 @@ try {
 
     transport({name, init, ...options});
 } catch (e) {
-    console.error('The :entry crashed on startup:', e);
+    console.error("The :entry crashed on startup:", e);
 }

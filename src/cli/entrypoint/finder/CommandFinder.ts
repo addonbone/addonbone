@@ -8,7 +8,6 @@ import {ReadonlyConfig} from "@typing/config";
 import {CommandEntrypointOptions, CommandOptions} from "@typing/command";
 import {EntrypointFile, EntrypointOptionsFinder, EntrypointParser, EntrypointType} from "@typing/entrypoint";
 
-
 export default class extends AbstractPluginFinder<CommandEntrypointOptions> {
     protected _commands?: Map<EntrypointFile, CommandOptions>;
 
@@ -29,7 +28,7 @@ export default class extends AbstractPluginFinder<CommandEntrypointOptions> {
     }
 
     protected getPlugin(): EntrypointOptionsFinder<CommandEntrypointOptions> {
-        return new PluginFinder(this.config, 'command', this);
+        return new PluginFinder(this.config, "command", this);
     }
 
     protected async getCommands(): Promise<Map<EntrypointFile, CommandOptions>> {
@@ -48,7 +47,7 @@ export default class extends AbstractPluginFinder<CommandEntrypointOptions> {
     }
 
     public async commands(): Promise<Map<EntrypointFile, CommandOptions>> {
-        return this._commands ??= await this.getCommands();
+        return (this._commands ??= await this.getCommands());
     }
 
     public canMerge(): boolean {

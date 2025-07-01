@@ -15,35 +15,37 @@ import {Command} from "@typing/app";
 const getConfigFromPlugins = async (rspack: RspackConfig, config: ReadonlyConfig): Promise<RspackConfig> => {
     let mergedConfig: RspackConfig = {};
 
-    for await (const {result: pluginConfig} of processPluginHandler(config.plugins, 'bundler', {
+    for await (const {result: pluginConfig} of processPluginHandler(config.plugins, "bundler", {
         rspack: mergeConfig(rspack, mergedConfig),
-        config
+        config,
     })) {
         mergedConfig = mergeConfig(mergedConfig, pluginConfig);
     }
 
     return mergedConfig;
-}
+};
 
 const getConfigForManifest = async (config: ReadonlyConfig): Promise<RspackConfig> => {
     const manifest = manifestFactory(config);
 
-    const update = () => Array.fromAsync(processPluginHandler(config.plugins, 'manifest', {manifest, config}))
+    const update = () => Array.fromAsync(processPluginHandler(config.plugins, "manifest", {manifest, config}));
 
     await update();
 
     const plugins: RspackPluginInstance[] = [];
 
     if (config.command === Command.Watch) {
-        plugins.push(new WatchPlugin(async () => {
-            await update();
-        }));
+        plugins.push(
+            new WatchPlugin(async () => {
+                await update();
+            })
+        );
     }
 
     plugins.push(new ManifestPlugin(manifest));
 
     return {plugins};
-}
+};
 
 export default async (config: ReadonlyConfig): Promise<RspackConfig> => {
     let rspack: RspackConfig = {
@@ -52,10 +54,11 @@ export default async (config: ReadonlyConfig): Promise<RspackConfig> => {
         cache: false,
     };
 
+    // prettier-ignore
     rspack = mergeConfig(
         rspack,
         await getConfigFromPlugins(rspack, config),
-        await getConfigForManifest(config),
+        await getConfigForManifest(config)
     );
 
     if (config.debug) {
@@ -68,15 +71,13 @@ export default async (config: ReadonlyConfig): Promise<RspackConfig> => {
 
     if (config.command == Command.Watch) {
         rspack = mergeConfig(rspack, {
-            devtool: 'inline-source-map',
+            devtool: "inline-source-map",
         });
     }
 
     if (config.command == Command.Build) {
         rspack = mergeConfig(rspack, {
-            plugins: [
-                new CleanWebpackPlugin(),
-            ],
+            plugins: [new CleanWebpackPlugin()],
         });
 
         if (config.analyze) {
@@ -95,4 +96,4 @@ export default async (config: ReadonlyConfig): Promise<RspackConfig> => {
     }
 
     return rspack;
-}
+};

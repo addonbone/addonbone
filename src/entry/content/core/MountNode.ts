@@ -1,11 +1,12 @@
 import {ContentScriptMountFunction, ContentScriptNode} from "@typing/content";
 
 export default class implements ContentScriptNode {
-
     private unmounting?: () => void;
 
-    constructor(protected node: ContentScriptNode, protected mounter?: ContentScriptMountFunction) {
-    }
+    constructor(
+        protected node: ContentScriptNode,
+        protected mounter?: ContentScriptMountFunction
+    ) {}
 
     public get anchor(): Element {
         return this.node.anchor;

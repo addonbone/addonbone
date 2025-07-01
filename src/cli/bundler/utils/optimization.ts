@@ -3,16 +3,14 @@ import {NormalModule, type OptimizationSplitChunksCacheGroupTestFn} from "@rspac
 
 import {PackageName} from "@typing/app";
 
-export const isEntryModuleOrIssuer = (
-    entry: string | string[]
-): OptimizationSplitChunksCacheGroupTestFn => {
+export const isEntryModuleOrIssuer = (entry: string | string[]): OptimizationSplitChunksCacheGroupTestFn => {
     if (typeof entry === "string") {
         entry = [entry];
     }
 
     const entryDirs = entry.flatMap(value => [
         path.join("node_modules", PackageName, "dist", "entry", value),
-        path.join("addonbone", "dist", "entry", value) // TODO: Only for test. Remove this
+        path.join("addonbone", "dist", "entry", value), // TODO: Only for test. Remove this
     ]);
 
     return (module, {moduleGraph}) => {

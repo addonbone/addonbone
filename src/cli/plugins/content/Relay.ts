@@ -12,7 +12,7 @@ export default class extends RelayFinder implements ContentProvider<RelayEntrypo
     protected _driver?: ContentDriver<RelayEntrypointOptions>;
 
     public driver(): ContentDriver<RelayEntrypointOptions> {
-        return this._driver ??= new ContentDriver(this);
+        return (this._driver ??= new ContentDriver(this));
     }
 
     /**

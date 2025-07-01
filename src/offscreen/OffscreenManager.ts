@@ -1,4 +1,4 @@
-import TransportManager from '@transport/TransportManager'
+import TransportManager from "@transport/TransportManager";
 
 import {OffscreenGlobalKey} from "@typing/offscreen";
 
@@ -6,6 +6,6 @@ import type {TransportManager as TransportManagerContract} from "@typing/transpo
 
 export default class OffscreenManager extends TransportManager {
     public static getInstance(): TransportManagerContract {
-        return globalThis[OffscreenGlobalKey] ??= new OffscreenManager();
+        return (globalThis[OffscreenGlobalKey] ??= new OffscreenManager());
     }
 }

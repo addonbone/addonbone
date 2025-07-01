@@ -1,4 +1,4 @@
-import { isOffscreen} from "../utils";
+import {isOffscreen} from "../utils";
 
 import BaseTransport from "@transport/BaseTransport";
 
@@ -20,6 +20,6 @@ export default class<N extends TransportName, T = TransportDictionary[N]> extend
             throw new Error(`Offscreen service "${this.name}" can be getting only from offscreen context.`);
         }
 
-        return super.get()
+        return super.get();
     }
 }

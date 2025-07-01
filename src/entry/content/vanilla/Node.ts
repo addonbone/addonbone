@@ -6,8 +6,7 @@ export default class implements ContentScriptNode {
     constructor(
         protected readonly node: ContentScriptNode,
         protected readonly value?: null | boolean | string | number | Element
-    ) {
-    }
+    ) {}
 
     public get anchor(): Element {
         return this.node.anchor;
@@ -26,10 +25,10 @@ export default class implements ContentScriptNode {
 
         if (this.value instanceof Element) {
             this.container.appendChild(this.value);
-        } else if (typeof this.value === 'string' || typeof this.value === 'number') {
+        } else if (typeof this.value === "string" || typeof this.value === "number") {
             this.container.textContent = String(this.value);
         } else if (this.value === null || this.value === undefined) {
-            console.warn('Content script vanilla value is empty');
+            console.warn("Content script vanilla value is empty");
         }
 
         this.mounted = true;

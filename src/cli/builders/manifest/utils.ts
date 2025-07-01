@@ -23,15 +23,15 @@ export const filterPermissionsForMV2 = (permissions: Set<ManifestPermissions>): 
      * // Result: Set(['tabs', 'storage', 'activeTab'])
      * ```
      */
-    if (filteredPermissions.has('scripting')) {
-        filteredPermissions.delete('scripting');
-        filteredPermissions.add('tabs');
+    if (filteredPermissions.has("scripting")) {
+        filteredPermissions.delete("scripting");
+        filteredPermissions.add("tabs");
     }
 
-    filteredPermissions.delete('offscreen');
+    filteredPermissions.delete("offscreen");
 
     return filteredPermissions;
-}
+};
 
 export const filterPermissionsForMV3 = (permissions: Set<ManifestPermissions>): Set<ManifestPermissions> => {
     const filteredPermissions = new Set(permissions);
@@ -44,33 +44,33 @@ export const filterPermissionsForMV3 = (permissions: Set<ManifestPermissions>): 
      * - `webRequestAuthProvider`: Enabled handling of HTTP authentication (onAuthRequired), but was considered unsafe in the new MV3 architecture due to its ability to interfere with authentication flows.
      * @manifestV3 Removed. These APIs are no longer available in extensions using Manifest V3.
      */
-    filteredPermissions.delete('webAuthenticationProxy');
-    filteredPermissions.delete('webRequestAuthProvider');
-    filteredPermissions.delete('webRequestBlocking');
+    filteredPermissions.delete("webAuthenticationProxy");
+    filteredPermissions.delete("webRequestAuthProvider");
+    filteredPermissions.delete("webRequestBlocking");
 
     return filteredPermissions;
-}
+};
 
 export const filterHostPatterns = (patterns: Set<string>): Set<string> => {
-    if (patterns.has('<all_urls>')) {
-        return new Set(['<all_urls>']);
+    if (patterns.has("<all_urls>")) {
+        return new Set(["<all_urls>"]);
     }
 
     const result = new Set<string>();
 
     const activeWildcards = new Set<string>();
 
-    if (patterns.has('*://*/*')) {
-        activeWildcards.add('*://*/*');
-        result.add('*://*/*');
+    if (patterns.has("*://*/*")) {
+        activeWildcards.add("*://*/*");
+        result.add("*://*/*");
     }
 
     for (const scheme of ManifestMatchSchemes) {
         const wildcard = `${scheme}://*/*`;
 
         if (patterns.has(wildcard)) {
-            if (scheme === 'http' || scheme === 'https') {
-                if (!activeWildcards.has('*://*/*')) {
+            if (scheme === "http" || scheme === "https") {
+                if (!activeWildcards.has("*://*/*")) {
                     activeWildcards.add(wildcard);
                     result.add(wildcard);
                 }
@@ -82,7 +82,7 @@ export const filterHostPatterns = (patterns: Set<string>): Set<string> => {
     }
 
     const isCoveredByWildcard = (pattern: string): boolean => {
-        const schemeIndex = pattern.indexOf('://');
+        const schemeIndex = pattern.indexOf("://");
         if (schemeIndex === -1) return false;
 
         const scheme = pattern.substring(0, schemeIndex);
@@ -91,7 +91,7 @@ export const filterHostPatterns = (patterns: Set<string>): Set<string> => {
             return false;
         }
 
-        if (activeWildcards.has('*://*/*') && (scheme === 'http' || scheme === 'https')) {
+        if (activeWildcards.has("*://*/*") && (scheme === "http" || scheme === "https")) {
             return true;
         }
 
@@ -109,4 +109,4 @@ export const filterHostPatterns = (patterns: Set<string>): Set<string> => {
     }
 
     return result;
-}
+};

@@ -13,7 +13,7 @@ export default definePlugin(() => {
     let typescript: TypescriptConfig;
 
     return {
-        name: 'adnbn:typescript',
+        name: "adnbn:typescript",
         startup: ({config}) => {
             typescript = TypescriptConfig.make(config);
 
@@ -34,15 +34,15 @@ export default definePlugin(() => {
                                 jsc: {
                                     parser: {
                                         syntax: "typescript",
-                                        tsx: true
+                                        tsx: true,
                                     },
-                                    target: "es2020"
-                                }
+                                    target: "es2020",
+                                },
                             },
-                            type: "javascript/auto"
-                        }
-                    ]
-                }
+                            type: "javascript/auto",
+                        },
+                    ],
+                },
             } satisfies RspackConfig;
         },
     };

@@ -1,37 +1,34 @@
-import 'jest-webextension-mock';
-import AbstractStorage from '../src/storage/providers/AbstractStorage';
-import {TextDecoder, TextEncoder} from 'util';
+import "jest-webextension-mock";
+import AbstractStorage from "../src/storage/providers/AbstractStorage";
+import {TextDecoder, TextEncoder} from "util";
 
-type Listener = (
-    changes: Record<string, chrome.storage.StorageChange>,
-    areaName: chrome.storage.AreaName
-) => void
+type Listener = (changes: Record<string, chrome.storage.StorageChange>, areaName: chrome.storage.AreaName) => void;
 
 const listeners = new Set<Listener>();
 
-chrome.storage.onChanged.addListener = jest.fn((cb) => listeners.add(cb));
-chrome.storage.onChanged.removeListener = jest.fn((cb) => listeners.delete(cb));
-chrome.storage.onChanged.hasListener = jest.fn((cb) => listeners.has(cb));
+chrome.storage.onChanged.addListener = jest.fn(cb => listeners.add(cb));
+chrome.storage.onChanged.removeListener = jest.fn(cb => listeners.delete(cb));
+chrome.storage.onChanged.hasListener = jest.fn(cb => listeners.has(cb));
 
 interface StorageChange {
-    storage: AbstractStorage<any>,
-    key: string,
-    oldValue: any,
-    newValue: any,
-    areaName: chrome.storage.AreaName
+    storage: AbstractStorage<any>;
+    key: string;
+    oldValue: any;
+    newValue: any;
+    areaName: chrome.storage.AreaName;
 }
 
-global.simulateStorageChange = ({storage, key, oldValue, newValue, areaName = 'local'}: StorageChange) => {
-    const fullKey = storage['getFullKey'](key);
+global.simulateStorageChange = ({storage, key, oldValue, newValue, areaName = "local"}: StorageChange) => {
+    const fullKey = storage["getFullKey"](key);
 
     const changes = {[fullKey]: {oldValue, newValue}};
 
-    listeners.forEach((listener) => listener(changes, areaName));
+    listeners.forEach(listener => listener(changes, areaName));
 };
 
 global.simulateSecureStorageChange = async ({storage, key, oldValue, newValue, areaName}: StorageChange) => {
-    const encryptedOldValue = oldValue !== undefined ? await storage['encrypt'](oldValue) : undefined;
-    const encryptedNewValue = newValue !== undefined ? await storage['encrypt'](newValue) : undefined;
+    const encryptedOldValue = oldValue !== undefined ? await storage["encrypt"](oldValue) : undefined;
+    const encryptedNewValue = newValue !== undefined ? await storage["encrypt"](newValue) : undefined;
 
     global.simulateStorageChange({storage, key, oldValue: encryptedOldValue, newValue: encryptedNewValue, areaName});
 
@@ -42,9 +39,9 @@ global.simulateSecureStorageChange = async ({storage, key, oldValue, newValue, a
 // Native GET method does not work correctly with a specific key other than "key"
 // Pull Request with bug fix - https://github.com/RickyMarou/jest-webextension-mock/pull/19
 global.storageLocalGet = (key: string | string[], storage: AbstractStorage<any>): Promise<any> => {
-    const formatKey = (key: string) => storage ? storage['getFullKey'](key) : key;
+    const formatKey = (key: string) => (storage ? storage["getFullKey"](key) : key);
     return new Promise(resolve => {
-        chrome.storage.local.get(null, (res) => {
+        chrome.storage.local.get(null, res => {
             resolve(
                 Array.isArray(key)
                     ? key.reduce((acc, k) => ({...acc, [formatKey(k)]: res[formatKey(k)]}), {})
@@ -63,34 +60,30 @@ export const cryptoMock = {
         deriveKey: jest.fn(),
         decrypt: jest.fn(),
         encrypt: jest.fn(),
-        digest: jest.fn()
+        digest: jest.fn(),
     },
-    getRandomValues: jest.fn()
+    getRandomValues: jest.fn(),
 };
 
-cryptoMock.subtle.importKey.mockImplementation(
-    (format, keyData, algorithm, extractable, keyUsages) => {
-        return Promise.resolve({
-            format,
-            keyData,
-            algorithm,
-            extractable,
-            keyUsages
-        });
-    }
-);
+cryptoMock.subtle.importKey.mockImplementation((format, keyData, algorithm, extractable, keyUsages) => {
+    return Promise.resolve({
+        format,
+        keyData,
+        algorithm,
+        extractable,
+        keyUsages,
+    });
+});
 
-cryptoMock.subtle.deriveKey.mockImplementation(
-    (algorithm, baseKey, derivedKeyAlgorithm, extractable, keyUsages) => {
-        return Promise.resolve({
-            algorithm,
-            baseKey,
-            derivedKeyAlgorithm,
-            extractable,
-            keyUsages
-        });
-    }
-);
+cryptoMock.subtle.deriveKey.mockImplementation((algorithm, baseKey, derivedKeyAlgorithm, extractable, keyUsages) => {
+    return Promise.resolve({
+        algorithm,
+        baseKey,
+        derivedKeyAlgorithm,
+        extractable,
+        keyUsages,
+    });
+});
 
 // @ts-ignore
 cryptoMock.subtle.decrypt.mockImplementation((_, __, data: ArrayBufferLike) => {
@@ -120,5 +113,5 @@ Object.defineProperty(globalThis, "crypto", {
     value: cryptoMock,
     writable: true,
     enumerable: true,
-    configurable: true
+    configurable: true,
 });

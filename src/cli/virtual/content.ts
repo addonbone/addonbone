@@ -1,7 +1,7 @@
 //@ts-ignore
 import type {ContentScriptDefinition} from "adnbn";
 //@ts-ignore
-import {isContentScriptDefinition, isValidContentScriptDefinitionRenderValue} from "adnbn/entry/content"
+import {isContentScriptDefinition, isValidContentScriptDefinitionRenderValue} from "adnbn/entry/content";
 
 import contentScript from "virtual:content-framework";
 
@@ -12,7 +12,7 @@ try {
 
     let definition: ContentScriptDefinition = otherDefinition;
 
-    if (isContentScriptDefinition(defaultDefinition)){
+    if (isContentScriptDefinition(defaultDefinition)) {
         definition = {...definition, ...defaultDefinition};
     } else if (isValidContentScriptDefinitionRenderValue(defaultDefinition)) {
         definition = {...definition, render: defaultDefinition};
@@ -20,5 +20,5 @@ try {
 
     contentScript(definition);
 } catch (e) {
-    console.error('The content script crashed on startup:', e);
+    console.error("The content script crashed on startup:", e);
 }

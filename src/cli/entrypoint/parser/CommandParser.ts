@@ -9,13 +9,16 @@ import {EntrypointFile} from "@typing/entrypoint";
 
 export default class extends BackgroundParser<CommandEntrypointOptions> {
     protected definition(): string[] {
-        return ['defineCommand', 'defineExecuteActionCommand'];
+        return ["defineCommand", "defineExecuteActionCommand"];
     }
 
     protected schema(): typeof this.CommonPropertiesSchema {
         const ShortcutKeySchema = z
             .string()
-            .regex(/^(Ctrl|Command|MacCtrl|Alt|Option)(\+Shift)?\+[A-Z0-9]$/, 'Invalid shortcut key, expected format like: Ctrl+Shift+K or Command+Shift+P')
+            .regex(
+                /^(Ctrl|Command|MacCtrl|Alt|Option)(\+Shift)?\+[A-Z0-9]$/,
+                "Invalid shortcut key, expected format like: Ctrl+Shift+K or Command+Shift+P"
+            )
             .optional();
 
         return super.schema().extend({
@@ -53,7 +56,7 @@ export default class extends BackgroundParser<CommandEntrypointOptions> {
 
         const options = instance.getOptions();
 
-        if (instance.getDefinition() === 'defineExecuteActionCommand') {
+        if (instance.getDefinition() === "defineExecuteActionCommand") {
             return {...options, name: CommandExecuteActionName};
         }
 

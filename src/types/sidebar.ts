@@ -1,10 +1,7 @@
 import {ViewDefinition, ViewOptions} from "@typing/view";
 import {Browser} from "@typing/browser";
 
-export const SidebarAlternativeBrowsers: ReadonlySet<Browser> = new Set([
-    Browser.Opera,
-    Browser.Firefox,
-]);
+export const SidebarAlternativeBrowsers: ReadonlySet<Browser> = new Set([Browser.Opera, Browser.Firefox]);
 
 export interface SidebarConfig {
     icon?: string;

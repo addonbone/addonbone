@@ -8,7 +8,7 @@ export default class extends AbstractMeta<ManifestIncognitoValue> {
         super(config);
     }
 
-    public getValue(): ReadonlyConfig['incognito'] {
+    public getValue(): ReadonlyConfig["incognito"] {
         return this.config.incognito;
     }
 

@@ -1,5 +1,5 @@
-import {changeActionIcon} from "./icon"
-import {__t} from "./locale"
+import {changeActionIcon} from "./icon";
+import {__t} from "./locale";
 
 import {setActionPopup, setActionTitle} from "@adnbn/browser";
 
@@ -14,7 +14,7 @@ export type PopupMap = Map<PopupAlias, ManifestPopup>;
 
 export const definePopup = (options: PopupDefinition): PopupDefinition => {
     return options;
-}
+};
 
 export const getPopups = (): PopupMap => {
     const popups: PopupMap = new Map();
@@ -24,8 +24,8 @@ export const getPopups = (): PopupMap => {
         Object.entries<ManifestPopup>(__ADNBN_POPUP_MAP__).forEach(([key, value]) => {
             popups.set(key, value);
         });
-    } catch(e) {
-        console.error('Failed getting popups: ', e);
+    } catch (e) {
+        console.error("Failed getting popups: ", e);
     }
 
     return popups;
@@ -57,4 +57,4 @@ export const changePopup = async (alias: PopupAlias, tab?: number | Tab): Promis
     if (icon) {
         await changeActionIcon(icon, tab);
     }
-}
+};

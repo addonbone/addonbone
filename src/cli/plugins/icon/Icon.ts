@@ -5,17 +5,17 @@ import {IconFinder, type IconItem} from "@cli/entrypoint";
 import {ManifestIcon, ManifestIcons} from "@typing/manifest";
 import {DefaultIconGroupName} from "@typing/icon";
 
-export type CopyPatterns = Array<Pick<RawCopyPattern, 'from' | 'to'>>;
+export type CopyPatterns = Array<Pick<RawCopyPattern, "from" | "to">>;
 
 export type IconDefinition = Record<string, Record<number, string>>;
 
 export default class extends IconFinder {
     protected createPathname(item: IconItem): string {
-        const dir = this.config.icon.outputDir || 'icons';
+        const dir = this.config.icon.outputDir || "icons";
 
         let {size, group} = item.name;
 
-        group = group === DefaultIconGroupName ? '' : group + '-';
+        group = group === DefaultIconGroupName ? "" : group + "-";
 
         return path.posix.join(dir, `${group}${size}.png`);
     }
@@ -23,13 +23,13 @@ export default class extends IconFinder {
     public async manifest(): Promise<ManifestIcons> {
         const icons = await this.icons();
 
-        const manifest: ManifestIcons = new Map;
+        const manifest: ManifestIcons = new Map();
 
         for (const [group, items] of icons) {
-            const collect: ManifestIcon = new Map;
+            const collect: ManifestIcon = new Map();
 
             for (const [size, item] of items) {
-                collect.set(size, '/' + this.createPathname(item));
+                collect.set(size, "/" + this.createPathname(item));
             }
 
             manifest.set(group, collect);
@@ -58,11 +58,9 @@ export default class extends IconFinder {
     public async define(): Promise<IconDefinition> {
         const mapToJson = (map: Map<any, any>) => {
             return Object.fromEntries(
-                Array.from(map.entries()).map(([key, value]) =>
-                    [key, value instanceof Map ? mapToJson(value) : value]
-                )
+                Array.from(map.entries()).map(([key, value]) => [key, value instanceof Map ? mapToJson(value) : value])
             );
-        }
+        };
 
         return mapToJson(await this.manifest());
     }

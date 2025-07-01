@@ -5,9 +5,11 @@ import AbstractParser from "./AbstractParser";
 import {ContentScriptEntrypointOptions, ContentScriptMatches} from "@typing/content";
 import {EntrypointFile} from "@typing/entrypoint";
 
-export default class<O extends ContentScriptEntrypointOptions = ContentScriptEntrypointOptions> extends AbstractParser<O> {
+export default class<
+    O extends ContentScriptEntrypointOptions = ContentScriptEntrypointOptions,
+> extends AbstractParser<O> {
     protected definition(): string | string[] {
-        return ['defineContentScript', 'defineContentScriptAppend']
+        return ["defineContentScript", "defineContentScriptAppend"];
     }
 
     protected schema(): typeof this.CommonPropertiesSchema {
@@ -18,8 +20,8 @@ export default class<O extends ContentScriptEntrypointOptions = ContentScriptEnt
             includeGlobs: z.array(z.string()).optional(),
             excludeGlobs: z.array(z.string()).optional(),
             allFrames: z.boolean().optional(),
-            world: z.enum(['ISOLATED', 'MAIN']).optional(),
-            runAt: z.enum(['document_start', 'document_end', 'document_idle']).optional(),
+            world: z.enum(["ISOLATED", "MAIN"]).optional(),
+            runAt: z.enum(["document_start", "document_end", "document_idle"]).optional(),
             matchOriginAsFallback: z.boolean().optional(),
             declarative: z.boolean().optional(),
         });
@@ -30,9 +32,9 @@ export default class<O extends ContentScriptEntrypointOptions = ContentScriptEnt
 
         return {
             matches: ContentScriptMatches,
-            runAt: 'document_idle',
+            runAt: "document_idle",
             declarative: false,
-            ...options
+            ...options,
         };
     }
 }

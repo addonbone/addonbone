@@ -7,7 +7,6 @@ import {ReadonlyConfig} from "@typing/config";
 import {ContentScriptEntrypointOptions} from "@typing/content";
 import {EntrypointOptionsFinder, EntrypointParser, EntrypointType} from "@typing/entrypoint";
 
-
 export default class extends AbstractPluginFinder<ContentScriptEntrypointOptions> {
     public constructor(config: ReadonlyConfig) {
         super(config);
@@ -18,7 +17,7 @@ export default class extends AbstractPluginFinder<ContentScriptEntrypointOptions
     }
 
     protected getPlugin(): EntrypointOptionsFinder<ContentScriptEntrypointOptions> {
-        return new PluginFinder(this.config, 'content', this);
+        return new PluginFinder(this.config, "content", this);
     }
 
     protected getParser(): EntrypointParser<ContentScriptEntrypointOptions> {

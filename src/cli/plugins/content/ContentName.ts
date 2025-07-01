@@ -19,7 +19,7 @@ export default class ContentName extends NameGenerator implements ContentNameGen
     }
 
     public getChunkName(): string {
-        return 'common.' + this.entrypoint;
+        return "common." + this.entrypoint;
     }
 
     public create(name: string, options: ContentScriptEntrypointOptions): string {

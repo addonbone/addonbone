@@ -1,8 +1,8 @@
-import ts from 'typescript';
+import ts from "typescript";
 
-import SourceFile from './SourceFile';
+import SourceFile from "./SourceFile";
 
-import {PackageName} from '@typing/app';
+import {PackageName} from "@typing/app";
 
 /**
  * Signatures for function/method parameters.
@@ -16,7 +16,7 @@ export interface ParameterSignature {
  * Signature of a method: parameters and return type.
  */
 export interface MethodSignature {
-    kind: 'method';
+    kind: "method";
     /** method type parameters, e.g. ['T'] for fetchData<T> */
     typeParameters: string[];
     parameters: ParameterSignature[];
@@ -27,7 +27,7 @@ export interface MethodSignature {
  * Signature of a property: its type.
  */
 export interface PropertySignature {
-    kind: 'property';
+    kind: "property";
     type: string;
 }
 
@@ -93,21 +93,21 @@ export default class ExpressionFile extends SourceFile {
                         if (variable) {
                             const val = variable.value;
                             switch (typeof val) {
-                                case 'string':
-                                    return 'string';
-                                case 'number':
-                                    return 'number';
-                                case 'boolean':
-                                    return 'boolean';
-                                case 'object':
-                                    if (val === null) return 'null';
-                                    if (Array.isArray(val)) return 'array';
-                                    return 'object';
+                                case "string":
+                                    return "string";
+                                case "number":
+                                    return "number";
+                                case "boolean":
+                                    return "boolean";
+                                case "object":
+                                    if (val === null) return "null";
+                                    if (Array.isArray(val)) return "array";
+                                    return "object";
                                 default:
-                                    return 'any';
+                                    return "any";
                             }
                         }
-                        return 'any';
+                        return "any";
                     }
                 }
                 return undefined;
@@ -246,7 +246,7 @@ export default class ExpressionFile extends SourceFile {
                 if (ts.isFunctionExpression(init) || ts.isArrowFunction(init)) {
                     result[key] = this.getMethodSignature(init);
                 } else {
-                    result[key] = {kind: 'property', type: this.inferTypeFromExpression(init)};
+                    result[key] = {kind: "property", type: this.inferTypeFromExpression(init)};
                 }
             } else if (ts.isMethodDeclaration(prop)) {
                 result[key] = this.getMethodSignature(prop);
@@ -254,14 +254,22 @@ export default class ExpressionFile extends SourceFile {
                 const name = prop.name.text;
                 const variable = this.getVariables().get(name);
                 const val = variable ? variable.value : undefined;
-                const type = val === undefined ? 'any' :
-                    typeof val === 'string' ? 'string' :
-                        typeof val === 'number' ? 'number' :
-                            typeof val === 'boolean' ? 'boolean' :
-                                Array.isArray(val) ? 'array' :
-                                    typeof val === 'object' ? 'object' : 'any';
+                const type =
+                    val === undefined
+                        ? "any"
+                        : typeof val === "string"
+                          ? "string"
+                          : typeof val === "number"
+                            ? "number"
+                            : typeof val === "boolean"
+                              ? "boolean"
+                              : Array.isArray(val)
+                                ? "array"
+                                : typeof val === "object"
+                                  ? "object"
+                                  : "any";
 
-                result[key] = {kind: 'property', type};
+                result[key] = {kind: "property", type};
             }
         }
 
@@ -299,11 +307,9 @@ export default class ExpressionFile extends SourceFile {
                     const mods = ts.getCombinedModifierFlags(param);
 
                     if (mods & ts.ModifierFlags.Public) {
-                        const name = ts.isIdentifier(param.name)
-                            ? param.name.text
-                            : param.name.getText();
-                        const type = param.type ? param.type.getText() : 'any';
-                        members[name] = {kind: 'property', type};
+                        const name = ts.isIdentifier(param.name) ? param.name.text : param.name.getText();
+                        const type = param.type ? param.type.getText() : "any";
+                        members[name] = {kind: "property", type};
                     }
                 }
 
@@ -318,19 +324,20 @@ export default class ExpressionFile extends SourceFile {
             }
 
             // determine member name
-            const name = member.name && ts.isIdentifier(member.name)
-                ? member.name.text
-                : member.name
-                    ? member.name.getText()
-                    : '';
+            const name =
+                member.name && ts.isIdentifier(member.name)
+                    ? member.name.text
+                    : member.name
+                      ? member.name.getText()
+                      : "";
 
             if (!name) continue;
 
             if (ts.isMethodDeclaration(member) || ts.isGetAccessorDeclaration(member)) {
                 members[name] = this.getMethodSignature(member as ts.MethodDeclaration);
             } else if (ts.isPropertyDeclaration(member)) {
-                const type = member.type ? member.type.getText() : 'any';
-                members[name] = {kind: 'property', type};
+                const type = member.type ? member.type.getText() : "any";
+                members[name] = {kind: "property", type};
             }
         }
 
@@ -375,9 +382,11 @@ export default class ExpressionFile extends SourceFile {
             let defaultClass: ts.ClassDeclaration | undefined;
 
             const findDefault = (node: ts.Node) => {
-                if (ts.isClassDeclaration(node)
-                    && node.modifiers
-                    && node.modifiers.some(m => m.kind === ts.SyntaxKind.DefaultKeyword)) {
+                if (
+                    ts.isClassDeclaration(node) &&
+                    node.modifiers &&
+                    node.modifiers.some(m => m.kind === ts.SyntaxKind.DefaultKeyword)
+                ) {
                     defaultClass = node;
                 } else {
                     ts.forEachChild(node, findDefault);
@@ -435,7 +444,7 @@ export default class ExpressionFile extends SourceFile {
 
         return found;
     }
-    
+
     /**
      * Searches the AST of this file for an interface declaration by name.
      */
@@ -503,13 +512,15 @@ export default class ExpressionFile extends SourceFile {
                             } else if (ts.isMethodSignature(m) && m.name) {
                                 keyName = this.getName(m.name);
                                 const typeParams = m.typeParameters ? m.typeParameters.map(tp => tp.getText()) : [];
-                                const tpText = typeParams.length ? `<${typeParams.join(',')}>` : '';
-                                const paramsText = m.parameters.map(p => {
-                                    const pname = ts.isIdentifier(p.name) ? p.name.text : p.name.getText();
-                                    const ptype = p.type ? this.resolveTypeNode(p.type) : 'any';
-                                    return `${pname}: ${ptype}`;
-                                }).join(',');
-                                const returnType = m.type ? this.resolveTypeNode(m.type) : 'any';
+                                const tpText = typeParams.length ? `<${typeParams.join(",")}>` : "";
+                                const paramsText = m.parameters
+                                    .map(p => {
+                                        const pname = ts.isIdentifier(p.name) ? p.name.text : p.name.getText();
+                                        const ptype = p.type ? this.resolveTypeNode(p.type) : "any";
+                                        return `${pname}: ${ptype}`;
+                                    })
+                                    .join(",");
+                                const returnType = m.type ? this.resolveTypeNode(m.type) : "any";
                                 entry = `${keyName}${tpText}(${paramsText}): ${returnType}`;
                             } else {
                                 continue;
@@ -530,14 +541,18 @@ export default class ExpressionFile extends SourceFile {
                                 // split on top-level semicolons (ignore semicolons within braces)
                                 const segments: string[] = [];
                                 let depth = 0;
-                                let buf = '';
+                                let buf = "";
                                 for (const ch of inner) {
-                                    if (ch === '{') { depth++; buf += ch; }
-                                    else if (ch === '}') { depth--; buf += ch; }
-                                    else if (ch === ';' && depth === 0) {
+                                    if (ch === "{") {
+                                        depth++;
+                                        buf += ch;
+                                    } else if (ch === "}") {
+                                        depth--;
+                                        buf += ch;
+                                    } else if (ch === ";" && depth === 0) {
                                         const seg = buf.trim();
                                         if (seg) segments.push(seg);
-                                        buf = '';
+                                        buf = "";
                                     } else {
                                         buf += ch;
                                     }
@@ -555,7 +570,7 @@ export default class ExpressionFile extends SourceFile {
                         }
                     }
                 }
-                return `{${parts.join('; ')};}`;
+                return `{${parts.join("; ")};}`;
             }
             return this.resolveTypeNode(typeNode);
         }
@@ -576,7 +591,12 @@ export default class ExpressionFile extends SourceFile {
                                 if (parent) {
                                     const inner = parent.slice(1, -1).trim();
                                     if (inner) {
-                                        props.push(...inner.split(/;\s*/).map(s => s.trim()).filter(Boolean));
+                                        props.push(
+                                            ...inner
+                                                .split(/;\s*/)
+                                                .map(s => s.trim())
+                                                .filter(Boolean)
+                                        );
                                     }
                                 }
                             }
@@ -587,26 +607,28 @@ export default class ExpressionFile extends SourceFile {
             for (const member of localInterface.members) {
                 if (ts.isPropertySignature(member) && member.type) {
                     const key = this.getName(member.name!);
-                    const optional = member.questionToken ? '?' : '';
+                    const optional = member.questionToken ? "?" : "";
                     const typeText = this.resolveTypeNode(member.type);
                     props.push(`${key}${optional}: ${typeText}`);
                 } else if (ts.isMethodSignature(member) && member.name) {
                     const key = this.getName(member.name);
                     const typeParams = member.typeParameters ? member.typeParameters.map(tp => tp.getText()) : [];
-                    const tpText = typeParams.length ? `<${typeParams.join(',')}>` : '';
+                    const tpText = typeParams.length ? `<${typeParams.join(",")}>` : "";
 
-                    const params = member.parameters.map(p => {
-                        const pname = ts.isIdentifier(p.name) ? p.name.text : p.name.getText();
-                        const ptype = p.type ? this.resolveTypeNode(p.type) : 'any';
-                        return `${pname}: ${ptype}`;
-                    }).join(', ');
+                    const params = member.parameters
+                        .map(p => {
+                            const pname = ts.isIdentifier(p.name) ? p.name.text : p.name.getText();
+                            const ptype = p.type ? this.resolveTypeNode(p.type) : "any";
+                            return `${pname}: ${ptype}`;
+                        })
+                        .join(", ");
 
-                    const returnType = member.type ? this.resolveTypeNode(member.type) : 'any';
+                    const returnType = member.type ? this.resolveTypeNode(member.type) : "any";
 
                     props.push(`${key}${tpText}(${params}): ${returnType}`);
                 }
             }
-            return `{${props.join('; ')};}`;
+            return `{${props.join("; ")};}`;
         }
 
         const importPath = this.getImports().get(name);
@@ -638,7 +660,12 @@ export default class ExpressionFile extends SourceFile {
                                     if (parent) {
                                         const inner = parent.slice(1, -1).trim();
                                         if (inner) {
-                                            props.push(...inner.split(/;\s*/).map(s => s.trim()).filter(Boolean));
+                                            props.push(
+                                                ...inner
+                                                    .split(/;\s*/)
+                                                    .map(s => s.trim())
+                                                    .filter(Boolean)
+                                            );
                                         }
                                     }
                                 }
@@ -649,26 +676,28 @@ export default class ExpressionFile extends SourceFile {
                 for (const member of interfaceDecl.members) {
                     if (ts.isPropertySignature(member) && member.type) {
                         const key = parser.getName(member.name!);
-                        const optional = member.questionToken ? '?' : '';
+                        const optional = member.questionToken ? "?" : "";
                         const typeText = parser.resolveTypeNode(member.type);
                         props.push(`${key}${optional}: ${typeText}`);
                     } else if (ts.isMethodSignature(member) && member.name) {
                         const key = parser.getName(member.name);
                         const typeParams = member.typeParameters ? member.typeParameters.map(tp => tp.getText()) : [];
-                        const tpText = typeParams.length ? `<${typeParams.join(',')}>` : '';
+                        const tpText = typeParams.length ? `<${typeParams.join(",")}>` : "";
 
-                    const params = member.parameters.map(p => {
-                            const pname = ts.isIdentifier(p.name) ? p.name.text : p.name.getText();
-                            const ptype = p.type ? parser.resolveTypeNode(p.type) : 'any';
-                            return `${pname}: ${ptype}`;
-                    }).join(', ');
+                        const params = member.parameters
+                            .map(p => {
+                                const pname = ts.isIdentifier(p.name) ? p.name.text : p.name.getText();
+                                const ptype = p.type ? parser.resolveTypeNode(p.type) : "any";
+                                return `${pname}: ${ptype}`;
+                            })
+                            .join(", ");
 
-                        const returnType = member.type ? parser.resolveTypeNode(member.type) : 'any';
+                        const returnType = member.type ? parser.resolveTypeNode(member.type) : "any";
 
                         props.push(`${key}${tpText}(${params}): ${returnType}`);
                     }
                 }
-                return `{${props.join('; ')};}`;
+                return `{${props.join("; ")};}`;
             }
         }
 
@@ -699,28 +728,26 @@ export default class ExpressionFile extends SourceFile {
     /**
      * Builds a method signature from a function-like node.
      */
-    private getMethodSignature(method: ts.MethodDeclaration | ts.GetAccessorDeclaration | ts.FunctionExpression | ts.ArrowFunction): MethodSignature {
+    private getMethodSignature(
+        method: ts.MethodDeclaration | ts.GetAccessorDeclaration | ts.FunctionExpression | ts.ArrowFunction
+    ): MethodSignature {
         // parameters
-        const params: ParameterSignature[] = ('parameters' in method ? method.parameters : []).map(p => {
+        const params: ParameterSignature[] = ("parameters" in method ? method.parameters : []).map(p => {
             const name = ts.isIdentifier(p.name) ? p.name.text : p.name.getText();
-            const type = p.type ? p.type.getText() : 'any';
+            const type = p.type ? p.type.getText() : "any";
             return {name, type};
         });
 
         // generic type parameters
-        const typeParams: string[] = method.typeParameters
-            ? method.typeParameters.map(tp => tp.getText())
-            : [];
+        const typeParams: string[] = method.typeParameters ? method.typeParameters.map(tp => tp.getText()) : [];
 
         // return type (inline aliases when possible)
         const returnNode = (method as ts.MethodDeclaration).type;
 
-        const returnType = returnNode
-            ? this.resolveTypeNode(returnNode)
-            : 'any';
+        const returnType = returnNode ? this.resolveTypeNode(returnNode) : "any";
 
         return {
-            kind: 'method',
+            kind: "method",
             typeParameters: typeParams,
             parameters: params,
             returnType,
@@ -734,18 +761,18 @@ export default class ExpressionFile extends SourceFile {
         const val = this.parseNode(expr);
 
         switch (typeof val) {
-            case 'string':
-                return 'string';
-            case 'number':
-                return 'number';
-            case 'boolean':
-                return 'boolean';
-            case 'object':
-                if (val === null) return 'null';
-                if (Array.isArray(val)) return 'array';
-                return 'object';
+            case "string":
+                return "string";
+            case "number":
+                return "number";
+            case "boolean":
+                return "boolean";
+            case "object":
+                if (val === null) return "null";
+                if (Array.isArray(val)) return "array";
+                return "object";
             default:
-                return 'any';
+                return "any";
         }
     }
 
@@ -764,7 +791,7 @@ export default class ExpressionFile extends SourceFile {
      * Specify wrapper functions whose first argument should be unwrapped for parsing.
      */
     public setDefinition(definition: string | string[]): this {
-        const defs = typeof definition === 'string' ? [definition] : definition;
+        const defs = typeof definition === "string" ? [definition] : definition;
 
         defs.forEach(def => this.definition.add(def));
 
@@ -796,7 +823,6 @@ export default class ExpressionFile extends SourceFile {
 
                 if (importPath !== PackageName) {
                     console.warn(`Function ${fnName} is not imported from '${PackageName}' in file ${this.file}`);
-
                 } else if (expr.arguments.length > 0) {
                     const first = expr.arguments[0];
                     return this.unwrapExpression(first as ts.Expression);
@@ -812,23 +838,23 @@ export default class ExpressionFile extends SourceFile {
      */
     private formatMembers(members: Record<string, MemberSignature>): string {
         const parts = Object.entries(members).map(([key, sig]) => {
-            if (sig.kind === 'method') {
-                const tp = sig.typeParameters.length ? `<${sig.typeParameters.join(', ')}>` : '';
-                const params = sig.parameters.map(p => `${p.name}: ${p.type}`).join(', ');
+            if (sig.kind === "method") {
+                const tp = sig.typeParameters.length ? `<${sig.typeParameters.join(", ")}>` : "";
+                const params = sig.parameters.map(p => `${p.name}: ${p.type}`).join(", ");
                 return `${key}${tp}(${params}): ${sig.returnType};`;
             }
             return `${key}: ${sig.type};`;
         });
-        return `{ ${parts.join(' ')} }`;
+        return `{ ${parts.join(" ")} }`;
     }
 
     /**
      * Builds a function type string from a MethodSignature (parameters and return type).
      */
     private buildFunctionType(sig: MethodSignature): string {
-        const tp = sig.typeParameters.length ? `<${sig.typeParameters.join(', ')}>` : '';
+        const tp = sig.typeParameters.length ? `<${sig.typeParameters.join(", ")}>` : "";
 
-        const params = sig.parameters.map(p => `${p.name}: ${p.type}`).join(', ');
+        const params = sig.parameters.map(p => `${p.name}: ${p.type}`).join(", ");
 
         return `${tp}(${params}) => ${sig.returnType}`;
     }
@@ -836,7 +862,9 @@ export default class ExpressionFile extends SourceFile {
     /**
      * Given an initializer or expression, extracts its type: function signature or interface.
      */
-    private getTypeFromInitializer(node: ts.Expression | ts.MethodDeclaration | ts.GetAccessorDeclaration): string | undefined {
+    private getTypeFromInitializer(
+        node: ts.Expression | ts.MethodDeclaration | ts.GetAccessorDeclaration
+    ): string | undefined {
         // Function or arrow function: try to parse returned object or instance
         if (ts.isFunctionExpression(node) || ts.isArrowFunction(node)) {
             // attempt to parse returned expression into members

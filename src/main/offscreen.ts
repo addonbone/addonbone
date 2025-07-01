@@ -14,7 +14,7 @@ export type OffscreenMap = Map<OffscreenAlias, OffscreenParameters>;
 
 export const defineOffscreen = <T extends TransportType>(options: OffscreenDefinition<T>): OffscreenDefinition<T> => {
     return options;
-}
+};
 
 export const getOffscreens = (): OffscreenMap => {
     const offscreens: OffscreenMap = new Map();
@@ -25,15 +25,15 @@ export const getOffscreens = (): OffscreenMap => {
             offscreens.set(key, value);
         });
     } catch (e) {
-        console.error('Failed getting offscreens: ', e);
+        console.error("Failed getting offscreens: ", e);
     }
 
     return offscreens;
-}
+};
 
-export const getOffscreen = <
-    N extends Extract<keyof TransportDictionary, string>
->(name: N): DeepAsyncProxy<TransportDictionary[N]> => {
+export const getOffscreen = <N extends Extract<keyof TransportDictionary, string>>(
+    name: N
+): DeepAsyncProxy<TransportDictionary[N]> => {
     const parameters = getOffscreens().get(name);
 
     if (!parameters) {
@@ -41,4 +41,4 @@ export const getOffscreen = <
     }
 
     return new ProxyOffscreen(name, parameters).get();
-}
+};

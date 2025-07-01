@@ -15,15 +15,17 @@ export default class extends AbstractFinder {
     constructor(
         config: ReadonlyConfig,
         protected readonly key: PluginAssetKeys,
-        protected readonly finder: AbstractAssetFinder,
+        protected readonly finder: AbstractAssetFinder
     ) {
         super(config);
     }
 
     protected async getFiles(): Promise<Set<EntrypointFile>> {
-        const pluginResult = await Array.fromAsync(processPluginHandler(this.config.plugins, this.key, {
-            config: this.config,
-        }));
+        const pluginResult = await Array.fromAsync(
+            processPluginHandler(this.config.plugins, this.key, {
+                config: this.config,
+            })
+        );
 
         const files = new Set<EntrypointFile>();
 
@@ -60,7 +62,7 @@ export default class extends AbstractFinder {
 
                     const {name: filename} = path.parse(file.file);
 
-                    if (filename.endsWith(`.${this.config.browser}`) || !filename.includes('.')) {
+                    if (filename.endsWith(`.${this.config.browser}`) || !filename.includes(".")) {
                         files.add(file);
                     }
                 }
@@ -75,10 +77,7 @@ export default class extends AbstractFinder {
         const resolve = (file: string) => this.resolveSafely(name, path.posix.join(directory, file));
 
         for (const name of this.finder.getNames()) {
-            for (const file of [
-                resolve(name),
-                resolve(`${name}.${this.config.browser}`)
-            ]) {
+            for (const file of [resolve(name), resolve(`${name}.${this.config.browser}`)]) {
                 if (file) {
                     files.add(file);
                 }

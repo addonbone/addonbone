@@ -17,7 +17,7 @@ export default class extends ContentFinder implements ContentProvider<ContentScr
     }
 
     public driver(): ContentDriver<ContentScriptEntrypointOptions> {
-        return this._driver ??= new ContentDriver(this);
+        return (this._driver ??= new ContentDriver(this));
     }
 
     public virtual(file: EntrypointFile): string {

@@ -20,7 +20,6 @@ export default class<N extends TransportName, T = TransportDictionary[N]> extend
             throw new Error(`Relay "${this.name}" can be getting only from content script`);
         }
 
-        return super.get()
+        return super.get();
     }
-
 }

@@ -6,11 +6,11 @@ import {definePlugin} from "@main/plugin";
 
 import {getAppPath, getAppSourcePath, getSharedPath, getSourcePath} from "@cli/resolvers/path";
 
-type CopyPatterns = Array<Pick<RawCopyPattern, 'from' | 'to' | 'force' | 'priority'>>;
+type CopyPatterns = Array<Pick<RawCopyPattern, "from" | "to" | "force" | "priority">>;
 
 export default definePlugin(() => {
     return {
-        name: 'adnbn:public',
+        name: "adnbn:public",
         bundler: ({config}) => {
             const {publicDir, mergePublic} = config;
 
@@ -31,9 +31,9 @@ export default definePlugin(() => {
                 if (fs.existsSync(path)) {
                     patterns.push({
                         from: path,
-                        to: '.',
+                        to: ".",
                         force: true,
-                        priority: paths.length - i
+                        priority: paths.length - i,
                     });
                 }
             }
@@ -43,10 +43,8 @@ export default definePlugin(() => {
             }
 
             return {
-                plugins: [
-                    new CopyRspackPlugin({patterns})
-                ]
+                plugins: [new CopyRspackPlugin({patterns})],
             } satisfies RspackConfig;
-        }
+        },
     };
 });

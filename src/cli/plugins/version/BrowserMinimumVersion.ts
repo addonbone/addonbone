@@ -14,20 +14,24 @@ export default class extends AbstractVersion {
     public getVersion(): string | undefined {
         const version = this.extractVersionValue(this.config.minimumVersion);
 
+        if (!version) {
+            return;
+        }
+
         return this.resolveVersion(version) || this.resolveVersion(getEnv(version));
     }
 
     protected resolveVersion(version?: string): string | undefined {
-        const coerceVersion = semver.coerce(version)
+        const coerceVersion = semver.coerce(version);
 
-        if (!version || !coerceVersion) return
+        if (!version || !coerceVersion) return;
 
         const parts: string[] = coerceVersion.version.split(".");
 
-        while (parts.length && parts[parts.length - 1] === '0') {
+        while (parts.length && parts[parts.length - 1] === "0") {
             parts.pop();
         }
 
-        return parts.join('.') || undefined;
+        return parts.join(".") || undefined;
     }
 }

@@ -12,8 +12,8 @@ export default class extends FileBuilder {
     }
 
     protected template(): string {
-        const types = [`:package/client-types`].map((value) => `/// <reference types="${value}" />`);
+        const types = [`:package/client-types`].map(value => `/// <reference types="${value}" />`);
 
-        return types.join('\n');
+        return types.join("\n");
     }
 }

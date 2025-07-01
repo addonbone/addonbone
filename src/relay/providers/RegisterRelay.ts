@@ -2,12 +2,14 @@ import Relay from "./Relay";
 
 import {TransportDictionary, TransportName, TransportRegister} from "@typing/transport";
 
-export default class<
-    N extends TransportName,
-    T extends object = TransportDictionary[N],
-    A extends any[] = []
-> extends Relay<N, T> implements TransportRegister<T, A> {
-    constructor(name: N, protected readonly init: (...args: A) => T) {
+export default class<N extends TransportName, T extends object = TransportDictionary[N], A extends any[] = []>
+    extends Relay<N, T>
+    implements TransportRegister<T, A>
+{
+    constructor(
+        name: N,
+        protected readonly init: (...args: A) => T
+    ) {
         super(name);
     }
 

@@ -5,22 +5,22 @@ export {default as View} from "./View";
 
 export default definePlugin(() => {
     return {
-        name: 'adnbn:view',
+        name: "adnbn:view",
         bundler: {
             optimization: {
                 splitChunks: {
                     cacheGroups: {
                         frameworkView: {
                             minChunks: 2,
-                            name: 'view',
-                            test: isEntryModuleOrIssuer('view'),
+                            name: "view",
+                            test: isEntryModuleOrIssuer("view"),
                             enforce: false,
                             reuseExistingChunk: true,
-                            priority: 10
+                            priority: 10,
                         },
-                    }
-                }
-            }
-        }
+                    },
+                },
+            },
+        },
     };
 });

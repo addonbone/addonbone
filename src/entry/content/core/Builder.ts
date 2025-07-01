@@ -7,7 +7,7 @@ import {contentScriptContainerResolver} from "./resolvers/container";
 import {
     contentScriptAwaitFirstResolver,
     contentScriptLocationResolver,
-    contentScriptMutationObserverResolver
+    contentScriptMutationObserverResolver,
 } from "./resolvers/watch";
 
 import ManagedContext from "./ManagedContext";
@@ -28,7 +28,7 @@ import {
     ContentScriptRenderHandler,
     ContentScriptRenderValue,
     ContentScriptResolvedDefinition,
-    ContentScriptWatchStrategy
+    ContentScriptWatchStrategy,
 } from "@typing/content";
 
 import {Awaiter} from "@typing/helpers";
@@ -56,26 +56,19 @@ export default abstract class extends Builder implements ContentScriptBuilder {
             container: this.resolveContainer(definition.container),
             render: this.resolveRender(definition.render),
             watch: this.resolveWatch(definition.watch),
-        }
+        };
     }
 
-    protected resolveAnchor(
-        anchor?: ContentScriptAnchor | ContentScriptAnchorGetter
-    ): ContentScriptAnchorResolver {
+    protected resolveAnchor(anchor?: ContentScriptAnchor | ContentScriptAnchorGetter): ContentScriptAnchorResolver {
         return contentScriptAnchorResolver(anchor);
     }
 
-    protected resolveMount(
-        mount?: ContentScriptMountFunction
-    ): ContentScriptMountFunction {
+    protected resolveMount(mount?: ContentScriptMountFunction): ContentScriptMountFunction {
         return mount || contentScriptMountAppendResolver();
     }
 
     protected resolveContainer(
-        container?:
-            ContentScriptContainerTag |
-            ContentScriptContainerOptions |
-            ContentScriptContainerFactory
+        container?: ContentScriptContainerTag | ContentScriptContainerOptions | ContentScriptContainerFactory
     ): ContentScriptContainerCreator {
         return contentScriptContainerResolver(container);
     }
@@ -90,9 +83,7 @@ export default abstract class extends Builder implements ContentScriptBuilder {
         return contentScriptRenderResolver(render);
     }
 
-    protected resolveWatch(
-        watch?: true | ContentScriptWatchStrategy
-    ): ContentScriptWatchStrategy {
+    protected resolveWatch(watch?: true | ContentScriptWatchStrategy): ContentScriptWatchStrategy {
         if (watch === undefined) {
             watch = contentScriptAwaitFirstResolver();
         } else if (watch === true) {
@@ -116,7 +107,7 @@ export default abstract class extends Builder implements ContentScriptBuilder {
 
             this.unwatch = watch(() => {
                 this.processing().catch(e => {
-                    console.error('Content script processing on watch error', e);
+                    console.error("Content script processing on watch error", e);
                 });
             }, this.context);
         }

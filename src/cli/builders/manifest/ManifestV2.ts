@@ -10,7 +10,6 @@ type ManifestV2 = chrome.runtime.ManifestV2;
 type ManifestV3 = chrome.runtime.ManifestV3;
 
 export default class extends ManifestBase<ManifestV2> {
-
     public constructor(browser: Browser) {
         super(browser);
     }
@@ -28,13 +27,13 @@ export default class extends ManifestBase<ManifestV2> {
                     default_title: title || this.name,
                     default_popup: path,
                     default_icon: this.getIconsByName(icon),
-                }
+                },
             };
         } else if (this.hasExecuteActionCommand()) {
             return {
                 browser_action: {
                     default_title: this.name,
-                }
+                },
             };
         }
     }
@@ -98,5 +97,4 @@ export default class extends ManifestBase<ManifestV2> {
             return {web_accessible_resources: Array.from(new Set(resources))};
         }
     }
-
 }

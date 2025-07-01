@@ -1,0 +1,27 @@
+{
+    "semi": true,
+    "trailingComma": "es5",
+    "singleQuote": false,
+    "printWidth": 120,
+    "tabWidth": 4,
+    "useTabs": false,
+    "bracketSpacing": false,
+    "arrowParens": "avoid",
+    "overrides": [
+        {
+            "files": "*.json",
+            "options": {
+                "tabWidth": 2,
+                "bracketSpacing": true,
+                "bracketSameLine": false,
+                "printWidth": 40
+            }
+        },
+        {
+            "files": "*.scss",
+            "options": {
+                "tabWidth": 2
+            }
+        }
+    ]
+}

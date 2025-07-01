@@ -1,5 +1,7 @@
 export const MessageGlobalKey = 'adnbnMessage';
 
+export const MessageTypeSeparator = ':';
+
 export type MessageSender = chrome.runtime.MessageSender;
 
 export interface MessageDictionary {

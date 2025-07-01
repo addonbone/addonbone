@@ -1,6 +1,8 @@
 import {closeOffscreen, createOffscreen, hasOffscreen} from '@adnbn/browser';
 import {isOffscreen} from '@offscreen/utils';
 
+import {getBrowser} from "@main/env";
+
 import MessageManager from "@message/MessageManager";
 
 import ProxyOffscreen from "./ProxyOffscreen";
@@ -8,17 +10,11 @@ import RegisterOffscreen from "./RegisterOffscreen";
 import OffscreenManager from "../OffscreenManager";
 
 import {DeepAsyncProxy} from "@typing/helpers";
+import {MessageTypeSeparator} from "@typing/message";
+import {Browser} from "@typing/browser";
 
 jest.mock('@offscreen/utils', () => ({isOffscreen: jest.fn()}));
-jest.mock('@adnbn/browser', () => {
-    const actual = jest.requireActual('@adnbn/browser');
-    return {
-        ...actual,
-        hasOffscreen: jest.fn(),
-        createOffscreen: jest.fn(),
-        closeOffscreen: jest.fn(),
-    };
-});
+jest.mock('@main/env', () => ({getBrowser: jest.fn()}));
 
 beforeEach(async () => {
     jest.clearAllMocks();
@@ -55,6 +51,7 @@ describe('ProxyOffscreen', () => {
     beforeEach(async () => {
         (isOffscreen as jest.Mock).mockReturnValue(false);
         (hasOffscreen as jest.Mock).mockReturnValue(true);
+        (getBrowser as jest.Mock).mockReturnValue(Browser.Chrome);
     });
 
     test('throws an error when get() is called in offscreen context', async () => {
@@ -78,7 +75,7 @@ describe('ProxyOffscreen', () => {
         expect(await offscreen.sum(1, 2)).toBe(3);
         expect(chrome.runtime.sendMessage).toHaveBeenCalledWith(
             expect.objectContaining({
-                type: `offscreen.${offscreenName}`,
+                type: `offscreen${MessageTypeSeparator}${offscreenName}`,
                 data: {
                     path: "sum",
                     args: [1, 2]
@@ -94,7 +91,7 @@ describe('ProxyOffscreen', () => {
         expect(await offscreen.one()).toBe(1);
         expect(chrome.runtime.sendMessage).toHaveBeenCalledWith(
             expect.objectContaining({
-                type: `offscreen.${offscreenName}`,
+                type: `offscreen${MessageTypeSeparator}${offscreenName}`,
                 data: {
                     path: "one",
                     args: []
@@ -110,7 +107,7 @@ describe('ProxyOffscreen', () => {
         expect(await offscreen.obj.concat('Hello', 'world')).toBe('Hello world');
         expect(chrome.runtime.sendMessage).toHaveBeenCalledWith(
             expect.objectContaining({
-                type: `offscreen.${offscreenName}`,
+                type: `offscreen${MessageTypeSeparator}${offscreenName}`,
                 data: {
                     path: "obj.concat",
                     args: ['Hello', 'world']
@@ -122,7 +119,7 @@ describe('ProxyOffscreen', () => {
         expect(await offscreen.obj.zero()).toBe(0);
         expect(chrome.runtime.sendMessage).toHaveBeenCalledWith(
             expect.objectContaining({
-                type: `offscreen.${offscreenName}`,
+                type: `offscreen${MessageTypeSeparator}${offscreenName}`,
                 data: {
                     path: "obj.zero",
                     args: []

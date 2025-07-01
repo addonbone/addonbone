@@ -8,6 +8,10 @@ jest.mock('@adnbn/browser', () => ({
     browser: jest.fn(() => chrome),
     isManifestVersion3: jest.fn(() => true),
 
+    hasOffscreen: jest.fn(),
+    closeOffscreen: jest.fn(),
+    createOffscreen: jest.fn(),
+
     executeScript: chrome.scripting.executeScript,
 
     sendMessage: (msg: any) => {

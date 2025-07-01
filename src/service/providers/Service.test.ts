@@ -7,6 +7,7 @@ import RegisterService from "./RegisterService";
 import ServiceManager from "../ServiceManager";
 
 import {DeepAsyncProxy} from "@typing/helpers";
+import {MessageTypeSeparator} from "@typing/message";
 
 jest.mock('@adnbn/browser', () => {
     const actual = jest.requireActual('@adnbn/browser');
@@ -68,7 +69,7 @@ describe('ProxyService', () => {
         expect(await service.sum(1, 2)).toBe(3)
         expect(chrome.runtime.sendMessage).toHaveBeenCalledWith(
             expect.objectContaining({
-                type: `service.${serviceName}`,
+                type: `service${MessageTypeSeparator}${serviceName}`,
                 data: {
                     path: "sum",
                     args: [1, 2]
@@ -84,7 +85,7 @@ describe('ProxyService', () => {
         expect(await service.one()).toBe(1)
         expect(chrome.runtime.sendMessage).toHaveBeenCalledWith(
             expect.objectContaining({
-                type: `service.${serviceName}`,
+                type: `service${MessageTypeSeparator}${serviceName}`,
                 data: {
                     path: "one",
                     args: []
@@ -100,7 +101,7 @@ describe('ProxyService', () => {
         expect(await service.obj.concat('Hello', 'world')).toBe('Hello world')
         expect(chrome.runtime.sendMessage).toHaveBeenCalledWith(
             expect.objectContaining({
-                type: `service.${serviceName}`,
+                type: `service${MessageTypeSeparator}${serviceName}`,
                 data: {
                     path: "obj.concat",
                     args: ['Hello', 'world']
@@ -112,7 +113,7 @@ describe('ProxyService', () => {
         expect(await service.obj.zero()).toBe(0)
         expect(chrome.runtime.sendMessage).toHaveBeenCalledWith(
             expect.objectContaining({
-                type: `service.${serviceName}`,
+                type: `service${MessageTypeSeparator}${serviceName}`,
                 data: {
                     path: "obj.zero",
                     args: []

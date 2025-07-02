@@ -1,7 +1,7 @@
 {
   "name": "adnbn",
   "version": "0.0.55",
-  "description": "Addon 💀 Bone - Cross browser web extension framework with shared code base",
+  "description": "Addon 💀 Bone - Cross-browser web extension framework with shared code base",
   "homepage": "https://github.com/addonbone/addonbone",
   "repository": {
     "type": "git",
@@ -17,7 +17,7 @@
     "opera",
     "safari"
   ],
-  "author": "AddonBone",
+  "author": "Addon Bone",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/addonbone/addonbone/issues"

@@ -1,0 +1,53 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "module": "ESNext",
+    "target": "ESNext",
+    "moduleResolution": "Bundler",
+    "declaration": true,
+    "emitDeclarationOnly": false,
+    "resolvePackageJsonExports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "rootDir": ".",
+    "outDir": "./dist",
+    "noEmitOnError": false,
+    "noEmit": false,
+    "skipLibCheck": true,
+    "noImplicitAny": false,
+    "jsx": "react",
+    "typeRoots": [
+      "node_modules/@types",
+      "src/types.d.ts"
+    ],
+    "baseUrl": "./src",
+    "paths": {
+      "@cli/*": ["cli/*"],
+      "@entry/*": ["entry/*"],
+      "@locale/*": ["locale/*"],
+      "@main/*": ["main/*"],
+      "@message/*": ["message/*"],
+      "@offscreen/*": ["offscreen/*"],
+      "@relay/*": ["relay/*"],
+      "@service/*": ["service/*"],
+      "@transport/*": ["transport/*"],
+      "@typing/*": ["types/*"]
+    },
+    "isolatedModules": true,
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    "declarationMap": true
+  },
+  "include": [
+    "./src/**/*",
+    "./src/**/*.d.ts",
+    "./src/cli/virtual/virtual.d.ts",
+    "node_modules/@types/node/*.d.ts"
+  ],
+  "exclude": [
+    "**/*.test.ts",
+    "**/tests/**/*.ts",
+    "dist"
+  ]
+}

@@ -30,6 +30,7 @@ export interface MethodSignature {
 export interface PropertySignature {
     kind: "property";
     type: string;
+    optional?: boolean;
 }
 
 /**
@@ -339,7 +340,8 @@ export default class ExpressionFile extends SourceFile {
                 members[name] = this.getMethodSignature(member as ts.MethodDeclaration);
             } else if (ts.isPropertyDeclaration(member)) {
                 const type = member.type ? this.resolveTypeNode(member.type) : "any";
-                members[name] = {kind: "property", type};
+                const optional = member.questionToken !== undefined;
+                members[name] = {kind: "property", type, optional};
             }
         }
 
@@ -883,7 +885,8 @@ export default class ExpressionFile extends SourceFile {
                 const params = sig.parameters.map(p => `${p.name}: ${p.type}`).join(", ");
                 return `${key}${tp}(${params}): ${sig.returnType};`;
             }
-            return `${key}: ${sig.type};`;
+            const optionalMark = sig.optional ? "?" : "";
+            return `${key}${optionalMark}: ${sig.type};`;
         });
         return `{ ${parts.join(" ")} }`;
     }

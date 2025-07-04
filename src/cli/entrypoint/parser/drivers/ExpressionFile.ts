@@ -11,6 +11,7 @@ import {PackageName} from "@typing/app";
 export interface ParameterSignature {
     name: string;
     type: string;
+    optional?: boolean;
 }
 
 /**
@@ -777,7 +778,8 @@ export default class ExpressionFile extends SourceFile {
         const params: ParameterSignature[] = ("parameters" in method ? method.parameters : []).map(p => {
             const name = ts.isIdentifier(p.name) ? p.name.text : p.name.getText();
             const type = p.type ? this.resolveTypeNode(p.type) : "any";
-            return {name, type};
+            const optional = p.questionToken !== undefined;
+            return {name, type, optional};
         });
 
         // generic type parameters
@@ -882,7 +884,10 @@ export default class ExpressionFile extends SourceFile {
         const parts = Object.entries(members).map(([key, sig]) => {
             if (sig.kind === "method") {
                 const tp = sig.typeParameters.length ? `<${sig.typeParameters.join(", ")}>` : "";
-                const params = sig.parameters.map(p => `${p.name}: ${p.type}`).join(", ");
+                const params = sig.parameters.map(p => {
+                    const optionalMark = p.optional ? "?" : "";
+                    return `${p.name}${optionalMark}: ${p.type}`;
+                }).join(", ");
                 return `${key}${tp}(${params}): ${sig.returnType};`;
             }
             const optionalMark = sig.optional ? "?" : "";
@@ -897,7 +902,10 @@ export default class ExpressionFile extends SourceFile {
     private buildFunctionType(sig: MethodSignature): string {
         const tp = sig.typeParameters.length ? `<${sig.typeParameters.join(", ")}>` : "";
 
-        const params = sig.parameters.map(p => `${p.name}: ${p.type}`).join(", ");
+        const params = sig.parameters.map(p => {
+            const optionalMark = p.optional ? "?" : "";
+            return `${p.name}${optionalMark}: ${p.type}`;
+        }).join(", ");
 
         return `${tp}(${params}) => ${sig.returnType}`;
     }

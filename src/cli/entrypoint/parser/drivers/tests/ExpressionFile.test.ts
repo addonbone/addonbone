@@ -115,7 +115,7 @@ describe("ExpressionFile", () => {
 
                 const type = ExpressionFile.make(filename).setProperty('init').getType();
 
-                expect(type).toBe("{ extra: import('somelib').ExtraType; getExtra(): import('somelib').ExtraType; setExtra(extra: import('somelib').ExtraType): void; }");
+                expect(type).toBe("{ extra: import('somelib').ExtraType; getExtra(): import('somelib').ExtraType; setExtra(extra?: import('somelib').ExtraType): void; }");
             });
 
             test("export default function and return instance with external library type that can be undefined", () => {

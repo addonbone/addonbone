@@ -1,5 +1,5 @@
 // @ts-ignore
-import type { ExtraType } from "somelib";
+import type {ExtraType} from "somelib";
 
 class ExternalServiceWithUndefined {
     public extraProperty: ExtraType | undefined;

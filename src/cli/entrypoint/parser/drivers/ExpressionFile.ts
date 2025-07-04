@@ -259,16 +259,16 @@ export default class ExpressionFile extends SourceFile {
                     val === undefined
                         ? "any"
                         : typeof val === "string"
-                          ? "string"
-                          : typeof val === "number"
-                            ? "number"
-                            : typeof val === "boolean"
-                              ? "boolean"
-                              : Array.isArray(val)
-                                ? "array"
-                                : typeof val === "object"
-                                  ? "object"
-                                  : "any";
+                            ? "string"
+                            : typeof val === "number"
+                                ? "number"
+                                : typeof val === "boolean"
+                                    ? "boolean"
+                                    : Array.isArray(val)
+                                        ? "array"
+                                        : typeof val === "object"
+                                            ? "object"
+                                            : "any";
 
                 result[key] = {kind: "property", type};
             }
@@ -329,15 +329,15 @@ export default class ExpressionFile extends SourceFile {
                 member.name && ts.isIdentifier(member.name)
                     ? member.name.text
                     : member.name
-                      ? member.name.getText()
-                      : "";
+                        ? member.name.getText()
+                        : "";
 
             if (!name) continue;
 
             if (ts.isMethodDeclaration(member) || ts.isGetAccessorDeclaration(member)) {
                 members[name] = this.getMethodSignature(member as ts.MethodDeclaration);
             } else if (ts.isPropertyDeclaration(member)) {
-                const type = member.type ? member.type.getText() : "any";
+                const type = member.type ? this.resolveTypeNode(member.type) : "any";
                 members[name] = {kind: "property", type};
             }
         }
@@ -491,6 +491,13 @@ export default class ExpressionFile extends SourceFile {
      * Attempts to inline a type alias by name, resolving imported or local aliases.
      */
     private inlineAliasType(name: string): string | undefined {
+        // Check if the type is imported from an external library
+        const importPath = this.getImports().get(name);
+        if (importPath && !importPath.startsWith(".") && !importPath.startsWith("/") && !fs.existsSync(importPath)) {
+            // This is an external library import, format it as import('libraryName').TypeName
+            return `import('${importPath}').${name}`;
+        }
+
         // local type alias
         const local = this.findTypeAliasDeclaration(name);
 
@@ -639,35 +646,19 @@ export default class ExpressionFile extends SourceFile {
             return `{${props.join("; ")};}`;
         }
 
-        const importPath = this.getImports().get(name);
-
         if (importPath) {
-            let parser;
-            let interfaceDecl;
+            const parser = ExpressionFile.make(importPath);
 
-            try {
-                // Check if the file exists before creating a parser
-                if (!fs.existsSync(importPath)) {
-                    console.warn(`File not found: ${importPath} when resolving type alias ${name}`);
-                    return undefined;
-                }
+            // imported type alias
+            const aliasDecl = parser.findTypeAliasDeclaration(name);
 
-                parser = (this.constructor as typeof ExpressionFile).make(importPath);
-
-                // imported type alias
-                const aliasDecl = parser.findTypeAliasDeclaration(name);
-
-                if (aliasDecl) {
-                    // inline imported type alias (including intersections)
-                    return parser.inlineAliasType(name);
-                }
-
-                // imported interface
-                interfaceDecl = parser.findInterfaceDeclaration(name);
-            } catch (error) {
-                console.warn(`Error resolving type alias ${name} from ${importPath}:`, error);
-                return undefined;
+            if (aliasDecl) {
+                // inline imported type alias (including intersections)
+                return parser.inlineAliasType(name);
             }
+
+            // imported interface
+            const interfaceDecl = parser.findInterfaceDeclaration(name);
 
             if (interfaceDecl) {
                 const props: string[] = [];

@@ -89,6 +89,30 @@ describe("default function", () => {
             "{ getUserInfo(): {id: number; name: string;}; getUserDetails(): {id: number; name: string; address?: string; age?: number; data?: {reg: number; log: number;};}; getUserAndDetails(): {id: number; name: string; address?: string; age?: number; data?: {reg: number; log: number;};}; }"
         );
     });
+
+    test("export default function and return instance with external library types", () => {
+        const filename = path.join(fixtures, "expression", "export-instance-external-types.ts");
+
+        const type = ExpressionFile.make(filename).getType();
+
+        expect(type).toBe("{ extra: import('somelib').ExtraType; getExtra(): import('somelib').ExtraType; setExtra(extra: import('somelib').ExtraType): void; }");
+    });
+
+    test("export default function and return instance with external library types using type import", () => {
+        const filename = path.join(fixtures, "expression", "export-instance-external-types-alt.ts");
+
+        const type = ExpressionFile.make(filename).getType();
+
+        expect(type).toBe("{ extra: import('somelib').ExtraType; getExtra(): import('somelib').ExtraType; setExtra(extra: import('somelib').ExtraType): void; }");
+    });
+
+    test("export init function and return instance with external library types using import type", () => {
+        const filename = path.join(fixtures, "expression", "export-init-function-external-types-type.ts");
+
+        const type = ExpressionFile.make(filename).setProperty('init').getType();
+
+        expect(type).toBe("{ extra: import('somelib').ExtraType; getExtra(): import('somelib').ExtraType; setExtra(extra: import('somelib').ExtraType): void; }");
+    });
 });
 
 describe("named function", () => {

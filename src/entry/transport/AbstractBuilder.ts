@@ -11,10 +11,11 @@ import {
 } from "@typing/transport";
 import {EntrypointBuilder} from "@typing/entrypoint";
 
-export default abstract class<O extends TransportOptions, T extends TransportType = TransportType>
-    extends Builder
-    implements EntrypointBuilder
-{
+// prettier-ignore
+export default abstract class<
+    O extends TransportOptions,
+    T extends TransportType = TransportType
+> extends Builder implements EntrypointBuilder {
     protected readonly definition: TransportResolvedDefinition<O, T>;
 
     protected instance?: TransportRegister<T, [O]>;

@@ -23,6 +23,8 @@ export default class<T extends TransportType> extends Builder {
     }
 
     public async build(): Promise<void> {
+        await this.destroy();
+
         await this._transport.build();
         await this._content?.build();
 

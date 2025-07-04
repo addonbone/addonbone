@@ -117,6 +117,14 @@ describe("ExpressionFile", () => {
 
                 expect(type).toBe("{ extra: import('somelib').ExtraType; getExtra(): import('somelib').ExtraType; setExtra(extra: import('somelib').ExtraType): void; }");
             });
+
+            test("export default function and return instance with external library type that can be undefined", () => {
+                const filename = path.join(fixtures, "expression", "type-handling", "export-instance-external-types-undefined.ts");
+
+                const type = ExpressionFile.make(filename).getType();
+
+                expect(type).toBe("{ extraProperty: import('somelib').ExtraType | undefined; someExtraProperty?: import('somelib').ExtraType; getExtraProperty(): import('somelib').ExtraType | undefined; setExtraProperty(extra: import('somelib').ExtraType | undefined): void; }");
+            });
         });
     });
 

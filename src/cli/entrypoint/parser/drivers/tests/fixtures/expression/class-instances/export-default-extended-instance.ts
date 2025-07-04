@@ -1,4 +1,4 @@
-import UserService from "./class-for-test-export-default";
+import UserService from "../helpers/class-for-test-export-default";
 
 class Service extends UserService {
     public getUserName():string{

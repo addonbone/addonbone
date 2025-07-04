@@ -1,4 +1,5 @@
 import ts from "typescript";
+import fs from "fs";
 
 import SourceFile from "./SourceFile";
 
@@ -572,6 +573,13 @@ export default class ExpressionFile extends SourceFile {
                 }
                 return `{${parts.join("; ")};}`;
             }
+
+            // For type reference nodes (like aliases to other types), preserve the original type
+            if (ts.isTypeReferenceNode(typeNode) && ts.isIdentifier(typeNode.typeName)) {
+                // Get the full text of the type node, which includes any namespace qualifiers
+                return typeNode.getText();
+            }
+
             return this.resolveTypeNode(typeNode);
         }
 
@@ -634,18 +642,32 @@ export default class ExpressionFile extends SourceFile {
         const importPath = this.getImports().get(name);
 
         if (importPath) {
-            const parser = (this.constructor as typeof ExpressionFile).make(importPath);
+            let parser;
+            let interfaceDecl;
 
-            // imported type alias
-            const aliasDecl = parser.findTypeAliasDeclaration(name);
+            try {
+                // Check if the file exists before creating a parser
+                if (!fs.existsSync(importPath)) {
+                    console.warn(`File not found: ${importPath} when resolving type alias ${name}`);
+                    return undefined;
+                }
 
-            if (aliasDecl) {
-                // inline imported type alias (including intersections)
-                return parser.inlineAliasType(name);
+                parser = (this.constructor as typeof ExpressionFile).make(importPath);
+
+                // imported type alias
+                const aliasDecl = parser.findTypeAliasDeclaration(name);
+
+                if (aliasDecl) {
+                    // inline imported type alias (including intersections)
+                    return parser.inlineAliasType(name);
+                }
+
+                // imported interface
+                interfaceDecl = parser.findInterfaceDeclaration(name);
+            } catch (error) {
+                console.warn(`Error resolving type alias ${name} from ${importPath}:`, error);
+                return undefined;
             }
-
-            // imported interface
-            const interfaceDecl = parser.findInterfaceDeclaration(name);
 
             if (interfaceDecl) {
                 const props: string[] = [];
@@ -708,6 +730,18 @@ export default class ExpressionFile extends SourceFile {
      * Resolves a TypeScript type node to a string, inlining type aliases when possible.
      */
     private resolveTypeNode(typeNode: ts.TypeNode): string {
+        // Handle union types (like Tab | undefined)
+        if (ts.isUnionTypeNode(typeNode)) {
+            const types = typeNode.types.map(t => this.resolveTypeNode(t));
+            return types.join(' | ');
+        }
+
+        // Handle array types (like Tab[])
+        if (ts.isArrayTypeNode(typeNode)) {
+            const elementType = this.resolveTypeNode(typeNode.elementType);
+            return `${elementType}[]`;
+        }
+
         // inline type aliases
         if (ts.isTypeReferenceNode(typeNode) && ts.isIdentifier(typeNode.typeName)) {
             const aliasName = typeNode.typeName.text;
@@ -715,6 +749,14 @@ export default class ExpressionFile extends SourceFile {
 
             if (inlined) {
                 return inlined;
+            }
+
+            // Handle type reference nodes with type arguments (like Promise<Tab>)
+            if (typeNode.typeArguments && typeNode.typeArguments.length > 0) {
+                // Resolve each type argument
+                const resolvedArgs = typeNode.typeArguments.map(arg => this.resolveTypeNode(arg));
+                // Construct the type with resolved arguments
+                return `${aliasName}<${resolvedArgs.join(', ')}>`;
             }
 
             // preserve generics and other references
@@ -734,7 +776,7 @@ export default class ExpressionFile extends SourceFile {
         // parameters
         const params: ParameterSignature[] = ("parameters" in method ? method.parameters : []).map(p => {
             const name = ts.isIdentifier(p.name) ? p.name.text : p.name.getText();
-            const type = p.type ? p.type.getText() : "any";
+            const type = p.type ? this.resolveTypeNode(p.type) : "any";
             return {name, type};
         });
 

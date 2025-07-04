@@ -13,6 +13,14 @@ describe("default function", () => {
         expect(type).toBe("{ bar: string; getBar(): string; setBar(bar: string): void; }");
     });
 
+    test("export default function and return instance class with chrome types", () => {
+        const filename = path.join(fixtures, "expression", "export-instance-chrome-types.ts");
+
+        const type = ExpressionFile.make(filename).getType();
+
+        expect(type).toBe("{ create(properties: chrome.tabs.CreateProperties): Promise<chrome.tabs.Tab>; get(): Promise<chrome.tabs.Tab[]>; tab(): chrome.tabs.Tab | undefined; remove(tabId: number): Promise<void>; update(tab: chrome.tabs.Tab, properties: chrome.tabs.CreateProperties): Promise<void>; }");
+    });
+
     test("export default function and return extended instance class", () => {
         const filename = path.join(fixtures, "expression", "export-extended-instance.ts");
 

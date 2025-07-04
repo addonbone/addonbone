@@ -1,4 +1,5 @@
 import ts from "typescript";
+import fs from "fs";
 
 import SourceFile from "./SourceFile";
 
@@ -254,20 +255,21 @@ export default class ExpressionFile extends SourceFile {
                 const name = prop.name.text;
                 const variable = this.getVariables().get(name);
                 const val = variable ? variable.value : undefined;
-                const type =
-                    val === undefined
-                        ? "any"
-                        : typeof val === "string"
-                          ? "string"
-                          : typeof val === "number"
-                            ? "number"
-                            : typeof val === "boolean"
-                              ? "boolean"
-                              : Array.isArray(val)
-                                ? "array"
-                                : typeof val === "object"
-                                  ? "object"
-                                  : "any";
+
+                let type = "any";
+                if (val !== undefined) {
+                    if (typeof val === "string") {
+                        type = "string";
+                    } else if (typeof val === "number") {
+                        type = "number";
+                    } else if (typeof val === "boolean") {
+                        type = "boolean";
+                    } else if (Array.isArray(val)) {
+                        type = "array";
+                    } else if (typeof val === "object") {
+                        type = "object";
+                    }
+                }
 
                 result[key] = {kind: "property", type};
             }
@@ -328,15 +330,15 @@ export default class ExpressionFile extends SourceFile {
                 member.name && ts.isIdentifier(member.name)
                     ? member.name.text
                     : member.name
-                      ? member.name.getText()
-                      : "";
+                        ? member.name.getText()
+                        : "";
 
             if (!name) continue;
 
             if (ts.isMethodDeclaration(member) || ts.isGetAccessorDeclaration(member)) {
                 members[name] = this.getMethodSignature(member as ts.MethodDeclaration);
             } else if (ts.isPropertyDeclaration(member)) {
-                const type = member.type ? member.type.getText() : "any";
+                const type = member.type ? this.resolveTypeNode(member.type) : "any";
                 members[name] = {kind: "property", type};
             }
         }
@@ -404,15 +406,17 @@ export default class ExpressionFile extends SourceFile {
     }
 
     /**
-     * Searches the AST of this file for a class declaration by name.
+     * Generic method to find a node of a specific type by name in the AST.
      */
-    private findClassDeclaration(name: string): ts.ClassDeclaration | undefined {
+    private findNodeByName<T extends ts.Node>(
+        predicate: (node: ts.Node, name: string) => node is T,
+        name: string
+    ): T | undefined {
         const sf = this.getSourceFile();
-
-        let found: ts.ClassDeclaration | undefined;
+        let found: T | undefined;
 
         const visit = (node: ts.Node) => {
-            if (ts.isClassDeclaration(node) && node.name?.text === name) {
+            if (predicate(node, name)) {
                 found = node;
             } else {
                 ts.forEachChild(node, visit);
@@ -420,284 +424,275 @@ export default class ExpressionFile extends SourceFile {
         };
 
         ts.forEachChild(sf, visit);
-
         return found;
+    }
+
+    /**
+     * Searches the AST of this file for a class declaration by name.
+     */
+    private findClassDeclaration(name: string): ts.ClassDeclaration | undefined {
+        return this.findNodeByName<ts.ClassDeclaration>(
+            (node, searchName): node is ts.ClassDeclaration =>
+                ts.isClassDeclaration(node) && node.name?.text === searchName,
+            name
+        );
     }
 
     /**
      * Searches the AST of this file for a type alias declaration by name.
      */
     private findTypeAliasDeclaration(name: string): ts.TypeAliasDeclaration | undefined {
-        const sf = this.getSourceFile();
-
-        let found: ts.TypeAliasDeclaration | undefined;
-
-        const visit = (node: ts.Node) => {
-            if (ts.isTypeAliasDeclaration(node) && node.name.text === name) {
-                found = node;
-            } else {
-                ts.forEachChild(node, visit);
-            }
-        };
-
-        ts.forEachChild(sf, visit);
-
-        return found;
+        return this.findNodeByName<ts.TypeAliasDeclaration>(
+            (node, searchName): node is ts.TypeAliasDeclaration =>
+                ts.isTypeAliasDeclaration(node) && node.name.text === searchName,
+            name
+        );
     }
 
     /**
      * Searches the AST of this file for an interface declaration by name.
      */
     private findInterfaceDeclaration(name: string): ts.InterfaceDeclaration | undefined {
-        const sf = this.getSourceFile();
-
-        let found: ts.InterfaceDeclaration | undefined;
-        const visit = (node: ts.Node) => {
-            if (ts.isInterfaceDeclaration(node) && node.name.text === name) {
-                found = node;
-            } else {
-                ts.forEachChild(node, visit);
-            }
-        };
-
-        ts.forEachChild(sf, visit);
-
-        return found;
+        return this.findNodeByName<ts.InterfaceDeclaration>(
+            (node, searchName): node is ts.InterfaceDeclaration =>
+                ts.isInterfaceDeclaration(node) && node.name.text === searchName,
+            name
+        );
     }
 
     /**
      * Searches the AST of this file for a variable declaration by name.
      */
     private findVariableDeclaration(name: string): ts.VariableDeclaration | undefined {
-        const sf = this.getSourceFile();
+        return this.findNodeByName<ts.VariableDeclaration>(
+            (node, searchName): node is ts.VariableDeclaration =>
+                ts.isVariableDeclaration(node) &&
+                ts.isIdentifier(node.name) &&
+                node.name.text === searchName,
+            name
+        );
+    }
 
-        let found: ts.VariableDeclaration | undefined;
+    /**
+     * Extracts properties from an interface declaration
+     */
+    private extractInterfaceProperties(
+        interfaceDecl: ts.InterfaceDeclaration,
+        parser: ExpressionFile = this
+    ): string[] {
+        const props: string[] = [];
 
-        const visit = (node: ts.Node) => {
-            if (ts.isVariableDeclaration(node) && ts.isIdentifier(node.name) && node.name.text === name) {
-                found = node;
-            } else {
-                ts.forEachChild(node, visit);
+        // include inherited members from extended interfaces
+        if (interfaceDecl.heritageClauses) {
+            for (const clause of interfaceDecl.heritageClauses) {
+                if (clause.token === ts.SyntaxKind.ExtendsKeyword) {
+                    for (const typeNode of clause.types) {
+                        const expr = typeNode.expression;
+                        if (ts.isIdentifier(expr)) {
+                            const parent = parser.inlineAliasType(expr.text);
+                            if (parent) {
+                                const inner = parent.slice(1, -1).trim();
+                                if (inner) {
+                                    props.push(
+                                        ...inner
+                                            .split(/;\s*/)
+                                            .map(s => s.trim())
+                                            .filter(Boolean)
+                                    );
+                                }
+                            }
+                        }
+                    }
+                }
             }
-        };
+        }
 
-        ts.forEachChild(sf, visit);
+        // Add interface members
+        for (const member of interfaceDecl.members) {
+            if (ts.isPropertySignature(member) && member.type) {
+                const key = parser.getName(member.name!);
+                const optional = member.questionToken ? "?" : "";
+                const typeText = parser.resolveTypeNode(member.type);
+                props.push(`${key}${optional}: ${typeText}`);
+            } else if (ts.isMethodSignature(member) && member.name) {
+                const key = parser.getName(member.name);
+                const typeParams = member.typeParameters ? member.typeParameters.map(tp => tp.getText()) : [];
+                const tpText = typeParams.length ? `<${typeParams.join(",")}>` : "";
 
-        return found;
+                const params = member.parameters
+                    .map(p => {
+                        const pname = ts.isIdentifier(p.name) ? p.name.text : p.name.getText();
+                        const ptype = p.type ? parser.resolveTypeNode(p.type) : "any";
+                        return `${pname}: ${ptype}`;
+                    })
+                    .join(", ");
+
+                const returnType = member.type ? parser.resolveTypeNode(member.type) : "any";
+
+                props.push(`${key}${tpText}(${params}): ${returnType}`);
+            }
+        }
+
+        return props;
+    }
+
+    /**
+     * Processes an intersection type node by flattening its members
+     */
+    private processIntersectionType(typeNode: ts.IntersectionTypeNode): string {
+        const parts: string[] = [];
+        const seen = new Set<string>();
+
+        for (const t of typeNode.types) {
+            // inline object literal types
+            if (ts.isTypeLiteralNode(t)) {
+                for (const m of t.members) {
+                    let keyName: string;
+                    let entry: string;
+                    if (ts.isPropertySignature(m) && m.type) {
+                        keyName = this.getName(m.name!);
+                        const typeText = this.resolveTypeNode(m.type);
+                        entry = `${keyName}: ${typeText}`;
+                    } else if (ts.isMethodSignature(m) && m.name) {
+                        keyName = this.getName(m.name);
+                        const typeParams = m.typeParameters ? m.typeParameters.map(tp => tp.getText()) : [];
+                        const tpText = typeParams.length ? `<${typeParams.join(",")}>` : "";
+                        const paramsText = m.parameters
+                            .map(p => {
+                                const pname = ts.isIdentifier(p.name) ? p.name.text : p.name.getText();
+                                const ptype = p.type ? this.resolveTypeNode(p.type) : "any";
+                                return `${pname}: ${ptype}`;
+                            })
+                            .join(",");
+                        const returnType = m.type ? this.resolveTypeNode(m.type) : "any";
+                        entry = `${keyName}${tpText}(${paramsText}): ${returnType}`;
+                    } else {
+                        continue;
+                    }
+                    if (!seen.has(keyName)) {
+                        seen.add(keyName);
+                        parts.push(entry);
+                    }
+                }
+            }
+            // inline referenced aliases or interfaces
+            else if (ts.isTypeReferenceNode(t) && ts.isIdentifier(t.typeName)) {
+                const refName = t.typeName.text;
+                const sub = this.inlineAliasType(refName);
+                if (sub) {
+                    this.extractSegmentsFromType(sub, seen, parts);
+                }
+            }
+        }
+
+        return `{${parts.join("; ")};}`;
+    }
+
+    /**
+     * Extracts segments from a type string, handling nested braces
+     */
+    private extractSegmentsFromType(typeStr: string, seen: Set<string>, parts: string[]): void {
+        const inner = typeStr.slice(1, -1).trim();
+        if (!inner) return;
+
+        // split on top-level semicolons (ignore semicolons within braces)
+        const segments: string[] = [];
+        let depth = 0;
+        let buf = "";
+
+        for (const ch of inner) {
+            if (ch === "{") {
+                depth++;
+                buf += ch;
+            } else if (ch === "}") {
+                depth--;
+                buf += ch;
+            } else if (ch === ";" && depth === 0) {
+                const seg = buf.trim();
+                if (seg) segments.push(seg);
+                buf = "";
+            } else {
+                buf += ch;
+            }
+        }
+
+        const last = buf.trim();
+        if (last) segments.push(last);
+
+        for (const s of segments) {
+            const keyName = s.split(/[:(]/)[0];
+            if (!seen.has(keyName)) {
+                seen.add(keyName);
+                parts.push(s);
+            }
+        }
     }
 
     /**
      * Attempts to inline a type alias by name, resolving imported or local aliases.
      */
     private inlineAliasType(name: string): string | undefined {
+        // Check if the type is imported from an external library
+        const importPath = this.getImports().get(name);
+        if (importPath && !importPath.startsWith(".") && !importPath.startsWith("/") && !fs.existsSync(importPath)) {
+            // This is an external library import, format it as import('libraryName').TypeName
+            return `import('${importPath}').${name}`;
+        }
+
         // local type alias
         const local = this.findTypeAliasDeclaration(name);
 
         if (local) {
             const typeNode = local.type;
+
             // handle intersection type alias by flattening members
             if (ts.isIntersectionTypeNode(typeNode)) {
-                const parts: string[] = [];
-                const seen = new Set<string>();
-                for (const t of typeNode.types) {
-                    // inline object literal types
-                    if (ts.isTypeLiteralNode(t)) {
-                        for (const m of t.members) {
-                            let keyName: string;
-                            let entry: string;
-                            if (ts.isPropertySignature(m) && m.type) {
-                                keyName = this.getName(m.name!);
-                                const typeText = this.resolveTypeNode(m.type);
-                                entry = `${keyName}: ${typeText}`;
-                            } else if (ts.isMethodSignature(m) && m.name) {
-                                keyName = this.getName(m.name);
-                                const typeParams = m.typeParameters ? m.typeParameters.map(tp => tp.getText()) : [];
-                                const tpText = typeParams.length ? `<${typeParams.join(",")}>` : "";
-                                const paramsText = m.parameters
-                                    .map(p => {
-                                        const pname = ts.isIdentifier(p.name) ? p.name.text : p.name.getText();
-                                        const ptype = p.type ? this.resolveTypeNode(p.type) : "any";
-                                        return `${pname}: ${ptype}`;
-                                    })
-                                    .join(",");
-                                const returnType = m.type ? this.resolveTypeNode(m.type) : "any";
-                                entry = `${keyName}${tpText}(${paramsText}): ${returnType}`;
-                            } else {
-                                continue;
-                            }
-                            if (!seen.has(keyName)) {
-                                seen.add(keyName);
-                                parts.push(entry);
-                            }
-                        }
-                    }
-                    // inline referenced aliases or interfaces
-                    else if (ts.isTypeReferenceNode(t) && ts.isIdentifier(t.typeName)) {
-                        const refName = t.typeName.text;
-                        const sub = this.inlineAliasType(refName);
-                        if (sub) {
-                            const inner = sub.slice(1, -1).trim();
-                            if (inner) {
-                                // split on top-level semicolons (ignore semicolons within braces)
-                                const segments: string[] = [];
-                                let depth = 0;
-                                let buf = "";
-                                for (const ch of inner) {
-                                    if (ch === "{") {
-                                        depth++;
-                                        buf += ch;
-                                    } else if (ch === "}") {
-                                        depth--;
-                                        buf += ch;
-                                    } else if (ch === ";" && depth === 0) {
-                                        const seg = buf.trim();
-                                        if (seg) segments.push(seg);
-                                        buf = "";
-                                    } else {
-                                        buf += ch;
-                                    }
-                                }
-                                const last = buf.trim();
-                                if (last) segments.push(last);
-                                for (const s of segments) {
-                                    const keyName = s.split(/[:(]/)[0];
-                                    if (!seen.has(keyName)) {
-                                        seen.add(keyName);
-                                        parts.push(s);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                return `{${parts.join("; ")};}`;
+                return this.processIntersectionType(typeNode);
             }
+
+            // For type reference nodes (like aliases to other types), preserve the original type
+            if (ts.isTypeReferenceNode(typeNode) && ts.isIdentifier(typeNode.typeName)) {
+                // Get the full text of the type node, which includes any namespace qualifiers
+                return typeNode.getText();
+            }
+
             return this.resolveTypeNode(typeNode);
         }
 
         // local interface
         const localInterface = this.findInterfaceDeclaration(name);
-
         if (localInterface) {
-            const props: string[] = [];
-            // include inherited members from extended interfaces
-            if (localInterface.heritageClauses) {
-                for (const clause of localInterface.heritageClauses) {
-                    if (clause.token === ts.SyntaxKind.ExtendsKeyword) {
-                        for (const typeNode of clause.types) {
-                            const expr = typeNode.expression;
-                            if (ts.isIdentifier(expr)) {
-                                const parent = this.inlineAliasType(expr.text);
-                                if (parent) {
-                                    const inner = parent.slice(1, -1).trim();
-                                    if (inner) {
-                                        props.push(
-                                            ...inner
-                                                .split(/;\s*/)
-                                                .map(s => s.trim())
-                                                .filter(Boolean)
-                                        );
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            for (const member of localInterface.members) {
-                if (ts.isPropertySignature(member) && member.type) {
-                    const key = this.getName(member.name!);
-                    const optional = member.questionToken ? "?" : "";
-                    const typeText = this.resolveTypeNode(member.type);
-                    props.push(`${key}${optional}: ${typeText}`);
-                } else if (ts.isMethodSignature(member) && member.name) {
-                    const key = this.getName(member.name);
-                    const typeParams = member.typeParameters ? member.typeParameters.map(tp => tp.getText()) : [];
-                    const tpText = typeParams.length ? `<${typeParams.join(",")}>` : "";
-
-                    const params = member.parameters
-                        .map(p => {
-                            const pname = ts.isIdentifier(p.name) ? p.name.text : p.name.getText();
-                            const ptype = p.type ? this.resolveTypeNode(p.type) : "any";
-                            return `${pname}: ${ptype}`;
-                        })
-                        .join(", ");
-
-                    const returnType = member.type ? this.resolveTypeNode(member.type) : "any";
-
-                    props.push(`${key}${tpText}(${params}): ${returnType}`);
-                }
-            }
+            const props = this.extractInterfaceProperties(localInterface);
             return `{${props.join("; ")};}`;
         }
 
-        const importPath = this.getImports().get(name);
-
+        // Handle imported types
         if (importPath) {
-            const parser = (this.constructor as typeof ExpressionFile).make(importPath);
-
-            // imported type alias
-            const aliasDecl = parser.findTypeAliasDeclaration(name);
-
-            if (aliasDecl) {
-                // inline imported type alias (including intersections)
-                return parser.inlineAliasType(name);
-            }
-
-            // imported interface
-            const interfaceDecl = parser.findInterfaceDeclaration(name);
-
-            if (interfaceDecl) {
-                const props: string[] = [];
-                // include inherited members from extended interfaces
-                if (interfaceDecl.heritageClauses) {
-                    for (const clause of interfaceDecl.heritageClauses) {
-                        if (clause.token === ts.SyntaxKind.ExtendsKeyword) {
-                            for (const typeNode of clause.types) {
-                                const expr = typeNode.expression;
-                                if (ts.isIdentifier(expr)) {
-                                    const parent = parser.inlineAliasType(expr.text);
-                                    if (parent) {
-                                        const inner = parent.slice(1, -1).trim();
-                                        if (inner) {
-                                            props.push(
-                                                ...inner
-                                                    .split(/;\s*/)
-                                                    .map(s => s.trim())
-                                                    .filter(Boolean)
-                                            );
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+            try {
+                // Check if the file exists before creating a parser
+                if (!fs.existsSync(importPath)) {
+                    console.warn(`File not found: ${importPath} when resolving type alias ${name}`);
+                    return undefined;
                 }
-                for (const member of interfaceDecl.members) {
-                    if (ts.isPropertySignature(member) && member.type) {
-                        const key = parser.getName(member.name!);
-                        const optional = member.questionToken ? "?" : "";
-                        const typeText = parser.resolveTypeNode(member.type);
-                        props.push(`${key}${optional}: ${typeText}`);
-                    } else if (ts.isMethodSignature(member) && member.name) {
-                        const key = parser.getName(member.name);
-                        const typeParams = member.typeParameters ? member.typeParameters.map(tp => tp.getText()) : [];
-                        const tpText = typeParams.length ? `<${typeParams.join(",")}>` : "";
 
-                        const params = member.parameters
-                            .map(p => {
-                                const pname = ts.isIdentifier(p.name) ? p.name.text : p.name.getText();
-                                const ptype = p.type ? parser.resolveTypeNode(p.type) : "any";
-                                return `${pname}: ${ptype}`;
-                            })
-                            .join(", ");
+                const parser = ExpressionFile.make(importPath);
 
-                        const returnType = member.type ? parser.resolveTypeNode(member.type) : "any";
-
-                        props.push(`${key}${tpText}(${params}): ${returnType}`);
-                    }
+                // imported type alias
+                const aliasDecl = parser.findTypeAliasDeclaration(name);
+                if (aliasDecl) {
+                    // inline imported type alias (including intersections)
+                    return parser.inlineAliasType(name);
                 }
-                return `{${props.join("; ")};}`;
+
+                // imported interface
+                const interfaceDecl = parser.findInterfaceDeclaration(name);
+                if (interfaceDecl) {
+                    const props = this.extractInterfaceProperties(interfaceDecl, parser);
+                    return `{${props.join("; ")};}`;
+                }
+            } catch (error) {
+                console.warn(`Error resolving type alias ${name} from ${importPath}:`, error);
+                return undefined;
             }
         }
 
@@ -705,20 +700,65 @@ export default class ExpressionFile extends SourceFile {
     }
 
     /**
+     * Handles union types (like Tab | undefined)
+     */
+    private resolveUnionType(typeNode: ts.UnionTypeNode): string {
+        const types = typeNode.types.map(t => this.resolveTypeNode(t));
+        return types.join(' | ');
+    }
+
+    /**
+     * Handles array types (like Tab[])
+     */
+    private resolveArrayType(typeNode: ts.ArrayTypeNode): string {
+        const elementType = this.resolveTypeNode(typeNode.elementType);
+        return `${elementType}[]`;
+    }
+
+    /**
+     * Handles type reference nodes (like Promise<Tab>)
+     */
+    private resolveTypeReference(typeNode: ts.TypeReferenceNode): string {
+        if (!ts.isIdentifier(typeNode.typeName)) {
+            return typeNode.getText();
+        }
+
+        const aliasName = typeNode.typeName.text;
+        const inlined = this.inlineAliasType(aliasName);
+
+        if (inlined) {
+            return inlined;
+        }
+
+        // Handle type reference nodes with type arguments (like Promise<Tab>)
+        if (typeNode.typeArguments && typeNode.typeArguments.length > 0) {
+            // Resolve each type argument
+            const resolvedArgs = typeNode.typeArguments.map(arg => this.resolveTypeNode(arg));
+            // Construct the type with resolved arguments
+            return `${aliasName}<${resolvedArgs.join(', ')}>`;
+        }
+
+        // preserve generics and other references
+        return typeNode.getText();
+    }
+
+    /**
      * Resolves a TypeScript type node to a string, inlining type aliases when possible.
      */
     private resolveTypeNode(typeNode: ts.TypeNode): string {
+        // Handle union types (like Tab | undefined)
+        if (ts.isUnionTypeNode(typeNode)) {
+            return this.resolveUnionType(typeNode);
+        }
+
+        // Handle array types (like Tab[])
+        if (ts.isArrayTypeNode(typeNode)) {
+            return this.resolveArrayType(typeNode);
+        }
+
         // inline type aliases
-        if (ts.isTypeReferenceNode(typeNode) && ts.isIdentifier(typeNode.typeName)) {
-            const aliasName = typeNode.typeName.text;
-            const inlined = this.inlineAliasType(aliasName);
-
-            if (inlined) {
-                return inlined;
-            }
-
-            // preserve generics and other references
-            return typeNode.getText();
+        if (ts.isTypeReferenceNode(typeNode)) {
+            return this.resolveTypeReference(typeNode);
         }
 
         // fallback: use textual representation
@@ -734,7 +774,7 @@ export default class ExpressionFile extends SourceFile {
         // parameters
         const params: ParameterSignature[] = ("parameters" in method ? method.parameters : []).map(p => {
             const name = ts.isIdentifier(p.name) ? p.name.text : p.name.getText();
-            const type = p.type ? p.type.getText() : "any";
+            const type = p.type ? this.resolveTypeNode(p.type) : "any";
             return {name, type};
         });
 

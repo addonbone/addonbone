@@ -39,6 +39,8 @@ export default class extends Builder implements CommandBuilder {
     }
 
     public async build(): Promise<void> {
+        await this.destroy();
+
         const {name} = this.definition;
 
         if (name == CommandExecuteActionName) {

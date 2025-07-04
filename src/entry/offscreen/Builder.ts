@@ -24,6 +24,8 @@ export default class<T extends TransportType = TransportType> extends Builder {
     }
 
     public async build(): Promise<void> {
+        await this.destroy();
+
         globalThis[OffscreenGlobalAccess] = true;
 
         await this._transport.build();

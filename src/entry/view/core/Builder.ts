@@ -46,6 +46,8 @@ export default abstract class<T extends ViewConfig> extends Builder implements V
     }
 
     public async build(): Promise<void> {
+        await this.destroy();
+
         const {title} = this.definition;
 
         if (title) {

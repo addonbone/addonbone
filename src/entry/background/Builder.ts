@@ -10,6 +10,8 @@ export default class extends Builder implements BackgroundBuilder {
     }
 
     public async build(): Promise<void> {
+        await this.destroy();
+
         const {main, ...options} = this.definition;
 
         if (isValidBackgroundMainHandler(main)) {

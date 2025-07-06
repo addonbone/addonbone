@@ -69,7 +69,7 @@ describe("ExpressionFile", () => {
 
                 const type = ExpressionFile.make(filename).getType();
 
-                expect(type).toBe("{ create(properties: chrome.tabs.CreateProperties): Promise<chrome.tabs.Tab>; get(): Promise<chrome.tabs.Tab[]>; tab(): chrome.tabs.Tab | undefined; remove(tabId: number): Promise<void>; update(tab: chrome.tabs.Tab, properties: chrome.tabs.CreateProperties): Promise<void>; }");
+                expect(type).toBe("{ create(properties: chrome.tabs.CreateProperties): Promise<chrome.tabs.Tab>; get(): Promise<chrome.tabs.Tab[]>; tab(): chrome.tabs.Tab | undefined; remove(tabId: number): Promise<void>; update(tab: chrome.tabs.Tab, properties: chrome.tabs.CreateProperties): Promise<void>; captureInfo(): chrome.tabCapture.CaptureInfo; }");
             });
         });
 

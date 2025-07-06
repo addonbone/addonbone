@@ -1,8 +1,8 @@
 type Config = Record<string, any>
 
-export type UserMap = Record<string, {name: string}>;
+export type UserMap = Record<string, { name: string }>;
 
-export type ServiceInfo = {name: string, version: number}
+export type ServiceInfo = { name: string, version: number }
 
 export class BaseService {
 
@@ -24,9 +24,9 @@ export class BaseService {
 
     public getUsersMap(): UserMap {
         return {
-            "user1": { name: "Jack" },
-            "user2": { name: "Kate" },
-            "user3": { name: "Bob" }
+            "user1": {name: "Jack"},
+            "user2": {name: "Kate"},
+            "user3": {name: "Bob"}
         };
     }
 
@@ -36,9 +36,10 @@ export class BaseService {
             version: this.version
         };
     }
+
     public async fetchData<T>(endpoint: string): Promise<T> {
         this.logRequest(endpoint);
-        // Имитация запроса к API
+
         return new Promise((resolve) => {
             setTimeout(() => {
                 resolve({} as T);
@@ -50,9 +51,9 @@ export class BaseService {
         return Object.keys(this._config).length > 0;
     }
 
-    protected getDefaultUsers(): Record<string, {name: string}> {
+    protected getDefaultUsers(): Record<string, { name: string }> {
         return {
-            "default": { name: "Guest" },
+            "default": {name: "Guest"},
         };
     }
 

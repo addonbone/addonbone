@@ -73,6 +73,16 @@ describe("ExpressionFile", () => {
             });
         });
 
+        describe("Index Signatures", () => {
+            test("export default function and return instance with index signature", () => {
+                const filename = path.join(fixtures, "expression", "type-handling", "export-instance-index-signature.ts");
+
+                const type = ExpressionFile.make(filename).getType();
+
+                expect(type).toBe("{ get(): {[domain: string]: number;}; }");
+            });
+        });
+
         describe("External Types", () => {
             test("export default function and return instance when type separated", () => {
                 const filename = path.join(fixtures, "expression", "type-handling", "export-instance-with-separate-types.ts");

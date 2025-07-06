@@ -546,6 +546,12 @@ export default class ExpressionFile extends SourceFile {
                 const returnType = member.type ? parser.resolveTypeNode(member.type) : "any";
 
                 props.push(`${key}${tpText}(${params}): ${returnType}`);
+            } else if (ts.isIndexSignatureDeclaration(member) && member.type) {
+                // Handle index signatures like [domain: string]: number;
+                const paramName = member.parameters[0].name.getText();
+                const paramType = member.parameters[0].type ? parser.resolveTypeNode(member.parameters[0].type) : "any";
+                const returnType = parser.resolveTypeNode(member.type);
+                props.push(`[${paramName}: ${paramType}]: ${returnType}`);
             }
         }
 
@@ -588,6 +594,14 @@ export default class ExpressionFile extends SourceFile {
                         // Remove spaces in object types to match expected format
                         const formattedReturnType = returnType.replace(/\{\s+/g, '{').replace(/\s+\}/g, '}');
                         entry = `${keyName}${tpText}(${paramsText}): ${formattedReturnType}`;
+                    } else if (ts.isIndexSignatureDeclaration(m) && m.type) {
+                        // Handle index signatures like [domain: string]: number;
+                        const paramName = m.parameters[0].name.getText();
+                        const paramType = m.parameters[0].type ? this.resolveTypeNode(m.parameters[0].type) : "any";
+                        const returnType = this.resolveTypeNode(m.type);
+                        // Use a special key for index signatures to avoid conflicts
+                        keyName = `[${paramName}:${paramType}]`;
+                        entry = `[${paramName}: ${paramType}]: ${returnType}`;
                     } else {
                         continue;
                     }

@@ -11,6 +11,7 @@ import {PackageName} from "@typing/app";
 export interface ParameterSignature {
     name: string;
     type: string;
+    optional?: boolean;
 }
 
 /**
@@ -476,6 +477,19 @@ export default class ExpressionFile extends SourceFile {
     }
 
     /**
+     * Searches the AST of this file for an import equals declaration by name.
+     */
+    private findImportEqualsDeclaration(name: string): ts.ImportEqualsDeclaration | undefined {
+        return this.findNodeByName<ts.ImportEqualsDeclaration>(
+            (node, searchName): node is ts.ImportEqualsDeclaration =>
+                ts.isImportEqualsDeclaration(node) &&
+                ts.isIdentifier(node.name) &&
+                node.name.text === searchName,
+            name
+        );
+    }
+
+    /**
      * Extracts properties from an interface declaration
      */
     private extractInterfaceProperties(
@@ -532,6 +546,12 @@ export default class ExpressionFile extends SourceFile {
                 const returnType = member.type ? parser.resolveTypeNode(member.type) : "any";
 
                 props.push(`${key}${tpText}(${params}): ${returnType}`);
+            } else if (ts.isIndexSignatureDeclaration(member) && member.type) {
+                // Handle index signatures like [domain: string]: number;
+                const paramName = member.parameters[0].name.getText();
+                const paramType = member.parameters[0].type ? parser.resolveTypeNode(member.parameters[0].type) : "any";
+                const returnType = parser.resolveTypeNode(member.type);
+                props.push(`[${paramName}: ${paramType}]: ${returnType}`);
             }
         }
 
@@ -554,7 +574,9 @@ export default class ExpressionFile extends SourceFile {
                     if (ts.isPropertySignature(m) && m.type) {
                         keyName = this.getName(m.name!);
                         const typeText = this.resolveTypeNode(m.type);
-                        entry = `${keyName}: ${typeText}`;
+                        // Remove spaces in object types to match expected format
+                        const formattedTypeText = typeText.replace(/\{\s+/g, '{').replace(/\s+\}/g, '}');
+                        entry = `${keyName}: ${formattedTypeText}`;
                     } else if (ts.isMethodSignature(m) && m.name) {
                         keyName = this.getName(m.name);
                         const typeParams = m.typeParameters ? m.typeParameters.map(tp => tp.getText()) : [];
@@ -563,11 +585,23 @@ export default class ExpressionFile extends SourceFile {
                             .map(p => {
                                 const pname = ts.isIdentifier(p.name) ? p.name.text : p.name.getText();
                                 const ptype = p.type ? this.resolveTypeNode(p.type) : "any";
-                                return `${pname}: ${ptype}`;
+                                // Remove spaces in object types to match expected format
+                                const formattedPType = ptype.replace(/\{\s+/g, '{').replace(/\s+\}/g, '}');
+                                return `${pname}: ${formattedPType}`;
                             })
                             .join(",");
                         const returnType = m.type ? this.resolveTypeNode(m.type) : "any";
-                        entry = `${keyName}${tpText}(${paramsText}): ${returnType}`;
+                        // Remove spaces in object types to match expected format
+                        const formattedReturnType = returnType.replace(/\{\s+/g, '{').replace(/\s+\}/g, '}');
+                        entry = `${keyName}${tpText}(${paramsText}): ${formattedReturnType}`;
+                    } else if (ts.isIndexSignatureDeclaration(m) && m.type) {
+                        // Handle index signatures like [domain: string]: number;
+                        const paramName = m.parameters[0].name.getText();
+                        const paramType = m.parameters[0].type ? this.resolveTypeNode(m.parameters[0].type) : "any";
+                        const returnType = this.resolveTypeNode(m.type);
+                        // Use a special key for index signatures to avoid conflicts
+                        keyName = `[${paramName}:${paramType}]`;
+                        entry = `[${paramName}: ${paramType}]: ${returnType}`;
                     } else {
                         continue;
                     }
@@ -636,9 +670,33 @@ export default class ExpressionFile extends SourceFile {
     private inlineAliasType(name: string): string | undefined {
         // Check if the type is imported from an external library
         const importPath = this.getImports().get(name);
+        // Special case for chrome.* namespaces
+        if (importPath && importPath.startsWith('chrome.')) {
+            return importPath;
+        }
         if (importPath && !importPath.startsWith(".") && !importPath.startsWith("/") && !fs.existsSync(importPath)) {
             // This is an external library import, format it as import('libraryName').TypeName
             return `import('${importPath}').${name}`;
+        }
+
+        // Check for import equals declaration (import X = Y.Z)
+        const importEquals = this.findImportEqualsDeclaration(name);
+        if (importEquals && importEquals.moduleReference) {
+            // For qualified names like chrome.tabs.Tab, return the qualified name
+            if (ts.isQualifiedName(importEquals.moduleReference)) {
+                return importEquals.moduleReference.getText();
+            }
+            // For external module references like 'somelib', handle as external library
+            else if (ts.isExternalModuleReference(importEquals.moduleReference) && 
+                     importEquals.moduleReference.expression && 
+                     ts.isStringLiteral(importEquals.moduleReference.expression)) {
+                const libPath = importEquals.moduleReference.expression.text;
+                return `import('${libPath}').${name}`;
+            }
+            // For other module references, return the text representation
+            else {
+                return importEquals.moduleReference.getText();
+            }
         }
 
         // local type alias
@@ -777,7 +835,10 @@ export default class ExpressionFile extends SourceFile {
         const params: ParameterSignature[] = ("parameters" in method ? method.parameters : []).map(p => {
             const name = ts.isIdentifier(p.name) ? p.name.text : p.name.getText();
             const type = p.type ? this.resolveTypeNode(p.type) : "any";
-            return {name, type};
+            // Remove spaces in object types to match expected format
+            const formattedType = type.replace(/\{\s+/g, '{').replace(/\s+\}/g, '}');
+            const optional = p.questionToken !== undefined;
+            return {name, type: formattedType, optional};
         });
 
         // generic type parameters
@@ -787,12 +848,14 @@ export default class ExpressionFile extends SourceFile {
         const returnNode = (method as ts.MethodDeclaration).type;
 
         const returnType = returnNode ? this.resolveTypeNode(returnNode) : "any";
+        // Remove spaces in object types to match expected format
+        const formattedReturnType = returnType.replace(/\{\s+/g, '{').replace(/\s+\}/g, '}');
 
         return {
             kind: "method",
             typeParameters: typeParams,
             parameters: params,
-            returnType,
+            returnType: formattedReturnType,
         };
     }
 
@@ -882,7 +945,10 @@ export default class ExpressionFile extends SourceFile {
         const parts = Object.entries(members).map(([key, sig]) => {
             if (sig.kind === "method") {
                 const tp = sig.typeParameters.length ? `<${sig.typeParameters.join(", ")}>` : "";
-                const params = sig.parameters.map(p => `${p.name}: ${p.type}`).join(", ");
+                const params = sig.parameters.map(p => {
+                    const optionalMark = p.optional ? "?" : "";
+                    return `${p.name}${optionalMark}: ${p.type}`;
+                }).join(", ");
                 return `${key}${tp}(${params}): ${sig.returnType};`;
             }
             const optionalMark = sig.optional ? "?" : "";
@@ -897,7 +963,10 @@ export default class ExpressionFile extends SourceFile {
     private buildFunctionType(sig: MethodSignature): string {
         const tp = sig.typeParameters.length ? `<${sig.typeParameters.join(", ")}>` : "";
 
-        const params = sig.parameters.map(p => `${p.name}: ${p.type}`).join(", ");
+        const params = sig.parameters.map(p => {
+            const optionalMark = p.optional ? "?" : "";
+            return `${p.name}${optionalMark}: ${p.type}`;
+        }).join(", ");
 
         return `${tp}(${params}) => ${sig.returnType}`;
     }

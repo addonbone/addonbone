@@ -69,7 +69,17 @@ describe("ExpressionFile", () => {
 
                 const type = ExpressionFile.make(filename).getType();
 
-                expect(type).toBe("{ create(properties: chrome.tabs.CreateProperties): Promise<chrome.tabs.Tab>; get(): Promise<chrome.tabs.Tab[]>; tab(): chrome.tabs.Tab | undefined; remove(tabId: number): Promise<void>; update(tab: chrome.tabs.Tab, properties: chrome.tabs.CreateProperties): Promise<void>; }");
+                expect(type).toBe("{ create(properties: chrome.tabs.CreateProperties): Promise<chrome.tabs.Tab>; get(): Promise<chrome.tabs.Tab[]>; tab(): chrome.tabs.Tab | undefined; remove(tabId: number): Promise<void>; update(tab: chrome.tabs.Tab, properties: chrome.tabs.CreateProperties): Promise<void>; captureInfo(): chrome.tabCapture.CaptureInfo; }");
+            });
+        });
+
+        describe("Index Signatures", () => {
+            test("export default function and return instance with index signature", () => {
+                const filename = path.join(fixtures, "expression", "type-handling", "export-instance-index-signature.ts");
+
+                const type = ExpressionFile.make(filename).getType();
+
+                expect(type).toBe("{ get(): {[domain: string]: number;}; }");
             });
         });
 
@@ -115,7 +125,7 @@ describe("ExpressionFile", () => {
 
                 const type = ExpressionFile.make(filename).setProperty('init').getType();
 
-                expect(type).toBe("{ extra: import('somelib').ExtraType; getExtra(): import('somelib').ExtraType; setExtra(extra: import('somelib').ExtraType): void; }");
+                expect(type).toBe("{ extra: import('somelib').ExtraType; getExtra(): import('somelib').ExtraType; setExtra(extra?: import('somelib').ExtraType): void; }");
             });
 
             test("export default function and return instance with external library type that can be undefined", () => {

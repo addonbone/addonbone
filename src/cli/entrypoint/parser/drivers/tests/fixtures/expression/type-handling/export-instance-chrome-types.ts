@@ -1,6 +1,8 @@
 type Tab = chrome.tabs.Tab;
 type CreateProperties = chrome.tabs.CreateProperties;
 
+import CaptureInfo = chrome.tabCapture.CaptureInfo;
+
 class TabService {
     public create(properties: CreateProperties): Promise<Tab> {
         return chrome.tabs.create(properties);
@@ -20,6 +22,14 @@ class TabService {
 
     public async update(tab: chrome.tabs.Tab, properties: chrome.tabs.CreateProperties): Promise<void> {
         await chrome.tabs.update(tab.id!, properties);
+    }
+
+    public captureInfo(): CaptureInfo {
+        return {
+            tabId: 1,
+            status: 'done',
+            fullscreen: false,
+        };
     }
 }
 

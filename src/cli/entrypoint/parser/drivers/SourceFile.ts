@@ -58,6 +58,20 @@ export default class EntryFile {
                     }
                 }
             }
+            // import equals: import X = Y.Z
+            else if (ts.isImportEqualsDeclaration(node) && ts.isExternalModuleReference(node.moduleReference)) {
+                if (node.moduleReference.expression && ts.isStringLiteral(node.moduleReference.expression)) {
+                    const importPath = node.moduleReference.expression.text;
+                    this.imports?.set(node.name.text, this.getInputResolver().get(importPath));
+                }
+            }
+            // import equals with qualified name: import X = Y.Z
+            else if (ts.isImportEqualsDeclaration(node)) {
+                // For qualified names like chrome.tabs.Tab, we don't need to resolve a path
+                // Just store the full qualified name as the "import path"
+                const qualifiedName = node.moduleReference.getText();
+                this.imports?.set(node.name.text, qualifiedName);
+            }
 
             ts.forEachChild(node, parse);
         };

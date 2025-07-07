@@ -1,5 +1,5 @@
 // @ts-ignore
-import { ExtraType } from "somelib";
+import {ExtraType} from "somelib";
 
 class ExternalService {
     public extra: ExtraType;

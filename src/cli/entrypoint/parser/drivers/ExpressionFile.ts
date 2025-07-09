@@ -146,18 +146,6 @@ export default class ExpressionFile extends SourceFile {
         return undefined;
     }
 
-
-    /**
-     * Extracts properties from an interface declaration
-     */
-    private extractInterfaceProperties(
-        interfaceDecl: ts.InterfaceDeclaration,
-        parser: ExpressionFile = this
-    ): string[] {
-        return this.typeResolver.extractInterfaceProperties(interfaceDecl, parser.typeResolver);
-    }
-
-
     /**
      * Specify wrapper functions whose first argument should be unwrapped for parsing.
      */
@@ -201,7 +189,6 @@ export default class ExpressionFile extends SourceFile {
 
         return expr;
     }
-
 
     /**
      * Given an initializer or expression, extracts its type: function signature or interface.

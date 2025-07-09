@@ -213,7 +213,7 @@ export default class EntryFile {
         return undefined;
     }
 
-    protected parseNode(node?: ts.Node): any {
+    public parseNode(node?: ts.Node): any {
         if (!node) {
             return undefined;
         }

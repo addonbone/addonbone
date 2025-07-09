@@ -723,7 +723,7 @@ export default class ExpressionFile extends SourceFile {
         const localInterface = this.findInterfaceDeclaration(name);
         if (localInterface) {
             const props = this.extractInterfaceProperties(localInterface);
-            return `{${props.join("; ")};}`;
+            return props.length ? `{${props.join("; ")};}` : `{}`;
         }
 
         // Handle imported types
@@ -748,7 +748,7 @@ export default class ExpressionFile extends SourceFile {
                 const interfaceDecl = parser.findInterfaceDeclaration(name);
                 if (interfaceDecl) {
                     const props = this.extractInterfaceProperties(interfaceDecl, parser);
-                    return `{${props.join("; ")};}`;
+                    return props.length ? `{${props.join("; ")};}` : `{}`;
                 }
             } catch (error) {
                 console.warn(`Error resolving type alias ${name} from ${importPath}:`, error);

@@ -73,6 +73,16 @@ describe("ExpressionFile", () => {
             });
         });
 
+        describe("Empty Types", () => {
+            test("export default function and return object with empty types", () => {
+                const filename = path.join(fixtures, "expression", "type-handling", "export-object-empty-type.ts");
+
+                const type = ExpressionFile.make(filename).getType();
+
+                expect(type).toBe("{ foo: {}; bar: {}; }");
+            });
+        });
+
         describe("Index Signatures", () => {
             test("export default function and return instance with index signature", () => {
                 const filename = path.join(fixtures, "expression", "type-handling", "export-instance-index-signature.ts");

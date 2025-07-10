@@ -102,6 +102,14 @@ describe("ExpressionFile", () => {
                 expect(type).toBe("{ getBar(): {bar: string;}; getBarWithFoo(): {bar: string; foo: string;}; }");
             });
 
+            test("export default function and return instance with complex object", () => {
+                const filename = path.join(fixtures, "expression", "type-handling", "export-instance-with-complex-args.ts");
+
+                const type = ExpressionFile.make(filename).getType();
+
+                expect(type).toBe("{ set(name: string, a: {foo: string; bar: number;}): {baz?: string; qux?: number;}; }");
+            });
+
             test("export default function and return instance when type is external", () => {
                 const filename = path.join(fixtures, "expression", "type-handling", "export-instance-with-external-types.ts");
 

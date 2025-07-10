@@ -1,7 +1,7 @@
 import UserService from "../helpers/class-for-test-export-default";
 
 class Service extends UserService {
-    public getUserName():string{
+    public getUserName(): string {
         return "User " + this.name;
     }
 }

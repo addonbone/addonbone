@@ -12,7 +12,7 @@ class ExternalServiceType {
         return this.extra;
     }
 
-    public setExtra(extra?: ExtraType): void {
+    public setExtra(extra: ExtraType = {}): void {
         this.extra = extra;
     }
 }

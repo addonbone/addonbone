@@ -29,7 +29,7 @@ export default class SignatureBuilder {
             const type = p.type ? this.typeResolver.resolveTypeNode(p.type) : "any";
             // Remove spaces in object types to match expected format
             const formattedType = type.replace(/\{\s+/g, '{').replace(/\s+\}/g, '}');
-            const optional = p.questionToken !== undefined;
+            const optional = p.questionToken !== undefined || p.initializer !== undefined;
             return {name, type: formattedType, optional};
         });
 

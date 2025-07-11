@@ -1,6 +1,8 @@
 import {closeOffscreen, createOffscreen, hasOffscreen, isManifestVersion3} from "@adnbn/browser";
-import {__t} from "@main/locale";
+
 import {getBrowser} from "@main/env";
+
+import {__t} from "@locale/helpers";
 
 import ProxyTransport from "@transport/ProxyTransport";
 

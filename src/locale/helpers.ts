@@ -1,17 +1,6 @@
 import {LocaleNativeStructure, NativeLocale} from "@locale/providers";
-
 import {convertLocaleMessageKey, extractLocaleKey} from "@locale/utils";
-
-import {
-    Language,
-    LanguageCodes,
-    LocaleDir,
-    LocaleNonPluralKeys,
-    LocalePluralKeys,
-    LocaleSubstitutionsFor,
-} from "@typing/locale";
-
-export {Language, LanguageCodes, LocaleDir};
+import {LocaleNonPluralKeys, LocalePluralKeys, LocaleSubstitutionsFor} from "@typing/locale";
 
 /**
  * Translates a given locale key into the corresponding localized string.
@@ -84,3 +73,4 @@ export const __t = (input: string): string => {
 
     return input;
 };
+

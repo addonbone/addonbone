@@ -1,7 +1,8 @@
-import {changeActionIcon} from "./icon";
-import {__t} from "./locale";
-
 import {setActionPopup, setActionTitle} from "@adnbn/browser";
+
+import {__t} from "@locale/helpers";
+
+import {changeActionIcon} from "./icon";
 
 import {PopupDefinition} from "@typing/popup";
 import {ManifestPopup} from "@typing/manifest";

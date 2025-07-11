@@ -1,5 +1,7 @@
 //@ts-ignore
-import {type ViewDefinition, type ViewOptions, __t} from "adnbn";
+import type {ViewDefinition, ViewOptions} from "adnbn";
+//@ts-ignore
+import {__t} from "adnbn/locale";
 //@ts-ignore
 import {isViewDefinition, isValidViewDefinitionRenderValue} from "adnbn/entry/view";
 

@@ -287,6 +287,11 @@ export default class JSDocParser {
             return text;
         }
 
+        // Handle import types (e.g., import('somelib').SomeType)
+        if (text.includes("import(")) {
+            return text;
+        }
+
         // Handle generic types (e.g., Array<string>, Promise<Object>)
         if (text.includes("<") && text.includes(">")) {
             // Extract the type name and arguments

@@ -392,5 +392,25 @@ describe("ExpressionFile", () => {
                 );
             });
         });
+
+        describe("Import JSDoc Types", () => {
+            test("class with JSDoc import type annotations", () => {
+                const filename = path.join(fixtures, "jsdoc-types", "imports", "class-with-import-types.ts");
+                const type = ExpressionFile.make(filename).getType();
+
+                expect(type).toBe(
+                    "{ config: import(\"external-lib\").ConfigType; initialize(options: import('external-lib').InitOptions): Promise<import('external-lib').ServiceInstance>; processData<T>(data: import('external-lib').DataInput<T>, options: import('external-lib').ProcessorOptions): Promise<import('external-lib').ProcessedResult<T>>; }"
+                );
+            });
+
+            test("object with JSDoc import type annotations", () => {
+                const filename = path.join(fixtures, "jsdoc-types", "imports", "object-with-import-types.ts");
+                const type = ExpressionFile.make(filename).getType();
+
+                expect(type).toBe(
+                    "{ settings: import('external-lib').Settings; configure(config: import('external-lib').ConfigParams): import('external-lib').ConfigResult; validate<T>(input: import('external-lib').ValidationInput<T>): import('external-lib').ValidationResult<T>; }"
+                );
+            });
+        });
     });
 });

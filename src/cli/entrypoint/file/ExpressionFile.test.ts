@@ -322,4 +322,68 @@ describe("ExpressionFile", () => {
             });
         });
     });
+
+    describe("JSDoc Type Support", () => {
+        describe("Class JSDoc Types", () => {
+            test("class with JSDoc property type annotations", () => {
+                const filename = path.join(fixtures, "jsdoc-types", "class", "class-with-jsdoc-properties.ts");
+                const type = ExpressionFile.make(filename).getType();
+
+                expect(type).toBe("{ id: number; roles: string[]; name: { firstName: string; lastName: string; }; }");
+            });
+
+            test("class with JSDoc method parameter and return type annotations", () => {
+                const filename = path.join(fixtures, "jsdoc-types", "class", "class-with-jsdoc-methods.ts");
+                const type = ExpressionFile.make(filename).getType();
+
+                expect(type).toBe("{ fetchData(endpoint: string, options: { method: string; cache: boolean; }): Promise<Array<Object>>; isConnected(): boolean; }");
+            });
+        });
+
+        describe("Object JSDoc Types", () => {
+            test("object factory with JSDoc property and method annotations", () => {
+                const filename = path.join(fixtures, "jsdoc-types", "object", "object-factory-with-jsdoc.ts");
+                const type = ExpressionFile.make(filename).getType();
+
+                expect(type).toBe("{ timeout: number; allowedDomains: string[]; isValidDomain(domain: string): boolean; }");
+            });
+
+            test("object with JSDoc method parameter and return type annotations", () => {
+                const filename = path.join(fixtures, "jsdoc-types", "object", "object-with-jsdoc-methods-factory.ts");
+                const type = ExpressionFile.make(filename).getType();
+
+                expect(type).toBe("{ add(a: string, b: string): string; counts: Map<string, number>; }");
+            });
+        });
+
+        describe("Service JSDoc Types", () => {
+            test("service with JSDoc property and method annotations", () => {
+                const filename = path.join(fixtures, "jsdoc-types", "function", "service-with-jsdoc.ts");
+                const type = ExpressionFile.make(filename)
+                    .setDefinition("defineService")
+                    .setProperty('init')
+                    .getType();
+
+                expect(type).toBe("{ get(key: string, defaultValue: any): string; set(key: string, value: string): void; }");
+            });
+        });
+
+        describe("Inheritance JSDoc Types", () => {
+            test("extended class with JSDoc annotations overriding base class", () => {
+                const filename = path.join(fixtures, "jsdoc-types", "inheritance", "extended-class-with-jsdoc.ts");
+                const type = ExpressionFile.make(filename).getType();
+
+                expect(type).toBe("{ name: string; getResource(userId: string): Promise<{ name: string; email: string; }>; cache: Map<string, Object>; }");
+            });
+        });
+
+        describe("Complex JSDoc Types", () => {
+            test("class with complex JSDoc type annotations", () => {
+                const filename = path.join(fixtures, "jsdoc-types", "complex", "complex-jsdoc-types-factory.ts");
+                const type = ExpressionFile.make(filename).getType();
+
+                expect(type).toBe("{ mixedArray: (string|number)[]; counts: Object<string, number>; process<T>(data: T, transformer: function(T): any): Promise<T>; search(options: { query: string; limit?: number; caseSensitive?: boolean; }): string[]; }");
+            });
+        });
+    });
 });

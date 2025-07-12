@@ -25,7 +25,9 @@ export default class extends FileBuilder {
 
         const type = JSON.stringify(structure, null, 4);
 
-        return template.replace("interface LocaleNativeStructure {}", `interface LocaleNativeStructure ${type}`);
+        const name = "GeneratedNativeStructure";
+
+        return template.replace(`interface ${name} {}`, `interface ${name} ${type}`);
     }
 
     public structure(structure: LocaleStructure): this {

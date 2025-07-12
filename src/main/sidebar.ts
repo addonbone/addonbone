@@ -1,6 +1,6 @@
 import {setSidebarPath, setSidebarTitle} from "@adnbn/browser";
 
-import {__t} from "./locale";
+import {__t} from "@locale/helpers";
 
 import type {SidebarDefinition} from "@typing/sidebar";
 import type {ManifestSidebar} from "@typing/manifest";

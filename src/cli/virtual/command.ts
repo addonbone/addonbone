@@ -1,5 +1,7 @@
 //@ts-ignore
-import {type CommandUnresolvedDefinition, __t} from "adnbn";
+import type {CommandUnresolvedDefinition} from "adnbn";
+//@ts-ignore
+import {__t} from "adnbn/locale";
 //@ts-ignore
 import command, {isValidCommandDefinition, isValidCommandExecuteFunction} from "adnbn/entry/command";
 

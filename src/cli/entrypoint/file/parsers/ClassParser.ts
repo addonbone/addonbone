@@ -1,10 +1,13 @@
 import ts from "typescript";
+
 import SourceFile from "../SourceFile";
 import AbstractParser from "./AbstractParser";
-import {MemberSignature} from "./types";
 import TypeResolver from "./TypeResolver";
 import SignatureBuilder from "./SignatureBuilder";
 import NodeFinder from "./NodeFinder";
+import JSDocParser from "./JSDocParser";
+
+import {MemberSignature} from "./types";
 
 /**
  * Parses class expressions and declarations.
@@ -18,6 +21,8 @@ export default class ClassParser extends AbstractParser {
      * @param signatureBuilder The signature builder to use for building signatures
      * @param nodeFinder The node finder to use for finding nodes
      */
+    private readonly jsDocParser: JSDocParser;
+
     constructor(
         sourceFile: SourceFile,
         private readonly typeResolver: TypeResolver,
@@ -25,6 +30,8 @@ export default class ClassParser extends AbstractParser {
         private readonly nodeFinder: NodeFinder
     ) {
         super(sourceFile);
+
+        this.jsDocParser = new JSDocParser();
     }
 
     /**
@@ -90,7 +97,10 @@ export default class ClassParser extends AbstractParser {
             if (ts.isMethodDeclaration(member) || ts.isGetAccessorDeclaration(member)) {
                 members[name] = this.signatureBuilder.getMethodSignature(member as ts.MethodDeclaration);
             } else if (ts.isPropertyDeclaration(member)) {
-                const type = member.type ? this.typeResolver.resolveTypeNode(member.type) : "any";
+                // Check for JSDoc @type annotation
+                const jsDocType = this.jsDocParser.getJSDocType(member);
+                const tsType = member.type ? this.typeResolver.resolveTypeNode(member.type) : "any";
+                const type = jsDocType || tsType;
                 const optional = member.questionToken !== undefined;
                 members[name] = {kind: "property", type, optional};
             }

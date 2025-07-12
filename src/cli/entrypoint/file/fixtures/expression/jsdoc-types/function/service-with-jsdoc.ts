@@ -5,7 +5,7 @@ class ConfigService {
      * @type {Object<string, string>} Configuration values
      */
     private config: Map<string, number> = new Map();
-    
+
     /**
      * @param {string} key - Configuration key
      * @param {*} defaultValue - Default value if key not found
@@ -15,7 +15,7 @@ class ConfigService {
         // JSDoc types should override actual types
         return true;
     }
-    
+
     /**
      * @param {string} key - Configuration key
      * @param {string} value - Configuration value
@@ -30,9 +30,6 @@ class ConfigService {
 export default defineService({
     persistent: true,
     name: 'Config',
-    /**
-     * @returns {ConfigService} Config service instance
-     */
     init() {
         return new ConfigService();
     }

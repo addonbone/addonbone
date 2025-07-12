@@ -1,8 +1,12 @@
 import ts from "typescript";
+import _ from "lodash";
+
 import SourceFile from "../SourceFile";
 import AbstractParser from "./AbstractParser";
-import {MemberSignature} from "./types";
 import SignatureBuilder from "./SignatureBuilder";
+import JSDocParser from "./JSDocParser";
+
+import {MemberSignature} from "./types";
 
 /**
  * Parses object literal expressions.
@@ -14,11 +18,15 @@ export default class ObjectParser extends AbstractParser {
      * @param sourceFile The source file to parse
      * @param signatureBuilder The signature builder to use for building signatures
      */
+    private readonly jsDocParser: JSDocParser;
+
     constructor(
         sourceFile: SourceFile,
         private readonly signatureBuilder: SignatureBuilder
     ) {
         super(sourceFile);
+
+        this.jsDocParser = new JSDocParser();
     }
 
     /**
@@ -36,12 +44,17 @@ export default class ObjectParser extends AbstractParser {
 
             if (ts.isPropertyAssignment(prop)) {
                 const init = prop.initializer;
+
                 if (ts.isFunctionExpression(init) || ts.isArrowFunction(init)) {
                     result[key] = this.signatureBuilder.getMethodSignature(init);
                 } else {
+                    // Check for JSDoc @type annotation
+                    const jsDocType = this.jsDocParser.getJSDocType(prop);
+                    const tsType = this.inferTypeFromExpression(init);
+
                     result[key] = {
                         kind: "property",
-                        type: this.inferTypeFromExpression(init),
+                        type: jsDocType || tsType,
                     };
                 }
             } else if (ts.isMethodDeclaration(prop)) {
@@ -52,16 +65,17 @@ export default class ObjectParser extends AbstractParser {
                 const val = variable ? variable.value : undefined;
 
                 let type = "any";
-                if (val !== undefined) {
-                    if (typeof val === "string") {
+
+                if (!_.isUndefined(val)) {
+                    if (_.isString(val)) {
                         type = "string";
-                    } else if (typeof val === "number") {
+                    } else if (_.isNumber(val)) {
                         type = "number";
-                    } else if (typeof val === "boolean") {
+                    } else if (_.isBoolean(val)) {
                         type = "boolean";
-                    } else if (Array.isArray(val)) {
+                    } else if (_.isArray(val)) {
                         type = "array";
-                    } else if (typeof val === "object") {
+                    } else if (_.isPlainObject(val)) {
                         type = "object";
                     }
                 }
@@ -91,7 +105,7 @@ export default class ObjectParser extends AbstractParser {
                 return "boolean";
             case "object":
                 if (val === null) return "null";
-                if (Array.isArray(val)) return "array";
+                if (_.isArray(val)) return "array";
                 return "object";
             default:
                 return "any";

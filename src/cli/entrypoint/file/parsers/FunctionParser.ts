@@ -1,10 +1,12 @@
 import ts from "typescript";
+
 import SourceFile from "../SourceFile";
 import AbstractParser from "./AbstractParser";
-import {MemberSignature} from "./types";
 import NodeFinder from "./NodeFinder";
 import ClassParser from "./ClassParser";
 import ObjectParser from "./ObjectParser";
+
+import {MemberSignature} from "./types";
 
 /**
  * Parses function expressions and arrow functions.

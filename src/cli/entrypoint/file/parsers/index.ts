@@ -4,3 +4,4 @@ export {default as ClassParser} from "./ClassParser";
 export {default as TypeResolver} from "./TypeResolver";
 export {default as SignatureBuilder} from "./SignatureBuilder";
 export {default as NodeFinder} from "./NodeFinder";
+export {default as JSDocParser} from "./JSDocParser";

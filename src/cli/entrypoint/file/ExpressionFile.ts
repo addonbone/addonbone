@@ -1,7 +1,15 @@
 import ts from "typescript";
 
 import SourceFile from "./SourceFile";
-import {ClassParser, FunctionParser, NodeFinder, ObjectParser, SignatureBuilder, TypeResolver} from "./parsers";
+import {
+    ClassParser,
+    FunctionParser,
+    JSDocParser,
+    NodeFinder,
+    ObjectParser,
+    SignatureBuilder,
+    TypeResolver,
+} from "./parsers";
 import {MemberSignature} from "./parsers/types";
 
 import {PackageName} from "@typing/app";
@@ -23,7 +31,7 @@ export default class ExpressionFile extends SourceFile {
     private readonly functionParser: FunctionParser;
     private readonly objectParser: ObjectParser;
     private readonly classParser: ClassParser;
-
+    private readonly jsDocParser: JSDocParser;
     constructor(filePath: string) {
         super(filePath);
 
@@ -33,6 +41,7 @@ export default class ExpressionFile extends SourceFile {
         this.objectParser = new ObjectParser(this, this.signatureBuilder);
         this.classParser = new ClassParser(this, this.typeResolver, this.signatureBuilder, this.nodeFinder);
         this.functionParser = new FunctionParser(this, this.nodeFinder, this.objectParser, this.classParser);
+        this.jsDocParser = new JSDocParser();
     }
 
     public getType(): string | undefined {
@@ -59,6 +68,49 @@ export default class ExpressionFile extends SourceFile {
             findExport(sf);
 
             if (!exportExpr) return undefined;
+
+            // Special case for service definitions with JSDoc annotations
+            if (this.definition.size > 0 && ts.isCallExpression(exportExpr) && ts.isIdentifier(exportExpr.expression)) {
+                const fnName = exportExpr.expression.text;
+
+                if (this.definition.has(fnName)) {
+                    // Check if the wrapper function is imported from the designated package name
+                    let importPath: string | undefined;
+                    try {
+                        importPath = this.getImports().get(fnName);
+                    } catch {
+                        // unable to resolve import source -> ignore wrapper
+                        return undefined;
+                    }
+
+                    if (importPath !== PackageName) {
+                        // Function is not imported from the designated package name -> ignore wrapper
+                        console.warn(`Function ${fnName} is not imported from '${PackageName}' in file ${this.file}`);
+                        return undefined;
+                    }
+
+                    if (exportExpr.arguments.length > 0) {
+                        const firstArg = exportExpr.arguments[0];
+
+                        if (ts.isObjectLiteralExpression(firstArg)) {
+                            for (const prop of firstArg.properties) {
+                                const key = this.objectParser.getName(prop.name ?? prop);
+
+                                if (key !== this.property) continue;
+
+                                if (ts.isPropertyAssignment(prop)) {
+                                    const initType = this.getTypeFromInitializer(prop.initializer);
+                                    if (initType) return initType;
+                                } else if (ts.isMethodDeclaration(prop)) {
+                                    // Get the return type of the method
+                                    const returnType = this.getTypeFromMethodReturn(prop);
+                                    if (returnType) return returnType;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
             const expr = this.unwrapExpression(exportExpr);
 
@@ -242,6 +294,62 @@ export default class ExpressionFile extends SourceFile {
         }
 
         // Fallback: undefined
+        return undefined;
+    }
+
+    /**
+     * Extracts the type of the return value of a method, taking into account JSDoc annotations.
+     *
+     * @param method The method declaration to extract the return type from
+     * @returns The extracted return type as a string, or undefined if it cannot be extracted
+     */
+    private getTypeFromMethodReturn(method: ts.MethodDeclaration): string | undefined {
+        // Try to find a return statement in the method body
+        if (method.body) {
+            // First, check if there's a JSDoc return type annotation
+            const jsDocReturnType = this.jsDocParser.getJSDocReturnType(method);
+            if (jsDocReturnType) {
+                // If the return type is a new expression, try to parse it
+                if (jsDocReturnType.includes("new ")) {
+                    const className = jsDocReturnType.replace("new ", "").trim();
+                    const members = this.classParser.parseFileClass(className);
+                    if (members) {
+                        return this.signatureBuilder.formatMembers(members);
+                    }
+                }
+
+                // If the return type is a class name, try to parse it
+                const members = this.classParser.parseFileClass(jsDocReturnType);
+                if (members) {
+                    return this.signatureBuilder.formatMembers(members);
+                }
+
+                return jsDocReturnType;
+            }
+
+            // If there's no JSDoc return type, try to find a return statement
+            let returnExpr: ts.Expression | undefined;
+
+            const findReturn = (node: ts.Node): void => {
+                if (ts.isReturnStatement(node) && node.expression) {
+                    returnExpr = node.expression;
+                    return;
+                }
+                ts.forEachChild(node, findReturn);
+            };
+
+            findReturn(method.body);
+
+            if (returnExpr) {
+                return this.getTypeFromInitializer(returnExpr);
+            }
+        }
+
+        // If we couldn't find a return statement, use the method's return type
+        if (method.type) {
+            return this.typeResolver.resolveTypeNode(method.type);
+        }
+
         return undefined;
     }
 }

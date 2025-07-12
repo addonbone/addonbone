@@ -1,10 +1,12 @@
 class DataService {
     /**
+     * @typedef {Object} RequestOptions
+     * @property {string} method - HTTP method
+     * @property {boolean} cache - Whether to use cache
+     * 
      * Fetches data from an API
      * @param {string} endpoint - The API endpoint
-     * @param {Object} options - Request options
-     * @param {string} options.method - HTTP method
-     * @param {boolean} options.cache - Whether to use cache
+     * @param {RequestOptions} options - Request options
      * @returns {Promise<Array<Object>>} Array of data objects
      */
     async fetchData(endpoint: number, options: { timeout: number }): Promise<Map<string, any>> {
@@ -12,7 +14,7 @@ class DataService {
         // JSDoc types should override the actual types
         return new Map();
     }
-    
+
     /**
      * @returns {boolean} Whether the operation was successful
      */

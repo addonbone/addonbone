@@ -4,7 +4,6 @@
  * @property {string[]} domains - Allowed domains
  * @property {boolean} debug - Enable debug mode
  */
-
 export const init = () => {
     return {
         /**
@@ -15,7 +14,7 @@ export const init = () => {
             domains: new Set(["example.com"]), // Should be interpreted as string[]
             debug: 1 // Should be interpreted as boolean
         },
-        
+
         /**
          * @param {string} key - Configuration key
          * @returns {any} Configuration value

@@ -1,6 +1,6 @@
 import path from "path";
 
-import OptionFile from "../OptionFile";
+import OptionFile from "./OptionFile";
 
 const fixtures = path.resolve(__dirname, "fixtures");
 

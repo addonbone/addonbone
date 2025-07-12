@@ -1,7 +1,7 @@
 import {z} from "zod";
 import path from "path";
 
-import {ExpressionFile, ImportResolver, OptionFile, TsResolver} from "../driver";
+import {ExpressionFile, ImportResolver, OptionFile, TsResolver} from "../file";
 
 import {Browser} from "@typing/browser";
 import {ReadonlyConfig} from "@typing/config";

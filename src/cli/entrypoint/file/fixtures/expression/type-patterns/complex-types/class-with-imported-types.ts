@@ -1,4 +1,4 @@
-import {UserInfo, UserInfoWithDetails, UserAndDetails} from "../helpers/types-for-test";
+import {UserInfo, UserInfoWithDetails, UserAndDetails} from "../../helpers/types-for-test";
 
 class UserService {
     public getUserInfo(): UserInfo {

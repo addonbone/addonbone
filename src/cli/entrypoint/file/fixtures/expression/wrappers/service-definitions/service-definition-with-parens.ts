@@ -1,4 +1,4 @@
-import { defineService as svc } from "adnbn";
+import {defineService} from "adnbn";
 
 class Math {
     public add(a: number, b: number): number { return a + b; }
@@ -6,11 +6,9 @@ class Math {
     public multiply(a: number, b: number): number { return a * b; }
 }
 
-// alias import of wrapper function
-export default svc({
+// wrapped in multiple parentheses
+export default (((defineService({
     persistent: true,
     name: 'Math',
-    init() {
-        return new Math();
-    }
-});
+    init() { return new Math(); }
+}))));

@@ -1,37 +1,37 @@
 import path from "path";
 
-import ExpressionFile from "../ExpressionFile";
+import ExpressionFile from "./ExpressionFile";
 
-const fixtures = path.resolve(__dirname, "fixtures");
+const fixtures = path.resolve(__dirname, "fixtures", "expression");
 
 describe("ExpressionFile", () => {
-    describe("Class Instances", () => {
-        describe("Basic Class Instances", () => {
-            test("export default function and return instance class", () => {
-                const filename = path.join(fixtures, "expression", "class-instances", "export-instance.ts");
+    describe("Class Exports", () => {
+        describe("Basic Class Factories", () => {
+            test("class factory function returning class instance", () => {
+                const filename = path.join(fixtures, "class-exports", "basic", "class-factory-function.ts");
 
                 const type = ExpressionFile.make(filename).getType();
 
                 expect(type).toBe("{ bar: string; getBar(): string; setBar(bar: string): void; }");
             });
 
-            test("export default function and return inline class instance", () => {
-                const filename = path.join(fixtures, "expression", "class-instances", "export-instance-inside.ts");
+            test("class factory returning inline class instance", () => {
+                const filename = path.join(fixtures, "class-exports", "basic", "class-factory-inline.ts");
                 const type = ExpressionFile.make(filename).getType();
 
                 expect(type).toBe("{ bar: string; getBar(): string; setBar(bar: string): this; }");
             });
 
-            test("export default function and return instance class inside", () => {
-                const filename = path.join(fixtures, "expression", "class-instances", "export-instance-inside.ts");
+            test("class factory with inline anonymous class", () => {
+                const filename = path.join(fixtures, "class-exports", "basic", "class-factory-inline.ts");
 
                 const type = ExpressionFile.make(filename).getType();
 
                 expect(type).toBe("{ bar: string; getBar(): string; setBar(bar: string): this; }");
             });
 
-            test("export function as const", () => {
-                const filename = path.join(fixtures, "expression", "class-instances", "export-instance-as-const.ts");
+            test("class factory exported as const", () => {
+                const filename = path.join(fixtures, "class-exports", "basic", "class-factory-const.ts");
 
                 const type = ExpressionFile.make(filename).setProperty("init").getType();
 
@@ -39,9 +39,9 @@ describe("ExpressionFile", () => {
             });
         });
 
-        describe("Extended Class Instances", () => {
-            test("export default function and return extended instance class", () => {
-                const filename = path.join(fixtures, "expression", "class-instances", "export-extended-instance.ts");
+        describe("Extended Class Factories", () => {
+            test("factory returning extended class instance", () => {
+                const filename = path.join(fixtures, "class-exports", "extended", "extended-class-factory.ts");
 
                 const type = ExpressionFile.make(filename).getType();
 
@@ -50,8 +50,8 @@ describe("ExpressionFile", () => {
                 );
             });
 
-            test("export default function and return default extended instance class", () => {
-                const filename = path.join(fixtures, "expression", "class-instances", "export-default-extended-instance.ts");
+            test("factory returning default-exported extended class", () => {
+                const filename = path.join(fixtures, "class-exports", "extended", "default-extended-class-factory.ts");
 
                 const type = ExpressionFile.make(filename).getType();
 
@@ -62,10 +62,10 @@ describe("ExpressionFile", () => {
         });
     });
 
-    describe("Type Handling", () => {
-        describe("Chrome Types", () => {
-            test("export default function and return instance class with chrome types", () => {
-                const filename = path.join(fixtures, "expression", "type-handling", "export-instance-chrome-types.ts");
+    describe("Type Patterns", () => {
+        describe("Chrome API Types", () => {
+            test("class with Chrome API type references", () => {
+                const filename = path.join(fixtures, "type-patterns", "chrome-types", "class-with-chrome-api.ts");
 
                 const type = ExpressionFile.make(filename).getType();
 
@@ -73,45 +73,41 @@ describe("ExpressionFile", () => {
             });
         });
 
-        describe("Empty Types", () => {
-            test("export default function and return object with empty types", () => {
-                const filename = path.join(fixtures, "expression", "type-handling", "export-object-empty-type.ts");
+        describe("Complex Type Patterns", () => {
+            test("class with empty interface and type properties", () => {
+                const filename = path.join(fixtures, "type-patterns", "complex-types", "object-with-empty-type.ts");
 
                 const type = ExpressionFile.make(filename).getType();
 
                 expect(type).toBe("{ foo: {}; bar: {}; }");
             });
-        });
 
-        describe("Index Signatures", () => {
-            test("export default function and return instance with index signature", () => {
-                const filename = path.join(fixtures, "expression", "type-handling", "export-instance-index-signature.ts");
+            test("class with index signature type", () => {
+                const filename = path.join(fixtures, "type-patterns", "complex-types", "class-with-index-signature.ts");
 
                 const type = ExpressionFile.make(filename).getType();
 
                 expect(type).toBe("{ get(): {[domain: string]: number;}; }");
             });
-        });
 
-        describe("External Types", () => {
-            test("export default function and return instance when type separated", () => {
-                const filename = path.join(fixtures, "expression", "type-handling", "export-instance-with-separate-types.ts");
+            test("class with separate type definitions", () => {
+                const filename = path.join(fixtures, "type-patterns", "complex-types", "class-with-separate-types.ts");
 
                 const type = ExpressionFile.make(filename).getType();
 
                 expect(type).toBe("{ getBar(): {bar: string;}; getBarWithFoo(): {bar: string; foo: string;}; }");
             });
 
-            test("export default function and return instance with complex object", () => {
-                const filename = path.join(fixtures, "expression", "type-handling", "export-instance-with-complex-args.ts");
+            test("class with complex argument and return types", () => {
+                const filename = path.join(fixtures, "type-patterns", "complex-types", "class-with-complex-args.ts");
 
                 const type = ExpressionFile.make(filename).getType();
 
                 expect(type).toBe("{ set(name: string, a: {foo: string; bar: number;}): {baz?: string; qux?: number;}; }");
             });
 
-            test("export default function and return instance when type is external", () => {
-                const filename = path.join(fixtures, "expression", "type-handling", "export-instance-with-external-types.ts");
+            test("class using imported types from local modules", () => {
+                const filename = path.join(fixtures, "type-patterns", "complex-types", "class-with-imported-types.ts");
 
                 const type = ExpressionFile.make(filename).getType();
 
@@ -121,33 +117,33 @@ describe("ExpressionFile", () => {
             });
         });
 
-        describe("Library Types", () => {
-            test("export default function and return instance with external library types", () => {
-                const filename = path.join(fixtures, "expression", "type-handling", "export-instance-external-types.ts");
+        describe("External Library Types", () => {
+            test("class with external library type imports", () => {
+                const filename = path.join(fixtures, "type-patterns", "external-types", "class-with-external-types.ts");
 
                 const type = ExpressionFile.make(filename).getType();
 
                 expect(type).toBe("{ extra: import('somelib').ExtraType; getExtra(): import('somelib').ExtraType; setExtra(extra: import('somelib').ExtraType): void; }");
             });
 
-            test("export default function and return instance with external library types using type import", () => {
-                const filename = path.join(fixtures, "expression", "type-handling", "export-instance-external-types-alt.ts");
+            test("class with external library types using type import", () => {
+                const filename = path.join(fixtures, "type-patterns", "external-types", "class-with-external-types-alt.ts");
 
                 const type = ExpressionFile.make(filename).getType();
 
                 expect(type).toBe("{ extra: import('somelib').ExtraType; getExtra(): import('somelib').ExtraType; setExtra(extra: import('somelib').ExtraType): void; }");
             });
 
-            test("export init function and return instance with external library types using import type", () => {
-                const filename = path.join(fixtures, "expression", "type-handling", "export-init-function-external-types-type.ts");
+            test("class with external library types using import type and init export", () => {
+                const filename = path.join(fixtures, "type-patterns", "external-types", "class-with-external-types-init.ts");
 
                 const type = ExpressionFile.make(filename).setProperty('init').getType();
 
                 expect(type).toBe("{ extra: import('somelib').ExtraType; getExtra(): import('somelib').ExtraType; setExtra(extra?: import('somelib').ExtraType): void; }");
             });
 
-            test("export default function and return instance with external library type that can be undefined", () => {
-                const filename = path.join(fixtures, "expression", "type-handling", "export-instance-external-types-undefined.ts");
+            test("class with optional external library types", () => {
+                const filename = path.join(fixtures, "type-patterns", "external-types", "class-with-external-types-optional.ts");
 
                 const type = ExpressionFile.make(filename).getType();
 
@@ -156,18 +152,18 @@ describe("ExpressionFile", () => {
         });
     });
 
-    describe("Object Literals", () => {
-        describe("Basic Object Literals", () => {
-            test("export default function and return object", () => {
-                const filename = path.join(fixtures, "expression", "object-literals", "export-object-inside.ts");
+    describe("Object Exports", () => {
+        describe("Factory Functions", () => {
+            test("object factory returning inline object", () => {
+                const filename = path.join(fixtures, "object-exports", "factory-functions", "object-factory-inline.ts");
 
                 const type = ExpressionFile.make(filename).getType();
 
                 expect(type).toBe("{ foo: string; getFoo(): string; setFoo(foo: string): void; }");
             });
 
-            test("export default function and return object through variable", () => {
-                const filename = path.join(fixtures, "expression", "object-literals", "export-object-through-var.ts");
+            test("object factory returning variable-defined object", () => {
+                const filename = path.join(fixtures, "object-exports", "factory-functions", "object-factory-variable.ts");
 
                 const type = ExpressionFile.make(filename).getType();
 
@@ -175,35 +171,34 @@ describe("ExpressionFile", () => {
             });
         });
 
-        describe("Object Literal Assertions", () => {
-            test("object literal with as const assertion", () => {
-                const filename = path.join(fixtures, "expression", "object-literals", "default-object-assertion.ts");
+        describe("Literal Objects", () => {
+            test("literal object with const assertion", () => {
+                const filename = path.join(fixtures, "object-exports", "literals", "literal-with-assertion.ts");
                 const type = ExpressionFile.make(filename).getType();
                 expect(type).toBe("{ foo: string; getFoo(): string; }");
             });
 
-            test("object literal with satisfies expression", () => {
-                const filename = path.join(fixtures, "expression", "object-literals", "default-object-satisfies.ts");
+            test("literal object with satisfies type expression", () => {
+                const filename = path.join(fixtures, "object-exports", "literals", "literal-with-satisfies.ts");
                 const type = ExpressionFile.make(filename).getType();
-                // return type not explicitly annotated, so falls back to any
                 expect(type).toBe("{ foo: string; getFoo(): any; }");
             });
         });
 
-        describe("Object Literal Property Extraction", () => {
-            const filename = path.join(fixtures, "expression", "object-literals", "default-literal-props.ts");
+        describe("Property Extraction", () => {
+            const filename = path.join(fixtures, "object-exports", "literals", "literal-with-properties.ts");
 
-            test("extract string property", () => {
+            test("extract string property from literal", () => {
                 const type = ExpressionFile.make(filename).setProperty("str").getType();
                 expect(type).toBe("string");
             });
 
-            test("extract number property", () => {
+            test("extract number property from literal", () => {
                 const type = ExpressionFile.make(filename).setProperty("num").getType();
                 expect(type).toBe("number");
             });
 
-            test("extract method property", () => {
+            test("extract method property from literal", () => {
                 const type = ExpressionFile.make(filename).setProperty("greet").getType();
                 expect(type).toBe("(s: string) => string");
             });
@@ -214,15 +209,15 @@ describe("ExpressionFile", () => {
             });
         });
 
-        describe("Object Literal Init Extraction", () => {
-            test("init returning class instance inside object literal", () => {
-                const filename = path.join(fixtures, "expression", "object-literals", "export-object-init-instance.ts");
+        describe("Init Method Objects", () => {
+            test("object with init method returning class instance", () => {
+                const filename = path.join(fixtures, "object-exports", "with-init-methods", "literal-with-init-class.ts");
                 const type = ExpressionFile.make(filename).setProperty("init").getType();
                 expect(type).toBe("{ bar: string; getBar(): string; }");
             });
 
-            test("init returning object literal inside object literal", () => {
-                const filename = path.join(fixtures, "expression", "object-literals", "export-object-init-object.ts");
+            test("object with init method returning nested object", () => {
+                const filename = path.join(fixtures, "object-exports", "with-init-methods", "literal-with-init-object.ts");
                 const type = ExpressionFile.make(filename).setProperty("init").getType();
                 expect(type).toBe("{ some(): string; num: number; }");
             });
@@ -230,45 +225,41 @@ describe("ExpressionFile", () => {
     });
 
     describe("Wrappers", () => {
-        describe("Definition Wrappers", () => {
-            test("export default definition function instance", () => {
-                const filename = path.join(fixtures, "expression", "wrappers", "definition-function-instance.ts");
+        describe("Service Definitions", () => {
+            test("service definition with function instance", () => {
+                const filename = path.join(fixtures, "wrappers", "service-definitions", "service-definition-basic.ts");
 
                 const type = ExpressionFile.make(filename).setDefinition("defineService").getType();
 
                 expect(type).toBe("{ persistent: boolean; name: string; init(): any; }");
             });
 
-            test("ignore non-package wrapper for definition", () => {
-                const filename = path.join(fixtures, "expression", "wrappers", "export-nonpkg-wrapper.ts");
+            test("service definition with parentheses wrapping", () => {
+                const filename = path.join(fixtures, "wrappers", "service-definitions", "service-definition-with-parens.ts");
+                const type = ExpressionFile.make(filename).setDefinition("defineService").getType();
+                expect(type).toBe("{ persistent: boolean; name: string; init(): any; }");
+            });
+
+            test("service definition with no arguments returns undefined", () => {
+                const filename = path.join(fixtures, "wrappers", "service-definitions", "service-definition-no-args.ts");
+                const type = ExpressionFile.make(filename).setDefinition("defineService").getType();
+                expect(type).toBeUndefined();
+            });
+
+            test("service definition with alias import", () => {
+                const filename = path.join(fixtures, "wrappers", "service-definitions", "service-definition-with-alias.ts");
+                const type = ExpressionFile.make(filename).setDefinition("svc").getType();
+                expect(type).toBe("{ persistent: boolean; name: string; init(): any; }");
+            });
+        });
+
+        describe("Function Wrappers", () => {
+            test("external wrapper function should be ignored", () => {
+                const filename = path.join(fixtures, "wrappers", "function-wrappers", "external-wrapper-function.ts");
 
                 const type = ExpressionFile.make(filename).setProperty("init").setDefinition("fakeWrapper").getType();
 
                 expect(type).toBeUndefined();
-            });
-        });
-
-        describe("Wrapper Parentheses", () => {
-            test("export default wrapped in parentheses around definition function", () => {
-                const filename = path.join(fixtures, "expression", "wrappers", "default-wrapper-parens.ts");
-                const type = ExpressionFile.make(filename).setDefinition("defineService").getType();
-                expect(type).toBe("{ persistent: boolean; name: string; init(): any; }");
-            });
-        });
-
-        describe("Wrapper Edge Cases", () => {
-            test("wrapper defined with no arguments returns undefined", () => {
-                const filename = path.join(fixtures, "expression", "wrappers", "default-wrapper-no-args.ts");
-                const type = ExpressionFile.make(filename).setDefinition("defineService").getType();
-                expect(type).toBeUndefined();
-            });
-        });
-
-        describe("Alias Wrappers", () => {
-            test("alias import for definition function", () => {
-                const filename = path.join(fixtures, "expression", "wrappers", "default-alias-definition.ts");
-                const type = ExpressionFile.make(filename).setDefinition("svc").getType();
-                expect(type).toBe("{ persistent: boolean; name: string; init(): any; }");
             });
         });
     });

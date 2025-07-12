@@ -1,4 +1,3 @@
-// satisfy an explicit interface
 type Obj = {
     foo: string;
     getFoo(): string;

@@ -84,7 +84,7 @@ export default class {
             }
 
             // For external libraries used in tests, just return the import path
-            if (process.env.NODE_ENV === 'test' && importPath === 'somelib') {
+            if (process.env.NODE_ENV === "test" && importPath === "somelib") {
                 return importPath;
             }
 

@@ -10,8 +10,7 @@ export default class NodeFinder {
      *
      * @param sourceFile The source file to find nodes in
      */
-    constructor(private sourceFile: SourceFile) {
-    }
+    constructor(private sourceFile: SourceFile) {}
 
     /**
      * Generic method to find a node of a specific type by name in the AST.
@@ -104,9 +103,7 @@ export default class NodeFinder {
     public findImportEqualsDeclaration(name: string): ts.ImportEqualsDeclaration | undefined {
         return this.findNodeByName<ts.ImportEqualsDeclaration>(
             (node, searchName): node is ts.ImportEqualsDeclaration =>
-                ts.isImportEqualsDeclaration(node) &&
-                ts.isIdentifier(node.name) &&
-                node.name.text === searchName,
+                ts.isImportEqualsDeclaration(node) && ts.isIdentifier(node.name) && node.name.text === searchName,
             name
         );
     }

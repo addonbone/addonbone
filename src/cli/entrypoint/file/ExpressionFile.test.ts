@@ -69,7 +69,9 @@ describe("ExpressionFile", () => {
 
                 const type = ExpressionFile.make(filename).getType();
 
-                expect(type).toBe("{ create(properties: chrome.tabs.CreateProperties): Promise<chrome.tabs.Tab>; get(): Promise<chrome.tabs.Tab[]>; tab(): chrome.tabs.Tab | undefined; remove(tabId: number): Promise<void>; update(tab: chrome.tabs.Tab, properties: chrome.tabs.CreateProperties): Promise<void>; captureInfo(): chrome.tabCapture.CaptureInfo; }");
+                expect(type).toBe(
+                    "{ create(properties: chrome.tabs.CreateProperties): Promise<chrome.tabs.Tab>; get(): Promise<chrome.tabs.Tab[]>; tab(): chrome.tabs.Tab | undefined; remove(tabId: number): Promise<void>; update(tab: chrome.tabs.Tab, properties: chrome.tabs.CreateProperties): Promise<void>; captureInfo(): chrome.tabCapture.CaptureInfo; }"
+                );
             });
         });
 
@@ -103,7 +105,9 @@ describe("ExpressionFile", () => {
 
                 const type = ExpressionFile.make(filename).getType();
 
-                expect(type).toBe("{ set(name: string, a: {foo: string; bar: number;}): {baz?: string; qux?: number;}; }");
+                expect(type).toBe(
+                    "{ set(name: string, a: {foo: string; bar: number;}): {baz?: string; qux?: number;}; }"
+                );
             });
 
             test("class using imported types from local modules", () => {
@@ -123,31 +127,54 @@ describe("ExpressionFile", () => {
 
                 const type = ExpressionFile.make(filename).getType();
 
-                expect(type).toBe("{ extra: import('somelib').ExtraType; getExtra(): import('somelib').ExtraType; setExtra(extra: import('somelib').ExtraType): void; }");
+                expect(type).toBe(
+                    "{ extra: import('somelib').ExtraType; getExtra(): import('somelib').ExtraType; setExtra(extra: import('somelib').ExtraType): void; }"
+                );
             });
 
             test("class with external library types using type import", () => {
-                const filename = path.join(fixtures, "type-patterns", "external-types", "class-with-external-types-alt.ts");
+                const filename = path.join(
+                    fixtures,
+                    "type-patterns",
+                    "external-types",
+                    "class-with-external-types-alt.ts"
+                );
 
                 const type = ExpressionFile.make(filename).getType();
 
-                expect(type).toBe("{ extra: import('somelib').ExtraType; getExtra(): import('somelib').ExtraType; setExtra(extra: import('somelib').ExtraType): void; }");
+                expect(type).toBe(
+                    "{ extra: import('somelib').ExtraType; getExtra(): import('somelib').ExtraType; setExtra(extra: import('somelib').ExtraType): void; }"
+                );
             });
 
             test("class with external library types using import type and init export", () => {
-                const filename = path.join(fixtures, "type-patterns", "external-types", "class-with-external-types-init.ts");
+                const filename = path.join(
+                    fixtures,
+                    "type-patterns",
+                    "external-types",
+                    "class-with-external-types-init.ts"
+                );
 
-                const type = ExpressionFile.make(filename).setProperty('init').getType();
+                const type = ExpressionFile.make(filename).setProperty("init").getType();
 
-                expect(type).toBe("{ extra: import('somelib').ExtraType; getExtra(): import('somelib').ExtraType; setExtra(extra?: import('somelib').ExtraType): void; }");
+                expect(type).toBe(
+                    "{ extra: import('somelib').ExtraType; getExtra(): import('somelib').ExtraType; setExtra(extra?: import('somelib').ExtraType): void; }"
+                );
             });
 
             test("class with optional external library types", () => {
-                const filename = path.join(fixtures, "type-patterns", "external-types", "class-with-external-types-optional.ts");
+                const filename = path.join(
+                    fixtures,
+                    "type-patterns",
+                    "external-types",
+                    "class-with-external-types-optional.ts"
+                );
 
                 const type = ExpressionFile.make(filename).getType();
 
-                expect(type).toBe("{ extraProperty: import('somelib').ExtraType | undefined; someExtraProperty?: import('somelib').ExtraType; getExtraProperty(): import('somelib').ExtraType | undefined; setExtraProperty(extra: import('somelib').ExtraType | undefined): void; }");
+                expect(type).toBe(
+                    "{ extraProperty: import('somelib').ExtraType | undefined; someExtraProperty?: import('somelib').ExtraType; getExtraProperty(): import('somelib').ExtraType | undefined; setExtraProperty(extra: import('somelib').ExtraType | undefined): void; }"
+                );
             });
         });
     });
@@ -163,11 +190,18 @@ describe("ExpressionFile", () => {
             });
 
             test("object factory returning variable-defined object", () => {
-                const filename = path.join(fixtures, "object-exports", "factory-functions", "object-factory-variable.ts");
+                const filename = path.join(
+                    fixtures,
+                    "object-exports",
+                    "factory-functions",
+                    "object-factory-variable.ts"
+                );
 
                 const type = ExpressionFile.make(filename).getType();
 
-                expect(type).toBe("{ getName(): string; getAge(): any; getAddress(): any; getPhone(): any; getEmail(): any; }");
+                expect(type).toBe(
+                    "{ getName(): string; getAge(): any; getAddress(): any; getPhone(): any; getEmail(): any; }"
+                );
             });
         });
 
@@ -211,13 +245,23 @@ describe("ExpressionFile", () => {
 
         describe("Init Method Objects", () => {
             test("object with init method returning class instance", () => {
-                const filename = path.join(fixtures, "object-exports", "with-init-methods", "literal-with-init-class.ts");
+                const filename = path.join(
+                    fixtures,
+                    "object-exports",
+                    "with-init-methods",
+                    "literal-with-init-class.ts"
+                );
                 const type = ExpressionFile.make(filename).setProperty("init").getType();
                 expect(type).toBe("{ bar: string; getBar(): string; }");
             });
 
             test("object with init method returning nested object", () => {
-                const filename = path.join(fixtures, "object-exports", "with-init-methods", "literal-with-init-object.ts");
+                const filename = path.join(
+                    fixtures,
+                    "object-exports",
+                    "with-init-methods",
+                    "literal-with-init-object.ts"
+                );
                 const type = ExpressionFile.make(filename).setProperty("init").getType();
                 expect(type).toBe("{ some(): string; num: number; }");
             });
@@ -235,19 +279,34 @@ describe("ExpressionFile", () => {
             });
 
             test("service definition with parentheses wrapping", () => {
-                const filename = path.join(fixtures, "wrappers", "service-definitions", "service-definition-with-parens.ts");
+                const filename = path.join(
+                    fixtures,
+                    "wrappers",
+                    "service-definitions",
+                    "service-definition-with-parens.ts"
+                );
                 const type = ExpressionFile.make(filename).setDefinition("defineService").getType();
                 expect(type).toBe("{ persistent: boolean; name: string; init(): any; }");
             });
 
             test("service definition with no arguments returns undefined", () => {
-                const filename = path.join(fixtures, "wrappers", "service-definitions", "service-definition-no-args.ts");
+                const filename = path.join(
+                    fixtures,
+                    "wrappers",
+                    "service-definitions",
+                    "service-definition-no-args.ts"
+                );
                 const type = ExpressionFile.make(filename).setDefinition("defineService").getType();
                 expect(type).toBeUndefined();
             });
 
             test("service definition with alias import", () => {
-                const filename = path.join(fixtures, "wrappers", "service-definitions", "service-definition-with-alias.ts");
+                const filename = path.join(
+                    fixtures,
+                    "wrappers",
+                    "service-definitions",
+                    "service-definition-with-alias.ts"
+                );
                 const type = ExpressionFile.make(filename).setDefinition("svc").getType();
                 expect(type).toBe("{ persistent: boolean; name: string; init(): any; }");
             });

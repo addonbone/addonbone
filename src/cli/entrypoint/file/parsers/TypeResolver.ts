@@ -16,8 +16,7 @@ export default class TypeResolver {
     constructor(
         private readonly sourceFile: SourceFile,
         private readonly nodeFinder?: NodeFinder
-    ) {
-    }
+    ) {}
 
     /**
      * Resolves a TypeScript type node to a string, inlining type aliases when possible.
@@ -123,7 +122,7 @@ export default class TypeResolver {
             // Resolve each type argument
             const resolvedArgs = typeNode.typeArguments.map(arg => this.resolveTypeNode(arg));
             // Construct the type with resolved arguments
-            return `${aliasName}<${resolvedArgs.join(', ')}>`;
+            return `${aliasName}<${resolvedArgs.join(", ")}>`;
         }
 
         // preserve generics and other references
@@ -140,7 +139,7 @@ export default class TypeResolver {
         // Check if the type is imported from an external library
         const importPath = this.sourceFile.getImports().get(name);
         // Special case for chrome.* namespaces
-        if (importPath && importPath.startsWith('chrome.')) {
+        if (importPath && importPath.startsWith("chrome.")) {
             return importPath;
         }
         if (importPath && !importPath.startsWith(".") && !importPath.startsWith("/") && !fs.existsSync(importPath)) {
@@ -157,9 +156,11 @@ export default class TypeResolver {
                 return importEquals.moduleReference.getText();
             }
             // For external module references like 'somelib', handle as external library
-            else if (ts.isExternalModuleReference(importEquals.moduleReference) &&
+            else if (
+                ts.isExternalModuleReference(importEquals.moduleReference) &&
                 importEquals.moduleReference.expression &&
-                ts.isStringLiteral(importEquals.moduleReference.expression)) {
+                ts.isStringLiteral(importEquals.moduleReference.expression)
+            ) {
                 const libPath = importEquals.moduleReference.expression.text;
                 return `import('${libPath}').${name}`;
             }
@@ -246,7 +247,7 @@ export default class TypeResolver {
                         keyName = this.getName(m.name!);
                         const typeText = this.resolveTypeNode(m.type);
                         // Remove spaces in object types to match expected format
-                        const formattedTypeText = typeText.replace(/\{\s+/g, '{').replace(/\s+\}/g, '}');
+                        const formattedTypeText = typeText.replace(/\{\s+/g, "{").replace(/\s+\}/g, "}");
                         entry = `${keyName}: ${formattedTypeText}`;
                     } else if (ts.isMethodSignature(m) && m.name) {
                         keyName = this.getName(m.name);
@@ -257,13 +258,13 @@ export default class TypeResolver {
                                 const pname = ts.isIdentifier(p.name) ? p.name.text : p.name.getText();
                                 const ptype = p.type ? this.resolveTypeNode(p.type) : "any";
                                 // Remove spaces in object types to match expected format
-                                const formattedPType = ptype.replace(/\{\s+/g, '{').replace(/\s+\}/g, '}');
+                                const formattedPType = ptype.replace(/\{\s+/g, "{").replace(/\s+\}/g, "}");
                                 return `${pname}: ${formattedPType}`;
                             })
                             .join(",");
                         const returnType = m.type ? this.resolveTypeNode(m.type) : "any";
                         // Remove spaces in object types to match expected format
-                        const formattedReturnType = returnType.replace(/\{\s+/g, '{').replace(/\s+\}/g, '}');
+                        const formattedReturnType = returnType.replace(/\{\s+/g, "{").replace(/\s+\}/g, "}");
                         entry = `${keyName}${tpText}(${paramsText}): ${formattedReturnType}`;
                     } else if (ts.isIndexSignatureDeclaration(m) && m.type) {
                         // Handle index signatures like [domain: string]: number;
@@ -349,10 +350,7 @@ export default class TypeResolver {
     /**
      * Extracts properties from an interface declaration
      */
-    public extractInterfaceProperties(
-        interfaceDecl: ts.InterfaceDeclaration,
-        parser: TypeResolver = this
-    ): string[] {
+    public extractInterfaceProperties(interfaceDecl: ts.InterfaceDeclaration, parser: TypeResolver = this): string[] {
         const props: string[] = [];
 
         // include inherited members from extended interfaces

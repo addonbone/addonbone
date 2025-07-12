@@ -11,8 +11,7 @@ export default abstract class AbstractParser {
      *
      * @param sourceFile The source file to parse
      */
-    protected constructor(protected readonly sourceFile: SourceFile) {
-    }
+    protected constructor(protected readonly sourceFile: SourceFile) {}
 
     /**
      * Parse a node and return a record of member signatures.

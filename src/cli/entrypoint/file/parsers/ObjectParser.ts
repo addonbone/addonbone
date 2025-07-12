@@ -41,7 +41,7 @@ export default class ObjectParser extends AbstractParser {
                 } else {
                     result[key] = {
                         kind: "property",
-                        type: this.inferTypeFromExpression(init)
+                        type: this.inferTypeFromExpression(init),
                     };
                 }
             } else if (ts.isMethodDeclaration(prop)) {

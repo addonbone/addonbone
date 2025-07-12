@@ -11,8 +11,7 @@ export default class SignatureBuilder {
      *
      * @param typeResolver The type resolver to use for resolving types
      */
-    constructor(private readonly typeResolver: TypeResolver) {
-    }
+    constructor(private readonly typeResolver: TypeResolver) {}
 
     /**
      * Builds a method signature from a function-like node.
@@ -28,7 +27,7 @@ export default class SignatureBuilder {
             const name = ts.isIdentifier(p.name) ? p.name.text : p.name.getText();
             const type = p.type ? this.typeResolver.resolveTypeNode(p.type) : "any";
             // Remove spaces in object types to match expected format
-            const formattedType = type.replace(/\{\s+/g, '{').replace(/\s+\}/g, '}');
+            const formattedType = type.replace(/\{\s+/g, "{").replace(/\s+\}/g, "}");
             const optional = p.questionToken !== undefined || p.initializer !== undefined;
             return {name, type: formattedType, optional};
         });
@@ -41,7 +40,7 @@ export default class SignatureBuilder {
 
         const returnType = returnNode ? this.typeResolver.resolveTypeNode(returnNode) : "any";
         // Remove spaces in object types to match expected format
-        const formattedReturnType = returnType.replace(/\{\s+/g, '{').replace(/\s+\}/g, '}');
+        const formattedReturnType = returnType.replace(/\{\s+/g, "{").replace(/\s+\}/g, "}");
 
         return {
             kind: "method",
@@ -58,7 +57,7 @@ export default class SignatureBuilder {
      * @returns The function type as a string
      */
     public buildFunctionType(sig: MethodSignature): string {
-        const params = sig.parameters.map(p => `${p.name}${p.optional ? '?' : ''}: ${p.type}`).join(', ');
+        const params = sig.parameters.map(p => `${p.name}${p.optional ? "?" : ""}: ${p.type}`).join(", ");
         return `(${params}) => ${sig.returnType}`;
     }
 
@@ -73,12 +72,8 @@ export default class SignatureBuilder {
 
         for (const [name, member] of Object.entries(members)) {
             if (member.kind === "method") {
-                const typeParams = member.typeParameters.length
-                    ? `<${member.typeParameters.join(", ")}>`
-                    : "";
-                const params = member.parameters
-                    .map(p => `${p.name}${p.optional ? "?" : ""}: ${p.type}`)
-                    .join(", ");
+                const typeParams = member.typeParameters.length ? `<${member.typeParameters.join(", ")}>` : "";
+                const params = member.parameters.map(p => `${p.name}${p.optional ? "?" : ""}: ${p.type}`).join(", ");
                 parts.push(`${name}${typeParams}(${params}): ${member.returnType};`);
             } else {
                 parts.push(`${name}${member.optional ? "?" : ""}: ${member.type};`);

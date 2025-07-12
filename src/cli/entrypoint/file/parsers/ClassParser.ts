@@ -82,8 +82,8 @@ export default class ClassParser extends AbstractParser {
                 member.name && ts.isIdentifier(member.name)
                     ? member.name.text
                     : member.name
-                        ? member.name.getText()
-                        : "";
+                      ? member.name.getText()
+                      : "";
 
             if (!name) continue;
 

@@ -73,4 +73,3 @@ export const __t = (input: string): string => {
 
     return input;
 };
-

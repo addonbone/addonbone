@@ -13,7 +13,7 @@ export default definePlugin(() => {
             const {app, jsDir, jsFilename} = config;
 
             const kebabApp = _.kebabCase(app);
-            const snakeApp = _.snakeCase(app);
+            const camelApp = _.camelCase(app);
 
             const filename = appFilenameResolver(app, jsFilename, jsDir);
 
@@ -22,8 +22,8 @@ export default definePlugin(() => {
                     path: getRootPath(getOutputPath(config)),
                     filename,
                     chunkFilename: filename,
-                    hotUpdateGlobal: snakeApp + "HotUpdate",
-                    chunkLoadingGlobal: snakeApp + "ChunkLoading",
+                    hotUpdateGlobal: camelApp + "HotUpdate",
+                    chunkLoadingGlobal: camelApp + "ChunkLoading",
                     uniqueName: kebabApp,
                 },
             } satisfies RspackConfig;

@@ -48,7 +48,7 @@ export interface Config {
     /**
      * Author of the application (extension).
      */
-    author: string | (() => string | undefined);
+    author: undefined | string | (() => string | undefined);
 
     /**
      * The version of the extension.

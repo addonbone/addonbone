@@ -163,7 +163,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         app = "myapp",
         version = "VERSION",
         minimumVersion = "MINIMUM_VERSION",
-        author = "AUTHOR",
+        author = undefined,
         email = "EMAIL",
         homepage = "HOMEPAGE",
         incognito,

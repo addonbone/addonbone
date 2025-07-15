@@ -63,7 +63,7 @@ export default class implements LocaleValidator {
             throw new LocaleError(
                 this.browser,
                 this.language,
-                `Short name ${shortName} [${this.shortNameKey}] exceeds ${this.shortNameLimit} characters`
+                `Short name "${shortName}" [${this.shortNameKey}] exceeds ${this.shortNameLimit} characters`
             );
         }
 

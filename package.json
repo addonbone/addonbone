@@ -143,7 +143,7 @@
     "utility-types": "^3.11.0"
   },
   "dependencies": {
-    "@adnbn/browser": "^0.1.6",
+    "@adnbn/browser": "^0.1.7",
     "@adnbn/inject-script": "^0.2.0",
     "@rsdoctor/rspack-plugin": "^1.0.2",
     "@rspack/cli": "^1.3.8",

@@ -6,7 +6,6 @@ import {getEnv} from "@main/env";
 
 import type {ReadonlyConfig} from "@typing/config";
 
-
 export default class extends AbstractMeta {
     public constructor(config: ReadonlyConfig) {
         super(config);

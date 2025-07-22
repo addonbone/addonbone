@@ -19,7 +19,7 @@ export default definePlugin(() => {
                 module: {
                     rules: [
                         {
-                            test: /\.(png|apng|jpe?g|gif|webp)$/i,
+                            test: /\.(png|apng|jpe?g|gif|webp|svg|avif|tiff|bmp|ico)$/i,
                             oneOf: [
                                 {
                                     resourceQuery: /(chrome|browser)/,

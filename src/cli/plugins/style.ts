@@ -11,6 +11,7 @@ import {appFilenameResolver} from "@cli/bundler";
 import {getAppSourcePath, getRootPath, getSharedPath} from "@cli/resolvers/path";
 
 import {ReadonlyConfig} from "@typing/config";
+import {toPosix} from "@cli/utils/path";
 
 // prettier-ignore
 const styleMergerLoader =
@@ -29,12 +30,25 @@ const styleMergerLoader =
                         let appStyle = fs.readFileSync(appPath, "utf8");
 
                         appStyle = appStyle.replace(/url\((['"]?)(.*?)\1\)/g, (match, quote, filePath) => {
+                            if (
+                                filePath.startsWith("/") ||
+                                filePath.startsWith("http") ||
+                                filePath.startsWith("data:")
+                            ) {
+                                return match;
+                            }
+
                             const cssDir = path.dirname(appPath);
                             const assetAbs = path.resolve(cssDir, filePath);
-                            return `url("${assetAbs}")`;
+
+                            const sharedFileDir = path.dirname(sharedPath);
+
+                            const relativeToSharedFile = path.relative(sharedFileDir, assetAbs);
+
+                            return `url("${toPosix(relativeToSharedFile)}")`;
                         });
 
-                        return sharedStyle + appStyle;
+                        return sharedStyle + "\n" + appStyle;
                     } catch (error) {
                         console.error(error);
                     }

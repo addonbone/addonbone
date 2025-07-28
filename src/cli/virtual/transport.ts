@@ -4,7 +4,6 @@ import {
     type TransportType,
     type TransportUnresolvedDefinition,
     type TransportOptions,
-    //@ts-ignore
 } from "adnbn/entry/transport";
 //@ts-ignore
 import transport from "adnbn/entry/:entry";

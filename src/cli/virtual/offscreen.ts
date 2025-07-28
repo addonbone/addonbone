@@ -10,7 +10,7 @@ import {Builder as ViewBuilder} from "virtual:view-framework";
 import * as module from "virtual:offscreen-entrypoint";
 
 try {
-    const relayName = "virtual:offscreen-name";
+    const offscreenName = "virtual:offscreen-name";
 
     const {default: defaultDefinition, ...otherDefinition} = module;
 
@@ -22,7 +22,7 @@ try {
         definition = {...definition, init: defaultDefinition};
     }
 
-    const {init, main, name = relayName, ...options} = definition;
+    const {init, main, name = offscreenName, ...options} = definition;
 
     new OffscreenBuilder({
         name,

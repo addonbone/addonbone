@@ -14,3 +14,4 @@ export * from "./popup";
 export * from "./relay";
 export * from "./service";
 export * from "./sidebar";
+export * from "./view";

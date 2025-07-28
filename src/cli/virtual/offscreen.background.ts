@@ -1,4 +1,3 @@
-// @ts-ignore
 import {OffscreenBackground} from "adnbn/offscreen";
 
 try {

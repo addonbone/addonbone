@@ -3,11 +3,13 @@ import {
     CommandDefinition,
     CommandExecute,
     CommandExecuteActionName,
+    CommandUnresolvedDefinition,
     ExecuteActionCommandDefinition,
 } from "@typing/command";
 
 export {
     type CommandDefinition,
+    type CommandUnresolvedDefinition,
     type ExecuteActionCommandDefinition,
     CommandExecuteActionName,
     type CommandConfig,

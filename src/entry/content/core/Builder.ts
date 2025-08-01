@@ -11,6 +11,7 @@ import {
 } from "./resolvers/watch";
 
 import ManagedContext from "./ManagedContext";
+import EventEmitter from "./EventEmitter";
 
 import {
     ContentScriptAnchor,
@@ -33,10 +34,13 @@ import {
 
 import {Awaiter} from "@typing/helpers";
 
+
 export default abstract class extends Builder implements ContentScriptBuilder {
     protected readonly definition: ContentScriptResolvedDefinition;
 
-    protected context = new ManagedContext();
+    protected readonly emitter = new EventEmitter();
+
+    protected readonly context = new ManagedContext(this.emitter);
 
     protected unwatch?: () => void;
 
@@ -102,6 +106,8 @@ export default abstract class extends Builder implements ContentScriptBuilder {
 
         const {render, main, anchor, container, watch, mount, ...options} = this.definition;
 
+        await main?.(this.context, options);
+
         if (render !== undefined) {
             await this.processing();
 
@@ -111,8 +117,6 @@ export default abstract class extends Builder implements ContentScriptBuilder {
                 });
             }, this.context);
         }
-
-        await main?.(this.context, options);
     }
 
     public async destroy(): Promise<void> {

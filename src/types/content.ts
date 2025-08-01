@@ -104,8 +104,8 @@ export type ContentScriptContainerTag = Exclude<keyof HTMLElementTagNameMap, "ht
 
 export type ContentScriptContainerOptions = {
     [Tag in ContentScriptContainerTag]: {
-        tagName: Tag;
-    } & Exclude<Optional<PickNonFunctionProperties<HTMLElementTagNameMap[Tag]>>, "id">;
+    tagName: Tag;
+} & Exclude<Optional<PickNonFunctionProperties<HTMLElementTagNameMap[Tag]>>, "id">;
 }[ContentScriptContainerTag];
 
 export type ContentScriptContainerFactory = (
@@ -116,9 +116,57 @@ export type ContentScriptContainerCreator = (props: ContentScriptProps) => Await
 // Watch
 export type ContentScriptWatchStrategy = (update: () => void, context: ContentScriptContext) => () => void;
 
+// Event
+export enum ContentScriptEvent {
+    Mount = "mount",
+    Unmount = "unmount",
+    Add = "add",
+    Remove = "remove",
+}
+
+export type ContentScriptEventCallback = (event: ContentScriptEvent, node: ContentScriptNode) => void;
+
+export interface ContentScriptEventEmitter {
+    on(callback: ContentScriptEventCallback): void;
+
+    off(callback: ContentScriptEventCallback): void;
+
+    emit(event: ContentScriptEvent, node: ContentScriptNode): void;
+
+    emitMount(node: ContentScriptNode): void;
+
+    emitUnmount(node: ContentScriptNode): void;
+
+    emitAdd(node: ContentScriptNode): void;
+
+    emitRemove(node: ContentScriptNode): void;
+
+    removeAllListeners(): void;
+
+    listenerCount(): number;
+
+    hasListeners(): boolean;
+}
+
 // Context
 export interface ContentScriptContext extends ContentScriptMount {
     nodes: ReadonlySet<ContentScriptNode>;
+
+    /**
+     * Registers a callback function that will be invoked when a specific content script context event occurs.
+     *
+     * @param {ContentScriptEventCallback} callback - The function to be executed when the event is triggered. Receives event-related data as its argument.
+     * @return {Function} A function that can be called to unsubscribe the callback from the event.
+     */
+    watch(callback: ContentScriptEventCallback): () => void;
+
+    /**
+     * Stops watching for changes or events that were previously being observed.
+     * Unsubscribes from all event listeners that were registered through the watch method.
+     *
+     * @return {void} No return value.
+     */
+    unwatch(): void;
 }
 
 // Main

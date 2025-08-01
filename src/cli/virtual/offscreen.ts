@@ -1,8 +1,5 @@
-//@ts-ignore
-import {OffscreenUnresolvedDefinition} from "adnbn";
-//@ts-ignore
+import type {OffscreenUnresolvedDefinition} from "adnbn";
 import {isValidTransportDefinition, isValidTransportInitFunction, type TransportType} from "adnbn/entry/transport";
-//@ts-ignore
 import {Builder as OffscreenBuilder} from "adnbn/entry/offscreen";
 
 import {Builder as ViewBuilder} from "virtual:view-framework";

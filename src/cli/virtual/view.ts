@@ -1,4 +1,4 @@
-import {ViewDefinition, ViewOptions} from "adnbn";
+import type {ViewDefinition, ViewOptions} from "adnbn";
 import {__t} from "adnbn/locale";
 import {isViewDefinition, isValidViewDefinitionRenderValue} from "adnbn/entry/view";
 

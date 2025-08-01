@@ -1,4 +1,4 @@
-import {CommandUnresolvedDefinition} from "adnbn";
+import type {CommandUnresolvedDefinition} from "adnbn";
 import {__t} from "adnbn/locale";
 import command, {isValidCommandDefinition, isValidCommandExecuteFunction} from "adnbn/entry/command";
 

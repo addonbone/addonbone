@@ -1,4 +1,4 @@
-import {ContentScriptDefinition} from "adnbn";
+import type {ContentScriptDefinition} from "adnbn";
 import {isContentScriptDefinition, isValidContentScriptDefinitionRenderValue} from "adnbn/entry/content";
 
 import contentScript from "virtual:content-framework";

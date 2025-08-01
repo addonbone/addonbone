@@ -1,4 +1,4 @@
-import {BackgroundDefinition} from "adnbn";
+import type {BackgroundDefinition} from "adnbn";
 import background, {isValidBackgroundDefinition, isValidBackgroundMainHandler} from "adnbn/entry/background";
 
 import * as module from "virtual:background-entrypoint";

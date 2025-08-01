@@ -1,4 +1,4 @@
-import {RelayUnresolvedDefinition} from "adnbn";
+import type {RelayUnresolvedDefinition} from "adnbn";
 import {isValidTransportDefinition, isValidTransportInitFunction, type TransportType} from "adnbn/entry/transport";
 import {Builder as RelayBuilder} from "adnbn/entry/relay";
 

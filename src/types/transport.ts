@@ -2,6 +2,7 @@ import {Required} from "utility-types";
 
 import {EntrypointOptions} from "@typing/entrypoint";
 import {Awaiter, DeepAsyncProxy} from "@typing/helpers";
+import {MessageSender} from "@typing/message";
 
 export type TransportType = ((...args: any[]) => Promise<any>) | {[key: string]: any | TransportType};
 
@@ -35,7 +36,7 @@ export interface TransportMessageData {
 export interface TransportMessage {
     send(data: TransportMessageData): any;
 
-    watch(handler: (data: TransportMessageData) => any): void;
+    watch(handler: (data: TransportMessageData, sender: MessageSender) => any): void;
 }
 
 export interface TransportProvider<T extends TransportType> {

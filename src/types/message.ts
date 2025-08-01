@@ -2,10 +2,16 @@ export const MessageGlobalKey = "adnbnMessage";
 
 export const MessageTypeSeparator = ":";
 
+export const MessageSenderProperty = "sender";
+
 export type MessageSender = chrome.runtime.MessageSender;
 
 export interface MessageDictionary {
     [key: string]: (data: any) => any;
+}
+
+export interface MessageSenderAware {
+    sender?: MessageSender;
 }
 
 export type MessageType<T extends MessageDictionary> = Extract<keyof T, string>;

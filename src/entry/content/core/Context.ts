@@ -3,14 +3,13 @@ import {
     ContentScriptEventCallback,
     ContentScriptEventEmitter,
     ContentScriptNode,
-    ContentScriptNodeSet
+    ContentScriptNodeSet,
 } from "@typing/content";
 
 export default class implements ContentScriptContext {
     protected readonly collection: ContentScriptNodeSet = new Set();
 
-    constructor(protected readonly emitter: ContentScriptEventEmitter) {
-    }
+    constructor(protected readonly emitter: ContentScriptEventEmitter) {}
 
     public get nodes(): ReadonlySet<ContentScriptNode> {
         return this.collection;

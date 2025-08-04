@@ -34,7 +34,6 @@ import {
 
 import {Awaiter} from "@typing/helpers";
 
-
 export default abstract class extends Builder implements ContentScriptBuilder {
     protected readonly definition: ContentScriptResolvedDefinition;
 

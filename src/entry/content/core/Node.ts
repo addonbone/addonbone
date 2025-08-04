@@ -21,21 +21,29 @@ export default class implements ContentScriptNode {
         }
     }
 
-    public mount(): void {
+    public mount(): boolean {
         this.mark();
 
         if (!this.container && this._container) {
             this.container = this._container.cloneNode(false) as Element;
+
+            return true;
         }
+
+        return false;
     }
 
-    public unmount(): void {
+    public unmount(): boolean {
         this.unmark();
 
         if (this.container) {
             this.container.remove();
             this.container = undefined;
+
+            return true;
         }
+
+        return false;
     }
 
     protected mark(): this {

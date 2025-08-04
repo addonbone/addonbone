@@ -3,9 +3,8 @@ import {ContentScriptEventEmitter, ContentScriptNode} from "@typing/content";
 export default class implements ContentScriptNode {
     constructor(
         protected readonly node: ContentScriptNode,
-        protected readonly emitter: ContentScriptEventEmitter,
-    ) {
-    }
+        protected readonly emitter: ContentScriptEventEmitter
+    ) {}
 
     public get anchor(): Element {
         return this.node.anchor;
@@ -15,13 +14,23 @@ export default class implements ContentScriptNode {
         return this.node.container;
     }
 
-    public mount(): void {
-        this.node.mount();
-        this.emitter.emitMount(this.node);
+    public mount(): boolean {
+        const result = this.node.mount();
+
+        if (result === true) {
+            this.emitter.emitMount(this.node);
+        }
+
+        return !!result;
     }
 
-    public unmount(): void {
-        this.node.unmount();
-        this.emitter.emitUnmount(this.node);
+    public unmount(): boolean {
+        const result = this.node.unmount();
+
+        if (result === true) {
+            this.emitter.emitUnmount(this.node);
+        }
+
+        return !!result;
     }
 }

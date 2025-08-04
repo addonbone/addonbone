@@ -19,28 +19,30 @@ export default class implements ContentScriptNode {
         return this.node.container;
     }
 
-    public mount(): void {
+    public mount(): boolean {
         this.node.mount();
 
         if (!this.container || this.root) {
-            return;
+            return false;
         }
 
         if (!this.component) {
             console.warn("Content script react component is empty");
 
-            return;
+            return false;
         }
 
         this.root = createRoot(this.container);
 
         this.root.render(this.component);
+
+        return true;
     }
 
-    public unmount(): void {
+    public unmount(): boolean {
         this.root?.unmount();
         this.root = undefined;
 
-        this.node.unmount();
+        return !!this.node.unmount();
     }
 }

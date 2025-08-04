@@ -2,7 +2,7 @@ import {
     ContentScriptEvent,
     ContentScriptEventCallback,
     ContentScriptEventEmitter,
-    ContentScriptNode
+    ContentScriptNode,
 } from "@typing/content";
 
 export default class implements ContentScriptEventEmitter {

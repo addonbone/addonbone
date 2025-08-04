@@ -79,9 +79,9 @@ export enum ContentScriptAppend {
 export type ContentScriptMountFunction = (anchor: Element, container: Element) => void | (() => void);
 
 export interface ContentScriptMount {
-    mount(): void;
+    mount(): boolean | undefined | void;
 
-    unmount(): void;
+    unmount(): boolean | undefined | void;
 }
 
 // Props
@@ -104,8 +104,8 @@ export type ContentScriptContainerTag = Exclude<keyof HTMLElementTagNameMap, "ht
 
 export type ContentScriptContainerOptions = {
     [Tag in ContentScriptContainerTag]: {
-    tagName: Tag;
-} & Exclude<Optional<PickNonFunctionProperties<HTMLElementTagNameMap[Tag]>>, "id">;
+        tagName: Tag;
+    } & Exclude<Optional<PickNonFunctionProperties<HTMLElementTagNameMap[Tag]>>, "id">;
 }[ContentScriptContainerTag];
 
 export type ContentScriptContainerFactory = (

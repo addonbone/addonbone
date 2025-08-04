@@ -1,6 +1,7 @@
 import {isValidContentScriptRenderValue} from "../core/resolvers/render";
 
 import MountBuilder from "../core/MountBuilder";
+import EventNode from "../core/EventNode";
 import VanillaNode from "./Node";
 
 import {ContentScriptDefinition, ContentScriptNode} from "@typing/content";
@@ -19,6 +20,6 @@ export default class extends MountBuilder {
             console.warn("Content script vanilla value is not a valid render value");
         }
 
-        return new VanillaNode(await super.createNode(anchor), value);
+        return new EventNode(new VanillaNode(await super.createNode(anchor), value), this.emitter);
     }
 }

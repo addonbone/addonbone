@@ -16,27 +16,35 @@ export default class implements ContentScriptNode {
         return this.node.container;
     }
 
-    public mount(): void {
+    public mount(): boolean {
         this.node.mount();
 
         if (!this.container || this.mounted) {
-            return;
+            return false;
         }
+
+        let result: boolean = true;
 
         if (this.value instanceof Element) {
             this.container.appendChild(this.value);
         } else if (typeof this.value === "string" || typeof this.value === "number") {
             this.container.textContent = String(this.value);
         } else if (this.value === null || this.value === undefined) {
+            result = false;
+
             console.warn("Content script vanilla value is empty");
+        } else if (this.value === true) {
+            return false;
         }
 
         this.mounted = true;
+
+        return result;
     }
 
-    public unmount(): void {
-        this.node.unmount();
-
+    public unmount(): boolean {
         this.mounted = false;
+
+        return !!this.node.unmount();
     }
 }

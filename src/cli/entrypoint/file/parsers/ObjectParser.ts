@@ -5,7 +5,8 @@ import SourceFile from "../SourceFile";
 import AbstractParser from "./AbstractParser";
 import SignatureBuilder from "./SignatureBuilder";
 import JSDocParser from "./JSDocParser";
-import MemberFilter from "./MemberFilter";
+
+import {shouldIncludeMember} from "./helpers/memberFilters";
 
 import {MemberSignature} from "./types";
 
@@ -42,9 +43,9 @@ export default class ObjectParser extends AbstractParser {
         for (const prop of obj.properties) {
             // key name helper
             const key = this.getName(prop.name ?? prop);
-            
+
             // Skip members that start with underscore
-            if (!MemberFilter.shouldIncludeMember(key)) {
+            if (!shouldIncludeMember(key)) {
                 continue;
             }
 

@@ -6,6 +6,7 @@ import TypeResolver from "./TypeResolver";
 import SignatureBuilder from "./SignatureBuilder";
 import NodeFinder from "./NodeFinder";
 import JSDocParser from "./JSDocParser";
+import MemberFilter from "./MemberFilter";
 
 import {MemberSignature} from "./types";
 
@@ -69,6 +70,12 @@ export default class ClassParser extends AbstractParser {
 
                     if (mods & ts.ModifierFlags.Public) {
                         const name = ts.isIdentifier(param.name) ? param.name.text : param.name.getText();
+                        
+                        // Skip constructor parameters that start with underscore
+                        if (!MemberFilter.shouldIncludeMember(name)) {
+                            continue;
+                        }
+                        
                         const type = param.type ? param.type.getText() : "any";
                         members[name] = {kind: "property", type};
                     }
@@ -93,6 +100,11 @@ export default class ClassParser extends AbstractParser {
                       : "";
 
             if (!name) continue;
+            
+            // Skip members that start with underscore
+            if (!MemberFilter.shouldIncludeMember(name)) {
+                continue;
+            }
 
             if (ts.isMethodDeclaration(member) || ts.isGetAccessorDeclaration(member)) {
                 members[name] = this.signatureBuilder.getMethodSignature(member as ts.MethodDeclaration);

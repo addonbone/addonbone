@@ -16,7 +16,8 @@ export default class TypeResolver {
     constructor(
         private readonly sourceFile: SourceFile,
         private readonly nodeFinder?: NodeFinder
-    ) {}
+    ) {
+    }
 
     /**
      * Resolves a TypeScript type node to a string, inlining type aliases when possible.
@@ -138,10 +139,12 @@ export default class TypeResolver {
     public inlineAliasType(name: string): string | undefined {
         // Check if the type is imported from an external library
         const importPath = this.sourceFile.getImports().get(name);
+
         // Special case for chrome.* namespaces
-        if (importPath && importPath.startsWith("chrome.")) {
+        if (importPath && (importPath.startsWith("chrome.") || importPath.startsWith("browser."))) {
             return importPath;
         }
+
         if (importPath && !importPath.startsWith(".") && !importPath.startsWith("/") && !fs.existsSync(importPath)) {
             // This is an external library import, format it as import('libraryName').TypeName
             return `import('${importPath}').${name}`;

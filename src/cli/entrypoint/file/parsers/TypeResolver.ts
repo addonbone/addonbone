@@ -16,8 +16,7 @@ export default class TypeResolver {
     constructor(
         private readonly sourceFile: SourceFile,
         private readonly nodeFinder?: NodeFinder
-    ) {
-    }
+    ) {}
 
     /**
      * Resolves a TypeScript type node to a string, inlining type aliases when possible.

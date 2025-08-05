@@ -1,3 +1,3 @@
 export const shouldIncludeMember = (name: string): boolean => {
-    return !name.startsWith('_');
+    return !name.startsWith("_");
 };

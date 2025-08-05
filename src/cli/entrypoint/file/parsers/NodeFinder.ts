@@ -10,8 +10,7 @@ export default class NodeFinder {
      *
      * @param sourceFile The source file to find nodes in
      */
-    constructor(private sourceFile: SourceFile) {
-    }
+    constructor(private sourceFile: SourceFile) {}
 
     /**
      * Generic method to find a node of a specific type by name in the AST.

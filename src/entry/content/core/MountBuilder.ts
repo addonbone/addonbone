@@ -38,7 +38,7 @@ export default abstract class extends Builder {
 
         const value = await this.getValue(anchor);
 
-        if (value !== true && value !== undefined) {
+        if (typeof value !== "boolean" && value !== undefined) {
             container = (await this.definition.container(this.getProps(anchor))) as Element | undefined;
         }
 

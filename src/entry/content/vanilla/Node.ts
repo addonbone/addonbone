@@ -29,7 +29,7 @@ export default class implements ContentScriptNode {
             this.container.appendChild(this.value);
         } else if (typeof this.value === "string" || typeof this.value === "number") {
             this.container.textContent = String(this.value);
-        } else if (this.value === null || this.value === undefined) {
+        } else if (this.value === null || this.value === undefined || this.value === false) {
             result = false;
 
             console.warn("Content script vanilla value is empty");

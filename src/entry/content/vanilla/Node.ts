@@ -34,7 +34,7 @@ export default class implements ContentScriptNode {
 
             console.warn("Content script vanilla value is empty");
         } else if (this.value === true) {
-            return false;
+            result = false;
         }
 
         this.mounted = true;

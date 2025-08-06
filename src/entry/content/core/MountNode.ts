@@ -23,13 +23,17 @@ export default class implements ContentScriptNode {
             return false;
         }
 
-        const unmounting = this.mounter?.(this.anchor, this.container);
+        if (this.mounter) {
+            const unmounting = this.mounter(this.anchor, this.container);
 
-        if (unmounting) {
-            this.unmounting = unmounting;
+            if (unmounting) {
+                this.unmounting = unmounting;
+            }
+
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     public unmount(): boolean {

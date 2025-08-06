@@ -197,6 +197,19 @@ describe("ExpressionFile", () => {
                 expect(type).toBe("{ foo: string; getFoo(): string; setFoo(foo: string): void; }");
             });
 
+            test("object factory returning inline object as interface", () => {
+                const filename = path.join(
+                    fixtures,
+                    "object-exports",
+                    "factory-functions",
+                    "object-factory-interface.ts"
+                );
+
+                const type = ExpressionFile.make(filename).getType();
+
+                expect(type).toBe("{ getFoo(): string | undefined; setFoo(foo: string): void; }");
+            });
+
             test("object factory returning variable-defined object", () => {
                 const filename = path.join(
                     fixtures,
@@ -287,6 +300,21 @@ describe("ExpressionFile", () => {
                 const type = ExpressionFile.make(filename).setProperty("init").getType();
 
                 expect(type).toBe("{ some(): string; num: number; }");
+            });
+
+            test("object with define function and init method returning nested object", () => {
+                const filename = path.join(
+                    fixtures,
+                    "object-exports",
+                    "with-init-methods",
+                    "literal-with-define-init-object.ts"
+                );
+                const type = ExpressionFile.make(filename)
+                    .setDefinition('defineService')
+                    .setProperty("init")
+                    .getType();
+
+                expect(type).toBe("{ ping(): Promise<void>; }");
             });
         });
     });

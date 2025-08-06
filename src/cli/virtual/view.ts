@@ -1,8 +1,5 @@
-//@ts-ignore
 import type {ViewDefinition, ViewOptions} from "adnbn";
-//@ts-ignore
 import {__t} from "adnbn/locale";
-//@ts-ignore
 import {isViewDefinition, isValidViewDefinitionRenderValue} from "adnbn/entry/view";
 
 import view from "virtual:view-framework";

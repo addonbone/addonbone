@@ -1,0 +1,1 @@
+export type {ViewDefinition, ViewOptions} from "@typing/view";

@@ -16,24 +16,30 @@ export default class implements ContentScriptNode {
         return this.node.container;
     }
 
-    public mount(): void {
+    public mount(): boolean {
         this.node.mount();
 
         if (!this.container || this.container.isConnected) {
-            return;
+            return false;
         }
 
-        const unmounting = this.mounter?.(this.anchor, this.container);
+        if (this.mounter) {
+            const unmounting = this.mounter(this.anchor, this.container);
 
-        if (unmounting) {
-            this.unmounting = unmounting;
+            if (unmounting) {
+                this.unmounting = unmounting;
+            }
+
+            return true;
         }
+
+        return false;
     }
 
-    public unmount(): void {
+    public unmount(): boolean {
         this.unmounting?.();
         this.unmounting = undefined;
 
-        this.node.unmount();
+        return !!this.node.unmount();
     }
 }

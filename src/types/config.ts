@@ -120,14 +120,18 @@ export interface Config {
      * Final extension files will be located here.
      * @example "./dist"
      * @path Output path: `{{inputDir}}/{{outputDir}}`
+     *
+     * @default "dist"
      */
     outputDir: string;
 
     /**
-     * Directory where the application and Shared directory are located.
+     * Directory where the application and shared directory are located.
      * Main directory with source code.
      * @example "src"
      * @path Full path: `{{inputDir}}/{{srcDir}}`
+     *
+     * @default "src"
      */
     srcDir: string;
 
@@ -136,6 +140,8 @@ export interface Config {
      * Contains code used by multiple extensions.
      * @example "shared"
      * @path Full path: `{{inputDir}}/{{srcDir}}//{{sharedDir}}`
+     *
+     * @default "shared"
      */
     sharedDir: string;
 
@@ -144,6 +150,8 @@ export interface Config {
      * These extensions can use code from the Shared directory.
      * @example "apps"
      * @path Full path: `{{inputDir}}/{{srcDir}}/{{appsDir}}`
+     *
+     * @default "apps"
      */
     appsDir: string;
 
@@ -152,6 +160,8 @@ export interface Config {
      * May contain additional structure, such as a src folder.
      * @example "src"
      * @path Full path: `{{inputDir}}/{{appsDir}}/{{appDir}}/{{appSrcDir}}`
+     *
+     * @default "."
      */
     appSrcDir: string;
 
@@ -160,6 +170,8 @@ export interface Config {
      * All compiled JS files will be placed here.
      * @example "js"
      * @path Full path: `{{inputDir}}//{{outputDir}}/{{appDir}}/{{jsDir}}`
+     *
+     * @default "js"
      */
     jsDir: string;
 
@@ -168,6 +180,8 @@ export interface Config {
      * All compiled styles will be placed here.
      * @example "css"
      * @path Full path: `{{inputDir}}/{{outputDir}}/{{appDir}}/{{cssDir}}`
+     *
+     * @default "css"
      */
     cssDir: string;
 
@@ -175,6 +189,8 @@ export interface Config {
      * Directory for assets (images, fonts, etc.) in outputDir.
      * @example "assets"
      * @path Full path: `{{inputDir}}/{{outputDir}}/{{appDir}}/{{assetsDir}}`
+     *
+     * @default "assets"
      */
     assetsDir: string;
 
@@ -182,6 +198,8 @@ export interface Config {
      * Directory for HTML files in outputDir.
      * @example "view"
      * @path Full path: `{{inputDir}}/{{outputDir}}/{{appDir}}/{{htmlDir}}`
+     *
+     * @default "."
      */
     htmlDir: string;
 
@@ -274,19 +292,19 @@ export interface Config {
 
         /**
          * Default locale key from translation files or a string.
-         * @example "#app.name" or "Awesome App"
+         * @example "@app.name" or "Awesome App"
          */
         name?: string;
 
         /**
          * Default locale key for a short name from translation files or a string.
-         * @example "#app.short_name" or "Awesome"
+         * @example "@app.short_name" or "Awesome"
          */
         shortName?: string;
 
         /**
          * Default locale key for description from translation files or a string.
-         * @example "#app.description" or "My awesome app description"
+         * @example "@app.description" or "My awesome app description"
          */
         description?: string;
     };
@@ -301,6 +319,8 @@ export interface Config {
      * Flag to enable dependency analyzer.
      * When activated, open RSDoctor during the build, which shows
      * project dependencies and their sizes.
+     *
+     * @default false
      */
     analyze: boolean;
 
@@ -313,48 +333,64 @@ export interface Config {
     /**
      * Flag indicating whether to merge background scripts from App and Shared directories.
      * When `true`, background scripts from both directories will be combined into a single file.
+     *
+     * @default false
      */
     mergeBackground: boolean;
 
     /**
      * Flag indicating whether to merge commands from App and Shared directories.
      * When `true`, commands from both directories will be combined.
+     *
+     * @default false
      */
     mergeCommands: boolean;
 
     /**
      * Flag indicating whether to merge content scripts from App and Shared directories.
      * When `true`, content scripts from both directories will be combined.
+     *
+     * @default false
      */
     mergeContentScripts: boolean;
 
     /**
      * Flag indicating whether to combine content scripts with identical options into one chunk.
      * When `true`, content scripts with identical settings will be compiled into a single file.
+     *
+     * @default true
      */
     concatContentScripts: boolean;
 
     /**
      * Flag indicating whether to merge styles from App and Shared directories.
      * When `true`, styles from both directories will be combined.
+     *
+     * @default true
      */
     mergeStyles: boolean;
 
     /**
      * Flag indicating whether to merge icon files from App and Shared directories.
      * When `true`, icon files from both directories will be combined.
+     *
+     * @default false
      */
     mergeIcons: boolean;
 
     /**
      * Flag indicating whether to merge localizations from App and Shared directories.
      * When `true`, localization files from both directories will be combined.
+     *
+     * @default true
      */
     mergeLocales: boolean;
 
     /**
      * Flag indicating whether to merge page files from App and Shared directories.
      * When `true`, page files from both directories will be combined.
+     *
+     * @default false
      */
     mergePages: boolean;
 
@@ -405,12 +441,16 @@ export interface Config {
     /**
      * Flag indicating whether to merge service files from App and Shared directories.
      * When `true`, service files from both directories will be combined.
+     *
+     * @default false
      */
     mergeService: boolean;
 
     /**
      * Flag indicating whether to merge offscreen files from App and Shared directories.
      * When `true`, offscreen files from both directories will be combined.
+     *
+     * @default false
      */
     mergeOffscreen: boolean;
 

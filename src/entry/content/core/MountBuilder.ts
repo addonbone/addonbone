@@ -36,7 +36,9 @@ export default abstract class extends Builder {
     protected async createNode(anchor: Element): Promise<ContentScriptNode> {
         let container: Element | undefined;
 
-        if (await this.getValue(anchor)) {
+        const value = await this.getValue(anchor);
+
+        if (typeof value !== "boolean" && value !== undefined) {
             container = (await this.definition.container(this.getProps(anchor))) as Element | undefined;
         }
 

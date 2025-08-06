@@ -1,6 +1,4 @@
-//@ts-ignore
 import type {ContentScriptDefinition} from "adnbn";
-//@ts-ignore
 import {isContentScriptDefinition, isValidContentScriptDefinitionRenderValue} from "adnbn/entry/content";
 
 import contentScript from "virtual:content-framework";

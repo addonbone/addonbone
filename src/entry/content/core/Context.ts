@@ -1,7 +1,15 @@
-import {ContentScriptContext, ContentScriptNode, ContentScriptNodeSet} from "@typing/content";
+import {
+    ContentScriptContext,
+    ContentScriptEventCallback,
+    ContentScriptEventEmitter,
+    ContentScriptNode,
+    ContentScriptNodeSet,
+} from "@typing/content";
 
 export default class implements ContentScriptContext {
     protected readonly collection: ContentScriptNodeSet = new Set();
+
+    constructor(protected readonly emitter: ContentScriptEventEmitter) {}
 
     public get nodes(): ReadonlySet<ContentScriptNode> {
         return this.collection;
@@ -13,6 +21,8 @@ export default class implements ContentScriptContext {
                 node.unmount();
 
                 this.collection.delete(node);
+
+                this.emitter.emitRemove(node);
 
                 continue;
             }
@@ -27,7 +37,21 @@ export default class implements ContentScriptContext {
 
             if (!node.anchor.isConnected) {
                 this.collection.delete(node);
+
+                this.emitter.emitRemove(node);
             }
         }
+    }
+
+    public watch(callback: ContentScriptEventCallback): () => void {
+        this.emitter.on(callback);
+
+        return () => {
+            this.emitter.off(callback);
+        };
+    }
+
+    public unwatch(): void {
+        this.emitter.removeAllListeners();
     }
 }

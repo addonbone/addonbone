@@ -22,7 +22,7 @@ export interface EntrypointOptions {
      *
      * @default undefined
      */
-    includeBrowser?: Browser[];
+    includeBrowser?: `${Browser}`[] | Browser[];
 
     /**
      * List of target browsers to exclude this entrypoint from. Cannot be used with `include`. You
@@ -30,7 +30,7 @@ export interface EntrypointOptions {
      *
      * @default undefined
      */
-    excludeBrowser?: Browser[];
+    excludeBrowser?: `${Browser}`[] | Browser[];
 
     /**
      * List of target apps to include this entrypoint in. Defaults to being included in all builds.

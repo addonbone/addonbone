@@ -137,20 +137,41 @@ describe("ProxyOffscreen", () => {
         expect(await offscreen.asyncSum(1, 2)).toBe(3);
     });
 
-    test("recreates offscreen when already open: closes existing and creates a new one", async () => {
+    test("does not recreate offscreen when URL hasn't changed", async () => {
+        jest.clearAllMocks();
         (hasOffscreen as jest.Mock).mockReturnValue(false);
 
-        const offscreen = new ProxyOffscreen<typeof offscreenName, OffscreenProxyType>(offscreenName, parameters).get();
+        const proxyInstance = new ProxyOffscreen<typeof offscreenName, OffscreenProxyType>(offscreenName, parameters);
+        const offscreen = proxyInstance.get();
 
         await offscreen.sum(1, 2);
 
         (hasOffscreen as jest.Mock).mockReturnValue(true);
+        await offscreen.sum(3, 4);
 
-        await offscreen.sum(2, 3);
+        expect(createOffscreen).toHaveBeenCalledTimes(1);
+        expect(closeOffscreen).toHaveBeenCalledTimes(0);
+    });
+
+    test("recreates offscreen when URL changes", async () => {
+        jest.clearAllMocks();
+        (hasOffscreen as jest.Mock).mockReturnValue(false);
+
+        const proxyInstance1 = new ProxyOffscreen<typeof offscreenName, OffscreenProxyType>(offscreenName, parameters);
+        const offscreen1 = proxyInstance1.get();
+        await offscreen1.sum(1, 2);
+
+        (hasOffscreen as jest.Mock).mockReturnValue(true);
+        const differentParams = {...parameters, url: "different-offscreen.html"};
+        const proxyInstance2 = new ProxyOffscreen<typeof offscreenName, OffscreenProxyType>(
+            offscreenName,
+            differentParams
+        );
+        const offscreen2 = proxyInstance2.get();
+        await offscreen2.sum(3, 4);
 
         expect(createOffscreen).toHaveBeenCalledTimes(2);
         expect(closeOffscreen).toHaveBeenCalledTimes(1);
-        expect(createOffscreen).toHaveBeenCalledWith(parameters);
     });
 });
 

@@ -6,10 +6,13 @@ import {
     ContentScriptProps,
 } from "@typing/content";
 
-export const contentScriptContainerResolver =
-    (
-        container?: ContentScriptContainerTag | ContentScriptContainerOptions | ContentScriptContainerFactory
-    ): ContentScriptContainerCreator =>
+// prettier-ignore
+export const contentScriptContainerResolver = (
+    container?:
+        ContentScriptContainerTag |
+        ContentScriptContainerOptions |
+        ContentScriptContainerFactory
+): ContentScriptContainerCreator =>
     async (props: ContentScriptProps): Promise<Element> => {
         let resolvedContainer = typeof container === "function" ? container(props) : container;
 

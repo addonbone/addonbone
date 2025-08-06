@@ -1,8 +1,5 @@
-//@ts-ignore
-import {RelayUnresolvedDefinition} from "adnbn";
-//@ts-ignore
+import type {RelayUnresolvedDefinition} from "adnbn";
 import {isValidTransportDefinition, isValidTransportInitFunction, type TransportType} from "adnbn/entry/transport";
-//@ts-ignore
 import {Builder as RelayBuilder} from "adnbn/entry/relay";
 
 import {Builder as ContentScriptBuilder} from "virtual:content-framework";

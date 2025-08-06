@@ -37,6 +37,14 @@ describe("ExpressionFile", () => {
 
                 expect(type).toBe("{ bar: string; getBar(): string; setBar(bar: string): void; }");
             });
+
+            test("class with underscore members should exclude them", () => {
+                const filename = path.join(fixtures, "class-exports", "basic", "class-with-underscore-members.ts");
+
+                const type = ExpressionFile.make(filename).getType();
+
+                expect(type).toBe("{ publicProp: string; visibleParam: string; publicMethod(): void; }");
+            });
         });
 
         describe("Extended Class Factories", () => {
@@ -189,6 +197,19 @@ describe("ExpressionFile", () => {
                 expect(type).toBe("{ foo: string; getFoo(): string; setFoo(foo: string): void; }");
             });
 
+            test("object factory returning inline object as interface", () => {
+                const filename = path.join(
+                    fixtures,
+                    "object-exports",
+                    "factory-functions",
+                    "object-factory-interface.ts"
+                );
+
+                const type = ExpressionFile.make(filename).getType();
+
+                expect(type).toBe("{ getFoo(): string | undefined; setFoo(foo: string): void; }");
+            });
+
             test("object factory returning variable-defined object", () => {
                 const filename = path.join(
                     fixtures,
@@ -209,13 +230,22 @@ describe("ExpressionFile", () => {
             test("literal object with const assertion", () => {
                 const filename = path.join(fixtures, "object-exports", "literals", "literal-with-assertion.ts");
                 const type = ExpressionFile.make(filename).getType();
+
                 expect(type).toBe("{ foo: string; getFoo(): string; }");
             });
 
             test("literal object with satisfies type expression", () => {
                 const filename = path.join(fixtures, "object-exports", "literals", "literal-with-satisfies.ts");
                 const type = ExpressionFile.make(filename).getType();
+
                 expect(type).toBe("{ foo: string; getFoo(): any; }");
+            });
+
+            test("object with underscore properties should exclude them", () => {
+                const filename = path.join(fixtures, "object-exports", "literals", "object-with-underscore-props.ts");
+                const type = ExpressionFile.make(filename).getType();
+
+                expect(type).toBe("{ publicProp: string; publicMethod(): string; }");
             });
         });
 
@@ -224,21 +254,25 @@ describe("ExpressionFile", () => {
 
             test("extract string property from literal", () => {
                 const type = ExpressionFile.make(filename).setProperty("str").getType();
+
                 expect(type).toBe("string");
             });
 
             test("extract number property from literal", () => {
                 const type = ExpressionFile.make(filename).setProperty("num").getType();
+
                 expect(type).toBe("number");
             });
 
             test("extract method property from literal", () => {
                 const type = ExpressionFile.make(filename).setProperty("greet").getType();
+
                 expect(type).toBe("(s: string) => string");
             });
 
             test("nonexistent property returns undefined", () => {
                 const type = ExpressionFile.make(filename).setProperty("other").getType();
+
                 expect(type).toBeUndefined();
             });
         });
@@ -252,6 +286,7 @@ describe("ExpressionFile", () => {
                     "literal-with-init-class.ts"
                 );
                 const type = ExpressionFile.make(filename).setProperty("init").getType();
+
                 expect(type).toBe("{ bar: string; getBar(): string; }");
             });
 
@@ -263,7 +298,20 @@ describe("ExpressionFile", () => {
                     "literal-with-init-object.ts"
                 );
                 const type = ExpressionFile.make(filename).setProperty("init").getType();
+
                 expect(type).toBe("{ some(): string; num: number; }");
+            });
+
+            test("object with define function and init method returning nested object", () => {
+                const filename = path.join(
+                    fixtures,
+                    "object-exports",
+                    "with-init-methods",
+                    "literal-with-define-init-object.ts"
+                );
+                const type = ExpressionFile.make(filename).setDefinition("defineService").setProperty("init").getType();
+
+                expect(type).toBe("{ ping(): Promise<void>; }");
             });
         });
     });
@@ -285,7 +333,9 @@ describe("ExpressionFile", () => {
                     "service-definitions",
                     "service-definition-with-parens.ts"
                 );
+
                 const type = ExpressionFile.make(filename).setDefinition("defineService").getType();
+
                 expect(type).toBe("{ persistent: boolean; name: string; init(): any; }");
             });
 
@@ -296,7 +346,9 @@ describe("ExpressionFile", () => {
                     "service-definitions",
                     "service-definition-no-args.ts"
                 );
+
                 const type = ExpressionFile.make(filename).setDefinition("defineService").getType();
+
                 expect(type).toBeUndefined();
             });
 
@@ -307,7 +359,9 @@ describe("ExpressionFile", () => {
                     "service-definitions",
                     "service-definition-with-alias.ts"
                 );
+
                 const type = ExpressionFile.make(filename).setDefinition("svc").getType();
+
                 expect(type).toBe("{ persistent: boolean; name: string; init(): any; }");
             });
         });

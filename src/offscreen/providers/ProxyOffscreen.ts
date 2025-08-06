@@ -21,6 +21,8 @@ type CreateParameters = chrome.offscreen.CreateParameters;
 export default class<N extends TransportName, T = DeepAsyncProxy<TransportDictionary[N]>> extends ProxyTransport<N, T> {
     protected message: TransportMessage;
 
+    private url?: string;
+
     constructor(
         name: N,
         private parameters: CreateParameters
@@ -42,12 +44,14 @@ export default class<N extends TransportName, T = DeepAsyncProxy<TransportDictio
 
         if (!isManifestVersion3() || getBrowser() === Browser.Firefox) {
             await OffscreenBridge.createOffscreen(parameters);
-        } else {
+        } else if (this.url !== parameters.url) {
             if (await hasOffscreen()) {
                 await closeOffscreen();
             }
 
             await createOffscreen(parameters);
+
+            this.url = parameters.url;
         }
 
         return this.message.send({path, args});

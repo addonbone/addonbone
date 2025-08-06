@@ -1,6 +1,7 @@
 import {isValidElement} from "react";
 
 import MountBuilder from "../core/MountBuilder";
+import EventNode from "../core/EventNode";
 import ReactNode from "./Node";
 
 import {contentScriptReactRenderResolver} from "./resolvers/render";
@@ -34,6 +35,6 @@ export default class extends MountBuilder {
             console.warn("Content script react value is not a valid React element");
         }
 
-        return new ReactNode(await super.createNode(anchor), value);
+        return new EventNode(new ReactNode(await super.createNode(anchor), value), this.emitter);
     }
 }

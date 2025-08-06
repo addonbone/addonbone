@@ -16,6 +16,7 @@ export default class implements LocaleValidator {
         return (
             {
                 [Browser.Chrome]: 75,
+                [Browser.Edge]: 75,
                 [Browser.Firefox]: 50,
             }[this.browser] || 45
         );

@@ -30,12 +30,7 @@ export const contentScriptAnchorResolver =
                 }
             } else if (typeof resolved === "string") {
                 if (resolved.startsWith("/")) {
-                    const notRegex = /not\(\s*[^)]+\s*\)/;
-                    const condition = `not(@${attr})`;
-
-                    if (notRegex.test(resolved)) {
-                        resolved = `(${resolved})[${condition}]`;
-                    }
+                    resolved = `(${resolved})[not(@${attr})]`;
 
                     const result = document.evaluate(
                         resolved,

@@ -6,8 +6,10 @@ import {
     MessageGeneralHandler,
     MessageMapHandler,
     MessageResponse,
+    MessageSenderAware,
     MessageTargetHandler,
     MessageType,
+    MessageSender,
 } from "@typing/message";
 
 export type {
@@ -19,6 +21,8 @@ export type {
     MessageTargetHandler,
     MessageType,
     MessageSendOptions,
+    MessageSenderAware,
+    MessageSender,
 };
 
 export {Message};

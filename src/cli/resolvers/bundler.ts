@@ -1,5 +1,4 @@
 import {Configuration as RspackConfig, RspackPluginInstance} from "@rspack/core";
-import {CleanWebpackPlugin} from "clean-webpack-plugin";
 import {RsdoctorRspackPlugin} from "@rsdoctor/rspack-plugin";
 import {merge as mergeConfig} from "webpack-merge";
 
@@ -69,17 +68,13 @@ export default async (config: ReadonlyConfig): Promise<RspackConfig> => {
         });
     }
 
-    if (config.command == Command.Watch) {
+    if (config.command === Command.Watch) {
         rspack = mergeConfig(rspack, {
             devtool: "inline-source-map",
         });
     }
 
-    if (config.command == Command.Build) {
-        rspack = mergeConfig(rspack, {
-            plugins: [new CleanWebpackPlugin()],
-        });
-
+    if (config.command === Command.Build) {
         if (config.analyze) {
             rspack = mergeConfig(rspack, {
                 plugins: [

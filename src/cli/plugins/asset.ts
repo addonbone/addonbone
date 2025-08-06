@@ -21,7 +21,7 @@ export default definePlugin(() => {
                         {
                             test: /\.(png|apng|jpe?g|gif|webp|svg|avif|tiff|bmp|ico)$/i,
                             resourceQuery: {
-                                not: [/react/]
+                                not: [/react/],
                             },
                             oneOf: [
                                 {

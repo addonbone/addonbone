@@ -6,6 +6,8 @@ import {definePlugin} from "@main/plugin";
 import {appFilenameResolver} from "@cli/bundler";
 import {getOutputPath, getRootPath} from "@cli/resolvers/path";
 
+import {Command} from "@typing/app";
+
 export default definePlugin(() => {
     return {
         name: "adnbn:output",
@@ -25,6 +27,7 @@ export default definePlugin(() => {
                     hotUpdateGlobal: camelApp + "HotUpdate",
                     chunkLoadingGlobal: camelApp + "ChunkLoading",
                     uniqueName: kebabApp,
+                    clean: config.command === Command.Build,
                 },
             } satisfies RspackConfig;
         },

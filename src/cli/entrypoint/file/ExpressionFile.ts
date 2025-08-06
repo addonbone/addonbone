@@ -216,6 +216,11 @@ export default class ExpressionFile extends SourceFile {
         // First use the AbstractExpressionParser's unwrapExpression for basic unwrapping
         expr = this.functionParser.unwrapExpression(expr);
 
+        // Explicitly handle type assertions
+        if (ts.isAsExpression(expr)) {
+            return this.unwrapExpression(expr.expression);
+        }
+
         // Then handle the additional unwrapping for known definition wrappers
         if (ts.isCallExpression(expr) && ts.isIdentifier(expr.expression)) {
             const fnName = expr.expression.text;
@@ -248,6 +253,11 @@ export default class ExpressionFile extends SourceFile {
     private getTypeFromInitializer(
         node: ts.Expression | ts.MethodDeclaration | ts.GetAccessorDeclaration
     ): string | undefined {
+        // Unwrap type assertions
+        if (ts.isAsExpression(node)) {
+            return this.getTypeFromInitializer(node.expression);
+        }
+        
         // Function or arrow function: try to parse returned object or instance
         if (ts.isFunctionExpression(node) || ts.isArrowFunction(node)) {
             // attempt to parse returned expression into members

@@ -20,6 +20,9 @@ export default definePlugin(() => {
                     rules: [
                         {
                             test: /\.(png|apng|jpe?g|gif|webp|svg|avif|tiff|bmp|ico)$/i,
+                            resourceQuery: {
+                                not: [/react/],
+                            },
                             oneOf: [
                                 {
                                     resourceQuery: /(chrome|browser)/,

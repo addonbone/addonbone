@@ -309,10 +309,7 @@ describe("ExpressionFile", () => {
                     "with-init-methods",
                     "literal-with-define-init-object.ts"
                 );
-                const type = ExpressionFile.make(filename)
-                    .setDefinition('defineService')
-                    .setProperty("init")
-                    .getType();
+                const type = ExpressionFile.make(filename).setDefinition("defineService").setProperty("init").getType();
 
                 expect(type).toBe("{ ping(): Promise<void>; }");
             });

@@ -257,7 +257,7 @@ export default class ExpressionFile extends SourceFile {
         if (ts.isAsExpression(node)) {
             return this.getTypeFromInitializer(node.expression);
         }
-        
+
         // Function or arrow function: try to parse returned object or instance
         if (ts.isFunctionExpression(node) || ts.isArrowFunction(node)) {
             // attempt to parse returned expression into members

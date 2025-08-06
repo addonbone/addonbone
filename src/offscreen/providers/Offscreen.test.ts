@@ -157,10 +157,7 @@ describe("ProxyOffscreen", () => {
         jest.clearAllMocks();
         (hasOffscreen as jest.Mock).mockReturnValue(false);
 
-        const proxyInstance1 = new ProxyOffscreen<typeof offscreenName, OffscreenProxyType>(
-            offscreenName,
-            parameters
-        );
+        const proxyInstance1 = new ProxyOffscreen<typeof offscreenName, OffscreenProxyType>(offscreenName, parameters);
         const offscreen1 = proxyInstance1.get();
         await offscreen1.sum(1, 2);
 

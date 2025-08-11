@@ -6,6 +6,7 @@ import _ from "lodash";
 import {
     assetPlugin,
     backgroundPlugin,
+    bundlerPlugin,
     contentPlugin,
     dotenvPlugin,
     htmlPlugin,
@@ -279,6 +280,11 @@ export default async (config: OptionalConfig): Promise<Config> => {
 
     vars = {...vars, ...loadDotenv(resolvedConfig)};
 
+    /**
+     * IMPORTANT: the order of plugins matters. Early plugins prepare the environment and artifacts for the following ones
+     * (e.g., environment variables/output/transpilation/assets → page/version generation → bundling).
+     * Reordering may result in missing artifacts, incorrect configuration, or build failures.
+     */
     const corePlugins: Plugin[] = [
         dotenvPlugin(vars),
         outputPlugin(),
@@ -300,6 +306,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         viewPlugin(),
         htmlPlugin(),
         versionPlugin(),
+        bundlerPlugin(),
     ];
 
     return {

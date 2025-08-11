@@ -1,12 +1,14 @@
 import cac from "cac";
 import {consola} from "consola";
+import fs from "fs";
 
 import app from "./builders/app";
 
 import {Command} from "@typing/app";
 import {Browser} from "@typing/browser";
 
-import {name, version} from "../../package.json";
+const pkg = fs.readFileSync(new URL("../../package.json", import.meta.url), {encoding: "utf-8"});
+const {name, version} = JSON.parse(pkg);
 
 const cli = cac(name);
 

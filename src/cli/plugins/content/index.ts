@@ -40,7 +40,9 @@ export default definePlugin(() => {
                 return {};
             }
 
-            const plugin = EntrypointPlugin.from(await manager.entries()).virtual(file => manager.virtual(file));
+            // prettier-ignore
+            const plugin = EntrypointPlugin.from(await manager.entries())
+                .virtual(file => manager.virtual(file));
 
             if (config.command === Command.Watch) {
                 plugin.watch(async () => {

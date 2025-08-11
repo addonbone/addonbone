@@ -31,7 +31,7 @@ export default definePlugin(() => {
         background: () => background.files(),
         command: () => command.files(),
         service: () => service.files(),
-        bundler: async ({config, rspack}) => {
+        bundler: async ({config}) => {
             serviceDeclaration.dictionary(await service.dictionary()).build();
 
             if ((await background.empty()) && (await command.empty()) && (await service.empty())) {
@@ -42,17 +42,17 @@ export default definePlugin(() => {
                 return {};
             }
 
-            const backgroundPlugin = EntrypointPlugin.from(await background.entry().entries()).virtual(file =>
-                virtualBackgroundModule(file)
-            );
+            // prettier-ignore
+            const backgroundPlugin = EntrypointPlugin.from(await background.entry().entries())
+                .virtual(file => virtualBackgroundModule(file));
 
-            const commandPlugin = EntrypointPlugin.from(await command.entry().entries()).virtual(file =>
-                command.virtual(file)
-            );
+            // prettier-ignore
+            const commandPlugin = EntrypointPlugin.from(await command.entry().entries())
+                .virtual(file => command.virtual(file));
 
-            const servicePlugin = EntrypointPlugin.from(await service.entry().entries()).virtual(file =>
-                service.virtual(file)
-            );
+            // prettier-ignore
+            const servicePlugin = EntrypointPlugin.from(await service.entry().entries())
+                .virtual(file => service.virtual(file));
 
             if (config.command === AppCommand.Watch) {
                 backgroundPlugin.watch(() => background.clear().entry().entries());
@@ -83,15 +83,19 @@ export default definePlugin(() => {
             } satisfies RspackConfig;
         },
         manifest: async ({manifest}) => {
-            const mft = new BackgroundManifest().add(background.entry()).add(command.entry()).add(service.entry());
+            // prettier-ignore
+            const mft = new BackgroundManifest()
+                .add(background.entry())
+                .add(command.entry())
+                .add(service.entry());
 
             manifest
                 .setBackground(
                     (await mft.hasBackground())
                         ? {
-                              entry: BackgroundEntry.name,
-                              persistent: await mft.isPersistent(),
-                          }
+                            entry: BackgroundEntry.name,
+                            persistent: await mft.isPersistent(),
+                        }
                         : undefined
                 )
                 .setCommands(await command.manifest());

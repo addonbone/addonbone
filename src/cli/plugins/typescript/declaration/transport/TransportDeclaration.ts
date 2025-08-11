@@ -2,8 +2,6 @@ import _ from "lodash";
 
 import FileBuilder from "../../FileBuilder";
 
-import template from "./transport.d.ts?raw";
-
 import {ReadonlyConfig} from "@typing/config";
 
 export enum TransportDeclarationLayer {
@@ -26,6 +24,14 @@ export default class<T extends Record<string, string> = Record<string, string>> 
         return this.layer + ".d.ts";
     }
 
+    protected file(): URL {
+        return new URL("./transport.d.ts", this.url());
+    }
+
+    protected url(): string {
+        return import.meta.url;
+    }
+
     protected template(): string {
         const dictionary = this._dictionary;
 
@@ -39,7 +45,7 @@ export default class<T extends Record<string, string> = Record<string, string>> 
             })
             .join("\n\t\t");
 
-        return template
+        return this.readFile()
             .replaceAll(":layer", this.layer)
             .replaceAll("Layer", _.upperFirst(this.layer))
             .replace(`{ [name: string]: any }`, `{\n\t\t${type}\n\t}`);

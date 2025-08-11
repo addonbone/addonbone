@@ -7,6 +7,8 @@ import {PackageName, SystemDir} from "@typing/app";
 import {ReadonlyConfig} from "@typing/config";
 
 export default abstract class FileBuilder {
+    private _file?: string;
+
     protected abstract filename(): string;
 
     protected abstract template(): string;
@@ -23,6 +25,18 @@ export default abstract class FileBuilder {
 
     protected withBanner(): boolean {
         return true;
+    }
+
+    protected file(): URL {
+        return new URL(`./${this.filename()}`, this.url());
+    }
+
+    protected url(): string {
+        return import.meta.url;
+    }
+
+    protected readFile(): string {
+        return (this._file ??= fs.readFileSync(this.file(), {encoding: "utf-8"}));
     }
 
     public build(): this {

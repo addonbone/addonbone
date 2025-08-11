@@ -2,7 +2,7 @@ import _ from "lodash";
 import path from "path";
 
 import {Compiler, EntryNormalized} from "@rspack/core";
-import VirtualModulesPlugin from "rspack-plugin-virtual-module";
+import {RspackVirtualModulePlugin as VirtualModulesPlugin} from "rspack-plugin-virtual-module";
 
 import {EntrypointEntries, EntrypointFile} from "@typing/entrypoint";
 

@@ -44,16 +44,16 @@
       "default": "./dist/locale/index.js"
     },
     "./locale/*": {
-      "types": "./dist/locale/*/index.d.ts",
-      "default": "./dist/locale/*/index.js"
+      "types": "./dist/locale/adapters/*/index.d.ts",
+      "default": "./dist/locale/adapters/*/index.js"
     },
     "./message": {
       "types": "./dist/message/index.d.ts",
       "default": "./dist/message/index.js"
     },
     "./message/*": {
-      "types": "./dist/message/*/index.d.ts",
-      "default": "./dist/message/*/index.js"
+      "types": "./dist/message/adapters/*/index.d.ts",
+      "default": "./dist/message/adapters/*/index.js"
     },
     "./offscreen": {
       "types": "./dist/offscreen/index.d.ts",
@@ -64,8 +64,8 @@
       "default": "./dist/storage/index.js"
     },
     "./storage/*": {
-      "types": "./dist/storage/*/index.d.ts",
-      "default": "./dist/storage/*/index.js"
+      "types": "./dist/storage/adapters/*/index.d.ts",
+      "default": "./dist/storage/adapters/*/index.js"
     },
     "./service": {
       "types": "./dist/service/index.d.ts",
@@ -80,12 +80,12 @@
       "default": "./dist/entry/*/index.js"
     },
     "./entry/content/*": {
-      "types": "./dist/entry/content/*/index.d.ts",
-      "default": "./dist/entry/content/*/index.js"
+      "types": "./dist/entry/content/adapters/*/index.d.ts",
+      "default": "./dist/entry/content/adapters/*/index.js"
     },
     "./entry/view/*": {
-      "types": "./dist/entry/view/*/index.d.ts",
-      "default": "./dist/entry/view/*/index.js"
+      "types": "./dist/entry/view/adapters/*/index.d.ts",
+      "default": "./dist/entry/view/adapters/*/index.js"
     },
     "./client-types": {
       "types": "./types/client.d.ts"

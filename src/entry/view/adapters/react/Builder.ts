@@ -1,7 +1,7 @@
 import {isValidElement} from "react";
 import {createRoot, Root} from "react-dom/client";
 
-import Builder from "../core/Builder";
+import Builder from "../../core/Builder";
 
 import {viewReactRenderResolver} from "./resolvers/render";
 

@@ -1,7 +1,7 @@
 import {useEffect, useRef} from "react";
 import {MessageDictionary, MessageTargetHandler, MessageType} from "@typing/message";
 
-import {Message} from "../providers";
+import {Message} from "@message/providers";
 
 export default <K extends MessageType<T>, T extends MessageDictionary = MessageDictionary>(
     type: K,

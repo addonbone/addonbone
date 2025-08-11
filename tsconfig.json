@@ -30,6 +30,7 @@
       "@offscreen/*": ["offscreen/*"],
       "@relay/*": ["relay/*"],
       "@service/*": ["service/*"],
+      "@storage/*": ["storage/*"],
       "@transport/*": ["transport/*"],
       "@typing/*": ["types/*"]
     },

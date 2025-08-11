@@ -93,9 +93,9 @@ export default definePlugin(() => {
                 .setBackground(
                     (await mft.hasBackground())
                         ? {
-                            entry: BackgroundEntry.name,
-                            persistent: await mft.isPersistent(),
-                        }
+                              entry: BackgroundEntry.name,
+                              persistent: await mft.isPersistent(),
+                          }
                         : undefined
                 )
                 .setCommands(await command.manifest());

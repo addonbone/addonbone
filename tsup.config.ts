@@ -34,7 +34,7 @@ const fixVirtualIndexImportPlugin: Plugin = {
     name: "fix-virtual-index-import",
     setup(build) {
         const targets = ["virtual", "entrypoint"];
-        build.onLoad({filter: /\.(ts|js)$/}, async (args) => {
+        build.onLoad({filter: /\.(ts|js)$/}, async args => {
             const {readFile} = await import("fs/promises");
             let contents = await readFile(args.path, "utf8");
 
@@ -67,7 +67,7 @@ export default defineConfig([
         sourcemap: true,
         // @ts-ignore
         esbuildPlugins: [fixVirtualIndexImportPlugin, fixImportsPlugin()],
-        esbuildOptions: (options) => {
+        esbuildOptions: options => {
             options.outbase = "src";
         },
         outExtension: () => ({js: ".js"}),
@@ -84,7 +84,7 @@ export default defineConfig([
         external: [/^@cli/],
         // @ts-ignore
         esbuildPlugins: [fixVirtualIndexImportPlugin, rawPlugin(), fixImportsPlugin()],
-        esbuildOptions: (options) => {
+        esbuildOptions: options => {
             options.outbase = "src";
         },
         outExtension: () => ({js: ".js"}),

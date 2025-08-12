@@ -17,6 +17,7 @@ const config: Config = {
         "^@main/(.*)$": "<rootDir>/src/main/$1",
         "^@typing/(.*)$": "<rootDir>/src/types/$1",
     },
+    extensionsToTreatAsEsm: [".ts", ".tsx"],
     transform: {
         "^.+\\.tsx?$": [
             "ts-jest",

@@ -1,12 +1,17 @@
-import {Configuration as RspackConfig} from "@rspack/core";
+import _ from "lodash";
+import {merge as mergeConfig} from "webpack-merge";
 
 import {definePlugin} from "@main/plugin";
 
 export default definePlugin(() => {
     return {
         name: "adnbn:bundler",
-        bundler: () => {
-            return {
+        bundler: async ({config, rspack}) => {
+            const {bundler} = config;
+
+            const userConfig = _.isFunction(bundler) ? await bundler(rspack) : bundler;
+
+            return mergeConfig(userConfig, {
                 resolve: {
                     fallback: {
                         crypto: "crypto-browserify",
@@ -18,7 +23,7 @@ export default definePlugin(() => {
                         process: "process/browser",
                     },
                 },
-            } satisfies RspackConfig;
+            });
         },
     };
 });

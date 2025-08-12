@@ -1,4 +1,4 @@
-import type {Filename} from "@rspack/core";
+import type {Configuration as RspackConfig, Filename} from "@rspack/core";
 import type {Options as HtmlOptions} from "html-rspack-tags-plugin";
 
 import {Command, Mode} from "@typing/app";
@@ -6,12 +6,11 @@ import {Browser} from "@typing/browser";
 import {ManifestIncognitoValue, ManifestVersion} from "@typing/manifest";
 import {Plugin} from "@typing/plugin";
 import {Language} from "@typing/locale";
+import {Awaiter} from "@typing/helpers";
 
 /**
- * Interface representing the configuration options for building an extension.
- * This configuration includes settings for directories, output locations,
- * behavior flags, and various merge configurations to define how the build
- * process handles individual components or resources.
+ * Configuration interface defining all the configurable options
+ * needed to build, manage, and deploy browser extensions.
  */
 export interface Config {
     /**
@@ -284,6 +283,24 @@ export interface Config {
      *   returns either an HtmlOptions object or an array of HtmlOptions objects.
      */
     html: HtmlOptions | HtmlOptions[] | {(): HtmlOptions | HtmlOptions[]};
+
+    /**
+     * Rspack bundler configuration.
+     *
+     * Accepts:
+     * - a Rspack configuration object;
+     * - a function that receives the current (system-prepared) Rspack configuration
+     *   and returns an object with changes.
+     *
+     * How it works:
+     * - Any object you provide (either returned from the function or passed directly) will be
+     *   recursively merged with the base configuration by the build system.
+     * - Do NOT perform manual merging inside the function — simply return a patch object with the
+     *   fields you want to adjust, or return an empty object if no changes are needed.
+     * - The function parameter is mainly for inspecting the current config to decide whether
+     *   additional adjustments are necessary.
+     */
+    bundler: RspackConfig | {(rspack: RspackConfig): Awaiter<RspackConfig>};
 
     /**
      * Environment configuration for the extension.

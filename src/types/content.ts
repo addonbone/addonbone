@@ -5,7 +5,7 @@ import {EntrypointBuilder, EntrypointOptions} from "@typing/entrypoint";
 import {Awaiter, PickNonFunctionProperties} from "@typing/helpers";
 
 type ExecutionWorld = chrome.scripting.ExecutionWorld;
-type RunAt = chrome.userScripts.RunAt;
+type RunAt = chrome.extensionTypes.RunAt;
 
 export const ContentScriptMatches = ["http://*/*", "https://*/*"];
 

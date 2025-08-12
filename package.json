@@ -39,6 +39,18 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
+    "./entry/*": {
+      "types": "./dist/entry/*/index.d.ts",
+      "default": "./dist/entry/*/index.js"
+    },
+    "./entry/content/*": {
+      "types": "./dist/entry/content/adapters/*/index.d.ts",
+      "default": "./dist/entry/content/adapters/*/index.js"
+    },
+    "./entry/view/*": {
+      "types": "./dist/entry/view/adapters/*/index.d.ts",
+      "default": "./dist/entry/view/adapters/*/index.js"
+    },
     "./locale": {
       "types": "./dist/locale/index.d.ts",
       "default": "./dist/locale/index.js"
@@ -59,6 +71,14 @@
       "types": "./dist/offscreen/index.d.ts",
       "default": "./dist/offscreen/index.js"
     },
+    "./relay": {
+      "types": "./dist/relay/index.d.ts",
+      "default": "./dist/relay/index.js"
+    },
+    "./service": {
+      "types": "./dist/service/index.d.ts",
+      "default": "./dist/service/index.js"
+    },
     "./storage": {
       "types": "./dist/storage/index.d.ts",
       "default": "./dist/storage/index.js"
@@ -67,25 +87,9 @@
       "types": "./dist/storage/adapters/*/index.d.ts",
       "default": "./dist/storage/adapters/*/index.js"
     },
-    "./service": {
-      "types": "./dist/service/index.d.ts",
-      "default": "./dist/service/index.js"
-    },
-    "./relay": {
-      "types": "./dist/relay/index.d.ts",
-      "default": "./dist/relay/index.js"
-    },
-    "./entry/*": {
-      "types": "./dist/entry/*/index.d.ts",
-      "default": "./dist/entry/*/index.js"
-    },
-    "./entry/content/*": {
-      "types": "./dist/entry/content/adapters/*/index.d.ts",
-      "default": "./dist/entry/content/adapters/*/index.js"
-    },
-    "./entry/view/*": {
-      "types": "./dist/entry/view/adapters/*/index.d.ts",
-      "default": "./dist/entry/view/adapters/*/index.js"
+    "./transport": {
+      "types": "./dist/transport/index.d.ts",
+      "default": "./dist/transport/index.js"
     },
     "./client-types": {
       "types": "./types/client.d.ts"

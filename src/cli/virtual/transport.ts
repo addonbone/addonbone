@@ -1,10 +1,6 @@
-import {
-    isValidTransportDefinition,
-    isValidTransportInitFunction,
-    type TransportType,
-    type TransportUnresolvedDefinition,
-    type TransportOptions,
-} from "adnbn/entry/transport";
+import type {TransportOptions, TransportType, TransportUnresolvedDefinition} from "adnbn/transport";
+import {isValidTransportDefinition, isValidTransportInitFunction} from "adnbn/entry/transport";
+
 //@ts-ignore
 import transport from "adnbn/entry/:entry";
 
@@ -23,9 +19,9 @@ try {
         definition = {...definition, init: defaultDefinition};
     }
 
-    const {init, name = transportName, ...options} = definition;
+    const {init, name, ...options} = definition;
 
-    transport({name, init, ...options});
+    transport({name: transportName, init, ...options});
 } catch (e) {
     console.error("The :entry crashed on startup:", e);
 }

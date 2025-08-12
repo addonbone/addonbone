@@ -46,7 +46,58 @@ export interface Config {
     app: string;
 
     /**
-     * Author of the application (extension).
+     * Extension name for manifest.name.
+     *
+     * Can be either:
+     * - a plain string — inserted into the manifest as-is;
+     * - a localization key (for example, "@app.name") — converted to a reference to a localized message
+     *   and must exist in your locale files.
+     *
+     * @example "@app.name"
+     * @example "Awesome App"
+     */
+    name: undefined | string;
+
+    /**
+     * Short extension name for manifest.short_name.
+     *
+     * Can be either:
+     * - a plain string — inserted into the manifest as-is;
+     * - a localization key (for example, "@app.short_name") — converted to a reference to a localized message
+     *   and must exist in your locale files.
+     *
+     * Note: some browsers do not support localization in the short_name field (e.g., Opera, Edge).
+     * In that case, when a localization key is provided, it will be resolved to the actual string for the selected language.
+     *
+     * @example "@app.short_name"
+     * @example "Awesome"
+     */
+    shortName: undefined | string;
+
+    /**
+     * Extension description for manifest.description.
+     *
+     * Can be either:
+     * - a plain string — inserted into the manifest as-is;
+     * - a localization key (for example, "@app.description") — converted to a reference to a localized message
+     *   and must exist in your locale files.
+     *
+     * @example "@app.description"
+     * @example "My awesome app description"
+     */
+    description: undefined | string;
+
+    /**
+     * Author for manifest.author.
+     *
+     * Can be either:
+     * - a plain string — inserted into the manifest as-is;
+     * - a function returning a string or undefined — allows computing the value at build time.
+     *
+     * If the value is undefined (or the function returns undefined), the field will be omitted.
+     *
+     * @example "ACME Corp."
+     * @example () => getEnv('AUTHOR') || "Addon Bone"
      */
     author: undefined | string | (() => string | undefined);
 
@@ -109,6 +160,12 @@ export interface Config {
     manifestVersion: ManifestVersion;
 
     /**
+     * Default locale for the extension.
+     * @example "en"
+     */
+    lang?: string | Language;
+
+    /**
      * Path to the directory with source files for building.
      * This is the base directory relative to which other paths are defined.
      * @example "addon"
@@ -133,7 +190,7 @@ export interface Config {
      *
      * @default "src"
      */
-    srcDir: string;
+    sourceDir: string;
 
     /**
      * Directory with common modules, content scripts, and background scripts.
@@ -163,7 +220,7 @@ export interface Config {
      *
      * @default "."
      */
-    appSrcDir: string;
+    appSourceDir: string;
 
     /**
      * Directory for output JavaScript files in outputDir.
@@ -202,6 +259,20 @@ export interface Config {
      * @default "."
      */
     htmlDir: string;
+
+    /**
+     * Directory for localizations. Can be located in the Shared directory,
+     * in the project root, or in a folder for a specific App.
+     *
+     * @example "locales"
+     *
+     * @path Full paths can be:
+     *
+     * - `{{inputDir}}/{{srcDir}}/{{localeDir}}`
+     * - `{{inputDir}}/{{sharedDir}}/{{localeDir}}`
+     * - `{{inputDir}}/{{appsDir}}/{{appDir}}/{{localeDir}}`
+     */
+    localeDir: string;
 
     /**
      * Represents an HTML configuration, which can either be a single HtmlOptions object,
@@ -264,49 +335,6 @@ export interface Config {
          * @example "default"
          */
         name?: string;
-    };
-
-    /**
-     * Locale configuration for the extension.
-     */
-    locale: {
-        /**
-         * Directory for localizations. Can be located in the Shared directory,
-         * in the project root, or in a folder for a specific App.
-         *
-         * @example "locales"
-         *
-         * @path Full paths can be:
-         *
-         * - `{{inputDir}}/{{srcDir}}/{{localeDir}}`
-         * - `{{inputDir}}/{{sharedDir}}/{{localeDir}}`
-         * - `{{inputDir}}/{{appsDir}}/{{appDir}}/{{localeDir}}`
-         */
-        dir?: string;
-
-        /**
-         * Default locale for the extension.
-         * @example "en"
-         */
-        lang?: string | Language;
-
-        /**
-         * Default locale key from translation files or a string.
-         * @example "@app.name" or "Awesome App"
-         */
-        name?: string;
-
-        /**
-         * Default locale key for a short name from translation files or a string.
-         * @example "@app.short_name" or "Awesome"
-         */
-        shortName?: string;
-
-        /**
-         * Default locale key for description from translation files or a string.
-         * @example "@app.description" or "My awesome app description"
-         */
-        description?: string;
     };
 
     /**

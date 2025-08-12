@@ -103,6 +103,7 @@
     "test:service": "jest --testPathPattern=Service",
     "test:relay": "jest --testPathPattern=Relay",
     "test:locale": "jest --testPathPattern=Locale",
+    "test:manifest": "jest --testPathPattern=src/cli/builders/manifest",
     "test:entrypoint": "jest --testPathPattern=src/cli/entrypoint"
   },
   "devDependencies": {

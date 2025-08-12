@@ -7,7 +7,7 @@ import {Awaiter, PickNonFunctionProperties} from "@typing/helpers";
 type ExecutionWorld = chrome.scripting.ExecutionWorld;
 type RunAt = chrome.userScripts.RunAt;
 
-export const ContentScriptMatches = ["*://*/*"];
+export const ContentScriptMatches = ["http://*/*", "https://*/*"];
 
 export interface ContentScriptConfig {
     matches?: string[];
@@ -104,8 +104,8 @@ export type ContentScriptContainerTag = Exclude<keyof HTMLElementTagNameMap, "ht
 
 export type ContentScriptContainerOptions = {
     [Tag in ContentScriptContainerTag]: {
-        tagName: Tag;
-    } & Exclude<Optional<PickNonFunctionProperties<HTMLElementTagNameMap[Tag]>>, "id">;
+    tagName: Tag;
+} & Exclude<Optional<PickNonFunctionProperties<HTMLElementTagNameMap[Tag]>>, "id">;
 }[ContentScriptContainerTag];
 
 export type ContentScriptContainerFactory = (

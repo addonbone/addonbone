@@ -43,7 +43,7 @@ export default class extends AbstractAssetFinder {
     }
 
     public getDirectory(): string {
-        return this.config.locale.dir || "locales";
+        return this.config.localeDir || "locales";
     }
 
     public getNames(): ReadonlySet<string> {

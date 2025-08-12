@@ -50,8 +50,7 @@ export default definePlugin(() => {
             } satisfies RspackConfig;
         },
         manifest: async ({config, manifest}) => {
-            const {locale: localeFromConfig, browser} = config;
-            const {lang, name, shortName, description} = localeFromConfig;
+            const {lang, name, shortName, description, browser} = config;
 
             let language: Language = Language.English;
 

@@ -1,4 +1,4 @@
-import Builder from "../core/Builder";
+import Builder from "../../core/Builder";
 
 import {ViewConfig, ViewDefinition} from "@typing/view";
 

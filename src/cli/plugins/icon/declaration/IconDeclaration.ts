@@ -1,5 +1,3 @@
-import template from "./icon.d.ts?raw";
-
 import {FileBuilder} from "@cli/plugins/typescript";
 
 import {ReadonlyConfig} from "@typing/config";
@@ -15,8 +13,12 @@ export default class extends FileBuilder {
         return "icon.d.ts";
     }
 
+    protected url(): string {
+        return import.meta.url;
+    }
+
     protected template(): string {
-        let content = template;
+        let content = this.readFile();
 
         if (this.names.size > 0) {
             const type = '"' + Array.from(this.names).join('" | "') + '"';

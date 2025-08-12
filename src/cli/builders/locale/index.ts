@@ -9,8 +9,7 @@ import {ReadonlyConfig} from "@typing/config";
 export {LocaleBuilder, LocaleValidator};
 
 export default (language: Language, config: ReadonlyConfig): LocaleBuilderContract => {
-    const {browser, locale} = config;
-    const {name, shortName, description} = locale;
+    const {browser, name, shortName, description} = config;
 
     const validator = new LocaleValidator(browser, language)
         .setNameKey(extractLocaleKey(name))

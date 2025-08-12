@@ -1,5 +1,3 @@
-import template from "./locale.d.ts?raw";
-
 import {FileBuilder} from "@cli/plugins/typescript";
 
 import {ReadonlyConfig} from "@typing/config";
@@ -16,6 +14,10 @@ export default class extends FileBuilder {
         return "locale.d.ts";
     }
 
+    protected url(): string {
+        return import.meta.url;
+    }
+
     protected template(): string {
         const structure = this._structure;
 
@@ -27,7 +29,7 @@ export default class extends FileBuilder {
 
         const name = "GeneratedNativeStructure";
 
-        return template.replace(`interface ${name} {}`, `interface ${name} ${type}`);
+        return this.readFile().replace(`interface ${name} {}`, `interface ${name} ${type}`);
     }
 
     public structure(structure: LocaleStructure): this {

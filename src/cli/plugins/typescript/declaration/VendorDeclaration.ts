@@ -12,7 +12,10 @@ export default class extends FileBuilder {
     }
 
     protected template(): string {
-        const types = [`:package/client-types`].map(value => `/// <reference types="${value}" />`);
+        // prettier-ignore
+        const types = [
+            `:package/client-types`
+        ].map(value => `/// <reference types="${value}" />`);
 
         return types.join("\n");
     }

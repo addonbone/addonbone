@@ -2,9 +2,9 @@ import React, {PropsWithChildren, useCallback, useEffect, useMemo, useState} fro
 
 import {LocaleContext, LocaleContract} from "./context";
 
-import {getLocaleDir, isLocaleRtl} from "../utils";
+import {getLocaleDir, isLocaleRtl} from "@locale/utils";
 
-import {DynamicLocale} from "../providers";
+import {DynamicLocale} from "@locale/providers";
 
 import {Language} from "@typing/locale";
 

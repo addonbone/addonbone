@@ -7,7 +7,7 @@ import RelayDeclaration from "./RelayDeclaration";
 
 import {definePlugin} from "@main/plugin";
 
-import {EntrypointPlugin, isEntryModuleOrIssuer} from "@cli/bundler";
+import {EntrypointPlugin, onlyViaTopLevelEntry} from "@cli/bundler";
 
 import {Command} from "@typing/app";
 
@@ -40,7 +40,9 @@ export default definePlugin(() => {
                 return {};
             }
 
-            const plugin = EntrypointPlugin.from(await manager.entries()).virtual(file => manager.virtual(file));
+            // prettier-ignore
+            const plugin = EntrypointPlugin.from(await manager.entries())
+                .virtual(file => manager.virtual(file));
 
             if (config.command === Command.Watch) {
                 plugin.watch(async () => {
@@ -60,7 +62,7 @@ export default definePlugin(() => {
                             frameworkContent: {
                                 minChunks: 2,
                                 name: manager.chunkName(),
-                                test: isEntryModuleOrIssuer(["content", "relay"]),
+                                test: onlyViaTopLevelEntry(["content", "relay"]),
                                 chunks: (chunk): boolean => {
                                     return manager.likely(chunk.name);
                                 },

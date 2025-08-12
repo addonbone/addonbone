@@ -6,6 +6,7 @@ import _ from "lodash";
 import {
     assetPlugin,
     backgroundPlugin,
+    bundlerPlugin,
     contentPlugin,
     dotenvPlugin,
     htmlPlugin,
@@ -33,6 +34,7 @@ import {Command, Mode} from "@typing/app";
 import {Browser} from "@typing/browser";
 import {Plugin} from "@typing/plugin";
 import {ManifestVersion} from "@typing/manifest";
+import {Language} from "@typing/locale";
 
 const getUserConfig = async (config: ReadonlyConfig): Promise<UserConfig> => {
     const configFilePath = getConfigFile(config);
@@ -58,32 +60,32 @@ const getUserConfig = async (config: ReadonlyConfig): Promise<UserConfig> => {
 const validateConfig = (config: ReadonlyConfig): ReadonlyConfig => {
     const {
         outputDir,
-        srcDir,
+        sourceDir,
         sharedDir,
         appsDir,
-        appSrcDir,
+        appSourceDir,
         jsDir,
         cssDir,
         assetsDir,
         htmlDir,
         publicDir,
-        locale,
+        localeDir,
         icon,
     } = config;
 
     if (
         [
             outputDir,
-            srcDir,
+            sourceDir,
             sharedDir,
             appsDir,
-            appSrcDir,
+            appSourceDir,
             jsDir,
             cssDir,
             assetsDir,
             htmlDir,
             publicDir,
-            locale.dir,
+            localeDir,
             icon.outputDir,
             icon.sourceDir,
         ]
@@ -97,15 +99,15 @@ const validateConfig = (config: ReadonlyConfig): ReadonlyConfig => {
         throw new Error("Apps directory (appsDir) and shared directory (sharedDir) cannot be the same.");
     }
 
-    if (srcDir === outputDir) {
+    if (sourceDir === outputDir) {
         throw new Error("Source directory (srcDir) and destination directory (outputDir) cannot be the same.");
     }
 
-    if (srcDir === ".") {
+    if (sourceDir === ".") {
         throw new Error('Source directory cannot be the root directory (".") for security reasons.');
     }
 
-    if (publicDir === "." || [srcDir, outputDir, appSrcDir].includes(publicDir)) {
+    if (publicDir === "." || [sourceDir, outputDir, appSourceDir].includes(publicDir)) {
         throw new Error(
             'Public directory cannot be the root directory (".") or intersect with other root directories for security reasons.'
         );
@@ -161,27 +163,32 @@ export default async (config: OptionalConfig): Promise<Config> => {
         configFile = "adnbn.config.ts",
         browser = Browser.Chrome,
         app = "myapp",
+        name = app,
+        description,
+        shortName,
         version = "VERSION",
         minimumVersion = "MINIMUM_VERSION",
         author = undefined,
         email = "EMAIL",
         homepage = "HOMEPAGE",
+        lang = Language.English,
         incognito,
         inputDir = ".",
         outputDir = "dist",
-        srcDir = "src",
+        sourceDir = "src",
         sharedDir = "shared",
         appsDir = "apps",
-        appSrcDir = ".",
+        appSourceDir = ".",
+        localeDir = "locales",
         jsDir = "js",
         cssDir = "css",
         assetsDir = "assets",
         publicDir = "public",
         htmlDir = ".",
         html = [],
+        bundler = {},
         env = {},
         icon = {},
-        locale = {},
         manifestVersion = (new Set<Browser>([Browser.Safari]).has(browser) ? 2 : 3) as ManifestVersion,
         mode = Mode.Development,
         analyze = false,
@@ -223,28 +230,33 @@ export default async (config: OptionalConfig): Promise<Config> => {
         mode,
         browser,
         app,
+        name,
+        description,
+        shortName,
         version,
         minimumVersion,
         email,
         author,
         homepage,
+        lang,
         incognito,
         manifestVersion,
         inputDir,
         outputDir,
-        srcDir,
+        sourceDir,
         sharedDir,
         appsDir,
-        appSrcDir,
+        appSourceDir,
         jsDir,
         cssDir,
         assetsDir,
         publicDir,
         htmlDir,
+        localeDir,
         html,
+        bundler,
         env,
         icon,
-        locale,
         plugins,
         analyze,
         configFile,
@@ -279,6 +291,11 @@ export default async (config: OptionalConfig): Promise<Config> => {
 
     vars = {...vars, ...loadDotenv(resolvedConfig)};
 
+    /**
+     * IMPORTANT: the order of plugins matters. Early plugins prepare the environment and artifacts for the following ones
+     * (e.g., environment variables/output/transpilation/assets → page/version generation → bundling).
+     * Reordering may result in missing artifacts, incorrect configuration, or build failures.
+     */
     const corePlugins: Plugin[] = [
         dotenvPlugin(vars),
         outputPlugin(),
@@ -300,6 +317,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         viewPlugin(),
         htmlPlugin(),
         versionPlugin(),
+        bundlerPlugin(),
     ];
 
     return {

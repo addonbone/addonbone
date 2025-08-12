@@ -1,6 +1,6 @@
 import {act, renderHook, waitFor} from "@testing-library/react";
 
-import {SecureStorage, Storage} from "../providers";
+import {SecureStorage, Storage} from "../../providers";
 
 import useStorage from "./useStorage";
 

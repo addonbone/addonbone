@@ -1,4 +1,4 @@
-import isURL from "validator/lib/isURL";
+import isURL from "validator/lib/isURL.js";
 
 import AbstractMeta from "./AbstractMeta";
 

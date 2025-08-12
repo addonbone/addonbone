@@ -1,6 +1,6 @@
 import {renderHook} from "@testing-library/react";
 import useMessageHandler from "./useMessageHandler";
-import {Message} from "../providers";
+import {Message} from "../../providers";
 
 type MessageMap = {
     getStringLength: (data: string) => number;

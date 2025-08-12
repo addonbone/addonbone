@@ -1,86 +1,92 @@
-import {resolve} from "path";
-import {defineConfig, Options} from "tsup";
+import {Plugin} from "esbuild";
+import {defineConfig} from "tsup";
 import rawPlugin from "esbuild-plugin-raw";
+import {fixImportsPlugin} from "esbuild-fix-imports-plugin";
 
-const common: Options = {
-    dts: true,
-    clean: true,
-    treeshake: true,
-    sourcemap: true,
-    outDir: "dist",
-    target: "node14",
-    bundle: true,
-    splitting: false,
-    //@ts-ignore
-    esbuildPlugins: [rawPlugin()],
-    external: [/^node_modules/],
-    esbuildOptions(options) {
-        options.alias = {
-            "@cli": resolve(__dirname, "./src/cli"),
-            "@entry": resolve(__dirname, "./src/entry"),
-            "@locale": resolve(__dirname, "./src/locale"),
-            "@main": resolve(__dirname, "./src/main"),
-            "@message": resolve(__dirname, "./src/message"),
-            "@service": resolve(__dirname, "./src/service"),
-            "@relay": resolve(__dirname, "./src/relay"),
-            "@typing": resolve(__dirname, "./src/types"),
-        };
+const escapeRe = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+function fixCliIndexImports(src: string, targets: string[]): string {
+    if (targets.length === 0) return src;
+
+    const group = targets.map(escapeRe).join("|");
+
+    // 1) Alias: '@cli/<name>' or '@cli/<name>.js' -> '@cli/<name>/index.js'
+    const aliasRe = new RegExp(String.raw`(["'])@cli\/(${group})(?:\.js)?\1`, "g");
+
+    src = src.replace(aliasRe, (_m: string, q: string, mod: string) => {
+        return `${q}@cli/${mod}/index.js${q}`;
+    });
+
+    // 2) Any path ending with '/cli/<name>' or '/cli/<name>.js' but not already '/index.*'
+    const pathRe = new RegExp(
+        String.raw`(["'])([^"'\n]*\bcli\/(?:${group}))(?!\/index(?:\.(?:mjs|cjs|js|ts|jsx|tsx))?)(?:\.js)?\1`,
+        "g"
+    );
+
+    src = src.replace(pathRe, (_m: string, q: string, base: string) => {
+        return `${q}${base}/index.js${q}`;
+    });
+
+    return src;
+}
+
+const fixVirtualIndexImportPlugin: Plugin = {
+    name: "fix-virtual-index-import",
+    setup(build) {
+        const targets = ["virtual", "entrypoint"];
+        build.onLoad({filter: /\.(ts|js)$/}, async args => {
+            const {readFile} = await import("fs/promises");
+            let contents = await readFile(args.path, "utf8");
+
+            contents = fixCliIndexImports(contents, targets);
+
+            return {
+                contents,
+                loader: args.path.endsWith(".ts") ? "ts" : "js",
+            };
+        });
     },
 };
 
-const cli: Options = {
-    ...common,
-    entry: {
-        "cli/index": "src/cli/index.ts",
+export default defineConfig([
+    {
+        entry: [
+            "src/**/*.ts",
+            "!src/**/*.test.ts",
+            "!src/**/*.spec.ts",
+            "!src/**/*.d.ts",
+            "!src/cli/virtual/**/*",
+            "!src/cli/entrypoint/file/fixtures/**",
+        ],
+        bundle: false,
+        format: ["esm"],
+        outDir: "dist",
+        target: "node14",
+        clean: true,
+        dts: true,
+        sourcemap: true,
+        // @ts-ignore
+        esbuildPlugins: [fixVirtualIndexImportPlugin, fixImportsPlugin()],
+        esbuildOptions: options => {
+            options.outbase = "src";
+        },
+        outExtension: () => ({js: ".js"}),
     },
-    dts: false,
-    format: ["cjs"],
-    outExtension: () => ({js: ".cjs"}),
-};
-
-const framework: Options = {
-    ...common,
-    entry: {
-        index: "src/index.ts",
-
-        "locale/index": "src/locale/index.ts",
-        "locale/react/index": "src/locale/react/index.ts",
-
-        "message/index": "src/message/index.ts",
-        "message/react/index": "src/message/react/index.ts",
-
-        "offscreen/index": "src/offscreen/index.ts",
-
-        "storage/index": "src/storage/index.ts",
-        "storage/react/index": "src/storage/react/index.ts",
-
-        "service/index": "src/service/index.ts",
-
-        "relay/index": "src/relay/index.ts",
-
-        "entry/background/index": "src/entry/background/index.ts",
-
-        "entry/command/index": "src/entry/command/index.ts",
-
-        "entry/content/index": "src/entry/content/index.ts",
-        "entry/content/vanilla/index": "src/entry/content/vanilla/index.ts",
-        "entry/content/react/index": "src/entry/content/react/index.ts",
-
-        "entry/service/index": "src/entry/service/index.ts",
-        "entry/transport/index": "src/entry/transport/index.ts",
-        "entry/offscreen/index": "src/entry/offscreen/index.ts",
-        "entry/relay/index": "src/entry/relay/index.ts",
-
-        "entry/view/index": "src/entry/view/index.ts",
-        "entry/view/vanilla/index": "src/entry/view/vanilla/index.ts",
-        "entry/view/react/index": "src/entry/view/react/index.ts",
+    {
+        entry: ["src/cli/virtual/index.ts"],
+        format: ["esm"],
+        bundle: true,
+        outDir: "dist",
+        target: "node14",
+        clean: false,
+        dts: false,
+        sourcemap: false,
+        external: [/^@cli/],
+        // @ts-ignore
+        esbuildPlugins: [fixVirtualIndexImportPlugin, rawPlugin(), fixImportsPlugin()],
+        esbuildOptions: options => {
+            options.outbase = "src";
+        },
+        outExtension: () => ({js: ".js"}),
     },
-    format: ["esm", "cjs"],
-    outExtension({format}) {
-        return {
-            js: format === "esm" ? ".js" : ".cjs",
-        };
-    },
-};
-
-export default defineConfig([cli, framework]);
+]);

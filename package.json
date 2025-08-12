@@ -1,5 +1,6 @@
 {
   "name": "adnbn",
+  "type": "module",
   "version": "0.2.4",
   "description": "Addon 💀 Bone - Cross-browser web extension framework with shared code base",
   "homepage": "https://github.com/addonbone/addonbone",
@@ -22,77 +23,6 @@
   "bugs": {
     "url": "https://github.com/addonbone/addonbone/issues"
   },
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
-    },
-    "./locale": {
-      "types": "./dist/locale/index.d.ts",
-      "import": "./dist/locale/index.js",
-      "require": "./dist/locale/index.cjs"
-    },
-    "./locale/*": {
-      "types": "./dist/locale/*/index.d.ts",
-      "import": "./dist/locale/*/index.js",
-      "require": "./dist/locale/*/index.cjs"
-    },
-    "./message": {
-      "types": "./dist/message/index.d.ts",
-      "import": "./dist/message/index.js",
-      "require": "./dist/message/index.cjs"
-    },
-    "./message/*": {
-      "types": "./dist/message/*/index.d.ts",
-      "import": "./dist/message/*/index.js",
-      "require": "./dist/message/*/index.cjs"
-    },
-    "./offscreen": {
-      "types": "./dist/offscreen/index.d.ts",
-      "import": "./dist/offscreen/index.js",
-      "require": "./dist/offscreen/index.cjs"
-    },
-    "./storage": {
-      "types": "./dist/storage/index.d.ts",
-      "import": "./dist/storage/index.js",
-      "require": "./dist/storage/index.cjs"
-    },
-    "./storage/*": {
-      "types": "./dist/storage/*/index.d.ts",
-      "import": "./dist/storage/*/index.js",
-      "require": "./dist/storage/*/index.cjs"
-    },
-    "./service": {
-      "types": "./dist/service/index.d.ts",
-      "import": "./dist/service/index.js",
-      "require": "./dist/service/index.cjs"
-    },
-    "./relay": {
-      "types": "./dist/relay/index.d.ts",
-      "import": "./dist/relay/index.js",
-      "require": "./dist/relay/index.cjs"
-    },
-    "./entry/*": {
-      "types": "./dist/entry/*/index.d.ts",
-      "import": "./dist/entry/*/index.js",
-      "require": "./dist/entry/*/index.cjs"
-    },
-    "./entry/content/*": {
-      "types": "./dist/entry/content/*/index.d.ts",
-      "import": "./dist/entry/content/*/index.js",
-      "require": "./dist/entry/content/*/index.cjs"
-    },
-    "./entry/view/*": {
-      "types": "./dist/entry/view/*/index.d.ts",
-      "import": "./dist/entry/view/*/index.js",
-      "require": "./dist/entry/view/*/index.cjs"
-    },
-    "./client-types": {
-      "types": "./types/client.d.ts"
-    }
-  },
-  "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
@@ -100,12 +30,70 @@
     "dist",
     "types"
   ],
+  "sideEffects": false,
   "bin": {
     "adnbn": "bin/adnbn.js"
   },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./locale": {
+      "types": "./dist/locale/index.d.ts",
+      "default": "./dist/locale/index.js"
+    },
+    "./locale/*": {
+      "types": "./dist/locale/adapters/*/index.d.ts",
+      "default": "./dist/locale/adapters/*/index.js"
+    },
+    "./message": {
+      "types": "./dist/message/index.d.ts",
+      "default": "./dist/message/index.js"
+    },
+    "./message/*": {
+      "types": "./dist/message/adapters/*/index.d.ts",
+      "default": "./dist/message/adapters/*/index.js"
+    },
+    "./offscreen": {
+      "types": "./dist/offscreen/index.d.ts",
+      "default": "./dist/offscreen/index.js"
+    },
+    "./storage": {
+      "types": "./dist/storage/index.d.ts",
+      "default": "./dist/storage/index.js"
+    },
+    "./storage/*": {
+      "types": "./dist/storage/adapters/*/index.d.ts",
+      "default": "./dist/storage/adapters/*/index.js"
+    },
+    "./service": {
+      "types": "./dist/service/index.d.ts",
+      "default": "./dist/service/index.js"
+    },
+    "./relay": {
+      "types": "./dist/relay/index.d.ts",
+      "default": "./dist/relay/index.js"
+    },
+    "./entry/*": {
+      "types": "./dist/entry/*/index.d.ts",
+      "default": "./dist/entry/*/index.js"
+    },
+    "./entry/content/*": {
+      "types": "./dist/entry/content/adapters/*/index.d.ts",
+      "default": "./dist/entry/content/adapters/*/index.js"
+    },
+    "./entry/view/*": {
+      "types": "./dist/entry/view/adapters/*/index.d.ts",
+      "default": "./dist/entry/view/adapters/*/index.js"
+    },
+    "./client-types": {
+      "types": "./types/client.d.ts"
+    }
+  },
   "scripts": {
     "adnbn": "tsx ./src/cli/index.ts",
-    "build": "cross-env NODE_OPTIONS=--max-old-space-size=6046 tsup",
+    "build": "cross-env NODE_OPTIONS=--max-old-space-size=15046 tsup && node ./scripts/copy-dts.js",
     "format": "prettier --write .",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -115,6 +103,7 @@
     "test:service": "jest --testPathPattern=Service",
     "test:relay": "jest --testPathPattern=Relay",
     "test:locale": "jest --testPathPattern=Locale",
+    "test:manifest": "jest --testPathPattern=src/cli/builders/manifest",
     "test:entrypoint": "jest --testPathPattern=src/cli/entrypoint"
   },
   "devDependencies": {
@@ -129,8 +118,11 @@
     "@types/validator": "^13.15.1",
     "cross-env": "^7.0.3",
     "dotenv": "^16.4.7",
+    "esbuild-fix-imports-plugin": "^1.0.21",
+    "esbuild-plugin-copy": "^2.1.1",
     "esbuild-plugin-raw": "^0.1.8",
     "fs-extra": "^11.3.0",
+    "globby": "^14.1.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "jest-webextension-mock": "^4.0.0",
@@ -144,15 +136,17 @@
   },
   "dependencies": {
     "@adnbn/browser": "^0.1.7",
-    "@adnbn/inject-script": "^0.2.1",
+    "@adnbn/inject-script": "^0.2.2",
     "@rsdoctor/rspack-plugin": "^1.0.2",
     "@rspack/cli": "^1.3.8",
     "@rspack/core": "^1.3.8",
     "@svgr/webpack": "^8.1.0",
     "@types/chrome": "^0.0.323",
+    "buffer": "^6.0.3",
     "c12": "^3.0.3",
     "cac": "^6.7.14",
     "consola": "^3.4.2",
+    "crypto-browserify": "^3.12.1",
     "css-loader": "^7.1.2",
     "debounce": "^2.2.0",
     "file-loader": "^6.2.0",
@@ -163,16 +157,21 @@
     "lodash": "^4.17.21",
     "mini-css-extract-plugin": "^2.9.2",
     "nanoid": "^5.1.4",
+    "path-browserify": "^1.0.1",
     "pluralize": "^8.0.0",
+    "process": "^0.11.10",
     "rspack-plugin-virtual-module": "^0.1.13",
     "sass": "^1.83.4",
     "sass-loader": "^16.0.4",
     "semver": "^7.7.2",
     "source-modifier-loader": "^1.0.2",
+    "stream-browserify": "^3.0.0",
+    "string_decoder": "^1.3.0",
     "tsconfig-paths": "^4.2.0",
     "type-fest": "^4.37.0",
     "typescript": "^5.7.3",
     "validator": "^13.15.15",
+    "vm-browserify": "^1.1.2",
     "webpack-merge": "^6.0.1",
     "zod": "^3.24.2"
   },
@@ -189,5 +188,6 @@
     "@types/react-dom": {
       "optional": true
     }
-  }
+  },
+  "packageManager": "pnpm@10.12.1+sha512.f0dda8580f0ee9481c5c79a1d927b9164f2c478e90992ad268bbb2465a736984391d6333d2c327913578b2804af33474ca554ba29c04a8b13060a717675ae3ac"
 }

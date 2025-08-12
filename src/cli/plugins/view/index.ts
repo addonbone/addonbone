@@ -1,5 +1,5 @@
 import {definePlugin} from "@main/plugin";
-import {isEntryModuleOrIssuer} from "@cli/bundler";
+import {onlyViaTopLevelEntry} from "@cli/bundler";
 
 export {default as View} from "./View";
 
@@ -13,10 +13,10 @@ export default definePlugin(() => {
                         frameworkView: {
                             minChunks: 2,
                             name: "view",
-                            test: isEntryModuleOrIssuer("view"),
+                            test: onlyViaTopLevelEntry("view"),
                             enforce: false,
                             reuseExistingChunk: true,
-                            priority: 10,
+                            priority: 50,
                         },
                     },
                 },

@@ -1,5 +1,6 @@
 import path from "path";
 import fs from "fs";
+import {createRequire} from "module";
 
 import TsResolver from "./TsResolver";
 
@@ -83,15 +84,8 @@ export default class {
                 return importPath;
             }
 
-            // For external libraries used in tests, just return the import path
-            if (process.env.NODE_ENV === "test" && importPath === "somelib") {
-                return importPath;
-            }
-
-            return require.resolve(importPath, {paths: [this.baseDir]});
+            return createRequire(import.meta.url).resolve(importPath, {paths: [this.baseDir]});
         } catch {
-            // For external libraries that can't be resolved, return the import path as is
-            // This allows us to generate import('libraryName').TypeName syntax
             return importPath;
         }
     }

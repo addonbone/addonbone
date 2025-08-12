@@ -26,7 +26,7 @@ try {
         name: relayName,
         init,
         main,
-        ...options
+        ...options,
     })
         .content(new ContentScriptBuilder(options))
         .build()

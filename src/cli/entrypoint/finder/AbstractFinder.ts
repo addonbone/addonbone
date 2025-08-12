@@ -1,5 +1,5 @@
 import path from "path";
-import {createRequire} from 'module';
+import {createRequire} from "module";
 import _ from "lodash";
 
 import {toPosix} from "@cli/utils/path";

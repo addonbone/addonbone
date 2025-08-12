@@ -5,12 +5,7 @@ const setToArray = (set: Set<string>) => Array.from(set);
 
 describe("filterHostPatterns", () => {
     test("returns only <all_urls> when present", () => {
-        const input = toSet([
-            "<all_urls>",
-            "https://*/*",
-            "http://example.com/*",
-            "chrome-extension://*/*",
-        ]);
+        const input = toSet(["<all_urls>", "https://*/*", "http://example.com/*", "chrome-extension://*/*"]);
 
         const result = filterHostPatterns(input);
 
@@ -31,23 +26,15 @@ describe("filterHostPatterns", () => {
 
         const result = filterHostPatterns(input);
 
-        expect(new Set(result)).toEqual(
-            toSet(["*://*/*", "file://*/*", "chrome-extension://*/*"])
-        );
+        expect(new Set(result)).toEqual(toSet(["*://*/*", "file://*/*", "chrome-extension://*/*"]));
     });
 
     test("http wildcard covers only http; https specifics remain", () => {
-        const input = toSet([
-            "http://*/*",
-            "http://example.com/*",
-            "https://example.com/*",
-        ]);
+        const input = toSet(["http://*/*", "http://example.com/*", "https://example.com/*"]);
 
         const result = filterHostPatterns(input);
 
-        expect(new Set(result)).toEqual(
-            toSet(["http://*/*", "https://example.com/*"])
-        );
+        expect(new Set(result)).toEqual(toSet(["http://*/*", "https://example.com/*"]));
     });
 
     test("both http and https wildcards present; ftp specific remains", () => {
@@ -61,9 +48,7 @@ describe("filterHostPatterns", () => {
 
         const result = filterHostPatterns(input);
 
-        expect(new Set(result)).toEqual(
-            toSet(["http://*/*", "https://*/*", "ftp://example.com/*"])
-        );
+        expect(new Set(result)).toEqual(toSet(["http://*/*", "https://*/*", "ftp://example.com/*"]));
     });
 
     test("special schemes are never considered covered by *://*/*", () => {

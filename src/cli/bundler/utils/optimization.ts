@@ -16,7 +16,6 @@ const getEntryDirs = (entry: string | string[]): string[] => {
     ]);
 };
 
-
 export const onlyViaTopLevelEntry = (entry: string | string[]): OptimizationSplitChunksCacheGroupTestFn => {
     const entryDirs = getEntryDirs(entry);
 
@@ -24,8 +23,7 @@ export const onlyViaTopLevelEntry = (entry: string | string[]): OptimizationSpli
         return () => false;
     }
 
-    const isTargetRes = (res?: string) =>
-        !!res && entryDirs.some(dir => res!.includes(dir));
+    const isTargetRes = (res?: string) => !!res && entryDirs.some(dir => res!.includes(dir));
 
     const memoTopLevelTarget = new WeakMap<object, boolean>();
     const memoPathOk = new WeakMap<object, boolean>();

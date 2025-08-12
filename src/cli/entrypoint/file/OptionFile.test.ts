@@ -1,5 +1,5 @@
 import path from "path";
-
+jest.mock("./resolvers", () => require("./resolvers/tests/resolvers.mock"));
 import OptionFile from "./OptionFile";
 
 const fixtures = path.resolve(__dirname, "fixtures");

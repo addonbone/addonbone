@@ -1,7 +1,7 @@
 {
   "name": "adnbn",
   "type": "module",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "Addon 💀 Bone - Cross-browser web extension framework with shared code base",
   "homepage": "https://github.com/addonbone/addonbone",
   "repository": {
@@ -39,6 +39,18 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
+    "./entry/*": {
+      "types": "./dist/entry/*/index.d.ts",
+      "default": "./dist/entry/*/index.js"
+    },
+    "./entry/content/*": {
+      "types": "./dist/entry/content/adapters/*/index.d.ts",
+      "default": "./dist/entry/content/adapters/*/index.js"
+    },
+    "./entry/view/*": {
+      "types": "./dist/entry/view/adapters/*/index.d.ts",
+      "default": "./dist/entry/view/adapters/*/index.js"
+    },
     "./locale": {
       "types": "./dist/locale/index.d.ts",
       "default": "./dist/locale/index.js"
@@ -59,6 +71,14 @@
       "types": "./dist/offscreen/index.d.ts",
       "default": "./dist/offscreen/index.js"
     },
+    "./relay": {
+      "types": "./dist/relay/index.d.ts",
+      "default": "./dist/relay/index.js"
+    },
+    "./service": {
+      "types": "./dist/service/index.d.ts",
+      "default": "./dist/service/index.js"
+    },
     "./storage": {
       "types": "./dist/storage/index.d.ts",
       "default": "./dist/storage/index.js"
@@ -67,25 +87,9 @@
       "types": "./dist/storage/adapters/*/index.d.ts",
       "default": "./dist/storage/adapters/*/index.js"
     },
-    "./service": {
-      "types": "./dist/service/index.d.ts",
-      "default": "./dist/service/index.js"
-    },
-    "./relay": {
-      "types": "./dist/relay/index.d.ts",
-      "default": "./dist/relay/index.js"
-    },
-    "./entry/*": {
-      "types": "./dist/entry/*/index.d.ts",
-      "default": "./dist/entry/*/index.js"
-    },
-    "./entry/content/*": {
-      "types": "./dist/entry/content/adapters/*/index.d.ts",
-      "default": "./dist/entry/content/adapters/*/index.js"
-    },
-    "./entry/view/*": {
-      "types": "./dist/entry/view/adapters/*/index.d.ts",
-      "default": "./dist/entry/view/adapters/*/index.js"
+    "./transport": {
+      "types": "./dist/transport/index.d.ts",
+      "default": "./dist/transport/index.js"
     },
     "./client-types": {
       "types": "./types/client.d.ts"
@@ -110,6 +114,7 @@
     "@swc/core": "^1.11.7",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
+    "@types/chrome": "^0.1.3",
     "@types/jest": "^29.5.14",
     "@types/js-yaml": "^4.0.9",
     "@types/lodash": "^4.17.14",
@@ -119,7 +124,6 @@
     "cross-env": "^7.0.3",
     "dotenv": "^16.4.7",
     "esbuild-fix-imports-plugin": "^1.0.21",
-    "esbuild-plugin-copy": "^2.1.1",
     "esbuild-plugin-raw": "^0.1.8",
     "fs-extra": "^11.3.0",
     "globby": "^14.1.0",
@@ -138,10 +142,9 @@
     "@adnbn/browser": "^0.1.7",
     "@adnbn/inject-script": "^0.2.2",
     "@rsdoctor/rspack-plugin": "^1.0.2",
-    "@rspack/cli": "^1.3.8",
-    "@rspack/core": "^1.3.8",
+    "@rspack/cli": "^1.4.11",
+    "@rspack/core": "^1.4.11",
     "@svgr/webpack": "^8.1.0",
-    "@types/chrome": "^0.0.323",
     "buffer": "^6.0.3",
     "c12": "^3.0.3",
     "cac": "^6.7.14",
@@ -178,6 +181,7 @@
   "peerDependencies": {
     "@types/react": "*",
     "@types/react-dom": "*",
+    "@types/chrome": "*",
     "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
     "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
   },
@@ -188,6 +192,5 @@
     "@types/react-dom": {
       "optional": true
     }
-  },
-  "packageManager": "pnpm@10.12.1+sha512.f0dda8580f0ee9481c5c79a1d927b9164f2c478e90992ad268bbb2465a736984391d6333d2c327913578b2804af33474ca554ba29c04a8b13060a717675ae3ac"
+  }
 }

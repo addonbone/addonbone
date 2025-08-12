@@ -1,5 +1,6 @@
 import type {OffscreenUnresolvedDefinition} from "adnbn";
-import {isValidTransportDefinition, isValidTransportInitFunction, type TransportType} from "adnbn/entry/transport";
+import type {TransportType} from "adnbn/transport";
+import {isValidTransportDefinition, isValidTransportInitFunction} from "adnbn/entry/transport";
 import {Builder as OffscreenBuilder} from "adnbn/entry/offscreen";
 
 import {Builder as ViewBuilder} from "virtual:view-framework";
@@ -19,10 +20,10 @@ try {
         definition = {...definition, init: defaultDefinition};
     }
 
-    const {init, main, name = offscreenName, ...options} = definition;
+    const {init, main, name, ...options} = definition;
 
     new OffscreenBuilder({
-        name,
+        name: offscreenName,
         init,
         main,
         ...options,

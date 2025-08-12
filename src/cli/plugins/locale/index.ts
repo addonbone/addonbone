@@ -63,7 +63,7 @@ export default definePlugin(() => {
 
                 const availableLanguages = await locale.languages();
 
-                if (!availableLanguages.has(language)) {
+                if (availableLanguages.size > 0 && !availableLanguages.has(language)) {
                     throw new Error(
                         `Language "${language}" not found in available translations. Available languages: ${[...availableLanguages].join(", ")}`
                     );

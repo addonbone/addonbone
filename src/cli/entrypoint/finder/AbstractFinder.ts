@@ -1,4 +1,5 @@
 import path from "path";
+import {createRequire} from "module";
 import _ from "lodash";
 
 import {toPosix} from "@cli/utils/path";
@@ -70,11 +71,15 @@ export default abstract class implements EntrypointFinder {
     }
 
     protected resolve(name: string, filename: string): EntrypointFile {
-        const resolved = path.posix.join(name, filename);
+        const spec = path.posix.join(name, filename);
+
+        const require = createRequire(import.meta.url);
+
+        const file = require.resolve(spec, {paths: [process.cwd()]});
 
         return {
-            file: require.resolve(resolved, {paths: [process.cwd()]}),
-            import: resolved,
+            file,
+            import: spec,
             external: name,
         };
     }

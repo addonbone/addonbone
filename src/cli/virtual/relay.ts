@@ -1,5 +1,6 @@
 import type {RelayUnresolvedDefinition} from "adnbn";
-import {isValidTransportDefinition, isValidTransportInitFunction, type TransportType} from "adnbn/entry/transport";
+import type {TransportType} from "adnbn/transport";
+import {isValidTransportDefinition, isValidTransportInitFunction} from "adnbn/entry/transport";
 import {Builder as RelayBuilder} from "adnbn/entry/relay";
 
 import {Builder as ContentScriptBuilder} from "virtual:content-framework";
@@ -19,9 +20,14 @@ try {
         definition = {...definition, init: defaultDefinition};
     }
 
-    const {init, main, name = relayName, ...options} = definition;
+    const {init, main, name, ...options} = definition;
 
-    new RelayBuilder({name, init, main, ...options})
+    new RelayBuilder({
+        name: relayName,
+        init,
+        main,
+        ...options,
+    })
         .content(new ContentScriptBuilder(options))
         .build()
         .catch(e => {

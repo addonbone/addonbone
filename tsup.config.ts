@@ -52,6 +52,7 @@ export default defineConfig([
     {
         entry: [
             "src/**/*.ts",
+            "!src/**/tests/**",
             "!src/**/*.test.ts",
             "!src/**/*.spec.ts",
             "!src/**/*.d.ts",

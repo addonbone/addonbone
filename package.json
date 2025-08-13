@@ -101,14 +101,14 @@
     "format": "prettier --write .",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:offscreen": "jest --testPathPattern=Offscreen",
-    "test:message": "jest --testPathPattern=Message",
-    "test:storage": "jest --testPathPattern=Storage",
-    "test:service": "jest --testPathPattern=Service",
-    "test:relay": "jest --testPathPattern=Relay",
-    "test:locale": "jest --testPathPattern=Locale",
-    "test:manifest": "jest --testPathPattern=src/cli/builders/manifest",
-    "test:entrypoint": "jest --testPathPattern=src/cli/entrypoint"
+    "test:offscreen": "jest --testPathPatterns=Offscreen",
+    "test:message": "jest --testPathPatterns=src/message",
+    "test:storage": "jest --testPathPatterns=Storage",
+    "test:service": "jest --testPathPatterns=Service",
+    "test:relay": "jest --testPathPatterns=Relay",
+    "test:locale": "jest --testPathPatterns=Locale",
+    "test:manifest": "jest --testPathPatterns=src/cli/builders/manifest",
+    "test:entrypoint": "jest --testPathPatterns=src/cli/entrypoint"
   },
   "devDependencies": {
     "@swc/core": "^1.11.7",

@@ -26,10 +26,10 @@ const config: Config = {
                 jsc: {
                     target: "es2020",
                     parser: {syntax: "typescript", tsx: true, decorators: true},
-                    transform: {react: {runtime: "automatic"}}
-                }
-            }
-        ]
+                    transform: {react: {runtime: "automatic"}},
+                },
+            },
+        ],
     },
     testMatch: ["**/*.test.ts"],
 };

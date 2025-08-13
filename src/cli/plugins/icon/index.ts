@@ -2,9 +2,7 @@ import {Configuration as RspackConfig, CopyRspackPlugin, DefinePlugin} from "@rs
 
 import {definePlugin} from "@main/plugin";
 
-import {DefaultIconGroupName} from "@typing/icon";
-
-import Icon, {IconDefinition, CopyPatterns} from "./Icon";
+import Icon, {CopyPatterns, IconDefinition} from "./Icon";
 
 import {IconDeclaration} from "./declaration";
 
@@ -34,7 +32,7 @@ export default definePlugin(() => {
             } satisfies RspackConfig;
         },
         manifest: async ({manifest, config}) => {
-            manifest.setIcons(await icon.manifest()).setIcon(config.icon.name || DefaultIconGroupName);
+            manifest.setIcons(await icon.manifest()).setIcon(config.icon);
         },
     };
 });

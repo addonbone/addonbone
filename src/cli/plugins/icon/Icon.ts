@@ -11,7 +11,7 @@ export type IconDefinition = Record<string, Record<number, string>>;
 
 export default class extends IconFinder {
     protected createPathname(item: IconItem): string {
-        const dir = this.config.icon.outputDir || "icons";
+        const dir = this.config.iconOutDir;
 
         let {size, group} = item.name;
 

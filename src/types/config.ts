@@ -136,6 +136,21 @@ export interface Config {
     homepage: string | (() => string | undefined);
 
     /**
+     * Name of the icon group to use in the manifest as the primary extension icon (manifest.icons).
+     *
+     * An icon group is a named set of icons by sizes (e.g., 16, 32, 48, 128, ...).
+     * The value must match one of the available icon groups.
+     *
+     * @default: "default"
+     *
+     * Examples:
+     * - "default"
+     * - "active"
+     * - "disable"
+     */
+    icon: string;
+
+    /**
      * Used for Firefox under `browser_specific_settings.gecko.id`,
      * but only if the "storage" permission is declared.
      * Can be either:
@@ -221,6 +236,28 @@ export interface Config {
      * @default "."
      */
     appSrcDir: string;
+
+    /**
+     * Directory for icons and logos. Can be located in the Shared directory,
+     * in the project root, or in a folder for a specific App.
+     *
+     * @example "icons"
+     *
+     * @path Full paths can be:
+     *
+     * - `{{inputDir}}/{{srcDir}}/{{icon.sourceDir}}`
+     * - `{{inputDir}}/{{sharedDir}}/{{icon.sourceDir}}`
+     * - `{{inputDir}}/{{appsDir}}/{{appDir}}/{{icon.sourceDir}}`
+     */
+    iconSrcDir: string;
+
+    /**
+     * Directory for image files in outputDir.
+     *
+     * @example "icons"
+     * @path Full path: `{{inputDir}}/{{outputDir}}/{{appDir}}/{{icon.outputDir}}`
+     */
+    iconOutDir: string;
 
     /**
      * Directory for output JavaScript files in outputDir.
@@ -326,38 +363,6 @@ export interface Config {
      * - `{ filter: "PUBLIC_", crypt: true }` - include by prefix and obfuscate values
      */
     env: EnvFilterVariant | Partial<EnvFilterOptions>;
-
-    /**
-     * Icon configuration for the extension.
-     */
-    icon: {
-        /**
-         * Directory for icons and logos. Can be located in the Shared directory,
-         * in the project root, or in a folder for a specific App.
-         *
-         * @example "icons"
-         *
-         * @path Full paths can be:
-         *
-         * - `{{inputDir}}/{{srcDir}}/{{icon.sourceDir}}`
-         * - `{{inputDir}}/{{sharedDir}}/{{icon.sourceDir}}`
-         * - `{{inputDir}}/{{appsDir}}/{{appDir}}/{{icon.sourceDir}}`
-         */
-        sourceDir?: string;
-
-        /**
-         * Directory for image files in outputDir.
-         * @example "icons"
-         * @path Full path: `{{inputDir}}/{{outputDir}}/{{appDir}}/{{icon.outputDir}}`
-         */
-        outputDir?: string;
-
-        /**
-         * Default icon group name. If not specified, the default icons set will be used.
-         * @example "default"
-         */
-        name?: string;
-    };
 
     /**
      * Array of plugins used when building the extension.

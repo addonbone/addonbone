@@ -27,7 +27,7 @@ import {
     viewPlugin,
 } from "../plugins";
 
-import {getAppPath, getAppSourcePath, getConfigFile, fromRootPath} from "../resolvers/path";
+import {fromRootPath, getAppPath, getAppSourcePath, getConfigFile} from "../resolvers/path";
 
 import {Config, OptionalConfig, ReadonlyConfig, UserConfig} from "@typing/config";
 import {Command, Mode} from "@typing/app";
@@ -35,6 +35,7 @@ import {Browser} from "@typing/browser";
 import {Plugin} from "@typing/plugin";
 import {ManifestVersion} from "@typing/manifest";
 import {Language} from "@typing/locale";
+import {DefaultIconGroupName} from "@typing/icon";
 
 const getUserConfig = async (config: ReadonlyConfig): Promise<UserConfig> => {
     const configFilePath = getConfigFile(config);
@@ -70,7 +71,8 @@ const validateConfig = (config: ReadonlyConfig): ReadonlyConfig => {
         htmlDir,
         publicDir,
         localeDir,
-        icon,
+        iconSrcDir,
+        iconOutDir,
     } = config;
 
     if (
@@ -86,8 +88,8 @@ const validateConfig = (config: ReadonlyConfig): ReadonlyConfig => {
             htmlDir,
             publicDir,
             localeDir,
-            icon.outputDir,
-            icon.sourceDir,
+            iconSrcDir,
+            iconOutDir,
         ]
             .filter(dir => _.isString(dir))
             .some(dir => dir.includes(".."))
@@ -171,6 +173,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         author = undefined,
         email = "EMAIL",
         homepage = "HOMEPAGE",
+        icon = DefaultIconGroupName,
         lang = Language.English,
         incognito,
         rootDir = ".",
@@ -180,6 +183,8 @@ export default async (config: OptionalConfig): Promise<Config> => {
         appsDir = "apps",
         appSrcDir = ".",
         localeDir = "locales",
+        iconSrcDir = "icons",
+        iconOutDir = "icons",
         jsDir = "js",
         cssDir = "css",
         assetsDir = "assets",
@@ -188,7 +193,6 @@ export default async (config: OptionalConfig): Promise<Config> => {
         html = [],
         bundler = {},
         env = {},
-        icon = {},
         manifestVersion = (new Set<Browser>([Browser.Safari]).has(browser) ? 2 : 3) as ManifestVersion,
         mode = Mode.Development,
         analyze = false,
@@ -240,6 +244,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         author,
         homepage,
         lang,
+        icon,
         incognito,
         manifestVersion,
         rootDir,
@@ -254,10 +259,11 @@ export default async (config: OptionalConfig): Promise<Config> => {
         publicDir,
         htmlDir,
         localeDir,
+        iconSrcDir,
+        iconOutDir,
         html,
         bundler,
         env,
-        icon,
         plugins,
         analyze,
         configFile,

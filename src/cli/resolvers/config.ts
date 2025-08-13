@@ -27,7 +27,7 @@ import {
     viewPlugin,
 } from "../plugins";
 
-import {getAppPath, getAppSourcePath, getConfigFile, getInputPath} from "../resolvers/path";
+import {getAppPath, getAppSourcePath, getConfigFile, fromRootPath} from "../resolvers/path";
 
 import {Config, OptionalConfig, ReadonlyConfig, UserConfig} from "@typing/config";
 import {Command, Mode} from "@typing/app";
@@ -59,11 +59,11 @@ const getUserConfig = async (config: ReadonlyConfig): Promise<UserConfig> => {
 
 const validateConfig = (config: ReadonlyConfig): ReadonlyConfig => {
     const {
-        outputDir,
-        sourceDir,
+        outDir,
+        srcDir,
         sharedDir,
         appsDir,
-        appSourceDir,
+        appSrcDir,
         jsDir,
         cssDir,
         assetsDir,
@@ -75,11 +75,11 @@ const validateConfig = (config: ReadonlyConfig): ReadonlyConfig => {
 
     if (
         [
-            outputDir,
-            sourceDir,
+            outDir,
+            srcDir,
             sharedDir,
             appsDir,
-            appSourceDir,
+            appSrcDir,
             jsDir,
             cssDir,
             assetsDir,
@@ -99,15 +99,15 @@ const validateConfig = (config: ReadonlyConfig): ReadonlyConfig => {
         throw new Error("Apps directory (appsDir) and shared directory (sharedDir) cannot be the same.");
     }
 
-    if (sourceDir === outputDir) {
+    if (srcDir === outDir) {
         throw new Error("Source directory (srcDir) and destination directory (outputDir) cannot be the same.");
     }
 
-    if (sourceDir === ".") {
+    if (srcDir === ".") {
         throw new Error('Source directory cannot be the root directory (".") for security reasons.');
     }
 
-    if (publicDir === "." || [sourceDir, outputDir, appSourceDir].includes(publicDir)) {
+    if (publicDir === "." || [srcDir, outDir, appSrcDir].includes(publicDir)) {
         throw new Error(
             'Public directory cannot be the root directory (".") or intersect with other root directories for security reasons.'
         );
@@ -147,7 +147,7 @@ const loadDotenv = (config: ReadonlyConfig): DotenvParseOutput => {
 
     const appSourcePaths = preset.map(file => getAppSourcePath(config, file));
     const appPaths = preset.map(file => getAppPath(config, file));
-    const rootPaths = preset.map(file => getInputPath(config, file));
+    const rootPaths = preset.map(file => fromRootPath(config, file));
 
     const paths = [...appSourcePaths, ...appPaths, ...rootPaths];
 
@@ -173,12 +173,12 @@ export default async (config: OptionalConfig): Promise<Config> => {
         homepage = "HOMEPAGE",
         lang = Language.English,
         incognito,
-        inputDir = ".",
-        outputDir = "dist",
-        sourceDir = "src",
+        rootDir = ".",
+        outDir = "dist",
+        srcDir = "src",
         sharedDir = "shared",
         appsDir = "apps",
-        appSourceDir = ".",
+        appSrcDir = ".",
         localeDir = "locales",
         jsDir = "js",
         cssDir = "css",
@@ -210,6 +210,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         mergeService = false,
         mergeOffscreen = false,
         commonChunks = true,
+        artifactName = "[name]-[browser]-[mv]",
         assetsFilename = mode === Mode.Production && command === Command.Build && !debug
             ? "[contenthash:4][ext]"
             : "[name]-[contenthash:4][ext]",
@@ -241,12 +242,12 @@ export default async (config: OptionalConfig): Promise<Config> => {
         lang,
         incognito,
         manifestVersion,
-        inputDir,
-        outputDir,
-        sourceDir,
+        rootDir,
+        outDir,
+        srcDir,
         sharedDir,
         appsDir,
-        appSourceDir,
+        appSrcDir,
         jsDir,
         cssDir,
         assetsDir,
@@ -277,6 +278,7 @@ export default async (config: OptionalConfig): Promise<Config> => {
         mergeService,
         mergeOffscreen,
         commonChunks,
+        artifactName,
         assetsFilename,
         jsFilename,
         cssFilename,

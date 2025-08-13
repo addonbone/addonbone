@@ -3,37 +3,50 @@ import _ from "lodash";
 
 import {ReadonlyConfig} from "@typing/config";
 
-export const getRootPath = (to: string): string => {
+export const getResolvePath = (to: string): string => {
     return path.resolve(process.cwd(), to);
 };
 
-export const getInputPath = (config: ReadonlyConfig, to?: string): string => {
-    return path.join(config.inputDir, to ?? "");
+export const fromRootPath = (config: ReadonlyConfig, to?: string): string => {
+    return path.join(config.rootDir, to ?? "");
 };
 
 export const getSourcePath = (config: ReadonlyConfig, to?: string): string => {
-    return getInputPath(config, path.join(config.sourceDir, to ?? ""));
+    return fromRootPath(config, path.join(config.srcDir, to ?? ""));
 };
 
 export const getSharedPath = (config: ReadonlyConfig, to?: string): string => {
-    return getInputPath(config, path.join(config.sourceDir, config.sharedDir, to ?? ""));
+    return fromRootPath(config, path.join(config.srcDir, config.sharedDir, to ?? ""));
 };
 
 export const getAppPath = (config: ReadonlyConfig, to?: string): string => {
-    return getInputPath(config, path.join(config.sourceDir, config.appsDir, config.app, to ?? ""));
+    return fromRootPath(config, path.join(config.srcDir, config.appsDir, config.app, to ?? ""));
 };
 
 export const getAppSourcePath = (config: ReadonlyConfig, to?: string): string => {
-    return getAppPath(config, path.join(config.appSourceDir, to ?? ""));
+    return getAppPath(config, path.join(config.appSrcDir, to ?? ""));
 };
 
 export const getOutputPath = (config: ReadonlyConfig): string => {
-    return getInputPath(
-        config,
-        path.join(config.outputDir, `${_.kebabCase(config.app)}-${config.browser}-mv${config.manifestVersion}`)
-    );
+    return fromRootPath(config, path.join(config.outDir, getArtifactName(config)));
 };
 
 export const getConfigFile = (config: ReadonlyConfig): string => {
-    return getInputPath(config, config.configFile);
+    return fromRootPath(config, config.configFile);
+};
+
+export const getArtifactName = (config: ReadonlyConfig): string => {
+    const app = _.kebabCase(config.app);
+
+    const replacements: Record<string, string> = {
+        "[app]": app,
+        "[name]": app,
+        "[mode]": config.mode,
+        "[browser]": config.browser,
+        "[mv]": "mv" + config.manifestVersion.toString(),
+    };
+
+    const name = _.reduce(replacements, (result, value, key) => result.replaceAll(key, value), config.artifactName);
+
+    return _.kebabCase(name).replace(/\bmv-(\d+)/gi, "mv$1");
 };

@@ -170,7 +170,7 @@ export interface Config {
      * This is the base directory relative to which other paths are defined.
      * @example "addon"
      */
-    inputDir: string;
+    rootDir: string;
 
     /**
      * Directory where the built extensions will be placed.
@@ -180,7 +180,7 @@ export interface Config {
      *
      * @default "dist"
      */
-    outputDir: string;
+    outDir: string;
 
     /**
      * Directory where the application and shared directory are located.
@@ -190,7 +190,7 @@ export interface Config {
      *
      * @default "src"
      */
-    sourceDir: string;
+    srcDir: string;
 
     /**
      * Directory with common modules, content scripts, and background scripts.
@@ -220,7 +220,7 @@ export interface Config {
      *
      * @default "."
      */
-    appSourceDir: string;
+    appSrcDir: string;
 
     /**
      * Directory for output JavaScript files in outputDir.
@@ -529,6 +529,31 @@ export interface Config {
      * @default true
      */
     commonChunks: boolean;
+
+    /**
+     * Build artifact name.
+     *
+     * Used as:
+     * - the directory name where the built extension will be placed;
+     * - the base name of the packaged archive.
+     *
+     * Supports placeholders that are substituted and then normalized:
+     * - `[app]` / `[name]` — application name in kebab-case;
+     * - `[mode]` — current build mode (e.g., development, production);
+     * - `[browser]` — target browser;
+     * - `[mv]` — manifest version in mvN format (e.g., mv3).
+     *
+     * Notes:
+     * - the final name is automatically converted to kebab-case;
+     * - sequences like "mv-<number>" are normalized to "mv<number>" (e.g., "mv-3" → "mv3");
+     * - it is recommended to specify only a name (no paths or extensions).
+     *
+     * Examples:
+     * - `[app]` → `my-app`
+     * - `[app]-[browser]-[mv]` → `my-app-chrome-mv3`
+     * - `bundle-[name]-[mode]` → `bundle-my-app-production`
+     */
+    artifactName: string;
 
     /**
      * Template for generating asset output file names.

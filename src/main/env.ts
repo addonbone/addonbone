@@ -1,6 +1,7 @@
+import {decryptData} from "@cli/plugins/dotenv/crypt";
+
 import {Browser} from "@typing/browser";
 import {ManifestVersion} from "@typing/manifest";
-import {decryptData} from "@cli/plugins/dotenv/crypt";
 
 export const getEnv: {
     <T extends string>(key: string): T | undefined;

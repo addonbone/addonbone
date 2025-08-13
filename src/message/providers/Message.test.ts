@@ -80,7 +80,7 @@ describe("watch method", () => {
     test("prioritizes the first registered handler over others for the same message type", async () => {
         message.watch("getStringLength", (str: string) => str.length);
         message.watch((type, data) => {
-            // console.log(`TYPE: ${type}, DATA: ${data}`)
+            // console.log(`TYPE: ${type}, DATA: ${data}`)`
         });
 
         const result_1 = await message.send("getStringLength", "test");

@@ -1,9 +1,5 @@
 import {createHash} from "crypto";
 
-export const generateCryptoKey = (password: string): string => {
-    return createHash("sha256").update(password).digest("base64");
-};
-
 export const encryptData = <T = any>(data: T, key: string): string => {
     const jsonString = JSON.stringify(data);
     const dataBytes = Array.from(jsonString, c => c.charCodeAt(0));

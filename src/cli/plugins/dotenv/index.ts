@@ -1,14 +1,19 @@
 import _ from "lodash";
+import {createHash} from "crypto";
 
 import {DefinePlugin} from "@rspack/core";
 
 import {definePlugin} from "@main/plugin";
 
-import {encryptData, generateCryptoKey} from "./utils";
+import {encryptData} from "./utils";
 
 import {type DotenvParseOutput} from "dotenv";
 
 const ReservedEnvKeys = new Set<string>(["APP", "BROWSER", "MODE", "MANIFEST_VERSION"]);
+
+const generateKey = (value: string): string => {
+    return createHash("sha256").update(value).digest("base64");
+};
 
 export default definePlugin((vars: DotenvParseOutput = {}) => {
     return {
@@ -30,7 +35,7 @@ export default definePlugin((vars: DotenvParseOutput = {}) => {
                       })
                   );
 
-            const key = generateCryptoKey([config.app, ...Object.keys(filteredVars)].join("-"));
+            const key = generateKey([config.app, ...Object.keys(filteredVars)].join("-"));
 
             const data = crypt ? encryptData(filteredVars, key) : filteredVars;
 

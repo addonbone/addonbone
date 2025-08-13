@@ -1,15 +1,12 @@
-import _ from "lodash";
 import {createHash} from "crypto";
-
 import {DefinePlugin} from "@rspack/core";
 
 import {definePlugin} from "@main/plugin";
 
-import {encryptData} from "./utils";
+import {encryptData} from "./crypt";
+import {filterEnvVars, resolveEnvOptions} from "./utils";
 
 import {type DotenvParseOutput} from "dotenv";
-
-const ReservedEnvKeys = new Set<string>(["APP", "BROWSER", "MODE", "MANIFEST_VERSION"]);
 
 const generateKey = (value: string): string => {
     return createHash("sha256").update(value).digest("base64");
@@ -19,21 +16,9 @@ export default definePlugin((vars: DotenvParseOutput = {}) => {
     return {
         name: "adnbn:dotenv",
         bundler: ({config}) => {
-            const {filter, crypt} = config.env;
+            const {filter, crypt} = resolveEnvOptions(config.env);
 
-            const filteredVars = !filter
-                ? vars
-                : Object.fromEntries(
-                      Object.entries(vars).filter(([key]) => {
-                          if (
-                              ReservedEnvKeys.has(key) ||
-                              (_.isFunction(filter) && filter(key)) ||
-                              (_.isString(filter) && filter.trim() && key.startsWith(filter.trim()))
-                          ) {
-                              return true;
-                          }
-                      })
-                  );
+            const filteredVars = filterEnvVars(vars, filter);
 
             const key = generateKey([config.app, ...Object.keys(filteredVars)].join("-"));
 

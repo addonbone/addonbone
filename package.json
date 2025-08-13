@@ -108,7 +108,8 @@
     "test:relay": "jest --testPathPatterns=Relay",
     "test:locale": "jest --testPathPatterns=Locale",
     "test:manifest": "jest --testPathPatterns=src/cli/builders/manifest",
-    "test:entrypoint": "jest --testPathPatterns=src/cli/entrypoint"
+    "test:entrypoint": "jest --testPathPatterns=src/cli/entrypoint",
+    "test:plugins": "jest --testPathPatterns=src/cli/plugins"
   },
   "devDependencies": {
     "@swc/core": "^1.11.7",

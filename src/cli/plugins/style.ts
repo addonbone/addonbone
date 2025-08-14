@@ -8,7 +8,7 @@ import {definePlugin} from "@main/plugin";
 
 import {appFilenameResolver} from "@cli/bundler";
 
-import {getAppSourcePath, getRootPath, getSharedPath} from "@cli/resolvers/path";
+import {getAppSourcePath, getResolvePath, getSharedPath} from "@cli/resolvers/path";
 
 import {ReadonlyConfig} from "@typing/config";
 import {toPosix} from "@cli/utils/path";
@@ -17,13 +17,13 @@ import {toPosix} from "@cli/utils/path";
 const styleMergerLoader =
     (config: ReadonlyConfig) =>
         (sharedStyle: string, sharedPath: string): string | void => {
-            const sharedDir = getRootPath(getSharedPath(config));
+            const sharedDir = getResolvePath(getSharedPath(config));
 
             if (sharedPath.startsWith(sharedDir)) {
                 const relativePath = path.relative(sharedDir, sharedPath);
 
-                const appDir = getRootPath(getAppSourcePath(config));
-                const appPath = getRootPath(path.join(appDir, relativePath));
+                const appDir = getResolvePath(getAppSourcePath(config));
+                const appPath = getResolvePath(path.join(appDir, relativePath));
 
                 if (fs.existsSync(appPath)) {
                     try {

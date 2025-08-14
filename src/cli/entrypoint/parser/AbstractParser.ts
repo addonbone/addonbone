@@ -22,7 +22,7 @@ export default abstract class AbstractParser<O extends EntrypointOptions> implem
     protected abstract definition(): string | string[];
 
     constructor(protected readonly config: ReadonlyConfig) {
-        this.ir = new ImportResolver(TsResolver.make(path.resolve(this.config.inputDir, "tsconfig.json")));
+        this.ir = new ImportResolver(TsResolver.make(path.resolve(this.config.rootDir, "tsconfig.json")));
     }
 
     protected optionFile(file: EntrypointFile): OptionFile<Record<string, any>> {

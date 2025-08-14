@@ -50,13 +50,16 @@ export default class MessageManager<T extends MessageDictionary> {
         sender: MessageSender,
         sendResponse: (response?: any) => void
     ): boolean | void {
-        if (!message || typeof message !== "object" || !message.type) return;
+        if (!message || typeof message !== "object" || !message.type) {
+            return;
+        }
 
         const results: Promise<any>[] = [];
 
         for (const handler of this.handlers) {
             try {
                 const result = handler.run(message.type, message.data, sender);
+
                 if (result !== undefined) {
                     results.push(Promise.resolve(result));
                 }
@@ -73,7 +76,10 @@ export default class MessageManager<T extends MessageDictionary> {
 
         if (results.length === 1) {
             results[0].then(sendResponse);
+
             return true;
         }
+
+        sendResponse();
     }
 }

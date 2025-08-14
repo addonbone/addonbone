@@ -4,7 +4,7 @@ import {Configuration as RspackConfig} from "@rspack/core";
 import {definePlugin} from "@main/plugin";
 
 import {appFilenameResolver} from "@cli/bundler";
-import {getOutputPath, getRootPath} from "@cli/resolvers/path";
+import {getOutputPath, getResolvePath} from "@cli/resolvers/path";
 
 import {Command} from "@typing/app";
 
@@ -21,7 +21,7 @@ export default definePlugin(() => {
 
             return {
                 output: {
-                    path: getRootPath(getOutputPath(config)),
+                    path: getResolvePath(getOutputPath(config)),
                     filename,
                     chunkFilename: filename,
                     hotUpdateGlobal: camelApp + "HotUpdate",

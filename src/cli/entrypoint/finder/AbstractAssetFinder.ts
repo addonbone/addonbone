@@ -1,7 +1,7 @@
 import path from "path";
 import fs from "fs";
 
-import {getAppPath, getAppSourcePath, getRootPath, getSharedPath, getSourcePath} from "@cli/resolvers/path";
+import {getAppPath, getAppSourcePath, getResolvePath, getSharedPath, getSourcePath} from "@cli/resolvers/path";
 
 import AbstractFinder from "./AbstractFinder";
 
@@ -39,7 +39,7 @@ export default abstract class extends AbstractFinder {
 
         const parser = async (directory: string): Promise<void> => {
             if (files.size === 0 || this.canMerge()) {
-                const localeFiles = await this.findFiles(getRootPath(directory));
+                const localeFiles = await this.findFiles(getResolvePath(directory));
 
                 for (const file of localeFiles) {
                     files.add(file);

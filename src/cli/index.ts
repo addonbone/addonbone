@@ -33,7 +33,7 @@ cli.command("watch [root]", "Start watch mode")
                 app: options.app,
                 browser: options.browser,
                 manifestVersion: options.mv2 ? 2 : 3,
-                inputDir: root,
+                rootDir: root,
                 configFile: options.config,
             });
         } catch (e) {
@@ -57,7 +57,7 @@ cli.command("build [root]", "Build for production")
                 app: options.app,
                 browser: options.browser,
                 manifestVersion: options.mv2 ? 2 : 3,
-                inputDir: root,
+                rootDir: root,
                 configFile: options.config,
                 analyze: options.analyze,
             });

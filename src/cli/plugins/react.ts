@@ -3,7 +3,7 @@ import {Configuration as RspackConfig} from "@rspack/core";
 
 import {definePlugin} from "@main/plugin";
 
-import {getRootPath} from "@cli/resolvers/path";
+import {getResolvePath} from "@cli/resolvers/path";
 
 export default definePlugin(() => {
     return {
@@ -13,9 +13,9 @@ export default definePlugin(() => {
                 resolve: {
                     extensions: [".js", ".jsx"],
                     alias: {
-                        react: getRootPath(path.join("node_modules", "react")),
-                        "react-dom": getRootPath(path.join("node_modules", "react-dom")),
-                        scheduler: getRootPath(path.join("node_modules", "scheduler")),
+                        react: getResolvePath(path.join("node_modules", "react")),
+                        "react-dom": getResolvePath(path.join("node_modules", "react-dom")),
+                        scheduler: getResolvePath(path.join("node_modules", "scheduler")),
                     },
                 },
                 optimization: {

@@ -2,7 +2,6 @@ import type {Config} from "jest";
 
 const config: Config = {
     verbose: true,
-    preset: "ts-jest",
     testEnvironment: "jsdom",
     setupFiles: ["<rootDir>/tests/jest.setup.ts"],
     moduleNameMapper: {
@@ -19,11 +18,16 @@ const config: Config = {
     },
     extensionsToTreatAsEsm: [".ts", ".tsx"],
     transform: {
-        "^.+\\.tsx?$": [
-            "ts-jest",
+        "^.+\\.(t|j)sx?$": [
+            "@swc/jest",
             {
-                useESM: true,
-                tsconfig: "tsconfig.jest.json",
+                sourceMaps: true,
+                module: {type: "es6"},
+                jsc: {
+                    target: "es2020",
+                    parser: {syntax: "typescript", tsx: true, decorators: true},
+                    transform: {react: {runtime: "automatic"}},
+                },
             },
         ],
     },

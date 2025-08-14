@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 
-import {getInputPath, getRootPath} from "@cli/resolvers/path";
+import {fromRootPath, getResolvePath} from "@cli/resolvers/path";
 
 import {PackageName, SystemDir} from "@typing/app";
 import {ReadonlyConfig} from "@typing/config";
@@ -40,7 +40,7 @@ export default abstract class FileBuilder {
     }
 
     public build(): this {
-        const systemDirPath = getRootPath(getInputPath(this.config, SystemDir));
+        const systemDirPath = getResolvePath(fromRootPath(this.config, SystemDir));
 
         let content = this.content().replaceAll("// prettier-ignore", "");
 

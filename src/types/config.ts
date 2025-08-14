@@ -7,10 +7,11 @@ import {ManifestIncognitoValue, ManifestVersion} from "@typing/manifest";
 import {Plugin} from "@typing/plugin";
 import {Language} from "@typing/locale";
 import {Awaiter} from "@typing/helpers";
+import {EnvFilterOptions, EnvFilterVariant} from "@typing/env";
 
 /**
- * Configuration interface defining all the configurable options
- * needed to build, manage, and deploy browser extensions.
+ * Configuration object for defining various settings and build parameters
+ * for an extension application.
  */
 export interface Config {
     /**
@@ -135,6 +136,21 @@ export interface Config {
     homepage: string | (() => string | undefined);
 
     /**
+     * Name of the icon group to use in the manifest as the primary extension icon (manifest.icons).
+     *
+     * An icon group is a named set of icons by sizes (e.g., 16, 32, 48, 128, ...).
+     * The value must match one of the available icon groups.
+     *
+     * @default: "default"
+     *
+     * Examples:
+     * - "default"
+     * - "active"
+     * - "disable"
+     */
+    icon: string;
+
+    /**
      * Used for Firefox under `browser_specific_settings.gecko.id`,
      * but only if the "storage" permission is declared.
      * Can be either:
@@ -169,7 +185,7 @@ export interface Config {
      * This is the base directory relative to which other paths are defined.
      * @example "addon"
      */
-    inputDir: string;
+    rootDir: string;
 
     /**
      * Directory where the built extensions will be placed.
@@ -179,7 +195,7 @@ export interface Config {
      *
      * @default "dist"
      */
-    outputDir: string;
+    outDir: string;
 
     /**
      * Directory where the application and shared directory are located.
@@ -189,7 +205,7 @@ export interface Config {
      *
      * @default "src"
      */
-    sourceDir: string;
+    srcDir: string;
 
     /**
      * Directory with common modules, content scripts, and background scripts.
@@ -219,7 +235,29 @@ export interface Config {
      *
      * @default "."
      */
-    appSourceDir: string;
+    appSrcDir: string;
+
+    /**
+     * Directory for icons and logos. Can be located in the Shared directory,
+     * in the project root, or in a folder for a specific App.
+     *
+     * @example "icons"
+     *
+     * @path Full paths can be:
+     *
+     * - `{{inputDir}}/{{srcDir}}/{{icon.sourceDir}}`
+     * - `{{inputDir}}/{{sharedDir}}/{{icon.sourceDir}}`
+     * - `{{inputDir}}/{{appsDir}}/{{appDir}}/{{icon.sourceDir}}`
+     */
+    iconSrcDir: string;
+
+    /**
+     * Directory for image files in outputDir.
+     *
+     * @example "icons"
+     * @path Full path: `{{inputDir}}/{{outputDir}}/{{appDir}}/{{icon.outputDir}}`
+     */
+    iconOutDir: string;
 
     /**
      * Directory for output JavaScript files in outputDir.
@@ -282,7 +320,7 @@ export interface Config {
      * - { (): HtmlOptions | HtmlOptions[] }: A function that dynamically generates and
      *   returns either an HtmlOptions object or an array of HtmlOptions objects.
      */
-    html: HtmlOptions | HtmlOptions[] | {(): HtmlOptions | HtmlOptions[]};
+    html: HtmlOptions | HtmlOptions[] | (() => HtmlOptions | HtmlOptions[]);
 
     /**
      * Rspack bundler configuration.
@@ -300,59 +338,31 @@ export interface Config {
      * - The function parameter is mainly for inspecting the current config to decide whether
      *   additional adjustments are necessary.
      */
-    bundler: RspackConfig | {(rspack: RspackConfig): Awaiter<RspackConfig>};
+    bundler: RspackConfig | ((rspack: RspackConfig) => Awaiter<RspackConfig>);
 
     /**
-     * Environment configuration for the extension.
+     * Environment variables inclusion settings.
+     *
+     * Supports three forms:
+     * - string: treated as a prefix filter. Only variables whose names start with this prefix are included.
+     *   Equivalent to: { filter: "<PREFIX>" }.
+     * - function: a predicate that receives a variable name and returns true to include it.
+     *   Equivalent to: { filter: (name) => boolean }.
+     * - object: advanced settings.
+     *   - filter?: string | ((name: string) => boolean) — a prefix or predicate to select variables.
+     *   - crypt?: boolean — if true, values will be obfuscated with a simple reversible scheme
+     *     (for convenience only; not secure).
+     *
+     * Notes:
+     * - If no filter is provided (e.g., empty string or a function that always returns false), no variables are included.
+     * - Obfuscation is intended to reduce casual inspection only and should not be considered encryption.
+     *
+     * Examples:
+     * - `"APP_"` - include all variables starting with `APP_`
+     * - `(name) => name === "FEATURE_FLAG"` - include a single variable via predicate
+     * - `{ filter: "PUBLIC_", crypt: true }` - include by prefix and obfuscate values
      */
-    env: {
-        /**
-         * Filter that determines which environment variables should be included.
-         * Can be a string (interpreted as a prefix) or a function that receives
-         * the variable name and returns true if it should be included.
-         */
-        filter?: ((value: string) => boolean) | string;
-
-        /**
-         * If true, the environment variable values will be obfuscated with simple encryption.
-         * This is not secure encryption.
-         *
-         * @default false
-         */
-        crypt?: boolean;
-    };
-
-    /**
-     * Icon configuration for the extension.
-     */
-    icon: {
-        /**
-         * Directory for icons and logos. Can be located in the Shared directory,
-         * in the project root, or in a folder for a specific App.
-         *
-         * @example "icons"
-         *
-         * @path Full paths can be:
-         *
-         * - `{{inputDir}}/{{srcDir}}/{{icon.sourceDir}}`
-         * - `{{inputDir}}/{{sharedDir}}/{{icon.sourceDir}}`
-         * - `{{inputDir}}/{{appsDir}}/{{appDir}}/{{icon.sourceDir}}`
-         */
-        sourceDir?: string;
-
-        /**
-         * Directory for image files in outputDir.
-         * @example "icons"
-         * @path Full path: `{{inputDir}}/{{outputDir}}/{{appDir}}/{{icon.outputDir}}`
-         */
-        outputDir?: string;
-
-        /**
-         * Default icon group name. If not specified, the default icons set will be used.
-         * @example "default"
-         */
-        name?: string;
-    };
+    env: EnvFilterVariant | Partial<EnvFilterOptions>;
 
     /**
      * Array of plugins used when building the extension.
@@ -524,6 +534,31 @@ export interface Config {
      * @default true
      */
     commonChunks: boolean;
+
+    /**
+     * Build artifact name.
+     *
+     * Used as:
+     * - the directory name where the built extension will be placed;
+     * - the base name of the packaged archive.
+     *
+     * Supports placeholders that are substituted and then normalized:
+     * - `[app]` / `[name]` — application name in kebab-case;
+     * - `[mode]` — current build mode (e.g., development, production);
+     * - `[browser]` — target browser;
+     * - `[mv]` — manifest version in mvN format (e.g., mv3).
+     *
+     * Notes:
+     * - the final name is automatically converted to kebab-case;
+     * - sequences like "mv-<number>" are normalized to "mv<number>" (e.g., "mv-3" → "mv3");
+     * - it is recommended to specify only a name (no paths or extensions).
+     *
+     * Examples:
+     * - `[app]` → `my-app`
+     * - `[app]-[browser]-[mv]` → `my-app-chrome-mv3`
+     * - `bundle-[name]-[mode]` → `bundle-my-app-production`
+     */
+    artifactName: string;
 
     /**
      * Template for generating asset output file names.

@@ -2,7 +2,7 @@ import fs from "fs";
 import semver from "semver";
 
 import {getEnv} from "@main/env";
-import {getInputPath} from "@cli/resolvers/path";
+import {fromRootPath} from "@cli/resolvers/path";
 
 import AbstractVersion from "./AbstractVersion";
 
@@ -30,7 +30,7 @@ export default class extends AbstractVersion {
             return envVersion;
         }
 
-        const packagePath = getInputPath(this.config, "package.json");
+        const packagePath = fromRootPath(this.config, "package.json");
 
         try {
             const packageJson = JSON.parse(fs.readFileSync(packagePath, "utf-8"));

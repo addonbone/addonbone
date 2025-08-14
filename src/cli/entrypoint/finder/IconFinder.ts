@@ -91,7 +91,7 @@ export default class extends AbstractAssetFinder {
     }
 
     public getDirectory(): string {
-        return this.config.icon.sourceDir || "icons";
+        return this.config.iconSrcDir;
     }
 
     public canMerge(): boolean {

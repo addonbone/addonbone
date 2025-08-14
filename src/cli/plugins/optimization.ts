@@ -3,7 +3,7 @@ import {Configuration as RspackConfig, NormalModule} from "@rspack/core";
 
 import {definePlugin} from "@main/plugin";
 
-import {getRootPath, getSourcePath} from "@cli/resolvers/path";
+import {getResolvePath, getSourcePath} from "@cli/resolvers/path";
 
 export default definePlugin(() => {
     return {
@@ -30,7 +30,7 @@ export default definePlugin(() => {
                                         return false;
                                     }
 
-                                    return resource.startsWith(getRootPath(getSourcePath(config)));
+                                    return resource.startsWith(getResolvePath(getSourcePath(config)));
                                 },
                                 name: (module, chunks, cacheGroupKey) => {
                                     const entryNames = Array.from(

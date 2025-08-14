@@ -34,15 +34,23 @@ const fixVirtualIndexImportPlugin: Plugin = {
     name: "fix-virtual-index-import",
     setup(build) {
         const targets = ["virtual", "entrypoint"];
-        build.onLoad({filter: /\.(ts|js)$/}, async args => {
+        build.onLoad({filter: /\.(ts|tsx|js|jsx)$/}, async args => {
             const {readFile} = await import("fs/promises");
             let contents = await readFile(args.path, "utf8");
 
             contents = fixCliIndexImports(contents, targets);
 
+            const ext = args.path.endsWith(".tsx")
+                ? "tsx"
+                : args.path.endsWith(".ts")
+                  ? "ts"
+                  : args.path.endsWith(".jsx")
+                    ? "jsx"
+                    : "js";
+
             return {
                 contents,
-                loader: args.path.endsWith(".ts") ? "ts" : "js",
+                loader: ext,
             };
         });
     },
@@ -51,10 +59,11 @@ const fixVirtualIndexImportPlugin: Plugin = {
 export default defineConfig([
     {
         entry: [
-            "src/**/*.ts",
-            "!src/**/tests/**",
-            "!src/**/*.test.ts",
-            "!src/**/*.spec.ts",
+            "src/**/*.{ts,tsx}",
+            "!src/**/tests/**/*",
+            "!src/**/__tests__/**/*",
+            "!src/**/__mocks__/**/*",
+            "!src/**/*.{test,spec}.{ts,tsx}",
             "!src/**/*.d.ts",
             "!src/cli/virtual/**/*",
             "!src/cli/entrypoint/file/fixtures/**",

@@ -134,7 +134,7 @@
     "jest-webextension-mock": "^4.0.0",
     "prettier": "^3.6.2",
     "ts-node": "^10.9.2",
-    "tsup": "^8.3.6",
+    "tsup": "^8.5.0",
     "tsx": "^4.19.2",
     "uglify-js": "^3.19.3",
     "utility-types": "^3.11.0"
@@ -142,7 +142,7 @@
   "dependencies": {
     "@adnbn/browser": "^0.1.7",
     "@adnbn/inject-script": "^0.2.2",
-    "@rsdoctor/rspack-plugin": "^1.0.2",
+    "@rsdoctor/rspack-plugin": "~1.1.11",
     "@rspack/cli": "^1.4.11",
     "@rspack/core": "^1.4.11",
     "@svgr/webpack": "^8.1.0",

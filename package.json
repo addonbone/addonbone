@@ -123,6 +123,8 @@
     "@types/lodash": "^4.17.14",
     "@types/node": "^22.13.1",
     "@types/pluralize": "^0.0.33",
+    "@types/react": "^19.1.10",
+    "@types/react-dom": "^19.1.7",
     "@types/validator": "^13.15.1",
     "cross-env": "^7.0.3",
     "depcheck": "^1.4.7",

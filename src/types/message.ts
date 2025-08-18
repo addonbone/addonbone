@@ -55,5 +55,5 @@ export interface MessageHandler<T extends MessageDictionary> {
         type: MessageType<T>,
         data: MessageData<T, MessageType<T>>,
         sender: MessageSender
-    ): MessageResponse<T, MessageType<T>> | undefined;
+    ): MessageResponse<T, MessageType<T>> | undefined | null;
 }

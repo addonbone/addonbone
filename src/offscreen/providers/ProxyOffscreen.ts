@@ -18,7 +18,10 @@ import {TransportDictionary, TransportManager, TransportMessage, TransportName} 
 
 type CreateParameters = chrome.offscreen.CreateParameters;
 
-export default class ProxyOffscreen<N extends TransportName, T = DeepAsyncProxy<TransportDictionary[N]>> extends ProxyTransport<N, T> {
+export default class ProxyOffscreen<
+    N extends TransportName,
+    T = DeepAsyncProxy<TransportDictionary[N]>,
+> extends ProxyTransport<N, T> {
     protected message: TransportMessage;
 
     private url?: string;

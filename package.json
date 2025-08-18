@@ -1,7 +1,7 @@
 {
   "name": "adnbn",
   "type": "module",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "description": "Addon 💀 Bone - Cross-browser web extension framework with shared code base",
   "homepage": "https://github.com/addonbone/addonbone",
   "repository": {
@@ -123,6 +123,8 @@
     "@types/lodash": "^4.17.14",
     "@types/node": "^22.13.1",
     "@types/pluralize": "^0.0.33",
+    "@types/react": "^19.1.10",
+    "@types/react-dom": "^19.1.7",
     "@types/validator": "^13.15.1",
     "cross-env": "^7.0.3",
     "depcheck": "^1.4.7",
@@ -170,7 +172,6 @@
     "tsconfig-paths": "^4.2.0",
     "type-fest": "^4.37.0",
     "typescript": "^5.7.3",
-    "validator": "^13.15.15",
     "webpack-merge": "^6.0.1",
     "zod": "^3.24.2"
   },

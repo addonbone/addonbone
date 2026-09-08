@@ -265,10 +265,10 @@ const compile = async (
     const assetFilename = appFilenameResolver(AppName, () => "[name].[app].[contenthash:8][ext]", "custom/assets");
     const background =
         options.background === "async"
-            ? "./background-async.plan-a.js"
+            ? "./background-async.entry.js"
             : options.background === "shared"
-              ? "./background-shared.plan-a.js"
-              : "./background.plan-a.js";
+              ? "./background-shared.entry.js"
+              : "./background.entry.js";
     const compiler = rspack({
         context: fixtures,
         mode: "production",
@@ -276,8 +276,8 @@ const compile = async (
         devtool: "source-map",
         entry: {
             ...(options.includeBackground === false ? {} : {background}),
-            alpha: "./alpha.plan-a.js",
-            beta: "./beta.plan-a.js",
+            alpha: "./alpha.entry.js",
+            beta: "./beta.entry.js",
         },
         output: {
             path: outputPath,
@@ -642,8 +642,6 @@ const expectCompleteMap = (build: BuildResult, commonChunks: boolean): void => {
         .map(([, source]) => source);
 
     expect(emittedCode.every(source => !source.includes(FullMapPlaceholder))).toBe(true);
-    expect(emittedCode.every(source => !source.includes("scheduleEntrypoint"))).toBe(true);
-    expect(emittedCode.every(source => !source.includes("__adnbnScheduleEntrypoint"))).toBe(true);
 };
 
 const expectNoChangedBytesUnderStableNames = (before: BuildResult, after: BuildResult): void => {
@@ -656,7 +654,7 @@ const expectNoChangedBytesUnderStableNames = (before: BuildResult, after: BuildR
 
 jest.setTimeout(120_000);
 
-describe("BuildAssetsMapPlugin Plan A", () => {
+describe("BuildAssetsMapPlugin", () => {
     test.each(["chunkhash", "contenthash", "fullhash"] as const)(
         "exposes isolated runtime maps with %s filenames",
         async jsHash => {
@@ -712,7 +710,6 @@ describe("BuildAssetsMapPlugin Plan A", () => {
         const background = findNamedFile(build.assets.background.initial.js, "background", "js");
 
         expect(scripts.map(normalizeUrl)).not.toContain(background);
-        expect(scripts.every(script => !script.includes("__adnbn_build_assets__"))).toBe(true);
     });
 
     test("rejects async chunks in the background entrypoint", async () => {

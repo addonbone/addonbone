@@ -1,18 +1,15 @@
-import {
-    AssetInfo,
-    Chunk,
-    Compilation,
-    Compiler,
-    Filename,
-    PathData,
-    RuntimeGlobals,
-    RuntimeModule,
-    sources,
-} from "@rspack/core";
+import {Chunk, Compilation, Compiler, Filename, RuntimeGlobals, RuntimeModule, sources} from "@rspack/core";
 import stringify from "json-stringify-deterministic";
 import ts from "typescript";
 
 import {collectBuildAssets, setCompilationBuildAssets} from "@cli/bundler/utils/output";
+import {
+    CssContentHashType,
+    JavaScriptContentHashType,
+    resolveChunkFilename,
+    resolveFilenameTemplate,
+    filenameRequiresFullHash,
+} from "@cli/bundler/utils/chunk-filename";
 import {toPosix} from "@cli/utils/path";
 
 import type {EntrypointAssetsMap, EntrypointAssets} from "@typing/entrypoint";
@@ -25,11 +22,6 @@ const FullMapEnvelopeKey = "__adnbnBuildAssetsFullMap__";
 const CurrentMapEnvelopeKey = "__adnbnBuildAssetsCurrentMap__";
 const MapProperty = "__adnbnBuildAssets";
 const CurrentMapProperty = "__adnbnCurrentEntrypointAssets";
-const CssContentHashType = "css/mini-extract";
-const JavaScriptContentHashType = "javascript";
-const UnsupportedCallbackHashError =
-    "Build assets filename callbacks cannot read PathData hash values; return [contenthash], [chunkhash], or [fullhash] placeholders instead";
-
 // Hash-based output names are fixed when processAssets starts, so the asset graph is frozen here.
 const EmbedStage = Number.NEGATIVE_INFINITY;
 const FinalValidationStage = Infinity;
@@ -46,133 +38,7 @@ export interface BuildAssetsMapPluginOptions {
     readonly fullMapEntrypoint: string;
 }
 
-type FilenameTemplateCache = Map<Filename, Map<Chunk, Map<string, string>>>;
 type RuntimeModuleFingerprints = Map<Chunk, Map<string, string>>;
-
-const filenameTemplateCaches = new WeakMap<Compilation, FilenameTemplateCache>();
-
-// Final hashes do not exist while chunkHash is calculated. Returning placeholders keeps the callback result
-// hashable before Rspack resolves those placeholders into the emitted filename.
-const rejectResolvedHashAccess = <T extends object>(value: T): T => {
-    return new Proxy(value, {
-        get(target, property, receiver) {
-            if (property === "hash" || property === "contentHash") {
-                throw new Error(UnsupportedCallbackHashError);
-            }
-
-            return Reflect.get(target, property, receiver);
-        },
-    });
-};
-
-const getFilenameCallbackContext = (
-    compilation: Compilation,
-    chunk: Chunk,
-    contentHashType: string
-): {assetInfo: AssetInfo; pathData: PathData} => {
-    const id = chunk.id == null ? undefined : String(chunk.id);
-    const pathData: PathData = {
-        chunk: rejectResolvedHashAccess({
-            id,
-            name: chunk.name ?? id,
-            hash: chunk.hash ?? undefined,
-        }),
-        contentHash: chunk.contentHash[contentHashType],
-        hash: compilation.fullHash ?? undefined,
-    };
-    const assetInfo: AssetInfo = {
-        fullhash: [],
-        chunkhash: [],
-        contenthash: [],
-        related: {},
-        assetType: contentHashType === JavaScriptContentHashType ? "javascript" : "extract-css",
-    };
-
-    if (contentHashType === JavaScriptContentHashType) {
-        pathData.runtime = undefined;
-        assetInfo.javascriptModule = Boolean(compilation.outputOptions.module);
-    }
-
-    return {assetInfo, pathData: rejectResolvedHashAccess(pathData)};
-};
-
-const getFilenamePathData = (compilation: Compilation, chunk: Chunk, contentHashType: string): PathData => {
-    return {
-        chunk,
-        contentHash: chunk.contentHash[contentHashType],
-        contentHashType,
-        hash: compilation.fullHash ?? undefined,
-    };
-};
-
-const resolveFilenameTemplate = (
-    compilation: Compilation,
-    chunk: Chunk,
-    filename: Filename,
-    contentHashType: string
-): string => {
-    if (typeof filename !== "function") {
-        return filename;
-    }
-
-    let compilationCache = filenameTemplateCaches.get(compilation);
-
-    if (!compilationCache) {
-        compilationCache = new Map();
-        filenameTemplateCaches.set(compilation, compilationCache);
-    }
-
-    let filenameCache = compilationCache.get(filename);
-
-    if (!filenameCache) {
-        filenameCache = new Map();
-        compilationCache.set(filename, filenameCache);
-    }
-
-    let chunkCache = filenameCache.get(chunk);
-
-    if (!chunkCache) {
-        chunkCache = new Map();
-        filenameCache.set(chunk, chunkCache);
-    }
-
-    const cached = chunkCache.get(contentHashType);
-
-    if (cached !== undefined) {
-        return cached;
-    }
-
-    const {assetInfo, pathData} = getFilenameCallbackContext(compilation, chunk, contentHashType);
-    const template = filename(pathData, assetInfo);
-
-    chunkCache.set(contentHashType, template);
-
-    return template;
-};
-
-const resolveChunkFilename = (
-    compilation: Compilation,
-    chunk: Chunk,
-    filename: Filename,
-    contentHashType: string
-): string => {
-    const data = getFilenamePathData(compilation, chunk, contentHashType);
-    const template = resolveFilenameTemplate(compilation, chunk, filename, contentHashType);
-
-    return toPosix(compilation.getPath(template, data));
-};
-
-const filenameRequiresFullHash = (
-    compilation: Compilation,
-    chunk: Chunk,
-    filename: Filename,
-    contentHashType: string
-): boolean => {
-    const template = resolveFilenameTemplate(compilation, chunk, filename, contentHashType);
-    const callbackUsesHash = typeof filename === "function" && /\b(?:fullHash|hash)\b/.test(filename.toString());
-
-    return callbackUsesHash || /\[(?:fullhash|hash)(?::\d+)?\]/i.test(template);
-};
 
 const validateAsyncChunkFilenames = (compilation: Compilation, cssChunkFilename: Filename): void => {
     const asyncChunks = new Set(
@@ -231,6 +97,9 @@ const chunkHasCss = (compilation: Compilation, chunk: Chunk): boolean => {
 };
 
 const chunkHasJavaScript = (compilation: Compilation, chunk: Chunk): boolean => {
+    // splitChunks can move every user module out of an entry, but its bootstrap
+    // still emits a JavaScript file and remains an initial dependency.
+    if (chunk.hasRuntime()) return true;
     return Array.from(compilation.chunkGraph.getChunkModulesIterable(chunk)).some(module => {
         return module.type.startsWith("javascript");
     });

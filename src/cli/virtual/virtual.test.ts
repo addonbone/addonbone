@@ -1,4 +1,5 @@
 import {execFileSync} from "child_process";
+import {readFileSync} from "fs";
 import path from "path";
 import ts from "typescript";
 
@@ -96,6 +97,13 @@ describe("Built virtual modules", () => {
 
     test("covers every built generator", () => {
         expect(Object.keys(generated.ts).sort()).toEqual(cases.map(({generator}) => generator).sort());
+    });
+
+    test("keeps the entrypoint dependency external with a relative ESM path", () => {
+        const source = readFileSync(path.join(projectDir, "dist/cli/virtual/index.js"), "utf8");
+        const importedFiles = ts.preProcessFile(source).importedFiles.map(file => file.fileName);
+
+        expect(importedFiles).toContain("../entrypoint/index.js");
     });
 
     describe.each([

@@ -56,6 +56,17 @@ const fixVirtualIndexImportPlugin = (): Plugin => ({
     },
 });
 
+const virtualEntrypointImportPlugin = (): Plugin => ({
+    name: "virtual-entrypoint-import",
+    setup(build) {
+        // Keep the entrypoint module external; only the build knows its emitted ESM path.
+        build.onResolve({filter: /^@cli\/entrypoint$/}, () => ({
+            path: "../entrypoint/index.js",
+            external: true,
+        }));
+    },
+});
+
 const runtimeTemplateEntries = [
     "src/cli/bundler/plugins/runtime-data/templates.ts",
     "src/cli/bundler/plugins/chunk-loader/templates.ts",
@@ -98,10 +109,9 @@ export default defineConfig([
         clean: false,
         dts: false,
         sourcemap: false,
-        external: ["../entrypoint/index.js"],
         // Raw templates are source text; output-wide import rewrites corrupt their package specifiers.
         // @ts-ignore
-        esbuildPlugins: [rawPlugin()],
+        esbuildPlugins: [virtualEntrypointImportPlugin(), rawPlugin()],
         esbuildOptions: options => {
             options.outbase = "src";
         },

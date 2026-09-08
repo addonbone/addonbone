@@ -142,15 +142,8 @@ export default class EntrypointPlugin {
     protected async hookWatchRun(compiler: Compiler): Promise<void> {
         const {modifiedFiles = new Set()} = compiler;
 
-        const watchFiles = this.watchFiles;
-
-        const needUpdate = Array.from(modifiedFiles).some(file => {
-            if (path.isAbsolute(file)) {
-                file = path.relative(compiler.context, file);
-            }
-
-            return watchFiles.has(file);
-        });
+        const watchFiles = new Set(Array.from(this.watchFiles, file => path.resolve(compiler.context, file)));
+        const needUpdate = Array.from(modifiedFiles).some(file => watchFiles.has(path.resolve(compiler.context, file)));
 
         if (!needUpdate) {
             return;

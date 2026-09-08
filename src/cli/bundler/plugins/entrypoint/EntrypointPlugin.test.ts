@@ -16,6 +16,23 @@ class TestEntrypointPlugin extends EntrypointPlugin {
     }
 }
 
+test.each(["./example.content.ts", path.resolve("example.content.ts")])(
+    "watch recognizes the entry path %s",
+    async filename => {
+        const entries = new Map([["example.content", new Set([{file: filename, import: filename}])]]);
+        const update = jest.fn(async () => entries);
+        const plugin = new TestEntrypointPlugin(entries).watch(update);
+        const entry = {} as EntryNormalized;
+        plugin.applyEntryOptions(entry);
+        await plugin.applyWatch({
+            context: process.cwd(),
+            modifiedFiles: new Set([path.resolve("example.content.ts")]),
+            options: {entry},
+        } as unknown as Compiler);
+        expect(update).toHaveBeenCalledTimes(1);
+    }
+);
+
 test("applies entry options while preserving existing entry configuration", () => {
     const plugin = new TestEntrypointPlugin(
         new Map([

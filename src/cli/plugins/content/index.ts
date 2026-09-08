@@ -1,4 +1,4 @@
-import {Chunk, Configuration as RspackConfig, DefinePlugin, NormalModule} from "@rspack/core";
+import {Chunk, Configuration as RspackConfig, NormalModule} from "@rspack/core";
 import {merge as mergeConfig} from "webpack-merge";
 
 import ContentManager from "./ContentManager";
@@ -9,11 +9,11 @@ import {getContentChunkName, getContentLayer} from "./utils";
 
 import {definePlugin} from "@main/plugin";
 
-import {ChunkLoaderPlugin, EntrypointPlugin, onlyViaTopLevelEntry, ShadowStylesPlugin} from "@cli/bundler";
+import {ChunkLoaderPlugin, EntrypointPlugin, onlyViaTopLevelEntry, ShadowStylesPlugin, RuntimeDataPlugin, type RuntimeDataPluginData} from "@cli/bundler";
 
 import {Command} from "@typing/app";
 import {ContentScriptWorld} from "@typing/content";
-import {RelayOptions} from "@typing/relay";
+import {RelayOptionsRuntimeProperty} from "@typing/relay";
 
 export default definePlugin(() => {
     let content: Content;
@@ -40,15 +40,18 @@ export default definePlugin(() => {
             relayDeclaration.dictionary(await relay.dictionary()).build();
 
             let rspack: RspackConfig = {};
-            let options: Record<string, RelayOptions> = {};
+            const getRelayData = async (): Promise<RuntimeDataPluginData> =>
+                JSON.parse(JSON.stringify(await relay.getOptionsMap()));
+            const relayDataPlugin = new RuntimeDataPlugin({
+                property: RelayOptionsRuntimeProperty,
+                data: await getRelayData(),
+            });
 
             if (await manager.empty()) {
                 if (config.debug) {
                     console.warn("Content script or relay entries not found");
                 }
             } else {
-                options = await relay.getOptionsMap();
-
                 const entries = await manager.entries();
                 let entryWorlds = await manager.entryWorlds();
                 let entryShadows = await manager.entryShadows();
@@ -82,6 +85,7 @@ export default definePlugin(() => {
                         manager.clear();
 
                         relayDeclaration.dictionary(await relay.dictionary()).build();
+                        relayDataPlugin.update(await getRelayData());
 
                         const entries = await manager.entries();
                         entryWorlds = await manager.entryWorlds();
@@ -139,11 +143,7 @@ export default definePlugin(() => {
             }
 
             return mergeConfig(rspack, {
-                plugins: [
-                    new DefinePlugin({
-                        __ADNBN_RELAY_OPTIONS__: JSON.stringify(options),
-                    }),
-                ],
+                plugins: [relayDataPlugin],
             });
         },
         manifest: async ({manifest}) => {

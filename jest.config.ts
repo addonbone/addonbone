@@ -12,6 +12,7 @@ const config: Config = {
         "^@locale/(.*)$": "<rootDir>/src/locale/$1",
         "^@offscreen/(.*)$": "<rootDir>/src/offscreen/$1",
         "^@message/(.*)$": "<rootDir>/src/message/$1",
+        "^@relay/(.*)$": "<rootDir>/src/relay/$1",
         "^@sandbox/(.*)$": "<rootDir>/src/sandbox/$1",
         "^@service/(.*)$": "<rootDir>/src/service/$1",
         "^@storage/(.*)$": "<rootDir>/src/storage/$1",

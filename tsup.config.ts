@@ -57,6 +57,7 @@ const fixVirtualIndexImportPlugin = (): Plugin => ({
 });
 
 const runtimeTemplateEntries = [
+    "src/cli/bundler/plugins/runtime-data/templates.ts",
     "src/cli/bundler/plugins/chunk-loader/templates.ts",
     "src/cli/bundler/plugins/shadow-styles/templates.ts",
 ];

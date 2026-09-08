@@ -1,11 +1,18 @@
 import {EntrypointOptions} from "@typing/entrypoint";
 import {ContentScriptConfig, ContentScriptContext, ContentScriptDefinition} from "@typing/content";
-import {TransportConfig, TransportDefinition, TransportType, type TransportProxyTarget} from "@typing/transport";
+import {TransportConfig, TransportDefinition, TransportType, type TransportProxyTarget, type TransportTarget} from "@typing/transport";
 import {Awaiter} from "@typing/helpers";
 import type {MessageError} from "@typing/message";
-import type {RelayRegistry} from "@relay/index";
 
 export const RelayGlobalKey = "adnbnRelay";
+
+/** Shared build/runtime key for the serialized Relay options map. */
+export const RelayOptionsRuntimeProperty = "__adnbnRelayOptions";
+
+/** Augmented through adnbn/relay by the generated Relay declarations of the consuming application. */
+export interface RelayRegistry {}
+
+export type RelayName = Extract<keyof RelayRegistry, string>;
 
 export enum RelayMethod {
     Scripting = "scripting",
@@ -165,6 +172,8 @@ export type RelayBatchRpcProxy<T> = {
 };
 
 export type RelayBatchRpcProxyObject<T> = (() => Promise<RelayFramesResult<Awaited<T>>>) & RelayBatchRpcProxy<T>;
+
+export type RelayTarget<N extends keyof RelayRegistry> = TransportTarget<RelayRegistry, N>;
 
 export type RelayProxyTarget<N extends keyof RelayRegistry> = TransportProxyTarget<RelayRegistry, N>;
 

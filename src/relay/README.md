@@ -180,7 +180,9 @@ RelayParser / RelayFinder
 
 `ProxyRelay` checks this gate once per logical call, not once per frame. An allowed call proceeds synchronously into the adapter; otherwise it requests the configured permissions and rejects if the user denies them. Messaging does not request Scripting permissions. The cache is not a security boundary: the browser still enforces access.
 
-The options map comes from the bundler-generated `__ADNBN_RELAY_OPTIONS__`. An existing permission instance is not reconfigured when another map is passed. Runtime option hot replacement, revisions, and subscription disposal for HMR are not implemented; do not assume build-time cache clearing provides them.
+The content plugin supplies the options map to `RuntimeDataPlugin`, which embeds it in each entry runtime under the shared `RelayOptionsRuntimeProperty` key. `getRelay()` reads that runtime data; no separate file or background dependency is added. Watch rebuilds refresh the map together with Relay declarations, including changed names and removed optional values.
+
+An existing permission instance is not reconfigured when another map is passed. Runtime option hot replacement, revisions, and subscription disposal for HMR are not implemented; do not assume build-time cache clearing provides them.
 
 ## Discovery and transport internals
 

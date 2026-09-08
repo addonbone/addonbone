@@ -1,6 +1,6 @@
 /** @jest-environment node */
 import {spawn, type ChildProcess} from "child_process";
-import {copyFile, readFile, rm} from "fs/promises";
+import {copyFile, readFile, rm, writeFile} from "fs/promises";
 import path from "path";
 import vm from "vm";
 
@@ -42,7 +42,9 @@ test("content plugin delivers Relay options and refreshes names, methods and opt
         await rm(path.join(fixture.directory, "src/iframe.relay.ts"));
         await copyFile(path.join(__dirname, "states/background.ts"), path.join(fixture.directory, "src/background.ts"));
         const entry = path.join(fixture.directory, "src/shadow.relay.ts");
-        const setState = (state: string) => copyFile(path.join(__dirname, "states", `${state}.ts`), entry);
+        // Save like an editor: Windows copyFile preserves the fixture's old mtime, so watch can miss the edit.
+        const setState = async (state: string) =>
+            writeFile(entry, await readFile(path.join(__dirname, "states", `${state}.ts`)));
         await setState("messaging");
         const directory = await fixture.build({browser: "chrome"});
         const inspect = async () => {
@@ -63,18 +65,22 @@ test("content plugin delivers Relay options and refreshes names, methods and opt
         });
         watcher.stdout?.on("data", chunk => (output += chunk));
         watcher.stderr?.on("data", chunk => (output += chunk));
-        await waitFor(inspect);
+        await waitFor(inspect, 15000, "initial Relay watch build");
 
         for (const [state, expected] of [
             ["scripting", expectedScripting],
             ["messaging", expectedMessaging],
         ] as const) {
             await setState(state);
-            await waitFor(async () => {
-                const options = await inspect();
-                expect(options).toEqual(expected);
-                return options;
-            }, 15000);
+            await waitFor(
+                async () => {
+                    const options = await inspect();
+                    expect(options).toEqual(expected);
+                    return options;
+                },
+                15000,
+                `CLI watch Relay state "${state}"`
+            );
             const declaration = await readFile(path.join(fixture.directory, ".adnbn/relay.d.ts"), "utf8");
             const name = Object.keys(expected)[0];
             expect(declaration).toContain(name);

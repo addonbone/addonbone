@@ -3,7 +3,11 @@ import type {ChildProcess} from "child_process";
 
 const delay = (milliseconds: number) => new Promise(resolve => setTimeout(resolve, milliseconds));
 
-export const waitFor = async <T>(callback: () => Promise<T | undefined>, timeout = 15_000): Promise<T> => {
+export const waitFor = async <T>(
+    callback: () => Promise<T | undefined>,
+    timeout = 15_000,
+    description = "the browser"
+): Promise<T> => {
     const deadline = Date.now() + timeout;
     let lastError: unknown;
 
@@ -23,7 +27,7 @@ export const waitFor = async <T>(callback: () => Promise<T | undefined>, timeout
 
     const detail = lastError instanceof Error ? `: ${lastError.message}` : "";
 
-    throw new Error(`Timed out waiting for the browser${detail}`);
+    throw new Error(`Timed out waiting for ${description}${detail}`);
 };
 
 export const getFreePort = (): Promise<number> => {

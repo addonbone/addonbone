@@ -23,6 +23,12 @@ export {
 
 export {default as ManifestPlugin} from "./manifest";
 
+export {
+    default as ResourceAccessPlugin,
+    type ResourceAccessPluginOptions,
+    type ResourceAccessPluginRequirement,
+} from "./resource-access";
+
 export {default as ReplacePlugin} from "./replace";
 
 export {default as WatchPlugin} from "./watch";

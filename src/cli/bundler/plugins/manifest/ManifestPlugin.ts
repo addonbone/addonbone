@@ -1,6 +1,7 @@
 import rspack, {Compilation, Compiler} from "@rspack/core";
 
 import {getCompilationBuildAssets} from "@cli/bundler/utils/output";
+import {getManifestHooks} from "../utils/manifest-hooks";
 
 import {ManifestBuilder, ManifestDependencies, ManifestDependency} from "@typing/manifest";
 import {EntrypointAssetsMap} from "@typing/entrypoint";
@@ -22,26 +23,39 @@ export const createManifestDependencies = (buildAssets: EntrypointAssetsMap): Ma
 };
 
 class ManifestPlugin {
-    constructor(private readonly manifest: ManifestBuilder) {}
+    constructor(private readonly manifest: ManifestBuilder | (() => ManifestBuilder)) {}
 
     apply(compiler: Compiler): void {
         compiler.hooks.compilation.tap("ManifestPlugin", compilation => {
-            compilation.hooks.processAssets.tap(
+            const hooks = getManifestHooks(compilation);
+
+            compilation.hooks.processAssets.tapPromise(
                 {
                     name: "ManifestPlugin",
                     stage: Compilation.PROCESS_ASSETS_STAGE_REPORT,
                 },
-                () => {
-                    const buildAssets = getCompilationBuildAssets(compilation);
+                async () => {
+                    try {
+                        const buildAssets = getCompilationBuildAssets(compilation);
 
-                    if (!buildAssets) {
-                        throw new Error("Build assets are unavailable before manifest generation");
+                        if (!buildAssets) {
+                            throw new Error("Build assets are unavailable before manifest generation");
+                        }
+
+                        const dependencies = createManifestDependencies(buildAssets);
+                        await hooks.prepareDependencies.promise(dependencies, buildAssets);
+
+                        const builder = typeof this.manifest === "function" ? this.manifest() : this.manifest;
+                        const manifest = builder.setDependencies(dependencies).get();
+                        await hooks.validate.promise(manifest);
+
+                        const json = JSON.stringify(manifest, null, 2);
+
+                        compilation.emitAsset("manifest.json", new rspack.sources.RawSource(json));
+                    } catch (error) {
+                        // A manifest failure rejects this build without terminating the watch compiler.
+                        compilation.errors.push(error instanceof Error ? error : new Error(String(error)));
                     }
-
-                    const manifest = this.manifest.setDependencies(createManifestDependencies(buildAssets)).get();
-                    const json = JSON.stringify(manifest, null, 2);
-
-                    compilation.emitAsset("manifest.json", new rspack.sources.RawSource(json));
                 }
             );
         });

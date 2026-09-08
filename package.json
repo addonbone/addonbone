@@ -138,6 +138,7 @@
     "@rsdoctor/rspack-plugin": "^1.5.1",
     "@rspack/cli": "^1.7.5",
     "@rspack/core": "^1.7.5",
+    "@rspack/lite-tapable": "^1.1.0",
     "@svgr/webpack": "^8.1.0",
     "await-lock": "^3.0.0",
     "c12": "^3.3.2",

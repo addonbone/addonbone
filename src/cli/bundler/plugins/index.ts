@@ -11,7 +11,11 @@ export {
 
 export {default as ChunkLoaderPlugin, type ChunkLoaderPluginOptions} from "./chunk-loader";
 
-export {default as ShadowStylesPlugin, type ShadowStylesPluginOptions} from "./shadow-styles";
+export {
+    default as IsolatedStylesPlugin,
+    type IsolatedStylesPluginOptions,
+    type IsolatedStylesPluginFiles,
+} from "./isolated-styles";
 
 export {default as BuildAssetsMapPlugin, type BuildAssetsMapPluginOptions} from "./build-assets-map";
 

@@ -428,7 +428,7 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
     }
 
     public build(): T {
-        return this.merge<Manifest>(
+        const manifest = this.merge<Manifest>(
             this.buildName(),
             this.buildShortName(),
             this.buildDescription(),
@@ -456,6 +456,8 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
             this.buildBrowserSpecificSettings(),
             this.buildRaw()
         ) as T;
+
+        return manifest;
     }
 
     public get(): T {
@@ -601,7 +603,6 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
                     world,
                     matchAboutBlank,
                     matchOriginAsFallback,
-                    shadow,
                 } = script;
 
                 const dependencies = this.dependencies.get(entry);
@@ -611,7 +612,7 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
                 }
 
                 const js = Array.from(dependencies.js);
-                const css = shadow ? [] : Array.from(dependencies.css);
+                const css = Array.from(dependencies.css);
 
                 if (js.length === 0 && css.length === 0) {
                     throw new ManifestError(`Content script and style entry "${entry}" not found in dependencies`);
@@ -816,9 +817,7 @@ export default abstract class<T extends CoreManifest> implements ManifestBuilder
 
         for (const contentScript of this.contentScripts.values()) {
             const dependencies = this.dependencies.get(contentScript.entry);
-            const assets = dependencies
-                ? new Set([...dependencies.assets, ...(contentScript.shadow ? dependencies.css : [])])
-                : undefined;
+            const assets = dependencies?.assets;
 
             if (assets && assets.size > 0) {
                 resources.push({

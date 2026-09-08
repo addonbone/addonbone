@@ -1,3 +1,4 @@
+import type {PageAlias} from "@typing/page";
 import type {FC, ReactNode} from "react";
 import {Optional} from "utility-types";
 
@@ -7,6 +8,18 @@ import {Awaiter, PickNonFunctionProperties} from "@typing/helpers";
 type RunAt = chrome.extensionTypes.RunAt;
 
 export const ContentScriptMatches = ["http://*/*", "https://*/*"];
+
+/** Shared property used by the bundler plugin and the content script's style runtime getter. */
+export const ContentScriptStylesRuntimeProperty = "__adnbnIsolatedStyles";
+
+export interface ContentScriptStylesRuntime {
+    /** Resolves initial stylesheet URLs once, before the first root is registered. */
+    initialize(resolveUrl: (file: string) => string): void;
+    /** Retry restored styles once on load error; future loads keep the default failure behavior. */
+    add(root: ShadowRoot | HTMLElement, target: Element | null, retry?: boolean): void;
+    delete(root: ShadowRoot | HTMLElement): void;
+    load(url: string): Promise<void>;
+}
 
 export enum ContentScriptWorld {
     Isolated = "ISOLATED",
@@ -86,27 +99,45 @@ export interface ContentScriptConfig {
 
 export type ContentScriptOptions = ContentScriptConfig & EntrypointOptions;
 
+export enum ContentScriptIsolation {
+    None = "none",
+    Shadow = "shadow",
+    Iframe = "iframe",
+}
+
+export type ContentScriptIsolationValue = ContentScriptIsolation | `${ContentScriptIsolation}`;
+
+export interface ContentScriptFrameOptions {
+    width?: number | string;
+    /** Defaults to 150px. Automatic height is not supported yet. */
+    height?: number | string;
+}
+
+export interface ContentScriptFrameRenderOptions extends ContentScriptFrameOptions {
+    page?: never;
+    src?: never;
+}
+
+export interface ContentScriptFramePageOptions extends ContentScriptFrameOptions {
+    page: PageAlias;
+    src?: never;
+}
+
+export interface ContentScriptFrameSourceOptions extends ContentScriptFrameOptions {
+    src: string;
+    page?: never;
+}
+
+export type ContentScriptFrame =
+    | ContentScriptFrameRenderOptions
+    | ContentScriptFramePageOptions
+    | ContentScriptFrameSourceOptions;
+
+/** Statically resolved configuration; runtime render values are never retained here. */
 export type ContentScriptEntrypointOptions = Partial<ContentScriptOptions> & {
-    shadow?: boolean;
+    isolation?: ContentScriptIsolationValue;
+    frame?: ContentScriptFrame;
 };
-
-/**
- * Renders the content UI inside an open ShadowRoot. An object enables Shadow DOM and configures
- * the document-level resources required by that UI.
- */
-export type ContentScriptShadow = boolean | ContentScriptShadowOptions;
-
-export interface ContentScriptShadowOptions {
-    /** Local imported font files registered for this entrypoint through FontFace. */
-    fonts?: ContentScriptShadowFontOptions[];
-}
-
-export interface ContentScriptShadowFontOptions extends FontFaceDescriptors {
-    /** A family name unique enough not to collide with the host page or another entrypoint. */
-    family: string;
-    /** A local font import emitted by the framework asset pipeline. Remote URLs are unsupported. */
-    source: string;
-}
 
 // Append
 export enum ContentScriptAppend {
@@ -273,20 +304,45 @@ export interface ContentScriptNode extends ContentScriptMount {
 export type ContentScriptNodeSet = Set<ContentScriptNode>;
 
 // Definition
-export interface ContentScriptDefinition extends Omit<ContentScriptEntrypointOptions, "shadow"> {
-    shadow?: ContentScriptShadow;
+export interface ContentScriptDefinitionBase extends Partial<ContentScriptOptions> {
     marker?: ContentScriptMarkerType | ContentScriptMarkerGetter;
     anchor?: ContentScriptAnchor | ContentScriptAnchorGetter;
     mount?: ContentScriptMountFunction;
-    render?: ContentScriptRenderValue | ContentScriptRenderHandler;
     container?: ContentScriptContainerTag | ContentScriptContainerOptions | ContentScriptContainerFactory;
     watch?: true | ContentScriptWatchStrategy;
     main?: ContentScriptMainFunction;
 }
 
-// prettier-ignore
-export interface ContentScriptResolvedDefinition extends Omit<ContentScriptDefinition, "anchor" | "marker" | "mount" | "container" | "render" | "shadow" | "watch"> {
-    shadow?: ContentScriptShadowOptions;
+export type ContentScriptDefinition = ContentScriptDefinitionBase &
+    (
+        | {
+              isolation?: ContentScriptIsolation.None | "none";
+              frame?: never;
+              render?: ContentScriptRenderValue | ContentScriptRenderHandler;
+          }
+        | {
+              isolation: ContentScriptIsolation.Shadow | "shadow";
+              frame?: never;
+              render?: ContentScriptRenderValue | ContentScriptRenderHandler;
+          }
+        | {
+              isolation: ContentScriptIsolation.Iframe | "iframe";
+              frame?: ContentScriptFrameRenderOptions;
+              render?: ContentScriptRenderValue | ContentScriptRenderHandler;
+          }
+        | {
+              isolation: ContentScriptIsolation.Iframe | "iframe";
+              frame: ContentScriptFramePageOptions | ContentScriptFrameSourceOptions;
+              render?: never;
+          }
+    );
+
+export interface ContentScriptResolvedDefinition extends Omit<
+    ContentScriptDefinitionBase,
+    "anchor" | "marker" | "mount" | "container" | "watch"
+> {
+    isolation: ContentScriptIsolationValue;
+    frame?: ContentScriptFrame;
     marker: ContentScriptMarkerResolver;
     anchor: ContentScriptAnchorGetter;
     mount: ContentScriptMountFunction;
@@ -295,9 +351,8 @@ export interface ContentScriptResolvedDefinition extends Omit<ContentScriptDefin
     watch: ContentScriptWatchStrategy;
 }
 
-export interface ContentScriptAppendDefinition extends Omit<ContentScriptDefinition, "mount"> {
-    append?: ContentScriptAppend;
-}
+type ContentScriptAppendVariant<T> = T extends unknown ? Omit<T, "mount"> & {append?: ContentScriptAppend} : never;
+export type ContentScriptAppendDefinition = ContentScriptAppendVariant<ContentScriptDefinition>;
 
 // Builder
 export interface ContentScriptBuilder extends EntrypointBuilder {

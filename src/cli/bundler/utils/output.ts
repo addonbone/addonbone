@@ -1,10 +1,12 @@
 import type {AssetInfo, Chunk, Compilation, Filename, Module} from "@rspack/core";
 import _ from "lodash";
 import path from "path";
+import postcss from "postcss";
+import valueParser from "postcss-value-parser";
 
 import {toPosix} from "@cli/utils/path";
 
-import type {EntrypointAssetsMap, EntrypointAssetsMapEntry} from "@typing/entrypoint";
+import type {EntrypointAssetsMap, EntrypointAssetsMapEntry, EntrypointAssetsFiles} from "@typing/entrypoint";
 
 type AssetKind = "asset" | "css" | "js";
 
@@ -103,19 +105,67 @@ const collectResources = (
     sourceMaps: ReadonlySet<string>
 ): readonly string[] => {
     const candidates = new Map<string, boolean>();
+    const cssFiles = new Set<string>();
+    const sourceFiles = new Set<string>();
 
     for (const chunk of chunks) {
         for (const file of [...chunk.files, ...chunk.auxiliaryFiles]) {
             const normalized = toPosix(file);
 
             candidates.set(normalized, candidates.get(normalized) ?? false);
+            if (getAssetKind(compilation, normalized, sourceMaps) === "css") cssFiles.add(normalized);
         }
 
         for (const module of compilation.chunkGraph.getChunkModulesIterable(chunk)) {
             for (const file of getModuleAssetNames(module)) {
                 candidates.set(toPosix(file), true);
             }
+            if (module.type === "css/mini-extract") {
+                for (const dependency of module.buildInfo?.fileDependencies ?? [])
+                    sourceFiles.add(path.resolve(dependency));
+            }
         }
+    }
+
+    // CssExtract executes url() asset modules during the build. They are not
+    // runtime chunk modules, so follow the emitted CSS references as well.
+    // This only reads assets; it never rewrites CSS or its filenames.
+    const resources = compilation
+        .getAssets()
+        .filter(
+            asset =>
+                getAssetKind(compilation, asset.name, sourceMaps) === "asset" &&
+                (!asset.info.sourceFilename ||
+                    sourceFiles.has(
+                        path.resolve(compilation.compiler.context, asset.info.sourceFilename.split(/[?#]/)[0])
+                    ))
+        )
+        .map(asset => asset.name)
+        .sort((left, right) => right.length - left.length);
+    for (const file of cssFiles) {
+        const css = compilation.getAsset(file)?.source.source().toString();
+        if (!css) continue;
+        postcss.parse(css, {from: file}).walkDecls(declaration => {
+            valueParser(declaration.value).walk(node => {
+                if (node.type !== "function" || node.value.toLowerCase() !== "url") return;
+                const argument = node.nodes[0];
+                if (!argument || (argument.type !== "string" && argument.type !== "word")) return false;
+                const url = argument.value.replace(/\\([\da-f]{1,6}\s?|.)/gi, (_match, escape: string) =>
+                    /^[\da-f]{1,6}\s?$/i.test(escape)
+                        ? String.fromCodePoint(parseInt(escape.trim(), 16) || 0xfffd)
+                        : escape
+                );
+                if (/^(?:data|blob):/i.test(url)) return false;
+                try {
+                    const pathname = decodeURIComponent(new URL(url, `https://adnbn.invalid/${file}`).pathname);
+                    const resource = resources.find(candidate => pathname.endsWith(`/${candidate}`));
+                    if (resource) candidates.set(resource, true);
+                } catch {
+                    // External or malformed URLs do not name an emitted build resource.
+                }
+                return false;
+            });
+        });
     }
 
     return Array.from(candidates)
@@ -130,7 +180,7 @@ const collectCodeFiles = (
     compilation: Compilation,
     files: Iterable<string>,
     sourceMaps: ReadonlySet<string>
-): {css: readonly string[]; js: readonly string[]} => {
+): EntrypointAssetsFiles => {
     const css = new Set<string>();
     const js = new Set<string>();
 
@@ -153,7 +203,7 @@ const collectAsyncCodeFiles = (
     chunks: Iterable<Chunk>,
     sourceMaps: ReadonlySet<string>,
     initialFiles: ReadonlySet<string>
-): {css: readonly string[]; js: readonly string[]} => {
+): EntrypointAssetsFiles => {
     const files = new Set<string>();
 
     for (const chunk of chunks) {

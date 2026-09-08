@@ -1,3 +1,4 @@
+import {isContentScriptFrameNavigation, validateContentScriptIsolation} from "@shared/content";
 import AwaitLock from "await-lock";
 
 import Builder from "@entry/core/Builder";
@@ -12,11 +13,8 @@ import {
     contentScriptRenderResolver,
 } from "./resolvers";
 
-import ManagedContext from "./ManagedContext";
-import EventEmitter from "./EventEmitter";
-import AttributeMarker from "./AttributeMarker";
-import WeakMarker from "./WeakMarker";
-import ShadowFontRegistry from "./ShadowFontRegistry";
+import {ManagedContext, EventEmitter} from "./context";
+import {AttributeMarker, WeakMarker} from "./markers";
 
 import {
     ContentScriptAnchor,
@@ -39,8 +37,7 @@ import {
     ContentScriptRenderHandler,
     ContentScriptRenderValue,
     ContentScriptResolvedDefinition,
-    ContentScriptShadow,
-    ContentScriptShadowOptions,
+    ContentScriptIsolation,
     ContentScriptWatchStrategy,
 } from "@typing/content";
 
@@ -59,14 +56,14 @@ export default abstract class extends Builder implements ContentScriptBuilder {
 
     protected unwatch?: () => void;
 
-    private readonly fonts: ShadowFontRegistry;
-
     protected abstract createNode(anchor: Element): Promise<ContentScriptNode>;
 
     protected abstract cleanupNode(anchor: Element): Awaiter<void>;
 
     protected constructor(definition: ContentScriptDefinition) {
         super();
+
+        validateContentScriptIsolation(definition.isolation, definition.frame, "render" in definition);
 
         this.definition = {
             ...definition,
@@ -75,10 +72,9 @@ export default abstract class extends Builder implements ContentScriptBuilder {
             mount: this.resolveMount(definition.mount),
             container: this.resolveContainer(definition.container),
             render: this.resolveRender(definition.render),
-            shadow: this.resolveShadow(definition.shadow),
+            isolation: definition.isolation ?? ContentScriptIsolation.None,
             watch: this.resolveWatch(definition.watch),
         };
-        this.fonts = new ShadowFontRegistry(this.definition.shadow?.fonts);
     }
 
     protected resolveMarker(marker: ContentScriptMarkerType | ContentScriptMarkerGetter): ContentScriptMarkerResolver {
@@ -140,14 +136,6 @@ export default abstract class extends Builder implements ContentScriptBuilder {
         return contentScriptLocationResolver(watch);
     }
 
-    protected resolveShadow(shadow?: ContentScriptShadow): ContentScriptShadowOptions | undefined {
-        if (!shadow) {
-            return;
-        }
-
-        return shadow === true ? {} : shadow;
-    }
-
     public getContext(): ContentScriptContext {
         return this.context;
     }
@@ -159,11 +147,9 @@ export default abstract class extends Builder implements ContentScriptBuilder {
 
         this.marker = await marker(options);
 
-        this.fonts.register();
-
         await main?.(this.context, options);
 
-        if (render !== undefined) {
+        if (render !== undefined || isContentScriptFrameNavigation(this.definition.frame)) {
             await this.processing();
 
             this.unwatch = watch(() => {

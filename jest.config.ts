@@ -4,6 +4,7 @@ const config: Config = {
     verbose: true,
     testEnvironment: "jsdom",
     setupFiles: ["<rootDir>/tests/jest.setup.ts"],
+    modulePathIgnorePatterns: ["<rootDir>/.cache/"],
     resolver: "<rootDir>/tests/raw-module-resolver.cjs",
     moduleNameMapper: {
         "^@cli/(.*)$": "<rootDir>/src/cli/$1",
@@ -15,6 +16,7 @@ const config: Config = {
         "^@relay/(.*)$": "<rootDir>/src/relay/$1",
         "^@sandbox/(.*)$": "<rootDir>/src/sandbox/$1",
         "^@service/(.*)$": "<rootDir>/src/service/$1",
+        "^@shared/(.*)$": "<rootDir>/src/shared/$1",
         "^@storage/(.*)$": "<rootDir>/src/storage/$1",
         "^@transport/(.*)$": "<rootDir>/src/transport/$1",
         "^@main/(.*)$": "<rootDir>/src/main/$1",

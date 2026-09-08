@@ -1,6 +1,17 @@
 import {EntrypointOptions} from "@typing/entrypoint";
-import {ContentScriptConfig, ContentScriptContext, ContentScriptDefinition} from "@typing/content";
-import {TransportConfig, TransportDefinition, TransportType, type TransportProxyTarget, type TransportTarget} from "@typing/transport";
+import {
+    ContentScriptConfig,
+    ContentScriptContext,
+    ContentScriptDefinition,
+    ContentScriptEntrypointOptions,
+} from "@typing/content";
+import {
+    TransportConfig,
+    TransportDefinition,
+    TransportType,
+    type TransportProxyTarget,
+    type TransportTarget,
+} from "@typing/transport";
 import {Awaiter} from "@typing/helpers";
 import type {MessageError} from "@typing/message";
 
@@ -188,7 +199,8 @@ export type RelayOptions = RelayConfig & EntrypointOptions;
 
 export type RelayOptionsMap = Map<string, RelayOptions>;
 
-export type RelayEntrypointOptions = Partial<RelayOptions>;
+export type RelayEntrypointOptions = Partial<RelayOptions> &
+    Pick<ContentScriptEntrypointOptions, "isolation" | "frame">;
 
 export type RelayMainHandler<T extends TransportType> = (
     relay: T,
@@ -196,12 +208,13 @@ export type RelayMainHandler<T extends TransportType> = (
     options: RelayEntrypointOptions
 ) => Awaiter<void>;
 
-export interface RelayDefinition<T extends TransportType>
-    extends
-        Omit<TransportDefinition<RelayOptions, T>, "main">,
-        Omit<ContentScriptDefinition, "main" | "allFrames" | "shadow">,
-        RelayEntrypointOptions {
-    main?: RelayMainHandler<T>;
-}
+type RelayContentDefinition<T = ContentScriptDefinition> = T extends unknown ? Omit<T, "main" | "allFrames"> : never;
 
-export type RelayUnresolvedDefinition<T extends TransportType> = Partial<RelayDefinition<T>>;
+export type RelayDefinition<T extends TransportType> = Omit<TransportDefinition<RelayOptions, T>, "main"> &
+    RelayContentDefinition &
+    RelayEntrypointOptions & {
+        main?: RelayMainHandler<T>;
+    };
+
+/** Internal, merged runtime input. The public definition retains its discriminated union. */
+export type RelayUnresolvedDefinition<T extends TransportType> = Partial<Omit<RelayDefinition<T>, never>>;

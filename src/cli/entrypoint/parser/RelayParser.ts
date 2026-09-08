@@ -15,24 +15,26 @@ export default class extends ContentParser<RelayEntrypointOptions> {
         return "init";
     }
 
+    /** A Relay's default function initializes its transport; it is never an implicit content renderer. */
+    protected hasDefaultRender(): boolean {
+        return false;
+    }
+
     protected schema() {
-        return super
-            .schema()
-            .omit({shadow: true})
-            .extend({
-                allFrames: z.union([z.boolean(), z.nativeEnum(RelayAllFrames)]).optional(),
-                name: z
-                    .string()
-                    .trim()
-                    .min(1)
-                    .max(100)
-                    .regex(/^[\p{L}_$][\p{L}\p{N}_$]*$/u, {
-                        message:
-                            "Key must start with a Unicode letter, `$` or `_`, and may only contain letters, digits, `$` or `_`",
-                    })
-                    .optional(),
-                method: z.nativeEnum(RelayMethod).optional(),
-            });
+        return super.schema().extend({
+            allFrames: z.union([z.boolean(), z.nativeEnum(RelayAllFrames)]).optional(),
+            name: z
+                .string()
+                .trim()
+                .min(1)
+                .max(100)
+                .regex(/^[\p{L}_$][\p{L}\p{N}_$]*$/u, {
+                    message:
+                        "Key must start with a Unicode letter, `$` or `_`, and may only contain letters, digits, `$` or `_`",
+                })
+                .optional(),
+            method: z.nativeEnum(RelayMethod).optional(),
+        });
     }
 
     public options(file: EntrypointFile): RelayEntrypointOptions {

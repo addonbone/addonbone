@@ -295,6 +295,37 @@ export default class EntryFile {
         }
     }
 
+    /** Unlike parseNode's identifier fallback, proves a primitive comes from a static declaration. */
+    public isStaticValue(node?: ts.Node, seen = new Set<string>()): boolean {
+        if (!node) return false;
+        if (
+            ts.isStringLiteral(node) ||
+            ts.isNumericLiteral(node) ||
+            node.kind === ts.SyntaxKind.TrueKeyword ||
+            node.kind === ts.SyntaxKind.FalseKeyword
+        )
+            return true;
+        if (ts.isAsExpression(node) || ts.isSatisfiesExpression(node) || ts.isParenthesizedExpression(node)) {
+            return this.isStaticValue(node.expression, seen);
+        }
+        if (ts.isPropertyAccessExpression(node)) {
+            const value = this.parseNode(node);
+            return (typeof value === "string" || typeof value === "number") && value !== node.getText();
+        }
+        if (!ts.isIdentifier(node)) return false;
+        const key = `${this.file}:${node.text}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        for (const statement of this.getSourceFile().statements) {
+            if (!ts.isVariableStatement(statement)) continue;
+            const declaration = statement.declarationList.declarations.find(item => item.name.getText() === node.text);
+            if (declaration) return this.isStaticValue(declaration.initializer, seen);
+        }
+        const imported = this.getImports().get(node.text);
+        if (!imported || !/\.[cm]?[jt]sx?$/.test(imported)) return false;
+        return EntryFile.make(imported).isStaticValue(node, seen);
+    }
+
     protected getInputResolver(): ImportResolver {
         if (this.importResolver) {
             return this.importResolver;

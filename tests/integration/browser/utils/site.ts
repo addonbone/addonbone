@@ -9,7 +9,8 @@ export interface IntegrationSite {
 
 export const startIntegrationSite = async (
     directory: string,
-    contentSecurityPolicy: string | null = "default-src 'none'; frame-src 'self'; img-src 'self'"
+    contentSecurityPolicy: string | null = "default-src 'none'; frame-src 'self'; img-src 'self'",
+    headers: Readonly<Record<string, Readonly<Record<string, string>>>> = {}
 ): Promise<IntegrationSite> => {
     const server = createServer(async (request, response) => {
         try {
@@ -26,8 +27,11 @@ export const startIntegrationSite = async (
             const content = await readFile(path.join(directory, filename));
 
             response.writeHead(200, {
-                "Content-Type": "text/html; charset=utf-8",
+                "Content-Type": filename.endsWith(".js")
+                    ? "text/javascript; charset=utf-8"
+                    : "text/html; charset=utf-8",
                 ...(contentSecurityPolicy === null ? {} : {"Content-Security-Policy": contentSecurityPolicy}),
+                ...headers[filename],
             });
             response.end(content);
         } catch {

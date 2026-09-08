@@ -101,17 +101,17 @@ describe("ManifestV3", () => {
         });
     });
 
-    it("keeps shadow initial CSS out of content_scripts and exposes it through WAR", () => {
+    it("uses prepared CSS lists and exposes runtime resources without interpreting their delivery policy", () => {
         const manifest: any = new ManifestV3(Browser.Chrome)
             .setDependencies(
                 new Map([
-                    ["shadow", dependency(["shadow.js"], ["shared.css", "shadow.css"], ["lazy.css"])],
+                    ["shadow", dependency(["shadow.js"], ["page.css"], ["lazy.css", "shared.css", "shadow.css"])],
                     ["normal", dependency(["normal.js"], ["shared.css"], ["normal-lazy.css"])],
                 ])
             )
             .setContentScripts(
                 new Set([
-                    {entry: "shadow", matches: ["https://example.com/*"], shadow: true},
+                    {entry: "shadow", matches: ["https://example.com/*"]},
                     {entry: "normal", matches: ["https://example.com/*"]},
                 ])
             )
@@ -119,14 +119,13 @@ describe("ManifestV3", () => {
 
         expect(manifest.content_scripts).toEqual(
             expect.arrayContaining([
-                expect.objectContaining({js: ["shadow.js"], css: undefined}),
+                expect.objectContaining({js: ["shadow.js"], css: ["page.css"]}),
                 expect.objectContaining({js: ["normal.js"], css: ["shared.css"]}),
             ])
         );
         expect(manifest.web_accessible_resources[0].resources).toEqual(
             expect.arrayContaining(["lazy.css", "normal-lazy.css", "shared.css", "shadow.css"])
         );
-        expect(manifest.content_scripts[0]).not.toHaveProperty("shadow");
     });
 
     it("builds permissions separately from host permissions", () => {

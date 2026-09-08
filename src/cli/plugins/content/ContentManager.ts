@@ -1,11 +1,13 @@
 import ContentName from "./ContentName";
 
 import {ContentGroupItems, ContentProvider} from "./types";
-import {getContentChunkName, getContentScriptConfigFromOptions} from "./utils";
+import {getContentScriptConfigFromOptions, hasIsolatedTarget} from "./utils";
+import {getContentChunkName} from "./bundler";
 
 import {ReadonlyConfig} from "@typing/config";
 import {
     ContentScriptDeclarative,
+    ContentScriptIsolation,
     ContentScriptEntrypointOptions,
     ContentScriptWorld,
     type ContentScriptWorldValue,
@@ -68,8 +70,15 @@ export default class ContentManager {
         const world = this.resolveWorld(options.world);
 
         if (this.config.manifestVersion !== 2) {
-            if (world === ContentScriptWorld.Main && options.shadow) {
-                throw new Error(`Content script "${file.file}" cannot use Shadow DOM in the MAIN execution world`);
+            if (
+                world === ContentScriptWorld.Main &&
+                (options.isolation === ContentScriptIsolation.Shadow ||
+                    (options.isolation === ContentScriptIsolation.Iframe &&
+                        !(options.frame?.src && /^https?:\/\//.test(options.frame.src))))
+            ) {
+                throw new Error(
+                    `Content script "${file.file}" cannot use this isolation in the MAIN execution world; only external HTTP(S) frame.src is supported`
+                );
             }
 
             return options;
@@ -98,21 +107,34 @@ export default class ContentManager {
         return entries;
     }
 
-    public async manifest(): Promise<ManifestContentScripts> {
-        const manifest: ManifestContentScripts = new Set();
+    /** Settings are keyed by the final grouped entrypoint name, not the original source files. */
+    public async entryOptions(): Promise<ReadonlyMap<string, ContentScriptEntrypointOptions>> {
+        const entries = new Map<string, ContentScriptEntrypointOptions>();
 
         for (const [entry, items] of await this.group()) {
-            // prettier-ignore
-            const options = Array
-                .from(items, ({options}) => options)
-                .reduce((acc, opt) => {
-                    return {...acc, ...opt};
-                }, {} as ContentScriptEntrypointOptions);
+            const options = Array.from(items, item => item.options);
+            const worlds = new Set(options.map(option => this.resolveWorld(option.world)));
+            if (worlds.size !== 1) {
+                throw new Error(`Content entrypoint "${entry}" cannot mix execution worlds`);
+            }
 
-            manifest.add({entry, shadow: !!options.shadow, ...getContentScriptConfigFromOptions(options)});
+            if (new Set(options.map(hasIsolatedTarget)).size !== 1) {
+                throw new Error(`Content entrypoint "${entry}" cannot mix isolation style delivery modes`);
+            }
+
+            entries.set(entry, Object.assign({}, ...options));
         }
 
-        return manifest;
+        return entries;
+    }
+
+    public async manifest(): Promise<ManifestContentScripts> {
+        return new Set(
+            Array.from(await this.entryOptions(), ([entry, options]) => ({
+                entry,
+                ...getContentScriptConfigFromOptions(options),
+            }))
+        );
     }
 
     public async hostPermissions(): Promise<ManifestHostPermissions> {
@@ -204,9 +226,23 @@ export default class ContentManager {
     }
 
     public virtual(file: EntrypointFile): string {
+        if (!this._group) {
+            throw new Error(
+                `Cannot create virtual file "${file.file}": content group is not prepared. Await entries() or entryOptions() before virtual().`
+            );
+        }
+
+        const item = Array.from(this._group.values())
+            .flatMap(items => Array.from(items))
+            .find(item => item.file.file === file.file);
+
+        if (!item) {
+            throw new Error(`Virtual file "${file.file}" is not in the prepared content group.`);
+        }
+
         for (const provider of this.providers) {
             try {
-                return provider.virtual(file);
+                return provider.virtual(file, item.options);
             } catch {}
         }
 
@@ -215,40 +251,6 @@ export default class ContentManager {
 
     public async empty(): Promise<boolean> {
         return (await this.group()).size === 0;
-    }
-
-    public async entryWorlds(): Promise<ReadonlyMap<string, ContentScriptWorld>> {
-        const entries = new Map<string, ContentScriptWorld>();
-
-        for (const [entry, items] of await this.group()) {
-            const worlds = new Set(Array.from(items, ({options}) => this.resolveWorld(options.world)));
-            const world = worlds.values().next().value;
-
-            if (worlds.size !== 1 || !world) {
-                throw new Error(`Content entrypoint "${entry}" cannot mix execution worlds`);
-            }
-
-            entries.set(entry, world);
-        }
-
-        return entries;
-    }
-
-    public async entryShadows(): Promise<ReadonlyMap<string, boolean>> {
-        const entries = new Map<string, boolean>();
-
-        for (const [entry, items] of await this.group()) {
-            const shadows = new Set(Array.from(items, ({options}) => !!options.shadow));
-            const shadow = shadows.values().next().value;
-
-            if (shadows.size !== 1 || shadow === undefined) {
-                throw new Error(`Content entrypoint "${entry}" cannot mix Shadow DOM modes`);
-            }
-
-            entries.set(entry, shadow);
-        }
-
-        return entries;
     }
 
     protected resolveWorld(world?: ContentScriptWorldValue): ContentScriptWorld {

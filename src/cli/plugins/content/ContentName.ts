@@ -7,7 +7,7 @@ import {NameGenerator} from "@cli/entrypoint";
 
 import {ReadonlyConfig} from "@typing/config";
 import {EntrypointType} from "@typing/entrypoint";
-import {ContentScriptEntrypointOptions} from "@typing/content";
+import {ContentScriptIsolation, ContentScriptEntrypointOptions} from "@typing/content";
 
 export default class ContentName extends NameGenerator implements ContentNameGenerator<ContentScriptEntrypointOptions> {
     protected readonly _names = new Map<string, string>();
@@ -17,7 +17,10 @@ export default class ContentName extends NameGenerator implements ContentNameGen
     }
 
     public create(name: string, options: ContentScriptEntrypointOptions): string {
-        if (!this.config.concatContentScripts || options.shadow) {
+        if (
+            !this.config.concatContentScripts ||
+            (options.isolation !== undefined && options.isolation !== ContentScriptIsolation.None)
+        ) {
             return this.name(name);
         }
 

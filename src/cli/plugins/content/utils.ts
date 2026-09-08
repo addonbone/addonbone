@@ -1,7 +1,12 @@
 import _ from "lodash";
+import {isContentScriptFrameNavigation} from "@shared/content";
 
-import {ContentScriptConfig, ContentScriptEntrypointOptions, ContentScriptWorld} from "@typing/content";
-import {EntrypointType} from "@typing/entrypoint";
+import {ContentScriptConfig, ContentScriptEntrypointOptions, ContentScriptIsolation} from "@typing/content";
+
+/** ShadowRoot or a blank iframe provides a local target for isolated styles and UI. */
+export const hasIsolatedTarget = (options: ContentScriptEntrypointOptions): boolean =>
+    options.isolation === ContentScriptIsolation.Shadow ||
+    (options.isolation === ContentScriptIsolation.Iframe && !isContentScriptFrameNavigation(options.frame));
 
 export const getContentScriptConfigFromOptions = (options: ContentScriptEntrypointOptions): ContentScriptConfig => {
     const config = _.pick(options, [
@@ -25,12 +30,4 @@ export const getContentScriptConfigFromOptions = (options: ContentScriptEntrypoi
         includeGlobs: sort(config.includeGlobs),
         excludeGlobs: sort(config.excludeGlobs),
     };
-};
-
-export const getContentChunkName = (world: ContentScriptWorld): string => {
-    return `${world === ContentScriptWorld.Main ? "common-main" : "common"}.${EntrypointType.ContentScript}`;
-};
-
-export const getContentLayer = (world: ContentScriptWorld): string => {
-    return `adnbn:content:${world.toLowerCase()}`;
 };

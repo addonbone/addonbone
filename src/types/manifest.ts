@@ -198,11 +198,7 @@ export interface ManifestEntry {
 
 export type ManifestBackground = ManifestEntry & BackgroundConfig;
 
-export type ManifestContentScript = ManifestEntry &
-    ContentScriptConfig & {
-        /** Internal build flag. It is never emitted to manifest.json. */
-        shadow?: boolean;
-    };
+export type ManifestContentScript = ManifestEntry & ContentScriptConfig;
 export type ManifestContentScripts = Set<ManifestContentScript>;
 
 export type ManifestCommand = CommandConfig;
@@ -270,8 +266,11 @@ export type ManifestSandbox = string;
 export type ManifestSandboxes = Set<ManifestSandbox>;
 
 export interface ManifestDependency {
+    /** Initial scripts, in execution order. */
     js: Set<string>;
+    /** Initial styles delivered by the manifest. */
     css: Set<string>;
+    /** Runtime resources, including lazy JS/CSS and other emitted files. */
     assets: Set<string>;
 }
 

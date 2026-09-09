@@ -4,6 +4,8 @@ const config: Config = {
     verbose: true,
     testEnvironment: "jsdom",
     setupFiles: ["<rootDir>/tests/jest.setup.ts"],
+    modulePathIgnorePatterns: ["<rootDir>/.cache/"],
+    resolver: "<rootDir>/tests/raw-module-resolver.cjs",
     moduleNameMapper: {
         "^@cli/(.*)$": "<rootDir>/src/cli/$1",
         "^@entry/(.*)$": "<rootDir>/src/entry/$1",
@@ -11,8 +13,10 @@ const config: Config = {
         "^@locale/(.*)$": "<rootDir>/src/locale/$1",
         "^@offscreen/(.*)$": "<rootDir>/src/offscreen/$1",
         "^@message/(.*)$": "<rootDir>/src/message/$1",
+        "^@relay/(.*)$": "<rootDir>/src/relay/$1",
         "^@sandbox/(.*)$": "<rootDir>/src/sandbox/$1",
         "^@service/(.*)$": "<rootDir>/src/service/$1",
+        "^@shared/(.*)$": "<rootDir>/src/shared/$1",
         "^@storage/(.*)$": "<rootDir>/src/storage/$1",
         "^@transport/(.*)$": "<rootDir>/src/transport/$1",
         "^@main/(.*)$": "<rootDir>/src/main/$1",
@@ -20,6 +24,7 @@ const config: Config = {
     },
     extensionsToTreatAsEsm: [".ts", ".tsx"],
     transform: {
+        "^.+\\.template\\.js$": "<rootDir>/tests/raw-module-transformer.cjs",
         "^.+\\.(t|j)sx?$": [
             "@swc/jest",
             {

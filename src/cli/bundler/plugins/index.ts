@@ -1,20 +1,42 @@
 export {
     default as EntrypointPlugin,
+    type EntrypointPluginEntryOptions,
+    type EntrypointPluginEntryOptionsResolver,
     type EntrypointPluginModules,
     type EntrypointPluginModule,
     type EntrypointPluginEntryModules,
     type EntrypointPluginTemplate,
     type EntrypointPluginUpdate,
-} from "./EntrypointPlugin";
+} from "./entrypoint";
+
+export {default as ChunkLoaderPlugin, type ChunkLoaderPluginOptions} from "./chunk-loader";
+
+export {
+    default as IsolatedStylesPlugin,
+    type IsolatedStylesPluginOptions,
+    type IsolatedStylesPluginFiles,
+} from "./isolated-styles";
+
+export {default as BuildAssetsMapPlugin, type BuildAssetsMapPluginOptions} from "./build-assets-map";
 
 export {
     default as GenerateJsonPlugin,
     type GenerateJsonPluginData,
     type GenerateJsonPluginUpdate,
-} from "./GenerateJsonPlugin";
+} from "./generate-json";
 
-export {default as ManifestPlugin} from "./ManifestPlugin";
+export {default as ManifestPlugin} from "./manifest";
 
-export {default as ReplacePlugin} from "./ReplacePlugin";
+export {
+    default as ResourceAccessPlugin,
+    type ResourceAccessPluginOptions,
+    type ResourceAccessPluginRequirement,
+} from "./resource-access";
 
-export {default as WatchPlugin} from "./WatchPlugin";
+export {default as ReplacePlugin} from "./replace";
+
+export {default as WatchPlugin} from "./watch";
+
+export {default as RuntimeDataPlugin, type RuntimeDataPluginData, type RuntimeDataPluginOptions} from "./runtime-data";
+
+export type {RuntimePropertyOptions} from "./types";

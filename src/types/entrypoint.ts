@@ -88,6 +88,22 @@ export interface EntrypointFile {
  */
 export type EntrypointEntries = Map<string, Set<EntrypointFile>>;
 
+export interface EntrypointAssetsFiles {
+    readonly js: readonly string[];
+    readonly css: readonly string[];
+}
+
+export interface EntrypointAssets {
+    readonly initial: EntrypointAssetsFiles;
+    readonly async: EntrypointAssetsFiles;
+}
+
+export interface EntrypointAssetsMapEntry extends EntrypointAssets {
+    readonly assets: readonly string[];
+}
+
+export type EntrypointAssetsMap = Readonly<Record<string, EntrypointAssetsMapEntry>>;
+
 export interface EntrypointParser<O extends EntrypointOptions> {
     options(file: EntrypointFile): O;
 
@@ -103,6 +119,12 @@ export interface EntrypointFinder {
 
     clear(): this;
 
+    /**
+     * Determines if the specified file exists within the current set of files.
+     *
+     * @param {EntrypointFile} file - The file to be checked for existence in the set of files.
+     * @return {boolean} Returns true if the file exists in the set, otherwise false.
+     */
     holds(file: EntrypointFile): boolean;
 }
 

@@ -1,4 +1,4 @@
-import {Configuration as RspackConfig, DefinePlugin, HtmlRspackPlugin, Plugins} from "@rspack/core";
+import {Configuration as RspackConfig, HtmlRspackPlugin, Plugins} from "@rspack/core";
 import HtmlRspackTagsPlugin from "html-rspack-tags-plugin";
 
 import Page from "./Page";
@@ -7,10 +7,10 @@ import {PageDeclaration} from "./declaration";
 
 import {definePlugin} from "@main/plugin";
 import {virtualViewModule} from "@cli/virtual";
-import {EntrypointPlugin} from "@cli/bundler";
-import {ViewAliasToFilename} from "@cli/entrypoint";
+import {EntrypointPlugin, RuntimeDataPlugin} from "@cli/bundler";
 
 import {Command} from "@typing/app";
+import {PageAliasesRuntimeProperty} from "@typing/page";
 
 export default definePlugin(() => {
     let page: Page;
@@ -26,17 +26,19 @@ export default definePlugin(() => {
         bundler: async ({config}) => {
             declaration.setAlias(await page.getAlias()).build();
 
-            const plugins: Plugins = [];
+            const aliases = Object.fromEntries(
+                Array.from((await page.views()).values(), item => [item.alias, item.filename])
+            );
 
-            let alias: ViewAliasToFilename = new Map();
+            const aliasPlugin = new RuntimeDataPlugin({property: PageAliasesRuntimeProperty, data: aliases});
+
+            const plugins: Plugins = [];
 
             if (await page.empty()) {
                 if (config.debug) {
                     console.info("Page entries not found");
                 }
             } else {
-                alias = await page.getAliasToFilename();
-
                 // prettier-ignore
                 const plugin = EntrypointPlugin.from(await page.view().entries())
                     .virtual(file => virtualViewModule(file));
@@ -44,6 +46,12 @@ export default definePlugin(() => {
                 if (config.command === Command.Watch) {
                     plugin.watch(async () => {
                         declaration.setAlias(await page.clear().getAlias()).build();
+
+                        aliasPlugin.update(
+                            Object.fromEntries(
+                                Array.from((await page.views()).values(), item => [item.alias, item.filename])
+                            )
+                        );
 
                         return page.view().entries();
                     });
@@ -56,12 +64,7 @@ export default definePlugin(() => {
             }
 
             return {
-                plugins: [
-                    new DefinePlugin({
-                        __ADNBN_PAGE_ALIAS__: JSON.stringify(alias),
-                    }),
-                    ...plugins,
-                ],
+                plugins: [aliasPlugin, ...plugins],
             } satisfies RspackConfig;
         },
         manifest: async ({manifest}) => {

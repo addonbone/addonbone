@@ -266,8 +266,11 @@ export type ManifestSandbox = string;
 export type ManifestSandboxes = Set<ManifestSandbox>;
 
 export interface ManifestDependency {
+    /** Initial scripts, in execution order. */
     js: Set<string>;
+    /** Initial styles delivered by the manifest. */
     css: Set<string>;
+    /** Runtime resources, including lazy JS/CSS and other emitted files. */
     assets: Set<string>;
 }
 

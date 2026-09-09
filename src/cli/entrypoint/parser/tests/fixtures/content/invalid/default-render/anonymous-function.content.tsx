@@ -1,5 +1,4 @@
-export const isolation = "iframe";
-export const frame = {src: "https://example.com/panel"};
+export const isolation = {type: "iframe", src: "https://example.com/panel"};
 
 export default function () {
     return null;

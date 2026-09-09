@@ -15,7 +15,7 @@ test("FrameNode explains a disconnected host and allows mounting again once the 
         new MountNode(new Node(anchor, container), (anchor, container) => {
             if (connect) anchor.append(container);
         }),
-        {},
+        {type: "iframe"},
         () => {}
     );
     try {
@@ -38,7 +38,7 @@ test("FrameNode does not require a connected host for document navigation", () =
     const container = document.createElement("div");
     const node = new FrameNode(
         new Node(document.createElement("section"), container),
-        {src: "https://example.com"},
+        {type: "iframe", src: "https://example.com"},
         () => {}
     );
     try {
@@ -60,7 +60,7 @@ test("FrameNode replaces lost targets, unregisters old styles and releases its l
         new MountNode(new Node(anchor, document.createElement("div")), (anchor, container) => {
             anchor.append(container);
         }),
-        {height: 320},
+        {type: "iframe", height: 320},
         recover
     );
     node.mount();

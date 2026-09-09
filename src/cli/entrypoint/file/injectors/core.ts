@@ -3,6 +3,7 @@ import {Browser} from "@typing/browser";
 import {RelayAllFrames, RelayMethod} from "@typing/relay";
 import {
     ContentScriptIsolation,
+    ContentScriptShadowMode,
     ContentScriptAppend,
     ContentScriptDeclarative,
     ContentScriptMarker,
@@ -73,6 +74,10 @@ export default (): Injector[] => {
 
     Object.entries(ContentScriptIsolation).forEach(([key, value]) => {
         resolvers.push({from: PackageName, target: "ContentScriptIsolation", name: key, value});
+    });
+
+    Object.entries(ContentScriptShadowMode).forEach(([key, value]) => {
+        resolvers.push({from: PackageName, target: "ContentScriptShadowMode", name: key, value});
     });
 
     Object.entries(ContentScriptWorld).forEach(([key, value]) => {

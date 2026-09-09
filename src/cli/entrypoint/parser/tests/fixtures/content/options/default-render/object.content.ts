@@ -1,1 +1,1 @@
-export default {isolation: "iframe", frame: {page: "panel"}};
+export default {isolation: {type: "iframe", page: "panel"}};

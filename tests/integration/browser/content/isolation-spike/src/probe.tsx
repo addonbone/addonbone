@@ -89,11 +89,7 @@ for (const renderer of ["vanilla", "react"]) {
             if (renderer === "react") {
                 root = createRoot(target);
                 root.render(
-                    createElement(
-                        "div",
-                        {className: "probe"},
-                        createElement("span", {className: "font"}, "AAAA")
-                    )
+                    createElement("div", {className: "probe"}, createElement("span", {className: "font"}, "AAAA"))
                 );
             } else {
                 const probe = doc.createElement("div");

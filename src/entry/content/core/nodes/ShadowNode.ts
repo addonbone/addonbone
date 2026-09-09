@@ -1,7 +1,10 @@
 import {getContentScriptStylesRuntime} from "./isolated-styles";
-import type {ContentScriptStylesRuntime} from "@typing/content";
-
-import type {ContentScriptNode} from "@typing/content";
+import {
+    ContentScriptShadowMode,
+    type ContentScriptShadowOptions,
+    type ContentScriptStylesRuntime,
+    type ContentScriptNode,
+} from "@typing/content";
 
 export default class ShadowNode implements ContentScriptNode {
     private root?: ShadowRoot;
@@ -10,7 +13,10 @@ export default class ShadowNode implements ContentScriptNode {
 
     private runtime?: ContentScriptStylesRuntime;
 
-    public constructor(protected readonly node: ContentScriptNode) {}
+    public constructor(
+        protected readonly node: ContentScriptNode,
+        private readonly options: ContentScriptShadowOptions = {}
+    ) {}
 
     public get anchor(): Element {
         return this.node.anchor;
@@ -39,7 +45,16 @@ export default class ShadowNode implements ContentScriptNode {
             throw new Error("Content script container already has an open ShadowRoot");
         }
 
-        const root = this.container.attachShadow({mode: "open"});
+        let root: ShadowRoot;
+        try {
+            root = this.container.attachShadow({mode: this.options.mode ?? ContentScriptShadowMode.Open});
+        } catch (cause) {
+            // A pre-existing closed root is not observable through container.shadowRoot.
+            throw new Error(
+                "Cannot attach ShadowRoot: the content script container may already have a root or not support Shadow DOM",
+                {cause}
+            );
+        }
         const target = this.container.ownerDocument.createElement("div");
         root.appendChild(target);
 

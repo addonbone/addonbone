@@ -1,7 +1,6 @@
 import {defineContentScriptAppend} from "adnbn";
 export default defineContentScriptAppend({
-    isolation: "iframe",
-    frame: {page: "panel"},
+    isolation: {type: "iframe", page: "panel"},
     render() {
         return null;
     },

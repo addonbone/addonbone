@@ -1,8 +1,7 @@
 import {defineRelay} from "adnbn";
 
 export default defineRelay({
-    isolation: "iframe",
-    frame: {page: "panel"},
+    isolation: {type: "iframe", page: "panel"},
     init() {
         return {};
     },

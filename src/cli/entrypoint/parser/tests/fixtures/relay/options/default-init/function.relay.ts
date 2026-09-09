@@ -1,5 +1,4 @@
-export const isolation = "iframe";
-export const frame = {page: "panel"};
+export const isolation = {type: "iframe", page: "panel"};
 
 export default function init() {
     return {ping: () => "pong"};

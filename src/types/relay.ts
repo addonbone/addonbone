@@ -199,8 +199,7 @@ export type RelayOptions = RelayConfig & EntrypointOptions;
 
 export type RelayOptionsMap = Map<string, RelayOptions>;
 
-export type RelayEntrypointOptions = Partial<RelayOptions> &
-    Pick<ContentScriptEntrypointOptions, "isolation" | "frame">;
+export type RelayEntrypointOptions = Partial<RelayOptions> & Pick<ContentScriptEntrypointOptions, "isolation">;
 
 export type RelayMainHandler<T extends TransportType> = (
     relay: T,
@@ -212,7 +211,7 @@ type RelayContentDefinition<T = ContentScriptDefinition> = T extends unknown ? O
 
 export type RelayDefinition<T extends TransportType> = Omit<TransportDefinition<RelayOptions, T>, "main"> &
     RelayContentDefinition &
-    RelayEntrypointOptions & {
+    Partial<RelayOptions> & {
         main?: RelayMainHandler<T>;
     };
 

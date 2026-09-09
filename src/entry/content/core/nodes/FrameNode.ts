@@ -1,10 +1,11 @@
+import {ContentScriptIsolation} from "@typing/content";
 import {getPageUrl} from "@main/page";
 
 import {getContentScriptStylesRuntime} from "./isolated-styles";
 
 import {isContentScriptFrameNavigation} from "@shared/content";
 
-import type {ContentScriptStylesRuntime, ContentScriptFrame, ContentScriptNode} from "@typing/content";
+import type {ContentScriptStylesRuntime, ContentScriptIsolationFrameOptions, ContentScriptNode} from "@typing/content";
 
 /** Owns the child document, but never moves the content script's JavaScript into it. */
 export default class FrameNode implements ContentScriptNode {
@@ -17,14 +18,13 @@ export default class FrameNode implements ContentScriptNode {
 
     public constructor(
         private readonly node: ContentScriptNode,
-        private readonly options: ContentScriptFrame = {},
+        private readonly options: ContentScriptIsolationFrameOptions = {type: ContentScriptIsolation.Iframe},
         private readonly recover: () => void
     ) {}
 
     public get anchor(): Element {
         return this.node.anchor;
     }
-
 
     public get container(): Element | undefined {
         return this.node.container;

@@ -1,4 +1,4 @@
-import {isContentScriptFrameNavigation, validateContentScriptIsolation} from "@shared/content";
+import {isContentScriptFrameNavigation, resolveContentScriptIsolation} from "@shared/content";
 import AwaitLock from "await-lock";
 
 import Builder from "@entry/core/Builder";
@@ -37,7 +37,6 @@ import {
     ContentScriptRenderHandler,
     ContentScriptRenderValue,
     ContentScriptResolvedDefinition,
-    ContentScriptIsolation,
     ContentScriptWatchStrategy,
 } from "@typing/content";
 
@@ -63,7 +62,7 @@ export default abstract class extends Builder implements ContentScriptBuilder {
     protected constructor(definition: ContentScriptDefinition) {
         super();
 
-        validateContentScriptIsolation(definition.isolation, definition.frame, "render" in definition);
+        const isolation = resolveContentScriptIsolation(definition.isolation, "render" in definition);
 
         this.definition = {
             ...definition,
@@ -72,7 +71,7 @@ export default abstract class extends Builder implements ContentScriptBuilder {
             mount: this.resolveMount(definition.mount),
             container: this.resolveContainer(definition.container),
             render: this.resolveRender(definition.render),
-            isolation: definition.isolation ?? ContentScriptIsolation.None,
+            isolation,
             watch: this.resolveWatch(definition.watch),
         };
     }
@@ -149,7 +148,7 @@ export default abstract class extends Builder implements ContentScriptBuilder {
 
         await main?.(this.context, options);
 
-        if (render !== undefined || isContentScriptFrameNavigation(this.definition.frame)) {
+        if (render !== undefined || isContentScriptFrameNavigation(this.definition.isolation)) {
             await this.processing();
 
             this.unwatch = watch(() => {

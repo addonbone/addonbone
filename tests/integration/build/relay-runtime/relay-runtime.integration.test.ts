@@ -23,6 +23,7 @@ test("content plugin delivers Relay options and refreshes names, methods and opt
             name: "observer",
             matches: ["http://*/*", "https://*/*"],
             runAt: "document_idle",
+            isolation: {type: "none"},
             method: "messaging",
         },
     };
@@ -31,6 +32,7 @@ test("content plugin delivers Relay options and refreshes names, methods and opt
             name: "collector",
             matches: ["https://example.com/*"],
             runAt: "document_idle",
+            isolation: {type: "none"},
             method: "scripting",
             declarative: "required",
             allFrames: false,

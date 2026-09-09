@@ -6,7 +6,7 @@ shared CSS-only chunk, while each shadow entrypoint also loads its own initial a
 
 The primary entrypoint mounts two roots, starts one `import()` before the first root exists, watches
 for anchor replacement, and uses a local WOFF2 declared in document CSS with `@font-face`. The secondary entrypoint
-has an independent runtime registry and lazy chunk. The ordinary entrypoint proves that shared CSS
+uses `isolation: {type: Shadow, mode: Closed}` and has an independent runtime registry and lazy chunk. The ordinary entrypoint proves that shared CSS
 continues to load through `content_scripts.css` outside Shadow DOM.
 
 ## What the runner verifies
@@ -22,6 +22,9 @@ continues to load through `content_scripts.css` outside Shadow DOM.
   links.
 - Top documents and same-origin child iframes work with and without strict page CSP.
 - Two shadow entrypoints sharing CSS keep independent root registries.
+- Open and closed roots receive the same CSS delivery and survive anchor replacement. The closed
+  fixture reports measurements through a test-only host attribute; the runner separately verifies
+  that `host.shadowRoot` is `null`. It does not expose a root reference to the page.
 - The local font is really rendered: the synthetic `AAAA` sample is measured at 320px. Merely seeing
   its `font-family` value is not accepted.
 
@@ -31,7 +34,7 @@ The strict page response uses:
 default-src 'none'; style-src 'none'; style-src-elem 'none'; font-src 'none'; frame-src 'self'; img-src 'self'
 ```
 
-Passing results were reproduced on Chrome 155.0.8043.4 with Manifest V3 and Firefox 155.0.1 with
+Passing results were reproduced on Chrome 155.0.8046.0 with Manifest V3 and Firefox 155.0.1 with
 Manifest V2 and Manifest V3. Reports are written to
 `.cache/integration/isolation-shadow-<browser>-mv<version>.json`, outside the extension output.
 

@@ -72,12 +72,12 @@ export default class ContentManager {
         if (this.config.manifestVersion !== 2) {
             if (
                 world === ContentScriptWorld.Main &&
-                (options.isolation === ContentScriptIsolation.Shadow ||
-                    (options.isolation === ContentScriptIsolation.Iframe &&
-                        !(options.frame?.src && /^https?:\/\//.test(options.frame.src))))
+                (options.isolation?.type === ContentScriptIsolation.Shadow ||
+                    (options.isolation?.type === ContentScriptIsolation.Iframe &&
+                        !(options.isolation?.src && /^https?:\/\//.test(options.isolation.src))))
             ) {
                 throw new Error(
-                    `Content script "${file.file}" cannot use this isolation in the MAIN execution world; only external HTTP(S) frame.src is supported`
+                    `Content script "${file.file}" cannot use this isolation in the MAIN execution world; only external HTTP(S) isolation.src is supported`
                 );
             }
 

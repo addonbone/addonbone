@@ -67,7 +67,6 @@ declare module "virtual:relay-entrypoint" {
         name,
         method,
         isolation,
-        frame,
         allFrames,
         matches,
         excludeMatches,

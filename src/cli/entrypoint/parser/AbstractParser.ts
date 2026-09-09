@@ -43,6 +43,14 @@ export default abstract class AbstractParser<O extends EntrypointOptions> implem
         return instance.getOptions();
     }
 
+    protected expressionFile(file: EntrypointFile): ExpressionFile {
+        const instance = ExpressionFile.make(file.file);
+
+        instance.setImportResolver(this.ir);
+
+        return instance.setDefinition(this.definition());
+    }
+
     protected agreement(): string | undefined {
         return undefined;
     }
@@ -70,10 +78,6 @@ export default abstract class AbstractParser<O extends EntrypointOptions> implem
             return;
         }
 
-        const instance = ExpressionFile.make(file.file);
-
-        instance.setImportResolver(this.ir);
-
-        return instance.setDefinition(this.definition()).setProperty(agreement).getType();
+        return this.expressionFile(file).setProperty(agreement).getType();
     }
 }

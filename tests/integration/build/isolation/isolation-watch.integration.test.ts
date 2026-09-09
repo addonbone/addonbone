@@ -29,7 +29,7 @@ test("real CLI watch changes isolation and page aliases and removes outdated WAR
             writeFile(entry, await readFile(path.join(__dirname, "states", state + ".ts")));
         await setState("page-isolated");
         await expect(fixture.build({browser: "chrome"})).rejects.toThrow(
-            "uses ?isolation CSS with frame.page/frame.src, but has no local render target"
+            "uses ?isolation CSS with isolation.page/isolation.src, but has no local render target"
         );
         await setState("none");
         const directory = await fixture.build({browser: "chrome"});
@@ -64,6 +64,7 @@ test("real CLI watch changes isolation and page aliases and removes outdated WAR
         for (const state of [
             "none",
             "shadow",
+            "shadow-closed",
             "shadow-document",
             "shadow",
             "iframe",
@@ -83,7 +84,7 @@ test("real CLI watch changes isolation and page aliases and removes outdated WAR
                     "CLI watch missing-isolation-css warning"
                 );
             }
-            const isolated = ["shadow", "shadow-document", "iframe", "fonts"].includes(state);
+            const isolated = ["shadow", "shadow-closed", "shadow-document", "iframe", "fonts"].includes(state);
             expect(!!script.css?.length).toBe(!isolated || state === "shadow-document");
             expect(
                 /__webpack_require__(?:\.__adnbnIsolatedStyles|\["__adnbnIsolatedStyles"\])\s*=\s*\{/.test(source)

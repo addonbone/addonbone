@@ -2,8 +2,7 @@ import {ContentScriptIsolation, ContentScriptWorld, defineContentScriptAppend} f
 export default defineContentScriptAppend({
     matches: ["http://127.0.0.1/top.html"],
     world: ContentScriptWorld.Main,
-    isolation: ContentScriptIsolation.Iframe,
-    frame: {src: "http://127.0.0.1:1/page.html", height: 200},
+    isolation: {type: ContentScriptIsolation.Iframe, src: "http://127.0.0.1:1/page.html", height: 200},
     container: {tagName: "section", className: "source-host"},
     main() {
         window.addEventListener("message", event => {

@@ -5,8 +5,8 @@ import {ContentScriptConfig, ContentScriptEntrypointOptions, ContentScriptIsolat
 
 /** ShadowRoot or a blank iframe provides a local target for isolated styles and UI. */
 export const hasIsolatedTarget = (options: ContentScriptEntrypointOptions): boolean =>
-    options.isolation === ContentScriptIsolation.Shadow ||
-    (options.isolation === ContentScriptIsolation.Iframe && !isContentScriptFrameNavigation(options.frame));
+    options.isolation?.type === ContentScriptIsolation.Shadow ||
+    (options.isolation?.type === ContentScriptIsolation.Iframe && !isContentScriptFrameNavigation(options.isolation));
 
 export const getContentScriptConfigFromOptions = (options: ContentScriptEntrypointOptions): ContentScriptConfig => {
     const config = _.pick(options, [

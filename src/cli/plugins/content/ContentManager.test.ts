@@ -53,7 +53,7 @@ class ProviderFixture implements ContentProvider<ContentScriptEntrypointOptions>
 describe("ContentManager virtual modules", () => {
     test("requires a prepared group and a matching file before calling a provider", async () => {
         const file = {file: "panel.content.ts", import: "./panel.content"};
-        const options: ContentScriptEntrypointOptions = {isolation: "iframe", frame: {page: "panel"}};
+        const options: ContentScriptEntrypointOptions = {isolation: {type: "iframe", page: "panel"}};
         const createVirtual = jest.fn((_file, options) => JSON.stringify(options));
         const driver = new DriverFixture(new Set(), new Set(), new Map([["panel", {file, options}]]));
         const manager = new ContentManager({rootDir: process.cwd()} as ReadonlyConfig).provider(
@@ -77,18 +77,18 @@ describe("ContentManager virtual modules", () => {
         const driver = new DriverFixture(
             new Set(),
             new Set(),
-            new Map([["changing", {file, options: {isolation: "iframe", frame: {src: "https://example.com"}}}]])
+            new Map([["changing", {file, options: {isolation: {type: "iframe", src: "https://example.com"}}}]])
         );
         const manager = new ContentManager({rootDir: process.cwd()} as ReadonlyConfig).provider(
             new ProviderFixture(driver, (_file, options) => JSON.stringify(options))
         );
         await manager.entries();
-        expect(JSON.parse(manager.virtual(file))).toHaveProperty("frame.src", "https://example.com");
+        expect(JSON.parse(manager.virtual(file))).toHaveProperty("isolation.src", "https://example.com");
         manager.clear();
         expect(() => manager.virtual(file)).toThrow(/group is not prepared/);
-        driver.setItems(new Map([["changing", {file, options: {isolation: "shadow"}}]]));
+        driver.setItems(new Map([["changing", {file, options: {isolation: {type: "shadow"}}}]]));
         await manager.entries();
-        expect(JSON.parse(manager.virtual(file))).toEqual({isolation: "shadow"});
+        expect(JSON.parse(manager.virtual(file))).toEqual({isolation: {type: "shadow"}});
     });
 });
 
@@ -123,12 +123,12 @@ describe("ContentManager execution worlds", () => {
         async frame => {
             const file = {file: "frame.content.ts", import: "./frame.content"};
             const items: ContentItems<ContentScriptEntrypointOptions> = new Map([
-                ["frame", {file, options: {isolation: "iframe", frame, world: ContentScriptWorld.Main}}],
+                ["frame", {file, options: {isolation: {type: "iframe", ...frame}, world: ContentScriptWorld.Main}}],
             ]);
             const manager = new ContentManager({manifestVersion: 3, rootDir: process.cwd()} as ReadonlyConfig).provider(
                 new ProviderFixture(new DriverFixture(new Set(), new Set(), items))
             );
-            await expect(manager.entries()).rejects.toThrow(/only external HTTP\(S\) frame.src/);
+            await expect(manager.entries()).rejects.toThrow(/only external HTTP\(S\) isolation.src/);
         }
     );
     test("normalizes MV2 worlds before grouping and warns without changing provider options", async () => {
@@ -244,7 +244,7 @@ describe("ContentManager execution worlds", () => {
         const warn = jest.spyOn(console, "warn").mockImplementation(() => {});
         const file = {file: "shadow.content.ts", import: "./shadow.content"};
         const items: ContentItems<ContentScriptEntrypointOptions> = new Map([
-            ["shadow", {file, options: {isolation: "shadow", world: ContentScriptWorld.Main}}],
+            ["shadow", {file, options: {isolation: {type: "shadow"}, world: ContentScriptWorld.Main}}],
         ]);
         const manager = new ContentManager({
             manifestVersion: 2,
@@ -254,7 +254,7 @@ describe("ContentManager execution worlds", () => {
 
         try {
             await expect(manager.entryOptions()).resolves.toEqual(
-                new Map([["shadow.content", {world: ContentScriptWorld.Isolated, isolation: "shadow"}]])
+                new Map([["shadow.content", {world: ContentScriptWorld.Isolated, isolation: {type: "shadow"}}]])
             );
         } finally {
             warn.mockRestore();
@@ -264,7 +264,7 @@ describe("ContentManager execution worlds", () => {
     test("rejects Shadow DOM in the MAIN world for Manifest V3", async () => {
         const file = {file: "shadow.content.ts", import: "./shadow.content"};
         const items: ContentItems<ContentScriptEntrypointOptions> = new Map([
-            ["shadow", {file, options: {isolation: "shadow", world: ContentScriptWorld.Main}}],
+            ["shadow", {file, options: {isolation: {type: "shadow"}, world: ContentScriptWorld.Main}}],
         ]);
         const manager = new ContentManager({
             manifestVersion: 3,
@@ -284,7 +284,7 @@ describe("ContentManager Shadow DOM entries", () => {
                 `frame-${index}`,
                 {
                     file: {file: `frame-${index}.content.ts`, import: `./frame-${index}.content`},
-                    options: {isolation: "iframe", frame},
+                    options: {isolation: {type: "iframe", ...frame}},
                 },
             ])
         );
@@ -295,7 +295,7 @@ describe("ContentManager Shadow DOM entries", () => {
         } as ReadonlyConfig).provider(new ProviderFixture(new DriverFixture(new Set(), new Set(), items)));
         expect((await manager.entries()).size).toBe(4);
         expect(Array.from((await manager.entryOptions()).values())).toEqual(
-            frames.map(frame => ({isolation: "iframe", frame}))
+            frames.map(frame => ({isolation: {type: "iframe", ...frame}}))
         );
     });
     test("never concatenates shadow entries and keeps ordinary entries eligible for concatenation", async () => {
@@ -307,8 +307,8 @@ describe("ContentManager Shadow DOM entries", () => {
         const items: ContentItems<ContentScriptEntrypointOptions> = new Map([
             ["normal-a", {file: normalA, options: {matches}}],
             ["normal-b", {file: normalB, options: {matches}}],
-            ["shadow-a", {file: shadowA, options: {matches, isolation: "shadow"}}],
-            ["shadow-b", {file: shadowB, options: {matches, isolation: "shadow"}}],
+            ["shadow-a", {file: shadowA, options: {matches, isolation: {type: "shadow"}}}],
+            ["shadow-b", {file: shadowB, options: {matches, isolation: {type: "shadow"}}}],
         ]);
         const manager = new ContentManager({
             manifestVersion: 3,
@@ -326,8 +326,8 @@ describe("ContentManager Shadow DOM entries", () => {
         await expect(manager.entryOptions()).resolves.toEqual(
             new Map([
                 ["normal-a.content", {matches}],
-                ["shadow-a.content", {matches, isolation: "shadow"}],
-                ["shadow-b.content", {matches, isolation: "shadow"}],
+                ["shadow-a.content", {matches, isolation: {type: "shadow"}}],
+                ["shadow-b.content", {matches, isolation: {type: "shadow"}}],
             ])
         );
     });
@@ -337,7 +337,7 @@ describe("ContentManager Shadow DOM entries", () => {
         const driver = new DriverFixture(
             new Set(),
             new Set(),
-            new Map([["changing", {file, options: {isolation: "shadow"}}]])
+            new Map([["changing", {file, options: {isolation: {type: "shadow"}}}]])
         );
         const manager = new ContentManager({
             manifestVersion: 3,
@@ -345,7 +345,9 @@ describe("ContentManager Shadow DOM entries", () => {
             rootDir: process.cwd(),
         } as ReadonlyConfig).provider(new ProviderFixture(driver));
 
-        await expect(manager.entryOptions()).resolves.toEqual(new Map([["changing.content", {isolation: "shadow"}]]));
+        await expect(manager.entryOptions()).resolves.toEqual(
+            new Map([["changing.content", {isolation: {type: "shadow"}}]])
+        );
         const manifest = await manager.manifest();
         expect(manifest).toEqual(
             new Set([
@@ -359,14 +361,18 @@ describe("ContentManager Shadow DOM entries", () => {
             ])
         );
 
-        driver.setItems(new Map([["changing", {file, options: {isolation: "none"}}]]));
+        driver.setItems(new Map([["changing", {file, options: {isolation: {type: "none"}}}]]));
         manager.clear();
-        await expect(manager.entryOptions()).resolves.toEqual(new Map([["changing.content", {isolation: "none"}]]));
+        await expect(manager.entryOptions()).resolves.toEqual(
+            new Map([["changing.content", {isolation: {type: "none"}}]])
+        );
         await expect(manager.manifest()).resolves.toEqual(manifest);
 
-        driver.setItems(new Map([["changing", {file, options: {isolation: "shadow"}}]]));
+        driver.setItems(new Map([["changing", {file, options: {isolation: {type: "shadow"}}}]]));
         manager.clear();
-        await expect(manager.entryOptions()).resolves.toEqual(new Map([["changing.content", {isolation: "shadow"}]]));
+        await expect(manager.entryOptions()).resolves.toEqual(
+            new Map([["changing.content", {isolation: {type: "shadow"}}]])
+        );
         await expect(manager.manifest()).resolves.toEqual(manifest);
     });
 });

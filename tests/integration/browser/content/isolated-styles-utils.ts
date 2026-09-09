@@ -21,6 +21,8 @@ interface ShadowProbe {
     readonly mounts?: number;
     readonly instance?: string;
     readonly kind?: string;
+    readonly mode?: string;
+    readonly closed?: boolean;
     readonly links: string[];
     readonly ready?: string;
     readonly sharedCss?: string;
@@ -43,6 +45,13 @@ const DocumentStateExpression = `(document => {
     const view = document.defaultView;
     const hosts = Array.from(document.querySelectorAll("[data-shadow-probe]"));
     const probes = hosts.map(host => {
+        const reported = host.getAttribute("data-shadow-report");
+        if (reported) return {
+            ...JSON.parse(reported),
+            kind: host.getAttribute("data-shadow-probe"),
+            instance: host.getAttribute("data-instance"),
+            closed: host.shadowRoot === null,
+        };
         const root = host.shadowRoot ?? host.querySelector("iframe")?.contentDocument;
         const result = root && root.querySelector("[data-shadow-result]");
         const style = result && result.ownerDocument.defaultView.getComputedStyle(result);
@@ -55,6 +64,7 @@ const DocumentStateExpression = `(document => {
             style.borderTopWidth === "3px" && (!primary || (range && Math.abs(range.getBoundingClientRect().width - 320) < 0.1));
         return {
             measured: !!measured,
+            mode: host.shadowRoot?.mode,
             mounts: Number(host.getAttribute("data-mounts")),
             ...(result ? Object.fromEntries(Object.entries(result.dataset)) : {ready: "missing"}),
             instance: host.getAttribute("data-instance") || undefined,
@@ -239,6 +249,36 @@ export const runIsolatedStylesIntegration = async (
             }, 30_000);
             expectDocument(top, "top", 2);
 
+            if (fixtureName === "isolation-shadow") {
+                expect(top.probes.filter(probe => probe.kind === "primary").every(probe => probe.mode === "open")).toBe(
+                    true
+                );
+                expect(top.probes.find(probe => probe.kind === "secondary")).toMatchObject({
+                    mode: "closed",
+                    closed: true,
+                });
+                const instance = Number(top.probes.find(probe => probe.kind === "secondary")!.instance);
+                await evaluate(`(() => {
+                    document.querySelector('[data-shadow-secondary]')?.remove();
+                    const anchor = document.createElement("div");
+                    anchor.setAttribute("data-shadow-secondary", "");
+                    document.body.appendChild(anchor);
+                })()`);
+                const replaced = await waitFor(async () => {
+                    const state = await evaluate(`${DocumentStateExpression}(document)`);
+                    lastState = state;
+                    return isReady(state, 3) &&
+                        Number(state.probes.find(probe => probe.kind === "secondary")?.instance) > instance
+                        ? state
+                        : undefined;
+                }, 30_000);
+                expectDocument(replaced, "top", 2);
+                expect(replaced.probes.find(probe => probe.kind === "secondary")).toMatchObject({
+                    mode: "closed",
+                    closed: true,
+                });
+            }
+
             if (fixtureName === "isolation-iframe") {
                 let mounts = top.probes.map(probe => probe.mounts!);
                 for (const operation of ["append", "insert", "reinsert"]) {
@@ -292,6 +332,14 @@ export const runIsolatedStylesIntegration = async (
             }, 30_000);
             expectDocument(frames.top, "top", 1);
             expectDocument(frames.child, "child", 1);
+            if (fixtureName === "isolation-shadow") {
+                for (const document of [frames.top, frames.child]) {
+                    expect(document.probes.find(probe => probe.kind === "secondary")).toMatchObject({
+                        mode: "closed",
+                        closed: true,
+                    });
+                }
+            }
             measurements.push({policy: policy === null ? "none" : "strict", top: remounted, frames});
             await site.close();
             site = undefined;

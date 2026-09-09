@@ -19,12 +19,28 @@ const file = (...parts: string[]) => {
 };
 
 describe("RelayParser", () => {
+    test("reads imported isolation objects and enum injectors through the shared option reader", () => {
+        expect(parser.options(file("options", "isolation", "imported.relay.ts"))).toMatchObject({
+            isolation: {type: "shadow", mode: "closed"},
+            method: "messaging",
+        });
+    });
+    test("reports the unresolved nested field in Relay options", () => {
+        const target = file("invalid", "dynamic-isolation.relay.ts");
+        expect(() => parser.options(target)).toThrow(/isolation.mode must be statically known/);
+        expect(() => parser.options(target)).toThrow(target.file);
+    });
+    test("preserves Shadow options and shares content validation", () => {
+        expect(parser.options(file("options", "isolation", "shadow.relay.ts"))).toMatchObject({
+            isolation: {type: "shadow", mode: "closed"},
+        });
+        expect(() => parser.options(file("invalid", "shadow.relay.ts"))).toThrow(/isolation.mode is not supported/);
+    });
     test.each(["function.relay.ts", "named-render.relay.ts", "imported.relay.ts"])(
         "treats %s as init rather than a content renderer",
         name => {
             expect(parser.options(file("options", "default-init", name))).toMatchObject({
-                isolation: "iframe",
-                frame: {page: "panel"},
+                isolation: {type: "iframe", page: "panel"},
             });
         }
     );
@@ -35,8 +51,7 @@ describe("RelayParser", () => {
     });
     test("preserves Relay isolation and frame build options", () => {
         const options = parser.options(file("options", "isolation", "relay.ts"));
-        expect(options).toHaveProperty("isolation", "iframe");
-        expect(options).toHaveProperty("frame", {page: "panel"});
+        expect(options.isolation).toEqual({type: "iframe", page: "panel", width: "100%", height: 150});
     });
     test("parses the all-frame response capability from a real entrypoint file", () => {
         expect(parser.options(file("options", "all-frames", "relay.ts"))).toEqual(

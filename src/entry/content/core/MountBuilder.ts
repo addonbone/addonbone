@@ -12,7 +12,7 @@ export default abstract class extends Builder {
     private values = new Map<Element, null | ContentScriptRenderValue>();
 
     protected getProps(anchor: Element): ContentScriptProps {
-        const {anchor: _, mount, watch, render, container, main, isolation, frame, ...options} = this.definition;
+        const {anchor: _, mount, watch, render, container, main, isolation, ...options} = this.definition;
 
         return {...options, anchor};
     }
@@ -43,7 +43,7 @@ export default abstract class extends Builder {
         const value = await this.getValue(anchor);
 
         if (
-            isContentScriptFrameNavigation(this.definition.frame) ||
+            isContentScriptFrameNavigation(this.definition.isolation) ||
             (typeof value !== "boolean" && value !== undefined)
         ) {
             container = (await this.definition.container(this.getProps(anchor))) as Element | undefined;
@@ -51,11 +51,11 @@ export default abstract class extends Builder {
 
         const node = new MountNode(new MarkerNode(new Node(anchor, container), this.marker), this.definition.mount);
 
-        switch (this.definition.isolation) {
+        switch (this.definition.isolation.type) {
             case ContentScriptIsolation.Shadow:
-                return new ShadowNode(node);
+                return new ShadowNode(node, this.definition.isolation);
             case ContentScriptIsolation.Iframe:
-                return new FrameNode(node, this.definition.frame, () => this.context.mount());
+                return new FrameNode(node, this.definition.isolation, () => this.context.mount());
             default:
                 return node;
         }

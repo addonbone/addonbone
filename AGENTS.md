@@ -13,6 +13,7 @@
 - `src/shared` owns pure implementation helpers shared by CLI and extension runtime, grouped by domain (for example, `shared/content`). Such helpers may use domain contracts, but must not import CLI/runtime implementations or depend on DOM state. Keep them separate from public exports and declaration-only contracts.
 - Generated, augmentable contracts follow the same rule: for example, `PageAliasRegistry`, `PageAlias`, and `PageMap` belong in `types/page.ts` and are re-exported through `main/page.ts`. Preserve public module augmentation and verify both public and internal consumers when moving them.
 - `src/cli/entrypoint` owns discovery, parsing, naming, and normalized entrypoint descriptions. Reuse its finders instead of reaching into a feature plugin for the same information.
+- `src/cli/entrypoint/parser` owns entrypoint schemas, defaults, and interpretation of parsed data. These classes, including `AbstractParser`, configure file readers but must not traverse TypeScript AST or construct `Program`/`TypeChecker` instances. Keep source analysis in `file` and its specialized `file/parsers`; return plain metadata so each entrypoint decides what an export means.
 - `src/cli/plugins` owns framework feature policy and composition: interpreting entrypoint options, configuring the bundler, supplying normalized data, and declaring manifest requirements.
 - `src/cli/bundler/plugins` owns Rspack integration: compiler hooks, runtime modules, emitted assets, and generic build validation. A class using Rspack hooks belongs here even when only one framework feature currently uses it.
 - `src/entry` and the other extension runtime modules own execution, rendering adapters, and lifecycle behavior. Build code must not import runtime implementations to obtain constants, types, or helpers.
@@ -20,9 +21,9 @@
 
 ### Dependencies between plugins
 
-- A framework feature plugin must not import or instantiate another feature plugin's manager or implementation. For example, content uses `PageFinder` from `@cli/entrypoint`, not `Page` from `plugins/page`, to resolve `frame.page` aliases.
+- A framework feature plugin must not import or instantiate another feature plugin's manager or implementation. For example, content uses `PageFinder` from `@cli/entrypoint`, not `Page` from `plugins/page`, to resolve `isolation.page` aliases.
 - Framework plugins configure Rspack plugins by passing data, selectors, or callbacks with explicit contracts. Do not pass a manager instance, including a disguised dependency such as `Pick<ContentManager, ...>`.
-- Give Rspack plugins names and options that describe their build responsibility, not their current caller. They should not know about content options such as `frame.page`, page aliases, or specific managers when they only need filenames and access requirements.
+- Give Rspack plugins names and options that describe their build responsibility, not their current caller. They should not know about content options such as `isolation.page`, page aliases, or specific managers when they only need filenames and access requirements.
 - Caller-specific policy and diagnostic context belong to the framework plugin. Pass a validation callback, issuer, or hint instead of hardcoding the caller's options and error explanation inside a generic Rspack plugin.
 - Rspack plugins must not import sibling plugin implementations or their private helpers. Extract a genuinely shared contract or algorithm below both consumers; do not hide the dependency behind a barrel re-export.
 - Use `bundler/plugins/utils` and `bundler/plugins/types.ts` for shared plugin infrastructure such as compilation hooks and option contracts. Use `bundler/utils` for general asset graph, classification, and filename utilities. Keep feature-private helpers inside their owning plugin.
@@ -46,6 +47,7 @@
 
 ### Refactoring checks
 
+- For experimental APIs that have not been released and are still being designed in the active branch, replace superseded contracts outright. Do not retain compatibility aliases, migration guards, obsolete-contract tests or migration documentation unless explicitly requested. Keep validation and tests for the currently agreed contract.
 - Before adding an import or moving a symbol, identify who owns the behavior, who needs the data, and which dependency direction follows from that ownership. A directory move alone does not fix a dependency if the original implementation is still imported through a helper or re-export.
 - When changing a shared boundary, update declarations, consumers, templates, tests, and documentation together. Treat removal of public metadata as an API change, not a cosmetic cleanup.
 - Preserve behavior while separating responsibilities: public exports, generated declarations, loading order, lifecycle, user filename templates, manifest/WAR semantics, and watch updates. Verify at the owning layer and use existing integration tests for cross-layer guarantees.

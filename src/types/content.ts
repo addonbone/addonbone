@@ -105,7 +105,18 @@ export enum ContentScriptIsolation {
     Iframe = "iframe",
 }
 
-export type ContentScriptIsolationValue = ContentScriptIsolation | `${ContentScriptIsolation}`;
+export enum ContentScriptShadowMode {
+    Open = "open",
+    Closed = "closed",
+}
+
+export interface ContentScriptShadowOptions {
+    /**
+     * Controls access through the host's shadowRoot property, not CSS isolation or UI visibility.
+     * @default ContentScriptShadowMode.Open
+     */
+    mode?: ContentScriptShadowMode | `${ContentScriptShadowMode}`;
+}
 
 export interface ContentScriptFrameOptions {
     width?: number | string;
@@ -133,10 +144,42 @@ export type ContentScriptFrame =
     | ContentScriptFramePageOptions
     | ContentScriptFrameSourceOptions;
 
+export interface ContentScriptIsolationNoneOptions {
+    type: ContentScriptIsolation.None | "none";
+    mode?: never;
+    page?: never;
+    src?: never;
+    width?: never;
+    height?: never;
+}
+
+export interface ContentScriptIsolationShadowOptions extends ContentScriptShadowOptions {
+    type: ContentScriptIsolation.Shadow | "shadow";
+    page?: never;
+    src?: never;
+    width?: never;
+    height?: never;
+}
+
+export type ContentScriptIsolationFrameOptions = ContentScriptFrame & {
+    type: ContentScriptIsolation.Iframe | "iframe";
+    mode?: never;
+};
+
+/** Object form of isolation, also used after resolving shorthand values. */
+export type ContentScriptIsolationOptions =
+    | ContentScriptIsolationNoneOptions
+    | ContentScriptIsolationShadowOptions
+    | ContentScriptIsolationFrameOptions;
+
+export type ContentScriptIsolationValue =
+    | ContentScriptIsolation
+    | `${ContentScriptIsolation}`
+    | ContentScriptIsolationOptions;
+
 /** Statically resolved configuration; runtime render values are never retained here. */
 export type ContentScriptEntrypointOptions = Partial<ContentScriptOptions> & {
-    isolation?: ContentScriptIsolationValue;
-    frame?: ContentScriptFrame;
+    isolation?: ContentScriptIsolationOptions;
 };
 
 // Append
@@ -316,23 +359,17 @@ export interface ContentScriptDefinitionBase extends Partial<ContentScriptOption
 export type ContentScriptDefinition = ContentScriptDefinitionBase &
     (
         | {
-              isolation?: ContentScriptIsolation.None | "none";
-              frame?: never;
+              isolation?:
+                  | ContentScriptIsolation
+                  | `${ContentScriptIsolation}`
+                  | ContentScriptIsolationNoneOptions
+                  | ContentScriptIsolationShadowOptions
+                  | (ContentScriptIsolationFrameOptions & ContentScriptFrameRenderOptions);
               render?: ContentScriptRenderValue | ContentScriptRenderHandler;
           }
         | {
-              isolation: ContentScriptIsolation.Shadow | "shadow";
-              frame?: never;
-              render?: ContentScriptRenderValue | ContentScriptRenderHandler;
-          }
-        | {
-              isolation: ContentScriptIsolation.Iframe | "iframe";
-              frame?: ContentScriptFrameRenderOptions;
-              render?: ContentScriptRenderValue | ContentScriptRenderHandler;
-          }
-        | {
-              isolation: ContentScriptIsolation.Iframe | "iframe";
-              frame: ContentScriptFramePageOptions | ContentScriptFrameSourceOptions;
+              isolation: ContentScriptIsolationFrameOptions &
+                  (ContentScriptFramePageOptions | ContentScriptFrameSourceOptions);
               render?: never;
           }
     );
@@ -341,8 +378,7 @@ export interface ContentScriptResolvedDefinition extends Omit<
     ContentScriptDefinitionBase,
     "anchor" | "marker" | "mount" | "container" | "watch"
 > {
-    isolation: ContentScriptIsolationValue;
-    frame?: ContentScriptFrame;
+    isolation: ContentScriptIsolationOptions;
     marker: ContentScriptMarkerResolver;
     anchor: ContentScriptAnchorGetter;
     mount: ContentScriptMountFunction;

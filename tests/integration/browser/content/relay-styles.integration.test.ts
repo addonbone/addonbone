@@ -31,8 +31,22 @@ test.each([
             );
         });
         expect(result).toEqual({
-            shadow: {color: "rgb(17, 85, 153)", background: "rgb(34, 102, 68)", host: "3px", isolated: true},
-            iframe: {color: "rgb(17, 85, 153)", background: "rgb(34, 102, 68)", host: "3px", isolated: true},
+            shadow: {
+                color: "rgb(17, 85, 153)",
+                background: "rgb(34, 102, 68)",
+                host: "3px",
+                isolated: true,
+                mode: "closed",
+                closed: true,
+                isolation: {type: "shadow", mode: "closed"},
+            },
+            iframe: {
+                color: "rgb(17, 85, 153)",
+                background: "rgb(34, 102, 68)",
+                host: "3px",
+                isolated: true,
+                isolation: {type: "iframe", width: "100%", height: 150},
+            },
             page: "rgb(17, 85, 153)",
         });
         expect(session.errors).toEqual([]);

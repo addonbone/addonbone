@@ -28,7 +28,7 @@ export default class extends RelayFinder implements ContentProvider<ContentScrip
             throw new Error(`Relay options not found for "${file}"`);
         }
 
-        return virtualRelayModule(file, options.name, isContentScriptFrameNavigation(contentOptions?.frame));
+        return virtualRelayModule(file, options.name, isContentScriptFrameNavigation(contentOptions?.isolation));
     }
 
     public async getOptionsMap(): Promise<Record<string, RelayOptions>> {

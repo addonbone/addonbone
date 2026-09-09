@@ -1,4 +1,4 @@
 import {defineContentScriptAppend} from "adnbn";
 const page = "panel";
-const frame = {page, height: 320};
-export default defineContentScriptAppend({isolation: "iframe", frame});
+const isolation = {type: "iframe", page, height: 320} as const;
+export default defineContentScriptAppend({isolation});

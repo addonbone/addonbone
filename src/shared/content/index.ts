@@ -1,1 +1,1 @@
-export {isContentScriptFrameNavigation, validateContentScriptIsolation} from "./isolation";
+export {isContentScriptFrameNavigation, resolveContentScriptIsolation} from "./isolation";

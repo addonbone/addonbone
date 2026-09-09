@@ -1,8 +1,7 @@
 import {ContentScriptIsolation, defineContentScriptAppend} from "adnbn";
 export default defineContentScriptAppend({
     matches: ["http://127.0.0.1/top.html"],
-    isolation: ContentScriptIsolation.Iframe,
-    frame: {page: "panel", height: 250},
+    isolation: {type: ContentScriptIsolation.Iframe, page: "panel", height: 250},
     container: {tagName: "section", className: "page-host"},
     main() {
         window.addEventListener("message", event => {

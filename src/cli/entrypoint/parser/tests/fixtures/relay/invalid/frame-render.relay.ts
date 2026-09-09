@@ -1,5 +1,5 @@
-export const isolation = "iframe";
-export const frame = {page: "panel"};
+export const isolation = {type: "iframe", page: "panel"};
+
 export function render() {
     return "UI";
 }

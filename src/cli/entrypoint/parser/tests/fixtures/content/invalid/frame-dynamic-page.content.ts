@@ -1,2 +1,2 @@
 import {defineContentScriptAppend} from "adnbn";
-export default defineContentScriptAppend({isolation: "iframe", frame: {page: computeTarget()}});
+export default defineContentScriptAppend({isolation: {type: "iframe", page: computeTarget()}});

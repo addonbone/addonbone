@@ -10,7 +10,7 @@ and their tests live together:
 - `core/context`: the node collection, lifecycle operations, and event subscriptions.
 - `core/resolvers`: normalization of content definitions and option handlers.
 - `adapters/react` and `adapters/vanilla`: UI rendering implementations.
-- `frame`: document navigation for `frame.page` and `frame.src`, without a UI renderer.
+- `frame`: document navigation for `isolation.page` and `isolation.src`, without a UI renderer.
 
 Pure structural validation and the frame-navigation predicate live in `src/shared/content/isolation.ts`.
 CLI and runtime import this shared module independently; the parser does not import runtime resolvers.
@@ -22,7 +22,8 @@ A blank iframe still uses its React/Vanilla adapter with the shared `FrameNode`.
 ## Isolation
 
 `isolation` accepts `ContentScriptIsolation.None`, `Shadow`, or `Iframe`, or their string values
-`"none"`, `"shadow"`, and `"iframe"`. The default is `None`. Isolation changes the render target;
+`"none"`, `"shadow"`, and `"iframe"`. For additional options, use an object with a required `type`
+containing the same enum or string value. The default is `None`. Isolation changes the render target;
 existing anchors, containers, mount/append placement, and context methods remain available.
 
 ```tsx title="src/panel.content/index.tsx"
@@ -33,20 +34,19 @@ import Panel from "./Panel";
 export default defineContentScriptAppend({
     matches: ["https://example.com/*"],
     anchor: ".product",
-    isolation: ContentScriptIsolation.Iframe,
-    frame: {height: 320},
+    isolation: {type: ContentScriptIsolation.Iframe, height: 320},
     render: Panel,
 });
 ```
 
-| Mode                    | Target                                               | `frame`              |
-| ----------------------- | ---------------------------------------------------- | -------------------- |
-| None                    | Host container                                       | Forbidden            |
-| Shadow                  | Inner element in an open ShadowRoot                  | Forbidden            |
-| Iframe without page/src | Inner element in a blank iframe document             | Optional dimensions  |
-| Iframe with page/src    | Embedded document owns its UI; `render` is forbidden | Required page or src |
+| Type                    | Target                                               | Additional isolation options         |
+| ----------------------- | ---------------------------------------------------- | ------------------------------------ |
+| None                    | Host container                                       | None                                 |
+| Shadow                  | Inner element in a ShadowRoot                        | Optional `mode`, default `open`      |
+| Iframe without page/src | Inner element in a blank iframe document             | Optional `width` and `height`        |
+| Iframe with page/src    | Embedded document owns its UI; `render` is forbidden | `page` or `src`, optional dimensions |
 
-`frame.width` and `frame.height` accept pixels as numbers or CSS strings. Defaults are `100%` and
+`isolation.width` and `isolation.height` accept pixels as numbers or CSS strings. Defaults are `100%` and
 `150px`, with no border and `display: block`. Automatic height is not implemented; `height: "auto"`
 produces an error. The blank iframe has no `src` attribute. The framework creates the host and target,
 so a custom `container` factory is optional.
@@ -55,6 +55,33 @@ Import UI styles with `?isolation` and declare fonts in CSS as described below. 
 same isolation and frame variants; its RPC transport and all-frame addressing remain independent
 of UI isolation.
 
+## Shadow options
+
+Set `mode` inside an isolation object with `type: Shadow`, in content scripts or Relay:
+
+```tsx title="src/panel.content/index.tsx"
+import {ContentScriptIsolation, ContentScriptShadowMode, defineContentScriptAppend} from "adnbn";
+import "./panel.css?isolation";
+import Panel from "./Panel";
+
+export default defineContentScriptAppend({
+    isolation: {type: ContentScriptIsolation.Shadow, mode: ContentScriptShadowMode.Closed},
+    render: Panel,
+});
+```
+
+`mode` accepts `ContentScriptShadowMode.Open` / `Closed` and the string literals `"open"` / `"closed"`.
+The shorthand `isolation: "shadow"` and `{type: "shadow"}` both keep the default `open` behavior.
+`mode` is only valid for Shadow; iframe dimensions and page/src are only valid for Iframe.
+
+In closed mode, `host.shadowRoot` returns `null`. The framework retains its own reference, so
+`node.target`, initial and lazy CSS, renderer cleanup, and remount still work. The mode is selected
+when creating the root; changing an already mounted root's mode is not supported.
+
+Closed mode does not hide the UI, change CSS isolation, or provide a security boundary. Composed
+events can still reach the page; their external `composedPath()` omits closed-root internals.
+Code that needs the rendered element should use the framework's `target`, not query `host.shadowRoot`.
+
 ## Embedding a document
 
 ```ts title="src/panel-frame.content.ts"
@@ -62,8 +89,7 @@ import {defineContentScriptAppend} from "adnbn";
 
 export default defineContentScriptAppend({
     matches: ["https://example.com/*"],
-    isolation: "iframe",
-    frame: {page: "panel", height: 320},
+    isolation: {type: "iframe", page: "panel", height: 320},
 });
 ```
 
@@ -74,23 +100,28 @@ Rules can come from `page.matches` or custom manifest configuration and jointly 
 Insufficient coverage fails the build with a hint to add page matches or narrow content matches; the
 framework does not broaden access automatically.
 
-Use `frame: {src: "https://example.com/panel"}` for an absolute HTTP(S) URL. Absolute extension URLs
+Use `isolation: {type: "iframe", src: "https://example.com/panel"}` for an absolute HTTP(S) URL. Absolute extension URLs
 are also accepted. Relative paths and other schemes are unsupported. `page` and `src` are mutually
 exclusive and cannot be combined with `render`. The child page loads its own scripts,
 styles and fonts. A frame `load` event or the context's `Mount` event does not prove that embedding
 succeeded: host CSP, destination CSP/frame-ancestors or X-Frame-Options can block it.
 
 For content scripts, a default-exported component or render function also conflicts with
-`frame.page`/`frame.src` and is checked during the build. A default-exported options object remains
+`isolation.page`/`isolation.src` and is checked during the build. A default-exported options object remains
 configuration. A Relay's default function is `init`, not an implicit renderer.
 
-Isolation values and frame routing must be statically known. Write `frame` as an explicit object
-or a local constant holding one, without spreads or methods; page/src can reference statically resolvable string constants.
+Isolation options must be statically known. Objects and arrays can reference local or imported
+constants and supported enum members. Static object/array spreads and computed string or numeric
+keys are supported. Unresolved identifiers, function calls, methods and circular references in build
+options produce an error naming the field and source file; the CLI never executes entrypoint code
+to compute these values. Only build properties are evaluated, so runtime functions such as `render`
+and `main` remain untouched. CLI and runtime both normalize shorthand values to an object
+with `type` and the mode/dimension defaults; runtime rendering values are not evaluated by the CLI.
 
 ## Execution worlds and lifecycle
 
-Shadow, blank iframe, extension URLs and `frame.page` require effective `ISOLATED`. HTTP(S)
-`frame.src` also supports `MAIN`. MV2 normalizes requested `MAIN` to `ISOLATED` with a build warning
+Shadow, blank iframe, extension URLs and `isolation.page` require effective `ISOLATED`. HTTP(S)
+`isolation.src` also supports `MAIN`. MV2 normalizes requested `MAIN` to `ISOLATED` with a build warning
 before grouping and bundling. Unsupported MV3 combinations fail the build.
 
 In a blank iframe, React/Vanilla JavaScript still executes in the content-script runtime and renders
@@ -144,7 +175,7 @@ CSS file in `initial.css` / `async.css`. The isolated styles runtime owns CSS ro
 
 With `isolation: None`, marked CSS loads normally into the page. Outside content and Relay, including
 popup and page entries, `?isolation` has no routing effect and adds no isolated-style runtime.
-`frame.page`/`frame.src` entries have no local render target: importing `?isolation` CSS there is a build
+`isolation.page`/`isolation.src` entries have no local render target: importing `?isolation` CSS there is a build
 error. Import the styles in the embedded page instead. That page's own CSS behaves normally.
 
 The build reports `[adnbn:missing-isolation-css]` when a Shadow or blank-iframe content/Relay entry

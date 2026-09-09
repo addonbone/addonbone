@@ -51,20 +51,25 @@ export default definePlugin(() => {
             relayDeclaration.dictionary(await relayProvider.dictionary()).build();
 
             let entryOptionsByName = await contentManager.entryOptions();
+
             const getRelayData = async (): Promise<RuntimeDataPluginData> => {
                 // Preserve the previous JSON payload: absent optional values must not become undefined data.
                 return JSON.parse(JSON.stringify(await relayProvider.getOptionsMap()));
             };
+
             const relayDataPlugin = new RuntimeDataPlugin({
                 property: RelayOptionsRuntimeProperty,
                 data: await getRelayData(),
             });
+
             const basePlugins: Plugins = [
                 relayDataPlugin,
                 new ResourceAccessPlugin({
                     requirements: async () => {
                         if (
-                            !Array.from(entryOptionsByName.values()).some(options => options.frame?.page !== undefined)
+                            !Array.from(entryOptionsByName.values()).some(
+                                options => options.isolation?.page !== undefined
+                            )
                         ) {
                             return [];
                         }

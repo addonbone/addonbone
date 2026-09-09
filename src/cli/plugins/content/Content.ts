@@ -26,7 +26,7 @@ export default class extends ContentFinder implements ContentProvider<ContentScr
             throw new Error(`File ${file} not found for content script`);
         }
 
-        return virtualContentScriptModule(file, isContentScriptFrameNavigation(options?.frame));
+        return virtualContentScriptModule(file, isContentScriptFrameNavigation(options?.isolation));
     }
 
     public clear(): this {

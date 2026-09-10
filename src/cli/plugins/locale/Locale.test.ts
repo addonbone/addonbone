@@ -16,6 +16,7 @@ import {Browser} from "@typing/browser";
 import {ReadonlyConfig} from "@typing/config";
 import {Language, LocaleMessages} from "@typing/locale";
 import {GenerateJsonPluginData} from "@cli/bundler";
+import {flattenLocaleMessages} from "@shared/locale/messages";
 
 const fixtures = path.resolve(__dirname, "tests/fixtures/completion");
 
@@ -188,6 +189,7 @@ describe("locale JSON completion", () => {
         const locale = makeLocale("no-locales");
 
         expect(await locale.json()).toEqual({});
+        expect(await locale.catalogue()).toEqual({});
         expect(await locale.languages()).toEqual(new Set());
     });
 
@@ -216,9 +218,37 @@ describe("locale JSON completion", () => {
         expect(messages(await locale.json(), Language.French).app_greeting.message).toBe("Hello {{ name }}");
 
         fs.copyFileSync(path.join(fixtures, "updated/en.yaml"), path.join(root, "src/locales/en.yaml"));
+        // The second representation must use the same prepared messages until explicitly cleared.
+        expect((await locale.catalogue()).fr!.app_greeting).toBe("Hello {{ name }}");
         locale.clear();
 
+        expect((await locale.catalogue()).fr!.app_greeting).toBe("Welcome {{ name }}");
         expect(messages(await locale.json(), Language.French).app_greeting.message).toBe("Welcome {{ name }}");
+    });
+
+    test.each([Browser.Chrome, Browser.Firefox])(
+        "catalogue matches every completed JSON message for %s",
+        async browser => {
+            const locale = makeLayeredLocale({browser});
+            const [json, catalogue] = await Promise.all([locale.json(), locale.catalogue()]);
+            expect(Object.keys(catalogue)).toEqual([...(await locale.languages())]);
+            for (const lang of await locale.languages()) {
+                expect(catalogue[lang]).toEqual(flattenLocaleMessages(messages(json, lang)));
+                expect(catalogue[lang]!.locale).toBe(lang);
+            }
+            expect(catalogue.fr).toMatchObject({empty: "", pluginItems: "élément plugin|éléments plugin"});
+        }
+    );
+
+    test("validates the catalogue directly and recovers after clearing invalid sources", async () => {
+        const root = fs.mkdtempSync(path.join(os.tmpdir(), "adnbn-locale-catalogue-"));
+        temporaryDirectories.push(root);
+        fs.cpSync(path.join(fixtures, "missing-plural"), root, {recursive: true});
+        const locale = makeLocale("missing-plural", {rootDir: root});
+        await expect(locale.catalogue()).rejects.toThrow('missing plural key "cart.items"');
+        fs.cpSync(path.join(fixtures, "single"), root, {recursive: true});
+        locale.clear();
+        expect((await locale.catalogue()).fr!.cart_items).toBe("{{count}} article|{{count}} articles");
     });
 
     test("dynamic selection uses the generated default rather than a third native language", async () => {

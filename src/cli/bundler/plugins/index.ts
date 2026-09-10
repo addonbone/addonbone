@@ -25,6 +25,12 @@ export {
     type GenerateJsonPluginUpdate,
 } from "./generate-json";
 
+export {
+    GenerateModulePlugin,
+    type GenerateModulePluginModules,
+    type GenerateModulePluginUpdate,
+} from "./generate-module";
+
 export {default as ManifestPlugin} from "./manifest";
 
 export {

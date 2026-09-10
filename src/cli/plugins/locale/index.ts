@@ -1,13 +1,13 @@
 import _ from "lodash";
-import {Configuration as RspackConfig, DefinePlugin} from "@rspack/core";
+import {DefinePlugin, type Configuration as RspackConfig} from "@rspack/core";
 
 import {definePlugin} from "@main/plugin";
-import {GenerateJsonPlugin} from "@cli/bundler";
+import {GenerateJsonPlugin, GenerateModulePlugin} from "@cli/bundler";
 import {extractLocaleKey, modifyLocaleMessageKey} from "@locale/utils";
 
 import Locale from "./Locale";
-
 import {LocaleDeclaration} from "./declaration";
+import {createLocaleModule, LocaleModuleName} from "./module";
 
 import {Command} from "@typing/app";
 import {Browser} from "@typing/browser";
@@ -24,32 +24,63 @@ export default definePlugin(() => {
         },
         locale: () => locale.files(),
         bundler: async ({config}) => {
-            await locale.validate();
+            const prepareLocale = async () => {
+                await locale.validate();
+                declaration.structure(await locale.structure()).build();
+            };
 
-            declaration.structure(await locale.structure()).build();
+            const getModules = async () => ({
+                [LocaleModuleName]: createLocaleModule(await locale.catalogue()),
+            });
 
-            const plugin = new GenerateJsonPlugin(await locale.json());
+            await prepareLocale();
+
+            const jsonPlugin = new GenerateJsonPlugin(await locale.json());
+            const modulePlugin = new GenerateModulePlugin(await getModules()).layer("adnbn:locale");
+            const constantsPlugin = new DefinePlugin({
+                __ADNBN_LOCALE_KEYS__: JSON.stringify([...(await locale.keys())]),
+                __ADNBN_DEFINED_LOCALES__: JSON.stringify([...(await locale.languages())]),
+            });
 
             if (config.command === Command.Watch) {
-                plugin.watch(async () => {
+                jsonPlugin.watch(async () => {
                     locale.clear();
+                    await prepareLocale();
 
-                    await locale.validate();
-
-                    declaration.structure(await locale.structure()).build();
-
-                    return await locale.json();
+                    return locale.json();
                 });
+
+                const watchFiles = [...(await locale.plugin().files())].map(({file}) => file);
+                modulePlugin.watch(getModules, watchFiles);
             }
 
             return {
-                plugins: [
-                    plugin,
-                    new DefinePlugin({
-                        __ADNBN_LOCALE_KEYS__: JSON.stringify([...(await locale.keys())]),
-                        __ADNBN_DEFINED_LOCALES__: JSON.stringify([...(await locale.languages())]),
-                    }),
-                ],
+                // JSON refresh clears and prepares the shared cache before the module reads it.
+                plugins: [jsonPlugin, modulePlugin, constantsPlugin],
+                optimization: config.commonChunks
+                    ? {
+                          splitChunks: {
+                              cacheGroups: {
+                                  adnbnLocaleShared: {
+                                      layer: "adnbn:locale",
+                                      name: "locale",
+                                      minChunks: 2,
+                                      minSize: 0,
+                                      enforce: true,
+                                      priority: 60,
+                                  },
+                                  adnbnLocaleLarge: {
+                                      layer: "adnbn:locale",
+                                      name: "locale",
+                                      minChunks: 1,
+                                      minSize: 100_000,
+                                      enforce: true,
+                                      priority: 70,
+                                  },
+                              },
+                          },
+                      }
+                    : undefined,
             } satisfies RspackConfig;
         },
         manifest: async ({config, manifest}) => {
@@ -94,13 +125,13 @@ export default definePlugin(() => {
 
                 /** Opera/Edge do not support localization in manifest's short_name field */
                 if (shortNameKey && (browser === Browser.Opera || browser === Browser.Edge)) {
-                    const instance = builders.get(language);
+                    const defaultBuilder = builders.get(language);
 
-                    if (!instance) {
+                    if (!defaultBuilder) {
                         throw new Error(`Locale not found for "${language}"`);
                     }
 
-                    manifestShortName = instance.get().get(shortNameKey) ?? manifestShortName;
+                    manifestShortName = defaultBuilder.get().get(shortNameKey) ?? manifestShortName;
                 }
 
                 manifest.setShortName(manifestShortName);

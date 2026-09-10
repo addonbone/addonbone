@@ -1,0 +1,137 @@
+/** @jest-environment node */
+
+import {readFile, readdir, rm, writeFile} from "fs/promises";
+import path from "path";
+import vm from "vm";
+
+import {createLocaleModule} from "@cli/plugins/locale/module";
+import {createIntegrationFixture} from "../../utils/fixture";
+
+jest.setTimeout(90_000);
+
+const Greeting = "Hello from the locale chunk fixture";
+const Entries = [
+    "popup",
+    "options",
+    "isolated.content",
+    "isolated-secondary.content",
+    "main.content",
+    "main-secondary.content",
+];
+
+interface Scenario {
+    browser: "chrome" | "firefox";
+    entries: string[];
+    bytes?: number;
+    enabled?: boolean;
+}
+
+test.each<Scenario>([
+    {browser: "chrome", entries: ["popup"]},
+    {browser: "chrome", entries: ["isolated.content"]},
+    {browser: "chrome", entries: ["main.content"]},
+    {browser: "chrome", entries: ["popup", "isolated.content"]},
+    {browser: "chrome", entries: ["isolated.content", "main.content"]},
+    {browser: "chrome", entries: Entries},
+    {browser: "chrome", entries: ["popup"], bytes: 99_999},
+    {browser: "chrome", entries: ["popup"], bytes: 100_000},
+    {browser: "chrome", entries: ["isolated.content"], bytes: 100_000},
+    {browser: "chrome", entries: ["main.content"], bytes: 100_000},
+    {browser: "chrome", entries: [], bytes: 100_000},
+    {browser: "chrome", entries: Entries, enabled: false},
+    {browser: "firefox", entries: Entries},
+])("$browser: $entries, bytes=$bytes, commonChunks=$enabled", async ({browser, entries, bytes, enabled = true}) => {
+    const fixture = await createIntegrationFixture(ADNBN_TEST_ROOT, path.join(__dirname, "chunks-fixture"));
+    try {
+        for (const entry of Entries) {
+            if (!entries.includes(entry)) await rm(path.join(fixture.directory, "src", `${entry}.ts`));
+        }
+        if (bytes !== undefined) {
+            const empty = createLocaleModule({en: {greeting: Greeting, padding: "", locale: "en"}});
+            const padding = "x".repeat(bytes - Buffer.byteLength(empty));
+            const messages = {greeting: Greeting, padding};
+            expect(Buffer.byteLength(createLocaleModule({en: {...messages, locale: "en"}}))).toBe(bytes);
+            await writeFile(path.join(fixture.directory, "src/locales/en.json"), JSON.stringify(messages));
+            await rm(path.join(fixture.directory, "src/locales/fr.json"));
+        }
+        if (!enabled) {
+            const config = path.join(fixture.directory, "adnbn.config.ts");
+            await writeFile(
+                config,
+                (await readFile(config, "utf8")).replace("commonChunks: true", "commonChunks: false")
+            );
+        }
+
+        const directory = await fixture.build({browser});
+        const groups: string[] = JSON.parse(await readFile(path.join(fixture.directory, "cache-groups.json"), "utf8"));
+        expect(groups.filter(name => name.startsWith("adnbnLocale")).sort()).toEqual(
+            enabled ? ["adnbnLocaleLarge", "adnbnLocaleShared"] : []
+        );
+        const manifest = JSON.parse(await readFile(path.join(directory, "manifest.json"), "utf8"));
+        const backgroundFiles: string[] = manifest.background.service_worker
+            ? [manifest.background.service_worker]
+            : manifest.background.scripts;
+        expect(backgroundFiles).toHaveLength(1);
+
+        const sources = new Map<string, string>();
+        for (const filename of await readdir(directory, {recursive: true})) {
+            if (filename.endsWith(".js")) {
+                sources.set(filename.split(path.sep).join("/"), await readFile(path.join(directory, filename), "utf8"));
+            }
+        }
+        const catalogueFiles = [...sources.keys()].filter(file => sources.get(file)!.includes(Greeting));
+        expect(catalogueFiles).toContain(backgroundFiles[0]);
+
+        const sandbox = {catalogue: undefined as Record<string, Record<string, string>> | undefined};
+        vm.runInNewContext(sources.get(backgroundFiles[0])!, sandbox);
+        expect(sandbox.catalogue!.en.greeting).toBe(Greeting);
+        if (bytes === undefined) expect(sandbox.catalogue!.fr.greeting).toBe("Bonjour depuis le catalogue partagé");
+        for (const [language, messages] of Object.entries(sandbox.catalogue!)) {
+            const json = JSON.parse(
+                await readFile(path.join(directory, "_locales", language, "messages.json"), "utf8")
+            );
+            expect(messages).toEqual(
+                Object.fromEntries(
+                    Object.entries(json).map(([key, value]) => [key, (value as {message: string}).message])
+                )
+            );
+        }
+
+        const consumers: string[][] = [];
+        for (const filename of [manifest.action?.default_popup, manifest.options_ui?.page]) {
+            if (!filename) continue;
+            const html = await readFile(path.join(directory, filename), "utf8");
+            consumers.push(
+                [...html.matchAll(/<script\b[^>]*\bsrc="([^"]+)"/g)].map(([, file]) =>
+                    path.posix.normalize(path.posix.join(path.posix.dirname(filename), file))
+                )
+            );
+        }
+        consumers.push(...(manifest.content_scripts ?? []).map((script: {js: string[]}) => script.js));
+        expect(consumers).toHaveLength(entries.length);
+
+        const split = enabled && entries.length > 0 && (entries.length >= 2 || (bytes ?? 0) >= 100_000);
+        const sharedFiles = new Set<string>();
+        for (const files of consumers) {
+            expect(files).not.toContain(backgroundFiles[0]);
+            for (const file of files) expect(sources.has(file)).toBe(true);
+            const found = files.filter(file => catalogueFiles.includes(file));
+            expect(found).toHaveLength(1);
+            sharedFiles.add(found[0]);
+            if (enabled) {
+                expect(sources.get(found[0])!.includes("localeContext")).toBe(!split);
+                if (split) expect(found[0]).toMatch(/^js\/locale\.[a-f0-9]{8}\.js$/);
+            }
+        }
+        if (enabled) {
+            expect(catalogueFiles).toHaveLength(1 + (split ? 1 : entries.length));
+            if (split) {
+                expect(sharedFiles.size).toBe(1);
+                const source = sources.get([...sharedFiles][0])!;
+                expect(source.split(Greeting)).toHaveLength(2);
+            }
+        }
+    } finally {
+        await fixture.dispose();
+    }
+});

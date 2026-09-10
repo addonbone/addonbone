@@ -1,0 +1,9 @@
+{
+  "app": {
+    "title": "Catalogue de traductions"
+  },
+  "items": [
+    "{{count}} article",
+    "{{count}} articles"
+  ]
+}

@@ -1,6 +1,12 @@
 jest.mock("@addon-core/browser", () => ({
     getI18nMessage: jest.fn(() => "en"),
 }));
+jest.mock("#adnbn/locale", () => ({
+    __esModule: true,
+    default: require("./tests/fixtures/catalogue.json"),
+    keys: ["demo.empty"],
+    languages: ["en", "fr", "ru"],
+}));
 
 import {createElement, PropsWithChildren} from "react";
 import {act, cleanup, renderHook, waitFor} from "@testing-library/react";
@@ -10,23 +16,15 @@ import {useLocale, type LocaleContract} from "./context";
 import {Language} from "@typing/locale";
 
 describe("React locale provider", () => {
-    const languagesDescriptor = Object.getOwnPropertyDescriptor(globalThis, "__ADNBN_DEFINED_LOCALES__");
-    const keysDescriptor = Object.getOwnPropertyDescriptor(globalThis, "__ADNBN_LOCALE_KEYS__");
     const fetchDescriptor = Object.getOwnPropertyDescriptor(globalThis, "fetch");
 
     beforeEach(() => {
         jest.mocked(getI18nMessage).mockReset().mockReturnValue("en");
-        Object.defineProperty(globalThis, "__ADNBN_DEFINED_LOCALES__", {
-            configurable: true,
-            value: [Language.English, Language.French],
-        });
-        Object.defineProperty(globalThis, "__ADNBN_LOCALE_KEYS__", {
-            configurable: true,
-            value: ["demo.empty"],
-        });
         Object.defineProperty(globalThis, "fetch", {
             configurable: true,
-            value: jest.fn(async () => ({json: async () => ({locale: {message: "fr"}})})),
+            value: jest.fn(() => {
+                throw new Error("Translations must come from the catalogue");
+            }),
         });
     });
 
@@ -34,16 +32,10 @@ describe("React locale provider", () => {
         cleanup();
         jest.restoreAllMocks();
 
-        for (const [key, descriptor] of [
-            ["__ADNBN_DEFINED_LOCALES__", languagesDescriptor],
-            ["__ADNBN_LOCALE_KEYS__", keysDescriptor],
-            ["fetch", fetchDescriptor],
-        ] as const) {
-            if (descriptor) {
-                Object.defineProperty(globalThis, key, descriptor);
-            } else {
-                Reflect.deleteProperty(globalThis, key);
-            }
+        if (fetchDescriptor) {
+            Object.defineProperty(globalThis, "fetch", fetchDescriptor);
+        } else {
+            Reflect.deleteProperty(globalThis, "fetch");
         }
     });
 
@@ -67,11 +59,8 @@ describe("React locale provider", () => {
         expect(locale.choice("cart.items", 2, {count: 2})).toBe("cart.items");
     });
 
-    test("preserves an empty native translation on the first render without warnings or fetching", async () => {
+    test("preserves an empty catalogue translation on the first render without warnings or fetching", async () => {
         jest.mocked(getI18nMessage).mockImplementation(key => (key === "locale" ? "ru" : ""));
-        Object.defineProperty(globalThis, "__ADNBN_DEFINED_LOCALES__", {
-            value: [Language.English, Language.Russian],
-        });
         const warn = jest.spyOn(console, "warn").mockImplementation();
         const wrapper = ({children}: PropsWithChildren) =>
             createElement(LocaleProvider, {container: false, storage: "native-empty-test"}, children);
@@ -91,6 +80,7 @@ describe("React locale provider", () => {
         expect(result.current).toEqual({lang: Language.Russian, message: ""});
         expect(warn).not.toHaveBeenCalled();
         expect(fetch).not.toHaveBeenCalled();
+        expect(getI18nMessage).toHaveBeenCalledTimes(1);
     });
 
     test("keeps the available language map stable while changing the selected language", async () => {
@@ -103,6 +93,7 @@ describe("React locale provider", () => {
         expect([...langs]).toEqual([
             [Language.English, "English"],
             [Language.French, "Français"],
+            [Language.Russian, "Русский"],
         ]);
 
         act(() => result.current.change(Language.French));
@@ -110,6 +101,6 @@ describe("React locale provider", () => {
         rerender();
 
         expect(result.current.langs).toBe(langs);
-        expect([...result.current.langs.keys()]).toEqual([Language.English, Language.French]);
+        expect([...result.current.langs.keys()]).toEqual([Language.English, Language.French, Language.Russian]);
     });
 });

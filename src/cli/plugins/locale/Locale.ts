@@ -5,9 +5,7 @@ import {GenerateJsonPluginData} from "@cli/bundler";
 
 import {flattenLocaleMessages} from "@shared/locale/messages";
 
-import type {Language, LocaleMessages} from "@typing/locale";
-
-import type {LocaleCatalogue} from "./types";
+import type {Language, LocaleCatalogue, LocaleMessages} from "@typing/locale";
 
 export default class Locale extends LocaleFinder {
     private _messages?: Promise<Map<Language, LocaleMessages>>;

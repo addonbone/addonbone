@@ -63,6 +63,10 @@ export enum LocaleDir {
 
 export const RtlLanguages: ReadonlySet<Language> = new Set([Language.Arabic, Language.Persian, Language.Hebrew]);
 
+export const LocaleModuleName = "virtual/locale";
+
+export const LocaleModuleLayer = "adnbn:locale";
+
 export const LocaleNestedKeysSeparator = ".";
 
 export const LocaleKeysSeparator = "_";
@@ -171,6 +175,9 @@ export interface LocaleBuilder {
 }
 
 export type LocaleBuilders = Map<Language, LocaleBuilder>;
+
+/** Completed messages keyed by language and browser-compatible message key. */
+export type LocaleCatalogue = Partial<Record<Language, Record<string, string>>>;
 
 export interface LocaleValidator {
     isValid(locale: LocaleBuilder): boolean;

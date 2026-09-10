@@ -1,0 +1,14 @@
+{
+  "en": {
+    "locale": "en",
+    "demo_empty": ""
+  },
+  "fr": {
+    "locale": "fr",
+    "demo_empty": ""
+  },
+  "ru": {
+    "locale": "ru",
+    "demo_empty": ""
+  }
+}

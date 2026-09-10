@@ -115,9 +115,14 @@ test("isolates compilers with identical initial sources, updates and cleanup", a
     expect(await run(second)).toBe(6);
 });
 
-test.each([false, true])("shares only generated modules across entrypoint layers when configured: %s", async shared => {
+test.each([
+    {sharing: "none", layers: [null, "isolated", "main"]},
+    {sharing: "all", layers: ["shared-data"]},
+    {sharing: "filtered", layers: ["shared-data", "main"]},
+])("shares generated modules across the selected issuer layers: $sharing", async ({sharing, layers}) => {
     const plugin = new GenerateModulePlugin(modules);
-    if (shared) plugin.layer("shared-data");
+    if (sharing === "all") plugin.layer("shared-data");
+    if (sharing === "filtered") plugin.layer("shared-data", {not: ["main"]});
     const compiler = rspack({
         mode: "none",
         context: fixtures,
@@ -139,8 +144,8 @@ test.each([false, true])("shares only generated modules across entrypoint layers
     const built = [...stats.compilation.modules] as NormalModule[];
     for (const request of ["virtual/value", "virtual/tools"]) {
         const instances = built.filter(module => module.rawRequest === request);
-        expect(instances).toHaveLength(shared ? 1 : 3);
-        if (shared) expect(instances[0].layer).toBe("shared-data");
+        expect(instances).toHaveLength(layers.length);
+        expect(new Set(instances.map(module => module.layer ?? null))).toEqual(new Set(layers));
     }
     expect(built.filter(module => module.rawRequest === "./entry.js")).toHaveLength(3);
     for (const entry of ["view", "isolated", "main"]) {

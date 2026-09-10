@@ -32,11 +32,15 @@ test.each<Scenario>([
     {browser: "chrome", entries: ["main.content"]},
     {browser: "chrome", entries: ["popup", "isolated.content"]},
     {browser: "chrome", entries: ["isolated.content", "main.content"]},
+    {browser: "chrome", entries: ["main.content", "main-secondary.content"]},
+    {browser: "chrome", entries: ["main.content", "main-secondary.content"], bytes: 100_000},
     {browser: "chrome", entries: Entries},
+    {browser: "chrome", entries: Entries, bytes: 100_000},
     {browser: "chrome", entries: ["popup"], bytes: 99_999},
     {browser: "chrome", entries: ["popup"], bytes: 100_000},
     {browser: "chrome", entries: ["isolated.content"], bytes: 100_000},
     {browser: "chrome", entries: ["main.content"], bytes: 100_000},
+    {browser: "chrome", entries: ["isolated.content", "main.content"], bytes: 100_000},
     {browser: "chrome", entries: [], bytes: 100_000},
     {browser: "chrome", entries: Entries, enabled: false},
     {browser: "firefox", entries: Entries},
@@ -47,10 +51,11 @@ test.each<Scenario>([
             if (!entries.includes(entry)) await rm(path.join(fixture.directory, "src", `${entry}.ts`));
         }
         if (bytes !== undefined) {
-            const empty = createLocaleModule({en: {greeting: Greeting, padding: "", locale: "en"}});
+            const keys = new Set(["greeting", "padding", "locale"]);
+            const empty = createLocaleModule({en: {greeting: Greeting, padding: "", locale: "en"}}, keys);
             const padding = "x".repeat(bytes - Buffer.byteLength(empty));
             const messages = {greeting: Greeting, padding};
-            expect(Buffer.byteLength(createLocaleModule({en: {...messages, locale: "en"}}))).toBe(bytes);
+            expect(Buffer.byteLength(createLocaleModule({en: {...messages, locale: "en"}}, keys))).toBe(bytes);
             await writeFile(path.join(fixture.directory, "src/locales/en.json"), JSON.stringify(messages));
             await rm(path.join(fixture.directory, "src/locales/fr.json"));
         }
@@ -97,38 +102,66 @@ test.each<Scenario>([
             );
         }
 
-        const consumers: string[][] = [];
+        const consumers: Array<{files: string[]; main: boolean}> = [];
         for (const filename of [manifest.action?.default_popup, manifest.options_ui?.page]) {
             if (!filename) continue;
             const html = await readFile(path.join(directory, filename), "utf8");
-            consumers.push(
-                [...html.matchAll(/<script\b[^>]*\bsrc="([^"]+)"/g)].map(([, file]) =>
+            consumers.push({
+                files: [...html.matchAll(/<script\b[^>]*\bsrc="([^"]+)"/g)].map(([, file]) =>
                     path.posix.normalize(path.posix.join(path.posix.dirname(filename), file))
-                )
-            );
+                ),
+                main: false,
+            });
         }
-        consumers.push(...(manifest.content_scripts ?? []).map((script: {js: string[]}) => script.js));
+        consumers.push(
+            ...(manifest.content_scripts ?? []).map((script: {js: string[]; world: string}) => ({
+                files: script.js,
+                main: script.world === "MAIN",
+            }))
+        );
         expect(consumers).toHaveLength(entries.length);
 
-        const split = enabled && entries.length > 0 && (entries.length >= 2 || (bytes ?? 0) >= 100_000);
+        const mainConsumers = consumers.filter(consumer => consumer.main);
+        const localeConsumers = consumers.filter(consumer => !consumer.main);
+        const split = enabled && localeConsumers.length > 0 && (localeConsumers.length >= 2 || (bytes ?? 0) >= 100_000);
+        // The fixture's shared content runtime exceeds the regular 20,000-byte threshold.
+        const splitMain = enabled && mainConsumers.length >= 2;
         const sharedFiles = new Set<string>();
-        for (const files of consumers) {
+        const mainFiles = new Set<string>();
+        for (const {files, main} of consumers) {
             expect(files).not.toContain(backgroundFiles[0]);
             for (const file of files) expect(sources.has(file)).toBe(true);
             const found = files.filter(file => catalogueFiles.includes(file));
             expect(found).toHaveLength(1);
-            sharedFiles.add(found[0]);
-            if (enabled) {
+            if (main) {
+                mainFiles.add(found[0]);
+                expect(found[0]).not.toMatch(/^js\/locale[.-]/);
+                if (splitMain) expect(found[0]).toMatch(/^js\/common-main\.content\.[a-f0-9]{8}\.js$/);
+            } else {
+                sharedFiles.add(found[0]);
+            }
+            if (enabled && !main) {
                 expect(sources.get(found[0])!.includes("localeContext")).toBe(!split);
                 if (split) expect(found[0]).toMatch(/^js\/locale\.[a-f0-9]{8}\.js$/);
             }
         }
+        const otherFiles = new Set(localeConsumers.flatMap(consumer => consumer.files));
+        for (const {files} of mainConsumers) {
+            expect(files.filter(file => otherFiles.has(file))).toEqual([]);
+        }
+        expect([...sources.keys()].some(file => /locale-main/.test(file))).toBe(false);
         if (enabled) {
-            expect(catalogueFiles).toHaveLength(1 + (split ? 1 : entries.length));
+            expect(catalogueFiles).toHaveLength(
+                1 + (split ? 1 : localeConsumers.length) + (splitMain ? 1 : mainConsumers.length)
+            );
+            expect(mainFiles.size).toBe(splitMain ? 1 : mainConsumers.length);
+            expect(sharedFiles.size).toBe(split ? 1 : localeConsumers.length);
             if (split) {
-                expect(sharedFiles.size).toBe(1);
                 const source = sources.get([...sharedFiles][0])!;
                 expect(source.split(Greeting)).toHaveLength(2);
+            }
+            if (splitMain) {
+                expect(sources.get([...mainFiles][0])!.split(Greeting)).toHaveLength(2);
             }
         }
     } finally {

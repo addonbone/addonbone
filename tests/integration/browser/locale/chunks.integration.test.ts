@@ -13,7 +13,7 @@ import {ChangeLanguage, expectPanels, LocaleFixtureDirectory, ReadPanels} from "
 
 jest.setTimeout(90_000);
 
-test("Chrome loads one locale chunk in views, ISOLATED and MAIN while background stays standalone", async () => {
+test("Chrome shares locale with views and ISOLATED, and loads the MAIN catalogue through common content", async () => {
     const binary = findChromeBinary(ADNBN_TEST_ROOT);
     if (!binary) throw new Error("Install Chrome for Testing or set ADNBN_CHROME_BIN");
     const fixture = await createIntegrationFixture(ADNBN_TEST_ROOT, LocaleFixtureDirectory);

@@ -14,7 +14,7 @@ import {ChangeLanguage, expectPanels, LocaleFixtureDirectory, ReadPanels} from "
 
 jest.setTimeout(90_000);
 
-test("Firefox MV3 loads the same locale chunk in ISOLATED and MAIN", async () => {
+test("Firefox MV3 loads locale in ISOLATED and shares the MAIN catalogue through common content", async () => {
     const binary = findFirefoxBinary();
     if (!binary) throw new Error("Install Firefox or set ADNBN_FIREFOX_BIN");
     const fixture = await createIntegrationFixture(ADNBN_TEST_ROOT, LocaleFixtureDirectory);

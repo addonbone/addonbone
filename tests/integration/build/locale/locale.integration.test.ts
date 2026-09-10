@@ -16,12 +16,18 @@ const inspect = async (directory: string) => {
     const files: string[] = manifest.background.service_worker
         ? [manifest.background.service_worker]
         : manifest.background.scripts;
-    const sandbox = {readLocaleCatalogue: undefined as (() => Catalogue) | undefined};
+    const sandbox = {
+        readLocaleCatalogue: undefined as (() => Catalogue) | undefined,
+        readLocaleKeys: undefined as (() => readonly string[]) | undefined,
+        readLocaleLanguages: undefined as (() => readonly string[]) | undefined,
+    };
     const context = vm.createContext(sandbox);
     for (const file of files) {
         vm.runInContext(await readFile(path.join(directory, file), "utf8"), context);
     }
     const catalogue = sandbox.readLocaleCatalogue!();
+    const exportedLanguages = sandbox.readLocaleLanguages!();
+    expect(exportedLanguages).toEqual(Object.keys(catalogue));
     const languages = await readdir(path.join(directory, "_locales"));
     expect(Object.keys(catalogue).sort()).toEqual(languages.sort());
     for (const lang of languages) {
@@ -32,13 +38,23 @@ const inspect = async (directory: string) => {
         expect(catalogue[lang]).toEqual(flattened);
         expect(catalogue[lang].locale).toBe(lang);
     }
-    return catalogue;
+    return {catalogue, keys: sandbox.readLocaleKeys!(), languages: exportedLanguages};
 };
 
 test.each(["chrome", "firefox"])("%s build imports the catalogue and preserves the native JSON data", async browser => {
     const fixture = await createIntegrationFixture(ADNBN_TEST_ROOT, path.join(__dirname, "fixture"));
     try {
-        const catalogue = await inspect(await fixture.build({browser}));
+        const {catalogue, keys} = await inspect(await fixture.build({browser}));
+        expect([...keys].sort()).toEqual([
+            "__proto__",
+            "app.greeting",
+            "app.title",
+            "empty",
+            "items",
+            "literal",
+            "locale",
+        ]);
+        expect(catalogue.fr.secondaryOnly).toBe("Only in French");
         expect(catalogue.fr).toMatchObject({
             app_title: browser === "chrome" ? "Catalogue pour Chrome" : "Catalogue de traductions",
             app_greeting: "Hello {{name}}",
@@ -68,22 +84,29 @@ test("CLI watch refreshes the catalogue, JSON and declarations from the same loc
         watcher.stderr?.on("data", chunk => (output += chunk));
         await waitFor(() => inspect(directory), 15000, "initial locale watch build");
         await writeFile(
+            path.join(fixture.directory, "src/locales/de.json"),
+            await readFile(path.join(__dirname, "states/de.json"))
+        );
+        await writeFile(
             path.join(fixture.directory, "src/locales/en.json"),
             await readFile(path.join(__dirname, "states/en.json"))
         );
         await waitFor(
             async () => {
-                const catalogue = await inspect(directory);
+                const {catalogue, keys, languages} = await inspect(directory);
+                expect([...languages].sort()).toEqual(["de", "en", "fr"]);
+                expect(catalogue.de.app_title).toBe("Übersetzungskatalog");
                 expect(catalogue.fr.app_greeting).toBe("Welcome {{name}}");
                 expect(catalogue.fr.newKey).toBe("Added during watch");
                 expect(catalogue.fr).not.toHaveProperty("empty");
+                expect([...keys].sort()).toEqual(["app.greeting", "app.title", "items", "locale", "newKey"]);
                 const declarations = await readFile(path.join(fixture.directory, ".adnbn/locale.d.ts"), "utf8");
                 expect(declarations).toContain('"newKey"');
                 expect(declarations).not.toContain('"empty"');
                 return true;
             },
             15000,
-            "updated locale catalogue and JSON"
+            "updated locale catalogue, languages and JSON"
         );
     } catch (error) {
         throw new Error(`${String(error)}\n${output}`, {cause: error});

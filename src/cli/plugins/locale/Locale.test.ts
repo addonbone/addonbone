@@ -1,12 +1,14 @@
 jest.mock("@addon-core/browser", () => ({
     getI18nMessage: jest.fn(() => "de"),
 }));
+jest.mock("#adnbn/locale", () => ({__esModule: true, default: {}, keys: [], languages: []}));
 
 import fs from "fs";
 import os from "os";
 import path from "path";
 
 import {getI18nMessage} from "@addon-core/browser";
+import catalogue from "#adnbn/locale";
 import Locale from "./Locale";
 import DynamicLocale from "@locale/providers/DynamicLocale";
 import NativeLocale from "@locale/providers/NativeLocale";
@@ -70,6 +72,7 @@ describe("locale JSON completion", () => {
 
     afterEach(() => {
         consoleWarnSpy.mockRestore();
+        for (const lang of Object.keys(catalogue)) delete catalogue[lang as Language];
 
         if (fetchDescriptor) {
             Object.defineProperty(globalThis, "fetch", fetchDescriptor);
@@ -252,12 +255,16 @@ describe("locale JSON completion", () => {
     });
 
     test("dynamic selection uses the generated default rather than a third native language", async () => {
-        const json = await makeLocale("single").json();
+        const locale = makeLocale("single");
+        const json = await locale.json();
+        Object.assign(catalogue, await locale.catalogue());
         const german = messages(json, Language.German);
         jest.mocked(getI18nMessage).mockImplementation(key => german[key]?.message ?? "");
         Object.defineProperty(globalThis, "fetch", {
             configurable: true,
-            value: jest.fn(async () => ({json: async () => messages(json, Language.French)})),
+            value: jest.fn(() => {
+                throw new Error("Translations must come from the catalogue");
+            }),
         });
         const dynamic = new DynamicLocale<{
             "app.greeting": {plural: false; substitutions: ["name"]};
@@ -273,6 +280,6 @@ describe("locale JSON completion", () => {
         expect(dynamic.lang()).toBe(Language.French);
         expect(dynamic.trans("app.greeting", {name: "Ada"})).toBe("Hello Ada");
         expect(dynamic.choice("cart.items", 2, {count: 2})).toBe("2 articles");
-        expect(globalThis.fetch).toHaveBeenCalledWith(getLocaleFilename(Language.French));
+        expect(globalThis.fetch).not.toHaveBeenCalled();
     });
 });

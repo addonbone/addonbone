@@ -1,6 +1,6 @@
 import {randomUUID} from "crypto";
 import path from "path";
-import type {Compiler} from "@rspack/core";
+import type {Compiler, RuleSetCondition} from "@rspack/core";
 import {RspackVirtualModulePlugin} from "rspack-plugin-virtual-module";
 
 /** JavaScript source keyed by the module's import specifier. */
@@ -14,12 +14,14 @@ export class GenerateModulePlugin {
     private update?: GenerateModulePluginUpdate;
     private files: readonly string[] = [];
     private moduleLayer?: string;
+    private issuerLayer?: RuleSetCondition;
 
     constructor(private readonly modules: GenerateModulePluginModules) {}
 
-    /** Use one module identity regardless of the importing entrypoint's layer. */
-    public layer(name: string): this {
+    /** Share a module layer for matching issuers; other issuers keep their inherited layer. */
+    public layer(name: string, issuerLayer?: RuleSetCondition): this {
         this.moduleLayer = name;
+        this.issuerLayer = issuerLayer;
         return this;
     }
 
@@ -38,7 +40,11 @@ export class GenerateModulePlugin {
 
         if (this.moduleLayer !== undefined) {
             const resources = Object.keys(modules).map(name => compiler.options.resolve.alias![name] as string);
-            compiler.options.module.rules.push({include: resources, layer: this.moduleLayer});
+            compiler.options.module.rules.push({
+                include: resources,
+                layer: this.moduleLayer,
+                issuerLayer: this.issuerLayer,
+            });
         }
 
         compiler.hooks.compilation.tap(this.pluginName, compilation => {

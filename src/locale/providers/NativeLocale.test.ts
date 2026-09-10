@@ -1,6 +1,7 @@
 jest.mock("@addon-core/browser", () => ({
     getI18nMessage: jest.fn(),
 }));
+jest.mock("#adnbn/locale", () => ({keys: ["demo.empty", "demo.title"], languages: ["en", "fr", "ru"]}));
 
 import {getI18nMessage} from "@addon-core/browser";
 import NativeLocale from "./NativeLocale";
@@ -11,16 +12,11 @@ interface Structure {
 }
 
 describe("NativeLocale", () => {
-    const keysDescriptor = Object.getOwnPropertyDescriptor(globalThis, "__ADNBN_LOCALE_KEYS__");
     let locale: NativeLocale<Structure>;
     let warn: jest.SpyInstance;
     let error: jest.SpyInstance;
 
     beforeEach(() => {
-        Object.defineProperty(globalThis, "__ADNBN_LOCALE_KEYS__", {
-            configurable: true,
-            value: ["demo.empty", "demo.title"],
-        });
         jest.mocked(getI18nMessage)
             .mockReset()
             .mockImplementation(key => (key === "locale" ? "ru" : ""));
@@ -30,11 +26,6 @@ describe("NativeLocale", () => {
     });
 
     afterEach(() => {
-        if (keysDescriptor) {
-            Object.defineProperty(globalThis, "__ADNBN_LOCALE_KEYS__", keysDescriptor);
-        } else {
-            Reflect.deleteProperty(globalThis, "__ADNBN_LOCALE_KEYS__");
-        }
         jest.restoreAllMocks();
     });
 
@@ -53,11 +44,12 @@ describe("NativeLocale", () => {
 
     test.each(["Translated title", "0"])("preserves the nonempty message %j without consulting build keys", value => {
         jest.mocked(getI18nMessage).mockReturnValue(value);
-        Reflect.deleteProperty(globalThis, "__ADNBN_LOCALE_KEYS__");
+        const keys = jest.spyOn(locale, "keys");
 
         expect(locale.trans("demo.title")).toBe(value);
         expect(warn).not.toHaveBeenCalled();
         expect(error).not.toHaveBeenCalled();
+        expect(keys).not.toHaveBeenCalled();
     });
 
     test("preserves nonempty messages outside the default build contract", () => {
@@ -74,10 +66,29 @@ describe("NativeLocale", () => {
         expect(warn).toHaveBeenCalledWith('Locale key "demo.empty" not found in "ru" language.');
     });
 
-    test("keeps missing-key diagnostics when build keys are unavailable", () => {
-        Reflect.deleteProperty(globalThis, "__ADNBN_LOCALE_KEYS__");
+    test("keeps missing-key diagnostics when build keys are empty", () => {
+        jest.spyOn(locale, "keys").mockReturnValue(new Set());
 
         expect(locale.trans("demo.empty")).toBe("demo.empty");
         expect(warn).toHaveBeenCalledWith('Locale key "demo.empty" not found in "ru" language.');
+    });
+
+    test("returns independent sets of public dot keys from the locale module", () => {
+        expect([...locale.keys()]).toEqual(["demo.empty", "demo.title"]);
+        locale.keys().clear();
+        expect([...locale.keys()]).toEqual(["demo.empty", "demo.title"]);
+    });
+
+    test("reads available languages from the module independently of the selected native language", () => {
+        expect(locale.lang()).toBe("ru");
+        expect([...locale.languages()]).toEqual(["en", "fr", "ru"]);
+        expect([...locale.languageNames()]).toEqual([
+            ["en", "English"],
+            ["fr", "Français"],
+            ["ru", "Русский"],
+        ]);
+        locale.languages().clear();
+        expect([...locale.languages()]).toEqual(["en", "fr", "ru"]);
+        expect(error).not.toHaveBeenCalled();
     });
 });

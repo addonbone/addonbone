@@ -1,16 +1,19 @@
 import _ from "lodash";
-import {DefinePlugin, type Configuration as RspackConfig} from "@rspack/core";
+import type {Configuration as RspackConfig} from "@rspack/core";
 
 import {definePlugin} from "@main/plugin";
 import {GenerateJsonPlugin, GenerateModulePlugin} from "@cli/bundler";
+import {getContentLayer} from "@cli/bundler/utils/layers";
 import {extractLocaleKey, modifyLocaleMessageKey} from "@locale/utils";
 
 import Locale from "./Locale";
 import {LocaleDeclaration} from "./declaration";
-import {createLocaleModule, LocaleModuleName} from "./module";
+import {createLocaleModule} from "./module";
 
 import {Command} from "@typing/app";
 import {Browser} from "@typing/browser";
+import {ContentScriptWorld} from "@typing/content";
+import {LocaleModuleLayer, LocaleModuleName} from "@typing/locale";
 
 export default definePlugin(() => {
     let locale: Locale;
@@ -30,16 +33,15 @@ export default definePlugin(() => {
             };
 
             const getModules = async () => ({
-                [LocaleModuleName]: createLocaleModule(await locale.catalogue()),
+                [LocaleModuleName]: createLocaleModule(await locale.catalogue(), await locale.keys()),
             });
 
             await prepareLocale();
 
             const jsonPlugin = new GenerateJsonPlugin(await locale.json());
-            const modulePlugin = new GenerateModulePlugin(await getModules()).layer("adnbn:locale");
-            const constantsPlugin = new DefinePlugin({
-                __ADNBN_LOCALE_KEYS__: JSON.stringify([...(await locale.keys())]),
-                __ADNBN_DEFINED_LOCALES__: JSON.stringify([...(await locale.languages())]),
+            // MAIN keeps its content layer and uses the regular common-main.content group.
+            const modulePlugin = new GenerateModulePlugin(await getModules()).layer(LocaleModuleLayer, {
+                not: [getContentLayer(ContentScriptWorld.Main)],
             });
 
             if (config.command === Command.Watch) {
@@ -56,22 +58,26 @@ export default definePlugin(() => {
 
             return {
                 // JSON refresh clears and prepares the shared cache before the module reads it.
-                plugins: [jsonPlugin, modulePlugin, constantsPlugin],
+                plugins: [jsonPlugin, modulePlugin],
+                resolve: {alias: {"#adnbn/locale$": LocaleModuleName}},
                 optimization: config.commonChunks
                     ? {
                           splitChunks: {
                               cacheGroups: {
                                   adnbnLocaleShared: {
-                                      layer: "adnbn:locale",
+                                      layer: LocaleModuleLayer,
                                       name: "locale",
+                                      // Share the module across consumers of different exports.
+                                      usedExports: false,
                                       minChunks: 2,
                                       minSize: 0,
                                       enforce: true,
                                       priority: 60,
                                   },
                                   adnbnLocaleLarge: {
-                                      layer: "adnbn:locale",
+                                      layer: LocaleModuleLayer,
                                       name: "locale",
+                                      usedExports: false,
                                       minChunks: 1,
                                       minSize: 100_000,
                                       enforce: true,

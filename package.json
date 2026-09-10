@@ -37,6 +37,9 @@
     "types"
   ],
   "sideEffects": false,
+  "imports": {
+    "#adnbn/locale": "./dist/locale/catalogue/index.js"
+  },
   "engines": {
     "node": ">=22.0.0"
   },

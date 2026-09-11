@@ -3,7 +3,6 @@ import {getI18nMessage} from "@addon-core/browser";
 import catalogue, {keys, lang as defaultLanguage, languages} from "#adnbn/locale";
 
 import AbstractLocale from "./AbstractLocale";
-import type {LocaleNativeStructure} from "./NativeLocale";
 import {LocaleStorage} from "../storage";
 
 import {convertLocaleKey, resolveLanguage} from "../utils";
@@ -11,10 +10,11 @@ import {
     Language,
     LocaleCustomKeyForLanguage,
     type LocaleDynamicProvider,
+    type LocaleRegistry,
     type LocaleStorageDriver,
 } from "@typing/locale";
 
-export default class DynamicLocale<T extends object = LocaleNativeStructure>
+export default class DynamicLocale<T extends object = LocaleRegistry>
     extends AbstractLocale<T>
     implements LocaleDynamicProvider<T>
 {

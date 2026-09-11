@@ -1,10 +1,15 @@
 import {createContext, useContext} from "react";
 
-import {LocaleDir, Language, LocaleNonPluralKeys, LocaleSubstitutionArgs, LocalePluralKeys} from "@typing/locale";
+import {
+    LocaleDir,
+    Language,
+    type LocaleNonPluralKeys,
+    type LocaleSubstitutionArgs,
+    type LocalePluralKeys,
+    type LocaleRegistry,
+} from "@typing/locale";
 
-import {LocaleNativeStructure} from "@locale/providers";
-
-export interface LocaleContract<S extends object = LocaleNativeStructure> {
+export interface LocaleContract<S extends object = LocaleRegistry> {
     lang: Language;
 
     langs: ReadonlyMap<Language, string>;

@@ -7,6 +7,7 @@ export {
     LanguageCodes,
     LocaleDir,
     type LocaleStructure,
+    type LocaleRegistry,
     type LocaleProvider,
     type LocaleDynamicProvider,
     type LocaleStorageDriver,

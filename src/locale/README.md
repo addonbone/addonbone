@@ -23,7 +23,7 @@ description: Runtime translation providers, shared formatting, catalogue access,
 
 ## Ownership and data flow
 
-Shared languages, contracts, and module identifiers belong to `src/types/locale.ts`. Generated `.adnbn/locale.d.ts` augments `LocaleNativeStructure` through `adnbn/locale`, defining the application's keys and required substitutions from its default language.
+Shared languages, contracts, and module identifiers belong to `src/types/locale.ts`. It also declares the empty `LocaleRegistry`, re-exported through `adnbn/locale`. Generated `.adnbn/locale.d.ts` augments that registry, defining the application's keys and required substitutions from its default language for providers, helpers, and adapters.
 
 Locale discovery, merging, validation, fallback preparation, native `_locales/*/messages.json`, and declaration generation belong to the CLI locale pipeline. The locale feature plugin supplies the generated data; Rspack integration and chunk delivery belong to the bundler. Shared message-flattening logic lives in `src/shared/locale`.
 

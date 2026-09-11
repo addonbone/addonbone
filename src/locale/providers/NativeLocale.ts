@@ -5,15 +5,12 @@ import AbstractLocale from "./AbstractLocale";
 
 import {convertLocaleKey, resolveLanguage} from "@locale/utils";
 
-import {Language, LocaleCustomKeyForLanguage, LocaleProvider} from "@typing/locale";
+import {Language, LocaleCustomKeyForLanguage, type LocaleProvider, type LocaleRegistry} from "@typing/locale";
 
-/** Augmented by the generated .adnbn/locale.d.ts for the current app. */
-export interface LocaleNativeStructure {}
+export default class NativeLocale<S extends object = LocaleRegistry> extends AbstractLocale<S> {
+    private static instance?: LocaleProvider<LocaleRegistry>;
 
-export default class NativeLocale<S extends object = LocaleNativeStructure> extends AbstractLocale<S> {
-    private static instance?: LocaleProvider<LocaleNativeStructure>;
-
-    public static getInstance(): LocaleProvider<LocaleNativeStructure> {
+    public static getInstance(): LocaleProvider<LocaleRegistry> {
         return (NativeLocale.instance ??= new NativeLocale());
     }
 

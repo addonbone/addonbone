@@ -1,4 +1,4 @@
-import {DynamicLocale, Language, LocaleStorage, type LocaleStorageDriver} from "adnbn/locale";
+import {DynamicLocale, Language, LocaleStorage, type LocaleRegistry, type LocaleStorageDriver} from "adnbn/locale";
 import type {LocaleProviderProps} from "adnbn/locale/react";
 
 export const checkStorageContract = (storage: LocaleStorageDriver): void => {
@@ -29,6 +29,7 @@ export const checkContract = (locale: DynamicLocale): void => {
     const plural: string = locale.choice("items", 2, {count: 2});
     const keys: ReadonlySet<"locale" | "greeting" | "app.title" | "welcome" | "items" | "fallback" | "empty"> =
         locale.keys();
+    const registryKeys: ReadonlySet<keyof LocaleRegistry> = keys;
     // @ts-expect-error substitutions remain required
     locale.trans("welcome");
     // @ts-expect-error plural keys are not ordinary messages

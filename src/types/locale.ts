@@ -200,6 +200,9 @@ export interface LocaleStructure {
     [key: string]: LocaleFutures;
 }
 
+/** Augmented through adnbn/locale by the generated .adnbn/locale.d.ts for the current app. */
+export interface LocaleRegistry {}
+
 export type LocaleNonPluralKeys<T> = {
     [K in keyof T]: T[K] extends {plural: false} ? K : never;
 }[keyof T] &

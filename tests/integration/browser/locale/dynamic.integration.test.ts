@@ -113,7 +113,10 @@ test("Chrome switches DynamicLocale in both worlds and synchronizes extension st
             )
         ).toEqual({lang: "fr", message: "Bonjour depuis DynamicLocale !"});
         expect(
-            await evaluate(background, `(async () => (await chrome.storage.local.get('lang')).lang)()`)
+            await evaluate(
+                background,
+                `(async () => (await chrome.storage.local.get('adnbn:locale'))['adnbn:locale'])()`
+            )
         ).toBeUndefined();
         const state = await evaluate(
             background,
@@ -128,7 +131,7 @@ test("Chrome switches DynamicLocale in both worlds and synchronizes extension st
                 plural: dynamicLocale.choice('items', 0, {count: 0}),
             };
             await saved;
-            return {immediate, stored: (await chrome.storage.local.get('lang')).lang};
+            return {immediate, stored: (await chrome.storage.local.get('adnbn:locale'))['adnbn:locale']};
         })()`
         );
         expect(state).toEqual({

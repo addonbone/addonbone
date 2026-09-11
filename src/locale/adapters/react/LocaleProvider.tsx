@@ -6,10 +6,10 @@ import {getLocaleDir, isLocaleRtl} from "@locale/utils";
 
 import {DynamicLocale} from "@locale/providers";
 
-import {Language} from "@typing/locale";
+import {Language, type LocaleStorageDriver} from "@typing/locale";
 
 export interface LocaleProviderProps {
-    storage?: string | false;
+    storage?: LocaleStorageDriver | false;
     container?: string | Element | false;
 }
 
@@ -31,6 +31,8 @@ const LocaleProvider = ({children, storage, container = "html"}: PropsWithChildr
         locale
             .change(lang)
             .catch(err => console.error(`[LocaleProvider] Cannot find locale file for "${lang}" language`, err));
+
+        setLang(locale.lang());
     }, []);
 
     useEffect(() => {
@@ -52,10 +54,14 @@ const LocaleProvider = ({children, storage, container = "html"}: PropsWithChildr
     }, [lang, container]);
 
     useEffect(() => {
+        if (storage === false) return;
+
         locale.sync().then(lang => setLang(lang));
     }, []);
 
     useEffect(() => {
+        if (storage === false) return;
+
         return locale.watch(lang => setLang(lang));
     }, []);
 

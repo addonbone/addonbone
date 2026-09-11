@@ -1,13 +1,18 @@
 import {getI18nMessage} from "@addon-core/browser";
-import {Storage, type StorageProvider} from "@addon-core/storage";
 
 import catalogue, {keys, lang as defaultLanguage, languages} from "#adnbn/locale";
 
 import AbstractLocale from "./AbstractLocale";
 import type {LocaleNativeStructure} from "./NativeLocale";
+import {LocaleStorage} from "../storage";
 
 import {convertLocaleKey, resolveLanguage} from "../utils";
-import {Language, LocaleCustomKeyForLanguage, type LocaleDynamicProvider} from "@typing/locale";
+import {
+    Language,
+    LocaleCustomKeyForLanguage,
+    type LocaleDynamicProvider,
+    type LocaleStorageDriver,
+} from "@typing/locale";
 
 export default class DynamicLocale<T extends object = LocaleNativeStructure>
     extends AbstractLocale<T>
@@ -16,11 +21,10 @@ export default class DynamicLocale<T extends object = LocaleNativeStructure>
     private language!: Language;
     private messages!: Record<string, string>;
 
-    protected storage?: StorageProvider<Record<string, Language>>;
-    protected storageKey?: string;
+    protected storage?: LocaleStorageDriver;
     protected unsubscribe?: () => void;
 
-    constructor(storage: string | false = "lang") {
+    constructor(storage?: LocaleStorageDriver | false) {
         super();
 
         let marker: string | undefined;
@@ -33,28 +37,25 @@ export default class DynamicLocale<T extends object = LocaleNativeStructure>
 
         this.select(resolveLanguage(marker) ?? defaultLanguage);
 
-        if (storage) {
-            this.storageKey = storage;
-            this.storage = Storage.Local();
-        }
+        this.storage = storage === false ? undefined : (storage ?? new LocaleStorage());
     }
 
     public async change(lang: Language): Promise<Language> {
         this.select(lang);
 
-        if (this.storage && this.storageKey) {
-            await this.storage.set(this.storageKey, lang);
+        if (this.storage) {
+            await this.storage.set(lang);
         }
 
         return lang;
     }
 
     public async sync(): Promise<Language> {
-        if (!this.storage || !this.storageKey) {
+        if (!this.storage) {
             throw new Error("Language is not saving in storage");
         }
 
-        const lang = await this.storage.get(this.storageKey);
+        const lang = await this.storage.get();
 
         if (!lang) {
             return this.lang();
@@ -70,7 +71,7 @@ export default class DynamicLocale<T extends object = LocaleNativeStructure>
     }
 
     public watch(handler?: (lang: Language) => void): () => void {
-        if (!this.storage || !this.storageKey) {
+        if (!this.storage) {
             throw new Error("Language is not saved in storage");
         }
 
@@ -78,17 +79,13 @@ export default class DynamicLocale<T extends object = LocaleNativeStructure>
             throw new Error("Already subscribed to language changes in storage");
         }
 
-        this.unsubscribe = this.storage.watch({
-            [this.storageKey]: newValue => {
-                if (newValue) {
-                    try {
-                        this.select(newValue);
-                        handler?.(newValue);
-                    } catch (error) {
-                        console.error("Error while changing language:", error);
-                    }
-                }
-            },
+        this.unsubscribe = this.storage.watch(lang => {
+            try {
+                this.select(lang);
+                handler?.(lang);
+            } catch (error) {
+                console.error("Error while changing language:", error);
+            }
         });
 
         return this.unwatch.bind(this);

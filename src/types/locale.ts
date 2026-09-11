@@ -245,3 +245,14 @@ export interface LocaleProvider<S> {
 export interface LocaleDynamicProvider<S> extends LocaleProvider<S> {
     change(lang: Language): Promise<Language>;
 }
+
+/** Persists one language selection independently of the application's translation catalogue. */
+export interface LocaleStorageDriver {
+    /** No saved selection leaves the provider's current language unchanged. */
+    get(): Promise<Language | undefined>;
+
+    set(lang: Language): Promise<void>;
+
+    /** Observes valid selections, including own writes; does not emit an initial value or deletions. */
+    watch(handler: (lang: Language) => void): () => void;
+}

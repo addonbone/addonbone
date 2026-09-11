@@ -12,6 +12,7 @@ import {createElement, PropsWithChildren} from "react";
 import {act, cleanup, renderHook, waitFor} from "@testing-library/react";
 import {getI18nMessage} from "@addon-core/browser";
 import LocaleProvider from "./LocaleProvider";
+import {createLocaleStorage} from "../../tests/fixtures/storage";
 import {useLocale, type LocaleContract} from "./context";
 import {Language} from "@typing/locale";
 
@@ -62,8 +63,7 @@ describe("React locale provider", () => {
     test("preserves an empty catalogue translation on the first render without warnings or fetching", async () => {
         jest.mocked(getI18nMessage).mockImplementation(key => (key === "locale" ? "ru" : ""));
         const warn = jest.spyOn(console, "warn").mockImplementation();
-        const wrapper = ({children}: PropsWithChildren) =>
-            createElement(LocaleProvider, {container: false, storage: "native-empty-test"}, children);
+        const wrapper = ({children}: PropsWithChildren) => createElement(LocaleProvider, {container: false}, children);
         const {result} = renderHook(
             () => {
                 const locale = useLocale() as LocaleContract<{
@@ -84,8 +84,7 @@ describe("React locale provider", () => {
     });
 
     test("keeps the available language map stable while changing the selected language", async () => {
-        const wrapper = ({children}: PropsWithChildren) =>
-            createElement(LocaleProvider, {container: false, storage: "locale-test"}, children);
+        const wrapper = ({children}: PropsWithChildren) => createElement(LocaleProvider, {container: false}, children);
         const {result, rerender} = renderHook(() => useLocale(), {wrapper});
 
         await act(async () => {});
@@ -102,5 +101,26 @@ describe("React locale provider", () => {
 
         expect(result.current.langs).toBe(langs);
         expect([...result.current.langs.keys()]).toEqual([Language.English, Language.French, Language.Russian]);
+    });
+
+    test("uses the supplied driver for saved and subsequent selections", async () => {
+        const storage = createLocaleStorage(Language.French);
+        const wrapper = ({children}: PropsWithChildren) =>
+            createElement(LocaleProvider, {container: false, storage}, children);
+        const {result} = renderHook(() => useLocale(), {wrapper});
+        await waitFor(() => expect(result.current.lang).toBe(Language.French));
+        act(() => result.current.change(Language.Russian));
+        await waitFor(() => expect(result.current.lang).toBe(Language.Russian));
+        await expect(storage.get()).resolves.toBe(Language.Russian);
+    });
+
+    test("changes language without storage synchronization when storage is disabled", async () => {
+        const wrapper = ({children}: PropsWithChildren) =>
+            createElement(LocaleProvider, {container: false, storage: false}, children);
+        const {result} = renderHook(() => useLocale(), {wrapper});
+        await act(async () => {});
+        expect(result.current.lang).toBe(Language.English);
+        act(() => result.current.change(Language.French));
+        expect(result.current.lang).toBe(Language.French);
     });
 });

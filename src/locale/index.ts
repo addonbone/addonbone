@@ -1,5 +1,6 @@
 export * from "./providers";
 export * from "./helpers";
+export * from "./storage";
 
 export {
     Language,
@@ -8,6 +9,7 @@ export {
     type LocaleStructure,
     type LocaleProvider,
     type LocaleDynamicProvider,
+    type LocaleStorageDriver,
     type LocaleKeys,
     type LocaleSubstitutionArgs,
     type LocaleSubstitutionKeys,

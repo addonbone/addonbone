@@ -1,0 +1,1 @@
+export {LocaleStorage} from "./LocaleStorage";

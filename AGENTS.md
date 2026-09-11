@@ -53,6 +53,11 @@
 - Preserve behavior while separating responsibilities: public exports, generated declarations, loading order, lifecycle, user filename templates, manifest/WAR semantics, and watch updates. Verify at the owning layer and use existing integration tests for cross-layer guarantees.
 - Apply these rules to new and changed code. Report unrelated existing violations rather than expanding a focused task into an unrequested architectural rewrite.
 
+## Built-in storage
+
+- Every built-in storage uses a namespace exactly matching its owning package name, including case. In this framework, use `PackageName` from `@typing/app` (`adnbn`) rather than repeating a literal.
+- Features define default keys inside that shared namespace; locale selection defaults to `locale`. Keep the namespace inside the built-in storage implementation; callers may configure the key through its constructor. Custom sources implement the feature's storage driver contract.
+
 ## Internal imports
 
 - Import internal TypeScript modules through configured aliases or relative paths without a file extension. Do not write the future `.js` output path into a TypeScript source import.

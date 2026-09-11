@@ -1,4 +1,22 @@
-import {DynamicLocale, Language} from "adnbn/locale";
+import {DynamicLocale, Language, LocaleStorage, type LocaleStorageDriver} from "adnbn/locale";
+import type {LocaleProviderProps} from "adnbn/locale/react";
+
+export const checkStorageContract = (storage: LocaleStorageDriver): void => {
+    const builtin: LocaleStorageDriver = new LocaleStorage();
+    new DynamicLocale();
+    new DynamicLocale(builtin);
+    new DynamicLocale(storage);
+    new DynamicLocale(false);
+    const read: Promise<Language | undefined> = storage.get();
+    const write: Promise<void> = storage.set(Language.French);
+    const stop: () => void = storage.watch(lang => {
+        const selected: Language = lang;
+    });
+    const customProps: LocaleProviderProps = {storage};
+    const memoryProps: LocaleProviderProps = {storage: false};
+    // @ts-expect-error persisting an absent language is not part of the driver contract
+    storage.set(undefined);
+};
 
 export const checkContract = (locale: DynamicLocale): void => {
     const changed: Promise<Language> = locale.change(Language.French);

@@ -1,6 +1,6 @@
-import {DynamicLocale, type Language} from "adnbn/locale";
+import {DynamicLocale, type Language, type LocaleStorageDriver} from "adnbn/locale";
 
-export const createPanel = (context: string, storage: string | false = "lang"): HTMLElement => {
+export const createPanel = (context: string, storage?: LocaleStorageDriver | false): HTMLElement => {
     const locale = new DynamicLocale(storage);
     const panel = document.createElement("div");
     panel.dataset.localeContext = context;
@@ -18,7 +18,7 @@ export const createPanel = (context: string, storage: string | false = "lang"): 
         void saved.catch(console.error);
     });
     update();
-    if (storage) {
+    if (storage !== false) {
         void locale.sync().then(update).catch(console.error);
         const stop = locale.watch(update);
         window.addEventListener("pagehide", stop, {once: true});

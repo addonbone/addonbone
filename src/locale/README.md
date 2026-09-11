@@ -26,16 +26,18 @@ Shared languages, contracts, and module identifiers belong to `src/types/locale.
 
 Locale discovery, merging, validation, fallback preparation, native `_locales/*/messages.json`, and declaration generation belong to the CLI locale pipeline. The locale feature plugin supplies the generated data; Rspack integration and chunk delivery belong to the bundler. Shared message-flattening logic lives in `src/shared/locale`.
 
-During extension builds, the private `#adnbn/locale` import resolves to `virtual/locale`: a default catalogue export plus named `keys` and `languages`. `DynamicLocale` reads the catalogue; `NativeLocale` imports only the named lists, allowing unused translations to be removed from optimized bundles. Outside these builds, `catalogue/` provides a resolvable empty module.
+During extension builds, the private `#adnbn/locale` import resolves to `virtual/locale`: a default catalogue export plus named `keys`, `languages`, and `lang` (the configured default language). `DynamicLocale` reads the catalogue; `NativeLocale` imports only the named lists, allowing unused translations to be removed from optimized bundles. Outside these builds, `catalogue/` provides a resolvable empty module with `lang: "en"`.
 
 Views and ISOLATED content scripts can share `locale.js`. MAIN retains its own content layer: its catalogue stays in the entrypoint or joins `common-main.content.js` under the regular content chunk rules. Background keeps translations in its single bundle. This separates file delivery across content execution worlds; the same translations may occur in their respective bundles.
 
-Core providers have no React dependency. Browser i18n access goes through `@addon-core/browser`; persistence goes through `@addon-core/storage`. Both native and dynamic providers determine their initial language from the browser's `locale` message. The empty package fallback does not make them operational without the required browser API and generated locale data.
+Core providers have no React dependency. Browser i18n access goes through `@addon-core/browser`; persistence goes through `@addon-core/storage`. Both native and dynamic providers determine their initial language from the browser's `locale` message. If that call fails or its marker cannot be resolved, `DynamicLocale` uses the generated `lang`. `NativeLocale` still requires browser i18n. The empty package fallback contains no translations; `DynamicLocale` requires a generated catalogue containing its selected language.
 
 ## Runtime behavior
 
 Translations are synchronous strings. Providers share substitution and plural processing through `AbstractLocale`; `trans` handles non-plural keys and `choice` selects a form by count. Substitutions accept strings and numbers. Generated public keys use dot notation, while message lookup converts them to underscore keys. Missing messages warn and return the key; empty translations remain empty strings.
 
 `DynamicLocale` reads bundled messages without fetching JSON or dynamically importing languages. `change()` updates its state immediately and returns a promise for saving the language code. Storage defaults to local storage with the key `"lang"`; a string changes the key, and `false` keeps state only in the instance.
+
+Use `new DynamicLocale(false)` in MAIN: translations and language changes work from the bundle, starting with the configured default language. Extension storage is unavailable there; storage synchronization remains available in ISOLATED and extension pages.
 
 Storage initialization is explicit: `sync()` reads the saved language, `watch()` observes subsequent storage events, and `unwatch()` disconnects. The constructor does neither. `watch()` is not a general subscription to in-memory state; `sync()` and `watch()` require enabled storage. The current React provider connects these methods on mount and exposes their results through context.

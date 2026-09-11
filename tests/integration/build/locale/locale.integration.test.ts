@@ -1,7 +1,7 @@
 /** @jest-environment node */
 
 import {spawn, type ChildProcess} from "child_process";
-import {readFile, readdir, rm, writeFile} from "fs/promises";
+import {copyFile, readFile, readdir, rm, writeFile} from "fs/promises";
 import path from "path";
 import vm from "vm";
 import {createIntegrationFixture} from "../../utils/fixture";
@@ -19,6 +19,7 @@ const inspect = async (directory: string) => {
     const sandbox = {
         readLocaleCatalogue: undefined as (() => Catalogue) | undefined,
         readLocaleKeys: undefined as (() => readonly string[]) | undefined,
+        readLocaleLanguage: undefined as (() => string) | undefined,
         readLocaleLanguages: undefined as (() => readonly string[]) | undefined,
     };
     const context = vm.createContext(sandbox);
@@ -26,6 +27,8 @@ const inspect = async (directory: string) => {
         vm.runInContext(await readFile(path.join(directory, file), "utf8"), context);
     }
     const catalogue = sandbox.readLocaleCatalogue!();
+    const lang = sandbox.readLocaleLanguage!();
+    expect(lang).toBe(manifest.default_locale);
     const exportedLanguages = sandbox.readLocaleLanguages!();
     expect(exportedLanguages).toEqual(Object.keys(catalogue));
     const languages = await readdir(path.join(directory, "_locales"));
@@ -38,7 +41,7 @@ const inspect = async (directory: string) => {
         expect(catalogue[lang]).toEqual(flattened);
         expect(catalogue[lang].locale).toBe(lang);
     }
-    return {catalogue, keys: sandbox.readLocaleKeys!(), languages: exportedLanguages};
+    return {catalogue, keys: sandbox.readLocaleKeys!(), lang, languages: exportedLanguages};
 };
 
 test.each(["chrome", "firefox"])("%s build imports the catalogue and preserves the native JSON data", async browser => {
@@ -69,6 +72,27 @@ test.each(["chrome", "firefox"])("%s build imports the catalogue and preserves t
     }
 });
 
+test("exports the configured default language even when it is not the first catalogue language", async () => {
+    const fixture = await createIntegrationFixture(ADNBN_TEST_ROOT, path.join(__dirname, "fixture"));
+    try {
+        // Give the new default the complete message contract, including own __proto__ keys.
+        await copyFile(
+            path.join(fixture.directory, "src/locales/en.json"),
+            path.join(fixture.directory, "src/locales/fr.json")
+        );
+        const filename = path.join(fixture.directory, "adnbn.config.ts");
+        await writeFile(
+            filename,
+            (await readFile(filename, "utf8")).replace('version: "1.0.0",', 'version: "1.0.0", lang: "fr",')
+        );
+        const {lang, languages} = await inspect(await fixture.build());
+        expect(languages[0]).toBe("en");
+        expect(lang).toBe("fr");
+    } finally {
+        await fixture.dispose();
+    }
+});
+
 test("CLI watch refreshes the catalogue, JSON and declarations from the same locale edit", async () => {
     const fixture = await createIntegrationFixture(ADNBN_TEST_ROOT, path.join(__dirname, "fixture"));
     let watcher: ChildProcess | undefined;
@@ -82,6 +106,8 @@ test("CLI watch refreshes the catalogue, JSON and declarations from the same loc
         });
         watcher.stdout?.on("data", chunk => (output += chunk));
         watcher.stderr?.on("data", chunk => (output += chunk));
+        // Assets exist before Rspack finishes the compilation and reconnects its watcher.
+        await waitFor(async () => output.includes("compiled") || undefined, 15000, "initial locale watch compilation");
         await waitFor(() => inspect(directory), 15000, "initial locale watch build");
         await writeFile(
             path.join(fixture.directory, "src/locales/de.json"),

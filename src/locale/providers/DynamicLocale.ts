@@ -1,7 +1,7 @@
 import {getI18nMessage} from "@addon-core/browser";
 import {Storage, type StorageProvider} from "@addon-core/storage";
 
-import catalogue, {keys, languages} from "#adnbn/locale";
+import catalogue, {keys, lang as defaultLanguage, languages} from "#adnbn/locale";
 
 import AbstractLocale from "./AbstractLocale";
 import type {LocaleNativeStructure} from "./NativeLocale";
@@ -23,13 +23,15 @@ export default class DynamicLocale<T extends object = LocaleNativeStructure>
     constructor(storage: string | false = "lang") {
         super();
 
-        const language = resolveLanguage(getI18nMessage(LocaleCustomKeyForLanguage));
+        let marker: string | undefined;
 
-        if (!language) {
-            throw new Error("[DynamicLocale] Language is not defined. Failed to determine a supported locale.");
+        try {
+            marker = getI18nMessage(LocaleCustomKeyForLanguage);
+        } catch {
+            // MAIN has no extension i18n; use the configured language from the bundled catalogue.
         }
 
-        this.select(language);
+        this.select(resolveLanguage(marker) ?? defaultLanguage);
 
         if (storage) {
             this.storageKey = storage;

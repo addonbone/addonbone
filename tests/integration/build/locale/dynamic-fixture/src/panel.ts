@@ -1,7 +1,7 @@
 import {DynamicLocale, type Language} from "adnbn/locale";
 
-export const createPanel = (context: string): HTMLElement => {
-    const locale = new DynamicLocale();
+export const createPanel = (context: string, storage: string | false = "lang"): HTMLElement => {
+    const locale = new DynamicLocale(storage);
     const panel = document.createElement("div");
     panel.dataset.localeContext = context;
     const select = document.createElement("select");
@@ -18,9 +18,11 @@ export const createPanel = (context: string): HTMLElement => {
         void saved.catch(console.error);
     });
     update();
-    void locale.sync().then(update).catch(console.error);
-    const stop = locale.watch(update);
-    window.addEventListener("pagehide", stop, {once: true});
+    if (storage) {
+        void locale.sync().then(update).catch(console.error);
+        const stop = locale.watch(update);
+        window.addEventListener("pagehide", stop, {once: true});
+    }
     panel.append(select, message);
     return panel;
 };

@@ -3,6 +3,7 @@ jest.mock("@addon-core/storage", () => ({Storage: {Local: jest.fn()}}));
 jest.mock("#adnbn/locale", () => ({
     __esModule: true,
     default: require("./tests/fixtures/dynamic/catalogue.json"),
+    lang: "fr",
     keys: ["greeting", "items", "app.title", "fallback", "empty", "__proto__"],
     languages: ["en", "fr", "en_GB"],
 }));
@@ -73,9 +74,31 @@ test("normalizes the native marker before selecting catalogue data", () => {
     expect(locale.trans("app.title")).toBe("Catalogue");
 });
 
-test.each(["", "unknown", "de"])("rejects an unavailable native language: %s", marker => {
+test.each([undefined, "", "unknown"])("uses the build language when the native marker is invalid: %s", marker => {
     jest.mocked(getI18nMessage).mockReturnValue(marker);
-    expect(() => new DynamicLocale(false)).toThrow(/Language/);
+    const locale = new DynamicLocale<Structure>(false);
+    expect(locale.lang()).toBe(Language.French);
+    expect(locale.trans("greeting", {name: "Ada"})).toBe("Bonjour Ada");
+});
+
+test("uses the build language when browser i18n is unavailable and changes synchronously in memory", async () => {
+    jest.mocked(getI18nMessage).mockImplementationOnce(() => {
+        throw new TypeError("Cannot read properties of undefined (reading 'getMessage')");
+    });
+    const locale = new DynamicLocale<Structure>(false);
+    expect(locale.lang()).toBe(Language.French);
+    expect(locale.trans("greeting", {name: "Ada"})).toBe("Bonjour Ada");
+    const changed = locale.change(Language.English);
+    expect(locale.trans("greeting", {name: "Ada"})).toBe("Hello Ada");
+    await expect(changed).resolves.toBe(Language.English);
+    expect(Storage.Local).not.toHaveBeenCalled();
+    expect(getI18nMessage).toHaveBeenCalledTimes(1);
+});
+
+test("rejects a recognized native language that is absent from the catalogue", () => {
+    const marker = "de";
+    jest.mocked(getI18nMessage).mockReturnValue(marker);
+    expect(() => new DynamicLocale(false)).toThrow('Language "de" is not available');
 });
 
 test("keeps public dot keys separate from catalogue keys and returns independent language collections", () => {

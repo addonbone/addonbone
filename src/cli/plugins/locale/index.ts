@@ -33,7 +33,7 @@ export default definePlugin(() => {
             };
 
             const getModules = async () => ({
-                [LocaleModuleName]: createLocaleModule(await locale.catalogue(), await locale.keys()),
+                [LocaleModuleName]: createLocaleModule(await locale.catalogue(), await locale.keys(), config.lang),
             });
 
             await prepareLocale();

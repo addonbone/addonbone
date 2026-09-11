@@ -26,7 +26,9 @@ test.each(["chrome", "firefox"])(
             expect(catalogue).toContain("Bonjour depuis DynamicLocale");
             expect(catalogue).toContain("Completed from English");
             expect(await readFile(path.join(directory, background), "utf8")).toContain("Bonjour depuis DynamicLocale");
-            expect(manifest.content_scripts[0].js).toContain("js/locale.js");
+            expect(manifest.content_scripts.find((entry: {world: string}) => entry.world === "ISOLATED").js).toContain(
+                "js/locale.js"
+            );
             expect(manifest.web_accessible_resources).toBeUndefined();
             for (const filename of [manifest.action.default_popup, manifest.options_ui.page]) {
                 expect(await readFile(path.join(directory, filename), "utf8")).toContain("js/locale.js");
@@ -57,7 +59,7 @@ test.each(["chrome", "firefox"])(
 test("native-only consumers do not include the catalogue despite importing the public barrel", async () => {
     const fixture = await createIntegrationFixture(ADNBN_TEST_ROOT, fixtureDirectory);
     try {
-        for (const file of ["popup.ts", "options.ts", "locale.content.ts"])
+        for (const file of ["popup.ts", "options.ts", "locale.content.ts", "main.content.ts"])
             await rm(path.join(fixture.directory, "src", file));
         await copyFile(
             path.join(__dirname, "states/native-background.ts"),

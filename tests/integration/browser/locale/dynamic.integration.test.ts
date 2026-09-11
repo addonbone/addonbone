@@ -11,7 +11,7 @@ import {startIntegrationSite, type IntegrationSite} from "../utils/site";
 
 jest.setTimeout(90_000);
 
-test("Chrome switches DynamicLocale synchronously and synchronizes storage across views and content without loading translations", async () => {
+test("Chrome switches DynamicLocale in both worlds and synchronizes extension storage without loading translations", async () => {
     const binary = findChromeBinary(ADNBN_TEST_ROOT);
     if (!binary) throw new Error("Install Chrome for Testing or set ADNBN_CHROME_BIN");
     const fixture = await createIntegrationFixture(
@@ -77,7 +77,7 @@ test("Chrome switches DynamicLocale synchronously and synchronizes storage acros
             await waitFor(async () => {
                 const panel = await evaluate(
                     session,
-                    `(() => { const panel = document.querySelector('[data-locale-context]'); return panel && {lang: panel.dataset.language, message: panel.querySelector('p').textContent}; })()`
+                    `(() => { const panel = document.querySelector('[data-locale-context]:not([data-locale-context="main"])'); return panel && {lang: panel.dataset.language, message: panel.querySelector('p').textContent}; })()`
                 );
                 expect(panel).toEqual({
                     lang,
@@ -93,7 +93,28 @@ test("Chrome switches DynamicLocale synchronously and synchronizes storage acros
             await client.send("Page.navigate", {url}, session);
             await expectLanguage(session, "en");
         }
+        await waitFor(async () => {
+            expect(
+                await evaluate(sessions[0], `document.querySelector('[data-locale-context="main"]')?.dataset.language`)
+            ).toBe("en");
+            return true;
+        });
         const before = client.requests.length;
+        expect(
+            await evaluate(
+                sessions[0],
+                `(() => {
+            const panel = document.querySelector('[data-locale-context="main"]');
+            const select = panel.querySelector('select');
+            select.value = 'fr';
+            select.dispatchEvent(new Event('change', {bubbles: true}));
+            return {lang: panel.dataset.language, message: panel.querySelector('p').textContent};
+        })()`
+            )
+        ).toEqual({lang: "fr", message: "Bonjour depuis DynamicLocale !"});
+        expect(
+            await evaluate(background, `(async () => (await chrome.storage.local.get('lang')).lang)()`)
+        ).toBeUndefined();
         const state = await evaluate(
             background,
             `(async () => {
@@ -139,6 +160,9 @@ test("Chrome switches DynamicLocale synchronously and synchronizes storage acros
             )
         ).toBe("Hello from DynamicLocale!");
         for (const session of sessions) await expectLanguage(session, "en");
+        expect(
+            await evaluate(sessions[0], `document.querySelector('[data-locale-context="main"]').dataset.language`)
+        ).toBe("fr");
         expect(await evaluate(background, "dynamicLocale.sync()")).toBe("en");
         expect(client.requests.slice(afterReload).filter(url => url.startsWith(origin))).toEqual([]);
         expect(client.requests.filter(url => /_locales\/|messages\.json/.test(url))).toEqual([]);

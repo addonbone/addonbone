@@ -5,6 +5,7 @@ import path from "path";
 import vm from "vm";
 
 import {createLocaleModule} from "@cli/plugins/locale/module";
+import {Language} from "@typing/locale";
 import {createIntegrationFixture} from "../../utils/fixture";
 
 jest.setTimeout(90_000);
@@ -52,10 +53,16 @@ test.each<Scenario>([
         }
         if (bytes !== undefined) {
             const keys = new Set(["greeting", "padding", "locale"]);
-            const empty = createLocaleModule({en: {greeting: Greeting, padding: "", locale: "en"}}, keys);
+            const empty = createLocaleModule(
+                {en: {greeting: Greeting, padding: "", locale: "en"}},
+                keys,
+                Language.English
+            );
             const padding = "x".repeat(bytes - Buffer.byteLength(empty));
             const messages = {greeting: Greeting, padding};
-            expect(Buffer.byteLength(createLocaleModule({en: {...messages, locale: "en"}}, keys))).toBe(bytes);
+            expect(
+                Buffer.byteLength(createLocaleModule({en: {...messages, locale: "en"}}, keys, Language.English))
+            ).toBe(bytes);
             await writeFile(path.join(fixture.directory, "src/locales/en.json"), JSON.stringify(messages));
             await rm(path.join(fixture.directory, "src/locales/fr.json"));
         }
